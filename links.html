@@ -22,8 +22,8 @@
 <body>
 <main>
   <h1>Khám phá động vật · Activity links</h1>
-  <p class="sub">Copy a link and send it to students. Each link opens that activity straight away. Workbook pages are shown under each title.</p>
-  <div class="row all"><div class="no">★</div><div class="t"><b>Full map (all 15 activities)</b><a id="home"></a></div><button data-i="0">Copy</button></div>
+  <p class="sub">Copy a link and send it to students. Each link opens only that one activity. Workbook pages are shown under each title.</p>
+  <div class="row all"><div class="no">★</div><div class="t"><b>Full map (all 15 activities together)</b><a id="home"></a></div><button data-i="0">Copy</button></div>
   <div id="list"></div>
 </main>
 <script>
@@ -43,12 +43,12 @@ const A=[
 [13,'70–71','Ăn và di chuyển','Eating and moving'],
 [14,'72–73','Chế độ ăn khác nhau','Different diets'],
 [15,'74–75','Tôi đã học được gì?','What have I learned?']];
-const base=location.href.replace(/[#?].*$/,'').replace(/links\.html$/,'');
+const base='https://jameslazona.github.io/kham-pha-dong-vat/';
 const urls=[base];
 const home=document.getElementById('home');home.href=home.textContent=base;
 const list=document.getElementById('list');
 A.forEach(([n,pg,vi,en])=>{
-  const u=base+'#chang-'+n;urls.push(u);
+  const u=base+n+'/';urls.push(u);
   const r=document.createElement('div');r.className='row';
   r.innerHTML=`<div class="no">${n}</div><div class="t"><b>${vi}</b><small>${en} · tr.${pg}</small><br><a href="${u}" target="_blank">${u}</a></div><button data-i="${n}">Copy</button>`;
   list.append(r);
