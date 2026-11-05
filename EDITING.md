@@ -1,5 +1,11 @@
 # How to edit the activities
 
+**Easiest way: the teacher editor.** Open https://jameslazona.github.io/kham-pha-dong-vat/admin/
+Pick an activity, change the text in the boxes, click **Preview** to check, then **Save**.
+The first time on each computer, click **Connect to save** and follow the steps on screen.
+
+The rest of this page is for editing the file by hand on GitHub.
+
 All the questions, answers, hints and Vietnamese text are in one file: **`activities.js`**.
 After you save a change there, every student link picks it up within a minute or two. You don't need to copy anything to the other links.
 

@@ -347,6 +347,8 @@ input.slot{width:140px;text-align:center;font-family:var(--f-display);border-top
 <div id="app" class="app"></div>
 <script src="images.js"></script>
 <script src="activities.js"></script>
+<script>/* teacher editor preview: ?preview=1 shows unsaved changes from this browser */
+try{if(/[?&]preview=1/.test(location.search)){const d=localStorage.getItem('grit-animals-draft');if(d){const a=new Function(d+'\n;return ST;')();ST.length=0;ST.push(...a);}}}catch(e){console.warn('preview failed',e);}</script>
 <script>
 /* ====== helpers ====== */
 const $=(s,r=document)=>r.querySelector(s);

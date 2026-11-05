@@ -6,4 +6,4 @@ Interactive Science activities for Pearson International Primary Science workboo
 - Full map of all activities: `https://jameslazona.github.io/kham-pha-dong-vat/`
 - Teacher list of all links: `links.html`
 
-Teachers: to change questions or text, edit `activities.js`. See [EDITING.md](EDITING.md).
+Teachers: edit activities at `https://jameslazona.github.io/kham-pha-dong-vat/admin/`, or edit `activities.js` by hand. See [EDITING.md](EDITING.md).

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Teacher editor · Khám phá động vật</title>
+<style>
+:root{--bg:#f4f6f1;--card:#fff;--line:#dde3d8;--ink:#1d2a1b;--muted:#5d6a59;--green:#2f7d32;--green2:#e6f2e4;--red:#b3402f;--sun:#f4b400;--blue:#1b5fa8}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;font-weight:600;color:var(--ink)}
+button:hover{border-color:#b9c4b3}
+button.pri{background:var(--green);border-color:var(--green);color:#fff}
+button.pri:disabled{background:#9db79e;border-color:#9db79e;cursor:default}
+button.mini{padding:3px 8px;font-size:13px;font-weight:600}
+button.del{color:var(--red)}
+a{color:var(--blue)}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;padding:10px 18px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;margin-right:auto}
+header h1 small{display:block;font-weight:500;color:var(--muted);font-size:13px}
+#status{font-size:13px;color:var(--muted);max-width:340px}
+#status.err{color:var(--red)} #status.ok{color:var(--green)}
+.wrap{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - 62px)}
+nav{border-right:1px solid var(--line);background:#fbfcfa;padding:10px;overflow:auto;position:sticky;top:62px;height:calc(100vh - 62px)}
+nav button{display:flex;gap:10px;width:100%;text-align:left;border:0;background:none;padding:8px;border-radius:8px;align-items:center;font-weight:500}
+nav button.on{background:var(--green2)}
+nav button b{min-width:24px;text-align:center;color:var(--green)}
+nav button span small{display:block;color:var(--muted);font-size:12px}
+nav button .dot{margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--sun);visibility:hidden}
+nav button.changed .dot{visibility:visible}
+main{padding:20px 26px 80px;max-width:1050px}
+.banner{background:#fff6d6;border:1px solid #efd889;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.banner.info{background:#eaf2fb;border-color:#bcd3ee}
+h2{margin:0 0 4px;font-size:22px}
+.sub{color:var(--muted);margin:0 0 16px}
+section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+section>h3{margin:0 0 10px;font-size:16px;display:flex;gap:8px;align-items:center}
+section>h3 .sp{margin-left:auto;display:flex;gap:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+label.f{display:flex;flex-direction:column;gap:3px;font-size:12px;font-weight:600;color:var(--muted)}
+label.f.wide{grid-column:1/-1}
+input[type=text],input[type=number],textarea,select{border:1px solid var(--line);border-radius:7px;padding:6px 8px;color:var(--ink);background:#fff;width:100%;font-weight:400;font-size:14px}
+textarea{resize:vertical;min-height:38px}
+input:focus,textarea:focus,select:focus{outline:2px solid #9fcf9f;border-color:var(--green)}
+.list{display:flex;flex-direction:column;gap:6px}
+.li{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;padding:8px;border:1px dashed var(--line);border-radius:9px}
+.li>label.f{flex:1 1 160px}
+.li .tools{display:flex;gap:4px}
+.pic{width:58px;height:58px;border:1px solid var(--line);border-radius:8px;background:#fff center/contain no-repeat;cursor:pointer;flex:none;position:relative}
+.pic.empty::after{content:'+ pic';position:absolute;inset:0;display:grid;place-items:center;font-size:12px;color:var(--muted)}
+.task{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:#fff}
+.task>summary{list-style:none;cursor:pointer;padding:10px 14px;display:flex;gap:10px;align-items:center}
+.task>summary::-webkit-details-marker{display:none}
+.task>summary .n{background:var(--green2);color:var(--green);border-radius:6px;padding:2px 8px;font-weight:700;font-size:13px}
+.task>summary .ty{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.task>summary .qq{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.task .body{padding:4px 14px 14px;border-top:1px solid var(--line)}
+.task h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.ok-pick{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:var(--green);padding-bottom:6px}
+.note{font-size:13px;color:var(--muted);margin:4px 0}
+.mark{display:grid;gap:4px;overflow:auto}
+.mark div{font-size:13px;padding:4px}
+.modal{position:fixed;inset:0;background:rgba(20,30,20,.45);display:grid;place-items:center;z-index:50;padding:16px}
+.sheet{background:#fff;border-radius:14px;max-width:760px;width:100%;max-height:88vh;overflow:auto;padding:18px 20px}
+.sheet h3{margin-top:0}
+.picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin-top:10px}
+.picks button{padding:4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:500}
+.picks button i{display:block;width:80px;height:70px;background:center/contain no-repeat}
+.picks button.on{outline:3px solid var(--green)}
+code{background:#eef1ea;padding:1px 5px;border-radius:5px}
+ol.steps li{margin-bottom:6px}
+@media(max-width:800px){.wrap{grid-template-columns:1fr}nav{position:static;height:auto;display:flex;overflow:auto}nav button{min-width:180px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Teacher editor <small>Khám phá động vật · 15 activities</small></h1>
+  <span id="status">Loading…</span>
+  <button id="btnConnect" type="button">Connect to save</button>
+  <button id="btnPreview" type="button">Preview</button>
+  <button id="btnSave" class="pri" type="button" disabled>Save</button>
+</header>
+<div class="wrap">
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+
+<script src="../images.js"></script>
+<script src="serialize.js"></script>
+<script>
+const OWNER='jameslazona',REPO='kham-pha-dong-vat',PATH='activities.js',BRANCH='main';
+const API=`https://api.github.com/repos/${OWNER}/${REPO}`;
+const TOKEN_KEY='grit-gh-token',DRAFT_KEY='grit-animals-draft',DRAFT_SHA='grit-animals-draft-sha';
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+
+let DATA=null,ORIG='',ORIG_STAGES=[],SHA=null,CUR=0,DIRTY=false,CAN_SAVE=false,LOGIN='';
+const $=s=>document.querySelector(s);
+const nav=$('#nav'),main=$('#main'),statusEl=$('#status');
+
+function h(tag,attrs,...kids){const e=document.createElement(tag);
+  for(const k in attrs||{}){const v=attrs[k];if(v==null||v===false)continue;
+    if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(k==='style'&&typeof v==='object')Object.assign(e.style,v);else e.setAttribute(k,v===true?'':v);}
+  kids.flat(9).forEach(c=>{if(c==null||c===false)return;e.append(c.nodeType?c:document.createTextNode(String(c)));});return e;}
+function status(msg,kind){statusEl.textContent=msg;statusEl.className=kind||'';}
+
+/* ---------- loading ---------- */
+function b64ToText(b){const bin=atob(b.replace(/\s/g,''));const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u);}
+function textToB64(t){const u=new TextEncoder().encode(t);let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s);}
+function ghHeaders(){const t=LS.get(TOKEN_KEY);const hd={'Accept':'application/vnd.github+json'};if(t)hd.Authorization='Bearer '+t;return hd;}
+
+async function load(){
+  let src=null;
+  try{const r=await fetch(`${API}/contents/${PATH}?ref=${BRANCH}&t=${Date.now()}`,{headers:ghHeaders(),cache:'no-store'});
+    if(r.ok){const j=await r.json();SHA=j.sha;src=b64ToText(j.content);}}catch(e){}
+  if(src==null){const r=await fetch('../activities.js?t='+Date.now(),{cache:'no-store'});src=await r.text();SHA=null;}
+  ORIG=src;DATA=ActSer.parse(src);ORIG_STAGES=DATA.map(s=>stageText(s));
+  const draft=LS.get(DRAFT_KEY);
+  if(draft&&draft!==ActSer.serialize(DATA)){
+    try{const d=ActSer.parse(draft);showDraftBanner(d);}catch(e){LS.del(DRAFT_KEY);}
+  }
+  CUR=Math.max(0,Math.min(DATA.length-1,(+(location.hash.match(/\d+/)||[1])[0])-1));
+  renderNav();renderMain();
+  status(SHA?'Showing the live version.':'Showing the live version (read only, could not reach GitHub).');
+  checkAuth();
+}
+let draftBanner=null;
+function showDraftBanner(d){
+  const old=LS.get(DRAFT_SHA);
+  draftBanner=h('div',{class:'banner'},h('b',{},'You have unsaved changes from earlier in this browser.'),
+    old&&SHA&&old!==SHA?h('span',{class:'note'},'Someone has saved since then, so continuing would replace their changes.'):null,
+    h('button',{type:'button',onclick:()=>{DATA=d;markDirty();draftBanner.remove();draftBanner=null;renderNav();renderMain();}},'Continue my changes'),
+    h('button',{type:'button',class:'del',onclick:()=>{LS.del(DRAFT_KEY);draftBanner.remove();draftBanner=null;}},'Discard them'));
+}
+const stageText=s=>ActSer.serialize([s]);
+
+/* ---------- auth ---------- */
+async function checkAuth(){
+  const t=LS.get(TOKEN_KEY);const btn=$('#btnConnect');
+  if(!t){CAN_SAVE=false;btn.textContent='Connect to save';updateSave();return;}
+  try{const r=await fetch(API,{headers:ghHeaders()});const j=await r.json();
+    const u=await fetch('https://api.github.com/user',{headers:ghHeaders()}).then(x=>x.ok?x.json():{}).catch(()=>({}));
+    LOGIN=u.login||'';
+    CAN_SAVE=!!(r.ok&&j.permissions&&j.permissions.push);
+    btn.textContent=CAN_SAVE?('Connected'+(LOGIN?' · '+LOGIN:'')):'Connect to save';
+    if(!CAN_SAVE)status(r.status===401?'Your access key is not valid. Click "Connect to save".':'This access key cannot save to the activities. Check its permissions.','err');
+  }catch(e){CAN_SAVE=false;status('Could not check your GitHub access.','err');}
+  updateSave();
+}
+function openConnect(){
+  const inp=h('input',{type:'text',placeholder:'github_pat_…',autocomplete:'off'});
+  const m=h('div',{class:'modal'},h('div',{class:'sheet'},
+    h('h3',{},'Connect your GitHub account to save'),
+    h('p',{},'You only do this once on each computer. You need to be a collaborator on the activities repo.'),
+    h('ol',{class:'steps'},
+      h('li',{},'Open ',h('a',{href:'https://github.com/settings/personal-access-tokens/new',target:'_blank',rel:'noopener'},'GitHub → new access key'),' (sign in if asked).'),
+      h('li',{},'Name it ',h('code',{},'Teacher editor'),'. Set Expiration to the end of the school year.'),
+      h('li',{},'Resource owner: ',h('code',{},OWNER),'. Repository access: ',h('b',{},'Only select repositories'),' → ',h('code',{},REPO),'.'),
+      h('li',{},'Permissions → Repository permissions → ',h('b',{},'Contents'),' → ',h('b',{},'Read and write'),'.'),
+      h('li',{},'Click ',h('b',{},'Generate token'),', copy it and paste it here.')),
+    h('p',{class:'note'},'If you are not the repo owner and "Resource owner" does not show ',h('code',{},OWNER),', ask James to approve fine-grained access keys for collaborators, or use a classic key with the "repo" box ticked.'),
+    inp,
+    h('div',{style:{display:'flex',gap:'8px',marginTop:'12px',justifyContent:'flex-end'}},
+      LS.get(TOKEN_KEY)?h('button',{type:'button',class:'del',onclick:()=>{LS.del(TOKEN_KEY);m.remove();checkAuth();status('Disconnected from GitHub.');}},'Disconnect'):null,
+      h('button',{type:'button',onclick:()=>m.remove()},'Cancel'),
+      h('button',{type:'button',class:'pri',onclick:async()=>{const v=inp.value.trim();if(!v)return;LS.set(TOKEN_KEY,v);m.remove();status('Checking access…');await checkAuth();if(CAN_SAVE)status('Connected. You can save now.','ok');}},'Connect'))));
+  m.addEventListener('click',e=>{if(e.target===m)m.remove();});document.body.append(m);inp.focus();
+}
+
+/* ---------- dirty / save ---------- */
+let draftT=null;
+function markDirty(){DIRTY=true;updateSave();clearTimeout(draftT);draftT=setTimeout(()=>{LS.set(DRAFT_KEY,ActSer.serialize(DATA));if(SHA)LS.set(DRAFT_SHA,SHA);markNav();},300);}
+function updateSave(){const b=$('#btnSave');b.disabled=!DIRTY;b.textContent=DIRTY?'Save':'Saved';}
+function changedStages(){return DATA.map((s,i)=>stageText(s)!==ORIG_STAGES[i]?s.id:null).filter(x=>x!=null);}
+function markNav(){const ch=new Set(changedStages());nav.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('changed',ch.has(DATA[i].id)));}
+async function save(){
+  if(!DIRTY)return;
+  if(!CAN_SAVE){openConnect();return;}
+  const out=ActSer.serialize(DATA);
+  try{const chk=ActSer.parse(out);if(chk.length!==DATA.length)throw new Error('count');}catch(e){status('Something in the changes is not valid, so nothing was saved.','err');return;}
+  const ch=changedStages();
+  const msg=(ch.length?'Edit activity '+ch.join(', '):'Edit activities')+' (teacher editor'+(LOGIN?', '+LOGIN:'')+')';
+  $('#btnSave').disabled=true;status('Saving…');
+  try{
+    const r=await fetch(`${API}/contents/${PATH}`,{method:'PUT',headers:Object.assign(ghHeaders(),{'Content-Type':'application/json'}),
+      body:JSON.stringify({message:msg,content:textToB64(out),sha:SHA||undefined,branch:BRANCH})});
+    const j=await r.json().catch(()=>({}));
+    if(r.status===409||(r.status===422&&/sha/i.test(j.message||''))){status('Someone else saved first. Copy anything you need, then reload the page to get their version.','err');$('#btnSave').disabled=false;return;}
+    if(!r.ok){status('Save failed: '+(j.message||r.status),'err');$('#btnSave').disabled=false;return;}
+    SHA=j.content.sha;ORIG=out;ORIG_STAGES=DATA.map(s=>stageText(s));DIRTY=false;LS.del(DRAFT_KEY);LS.del(DRAFT_SHA);
+    updateSave();markNav();status('Saved. Students will see the change in about a minute.','ok');
+  }catch(e){status('Save failed: no connection to GitHub.','err');$('#btnSave').disabled=false;}
+}
+function preview(){
+  LS.set(DRAFT_KEY,ActSer.serialize(DATA));
+  window.open(`../?a=${DATA[CUR].id}${DIRTY?'&preview=1':''}`,'_blank');
+}
+window.addEventListener('beforeunload',e=>{if(DIRTY){e.preventDefault();e.returnValue='';}});
+
+/* ---------- field helpers ---------- */
+function setVal(o,k,v,orig){
+  if(typeof orig==='number'&&v.trim()!==''&&!isNaN(+v))v=+v;
+  o[k]=v;markDirty();
+}
+function txt(o,k,label,opt={}){
+  const v=o[k]==null?'':String(o[k]);const orig=o[k];
+  const el=(opt.area||v.length>70)?h('textarea',{rows:opt.rows||2},v):h('input',{type:'text',value:v});
+  el.addEventListener('input',()=>{setVal(o,k,el.value,orig);opt.on&&opt.on();});
+  return h('label',{class:'f'+(opt.wide?' wide':'')},label,el);
+}
+function picField(o,k){
+  const d=h('div',{class:'pic',title:'Click to choose a picture'});
+  const paint=()=>{const src=o[k]&&IMG[o[k]];d.style.backgroundImage=src?`url("${src}")`:'none';d.classList.toggle('empty',!src);};
+  paint();d.addEventListener('click',()=>openPicker(o[k],key=>{o[k]=key;paint();markDirty();}));return d;
+}
+function openPicker(current,cb){
+  const keys=Object.keys(IMG);const q=h('input',{type:'text',placeholder:'Filter by name, e.g. egg, act, g_'});
+  const grid=h('div',{class:'picks'});
+  const fill=()=>{grid.innerHTML='';const f=q.value.trim().toLowerCase();
+    keys.filter(k=>!f||k.toLowerCase().includes(f)).forEach(k=>grid.append(h('button',{type:'button',class:k===current?'on':'',onclick:()=>{cb(k);m.remove();}},h('i',{style:{backgroundImage:`url("${IMG[k]}")`}}),k)));};
+  const m=h('div',{class:'modal'},h('div',{class:'sheet'},h('h3',{},'Choose a picture'),q,grid,
+    h('div',{style:{textAlign:'right',marginTop:'10px'}},h('button',{type:'button',onclick:()=>m.remove()},'Close'))));
+  q.addEventListener('input',fill);fill();m.addEventListener('click',e=>{if(e.target===m)m.remove();});document.body.append(m);
+}
+function newId(arr,prefix){let i=arr.length+1;const ids=new Set(arr.map(x=>x&&x.id));while(ids.has(prefix+i))i++;return prefix+i;}
+/* list editor: arr of objects or arrays; fields: [{k,label,pic,area}] ; for arrays k is index */
+function listEd(arr,fields,opt={}){
+  const box=h('div',{class:'list'});
+  const draw=()=>{box.innerHTML='';
+    arr.forEach((it,i)=>{
+      const row=h('div',{class:'li'});
+      fields.forEach(f=>{if(f.pic)row.append(picField(it,f.k));else row.append(txt(it,f.k,f.label,{area:f.area}));});
+      if(opt.extra)row.append(opt.extra(it,i));
+      const tools=h('div',{class:'tools'});
+      if(opt.move!==false){tools.append(h('button',{type:'button',class:'mini',title:'Move up',onclick:()=>{if(i){[arr[i-1],arr[i]]=[arr[i],arr[i-1]];markDirty();draw();opt.after&&opt.after();}}},'↑'),
+        h('button',{type:'button',class:'mini',title:'Move down',onclick:()=>{if(i<arr.length-1){[arr[i+1],arr[i]]=[arr[i],arr[i+1]];markDirty();draw();opt.after&&opt.after();}}},'↓'));}
+      if(opt.add)tools.append(h('button',{type:'button',class:'mini del',title:'Remove',onclick:()=>{arr.splice(i,1);markDirty();draw();opt.after&&opt.after();}},'✕'));
+      row.append(tools);box.append(row);});
+    if(opt.add)box.append(h('div',{},h('button',{type:'button',class:'mini',onclick:()=>{arr.push(opt.add());markDirty();draw();opt.after&&opt.after();}},'+ '+(opt.addLabel||'Add'))));
+  };draw();return box;
+}
+function wordsEd(o,k,label){ /* array of strings, one per line */
+  const ta=h('textarea',{rows:Math.min(8,Math.max(2,(o[k]||[]).length))},(o[k]||[]).join('\n'));
+  ta.addEventListener('input',()=>{o[k]=ta.value.split('\n').map(x=>x.trim()).filter(Boolean);markDirty();});
+  return h('label',{class:'f wide'},label+' (one per line)',ta);
+}
+function sel(options,value,onchange,multi){
+  if(multi){const set=new Set([].concat(value||[]));return h('div',{style:{display:'flex',gap:'8px',flexWrap:'wrap',paddingBottom:'6px'}},options.map(([v,l])=>{
+    const c=h('input',{type:'checkbox'});c.checked=set.has(v);c.addEventListener('change',()=>{c.checked?set.add(v):set.delete(v);const a=[...set];onchange(a.length===1?a[0]:a);});
+    return h('label',{style:{display:'flex',gap:'4px',alignItems:'center',fontSize:'13px'}},c,l);}));}
+  const s=h('select',{},options.map(([v,l])=>h('option',{value:v},l)));s.value=value==null?'':value;s.addEventListener('change',()=>onchange(s.value));return s;
+}
+const lbl=x=>(x&&(x.t||x.title||x.name||x.id))||'';
+
+/* ---------- task editors by type ---------- */
+const TYPE_NAMES={choice:'Choose / circle',spell:'Spell a word',cloze:'Fill in the blanks',table:'Table tick',match:'Match lines',place:'Sort into groups',label:'Label a picture',keywalk:'Use a key',drawpick:'Pick a picture',order:'Put in order',hotspot:'Tap the picture'};
+const ED={
+  choice(t,box){
+    const multi=Array.isArray(t.ans);
+    box.append(h('h4',{},'Answer choices'),h('p',{class:'note'},multi?'Tick every correct answer.':'Pick the one correct answer.'));
+    const draw=()=>{list.replaceWith(list=mk());};
+    let list;const mk=()=>listEd(t.opts,[{k:'img',pic:true},{k:'t',label:'Text (English)'},{k:'vi',label:'Vietnamese'}],{
+      add:()=>({id:newId(t.opts,'o'),t:''}),addLabel:'Add choice',
+      extra:(it)=>{const c=h('input',{type:multi?'checkbox':'radio',name:'ans'+Math.random()});
+        c.checked=multi?t.ans.includes(it.id):t.ans===it.id;
+        c.addEventListener('change',()=>{if(multi){const s=new Set(t.ans);c.checked?s.add(it.id):s.delete(it.id);t.ans=t.opts.map(o=>o.id).filter(id=>s.has(id));}else{t.ans=it.id;draw();}markDirty();});
+        return h('label',{class:'ok-pick'},c,'Correct');}});
+    list=mk();box.append(list);
+    if(multi&&t.pick!=null)box.append(h('div',{class:'grid',style:{marginTop:'8px'}},txt(t,'pick','How many must students pick')));
+  },
+  spell(t,box){box.append(h('h4',{},'Answer'),h('div',{class:'grid'},txt(t,'word','Word to spell'),txt(t,'extra','Extra letters to mix in'),h('label',{class:'f'},'Picture',picField(t,'img'))));},
+  cloze(t,box){
+    box.append(h('h4',{},'Blanks'),h('p',{class:'note'},'Each blank lists the answers that count as correct. Leave a blank empty if any answer from the word list is accepted.'));
+    const g=h('div',{class:'grid'});
+    Object.keys(t.slots||{}).forEach(k=>{const sl=t.slots[k];const ta=h('textarea',{rows:2},(sl.ans||[]).join('\n'));
+      ta.addEventListener('input',()=>{sl.ans=ta.value.split('\n').map(x=>x.trim()).filter(Boolean);markDirty();});
+      g.append(h('label',{class:'f'},'Blank {'+k+'} – correct answers (one per line)',ta));});
+    box.append(g,h('div',{class:'grid',style:{marginTop:'8px'}},wordsEd(t,'bank','Word list students choose from')));
+    if(t.tpl)box.append(h('div',{class:'grid',style:{marginTop:'8px'}},txt(t,'tpl','Sentence / layout ({a}, {b} are the blanks; keep the {…} marks)',{wide:true,area:true,rows:3})));
+  },
+  table(t,box){
+    box.append(h('h4',{},'Columns'),listEd(t.cols,[{k:'t',label:'Column heading'}],{move:false}));
+    if(t.corner!=null)box.append(h('div',{class:'grid',style:{marginTop:'8px'}},txt(t,'corner','Top-left heading')));
+    box.append(h('h4',{},'Rows'));
+    if(t.rows.some(r=>r.ans!=null)){
+      box.append(listEd(t.rows,[{k:'img',pic:true},{k:'t',label:'Row text'}],{move:false,extra:r=>h('label',{class:'f'},'Correct column',sel(t.cols.map(c=>[c.id,c.t]),r.ans,v=>{r.ans=v;markDirty();}))}));
+    }else{
+      box.append(listEd(t.rows,[{k:'t',label:'Row text'}],{move:false}));
+      if(t.ans&&typeof t.ans==='object'){
+        box.append(h('h4',{},'Correct ✓ / ✗'));
+        const g=h('div',{class:'mark',style:{gridTemplateColumns:`minmax(140px,1.5fr) repeat(${t.cols.length},1fr)`}});
+        g.append(h('div',{}),...t.cols.map(c=>h('div',{},h('b',{},c.t))));
+        t.rows.forEach(r=>{g.append(h('div',{},r.t||r.id));t.cols.forEach(c=>{const key=r.id+'|'+c.id;g.append(h('div',{},sel([['v','✓ yes'],['x','✗ no']],t.ans[key],v=>{t.ans[key]=v;markDirty();})));});});
+        box.append(g);
+      }
+    }
+  },
+  match(t,box){
+    const rl=x=>x.t||(x.img?'picture '+x.img:x.id);
+    box.append(h('h4',{},'Left side'),listEd(t.left,[{k:'img',pic:true},{k:'t',label:'Text'}],{move:false,extra:it=>h('label',{class:'f'},'Matches',sel(t.right.map(r=>[r.id,rl(r)]),t.pairs[it.id],v=>{t.pairs[it.id]=v;markDirty();}))}),
+      h('h4',{},'Right side'),listEd(t.right,[{k:'img',pic:true},{k:'t',label:'Text'}],{move:false}));
+  },
+  place(t,box){
+    box.append(h('h4',{},'Groups'),listEd(t.slots,[{k:'img',pic:true},{k:'t',label:'Group name'},{k:'vi',label:'Vietnamese'}],{move:false}),
+      h('h4',{},'Cards to sort'),listEd(t.cards,[{k:'img',pic:true},{k:'t',label:'Card text'}],{move:false,extra:c=>h('label',{class:'f'},'Goes in',sel(t.slots.map(s=>[s.id,s.t]),t.map[c.id],v=>{t.map[c.id]=v;markDirty();},true))}));
+  },
+  label(t,box){
+    box.append(h('h4',{},'Picture and labels'),h('div',{class:'grid'},h('label',{class:'f'},'Picture',picField(t,'img'))),
+      h('p',{class:'note'},'Each numbered pin on the picture needs one correct word.'),
+      listEd(t.pins,[{k:'ans',label:'Correct word for this pin'}],{move:false}),
+      h('div',{class:'grid',style:{marginTop:'8px'}},wordsEd(t,'bank','Word list')));
+  },
+  keywalk(t,box){
+    box.append(h('h4',{},'Questions in the key'));
+    const nodes=[];(function walk(n){if(n&&typeof n==='object'){nodes.push(n);walk(n.yes);walk(n.no);}})(t.tree);
+    box.append(listEd(nodes,[{k:'q',label:'Question'},{k:'vi',label:'Vietnamese'}],{move:false}));
+    box.append(h('h4',{},'Animals'),listEd(t.items,[{k:'img',pic:true},{k:'name',label:'Name (Vietnamese)'},{k:'letter',label:'Correct letter'}],{move:false}),
+      h('p',{class:'note'},'The yes/no path for each animal is in Advanced.'));
+  },
+  drawpick(t,box){
+    box.append(h('h4',{},'Box'),listEd(t.boxes,[{k:'title',label:'Box title'},{k:'ph',label:'Placeholder text'},{k:'label',label:'Label after drop'}],{move:false}),
+      h('h4',{},'Pictures to choose from'),h('p',{class:'note'},'Pictures with a "why wrong" message are the wrong choices. Which pictures are correct is set in the code; ask James to change that.'),
+      listEd(t.bank,[{k:'img',pic:true},{k:'why',label:'Why wrong (leave empty if correct)'}],{move:false}));
+  },
+  order(t,box){box.append(h('h4',{},'Items in the correct order'),h('p',{class:'note'},'Put the items in the right order using the arrows. Students see them shuffled.'),listEd(t.items,[{k:'img',pic:true},{k:'t',label:'Text'}],{}));},
+  hotspot(t,box){box.append(h('h4',{},'Picture'),h('div',{class:'grid'},h('label',{class:'f'},'Picture',picField(t,'img'))),h('p',{class:'note'},'The tap area is in Advanced (x, y, w, h in % of the picture).'));}
+};
+function advanced(t,onApply){
+  const plain=JSON.parse(JSON.stringify(t,(k,v)=>typeof v==='function'?undefined:v));
+  const ta=h('textarea',{rows:10,style:{fontFamily:'ui-monospace,monospace',fontSize:'12px'}},JSON.stringify(plain,null,1));
+  const msg=h('span',{class:'note'});
+  return h('details',{style:{marginTop:'12px'}},h('summary',{class:'note',style:{cursor:'pointer'}},'Advanced (all settings as JSON)'),ta,
+    h('div',{style:{display:'flex',gap:'8px',alignItems:'center',marginTop:'6px'}},h('button',{type:'button',class:'mini',onclick:()=>{
+      try{const v=JSON.parse(ta.value);if(!v||typeof v!=='object'||!v.type)throw new Error('type missing');
+        Object.keys(t).forEach(k=>{if(typeof t[k]!=='function')delete t[k];});Object.assign(t,v);markDirty();onApply();}catch(e){msg.textContent='Not valid: '+e.message;msg.style.color='var(--red)';}}},'Apply JSON'),msg));
+}
+function taskCard(s,t,i){
+  const sum=h('summary',{},h('span',{class:'n'},'Q'+(i+1)),h('span',{class:'qq'},(t.ref?t.ref+' · ':'')+(t.q||'')),h('span',{class:'ty'},TYPE_NAMES[t.type]||t.type));
+  const body=h('div',{class:'body'});
+  const d=h('details',{class:'task'},sum,body);
+  const refresh=()=>{const open=d.open;const n=taskCard(s,t,i);n.open=open;d.replaceWith(n);};
+  body.append(h('h4',{},'Question'),h('div',{class:'grid'},
+    txt(t,'q','Question (English, read aloud)',{wide:true,area:true,on:()=>{sum.querySelector('.qq').textContent=(t.ref?t.ref+' · ':'')+t.q;}}),
+    txt(t,'vi','Vietnamese meaning',{wide:true,area:true}),
+    txt(t,'hint','Hint (Gợi ý)',{wide:true,area:true}),
+    txt(t,'ref','Workbook question'),txt(t,'pg','Workbook page'),
+    t.write!=null?txt(t,'write','What to write in the book',{wide:true}):null,
+    t.explain!=null?txt(t,'explain','Explanation after correct',{wide:true}):null,
+    t.autoText!=null?txt(t,'autoText','Answer shown after correct',{wide:true}):null,
+    t.bookNote!=null?txt(t,'bookNote','Book note',{wide:true}):null,
+    t.wrongMsg!=null?txt(t,'wrongMsg','Message when wrong',{wide:true}):null));
+  body.append(h('h4',{},'Key words'));
+  const kw=t.kw||[];
+  body.append(listEd(kw,[{k:0,label:'English'},{k:1,label:'Vietnamese'}],{add:()=>['',''],addLabel:'Add key word',move:false,after:()=>{if(kw.length)t.kw=kw;else delete t.kw;}}));
+  if(t.fig!==undefined)body.append(h('h4',{},'Picture above the question'),picField(t,'fig'));
+  if(ED[t.type])ED[t.type](t,body);
+  body.append(advanced(t,refresh));
+  body.append(h('div',{style:{display:'flex',gap:'6px',marginTop:'12px',flexWrap:'wrap'}},
+    h('button',{type:'button',class:'mini',onclick:()=>moveTask(s,i,-1)},'↑ Move up'),
+    h('button',{type:'button',class:'mini',onclick:()=>moveTask(s,i,1)},'↓ Move down'),
+    h('button',{type:'button',class:'mini',onclick:()=>{s.tasks.splice(i+1,0,cloneTask(t));markDirty();renderMain(i+1);}},'Duplicate'),
+    h('button',{type:'button',class:'mini del',onclick:()=>{if(s.tasks.length<2)return;delQ(d,()=>{s.tasks.splice(i,1);markDirty();renderMain();});}},'Delete question')));
+  return d;
+}
+function delQ(card,go){const b=h('div',{class:'banner'},'Delete this question?',h('button',{type:'button',class:'del',onclick:go},'Yes, delete'),h('button',{type:'button',onclick:()=>b.remove()},'Keep it'));card.querySelector('.body').append(b);}
+function cloneTask(t){const c=JSON.parse(JSON.stringify(t,(k,v)=>typeof v==='function'?undefined:v));for(const k in t)if(typeof t[k]==='function')c[k]=t[k];
+  if(t.boxes)c.boxes.forEach((b,i)=>{if(typeof t.boxes[i].accept==='function')b.accept=t.boxes[i].accept;});return c;}
+function moveTask(s,i,d){const j=i+d;if(j<0||j>=s.tasks.length)return;[s.tasks[i],s.tasks[j]]=[s.tasks[j],s.tasks[i]];markDirty();renderMain(j);}
+
+/* ---------- pages ---------- */
+function renderNav(){
+  nav.innerHTML='';
+  DATA.forEach((s,i)=>nav.append(h('button',{type:'button',class:i===CUR?'on':'',onclick:()=>{CUR=i;history.replaceState(null,'','#'+s.id);renderNav();renderMain();markNav();window.scrollTo(0,0);}},
+    h('b',{},s.id),h('span',{},s.title,h('small',{},s.en)),h('i',{class:'dot',title:'Unsaved changes'}))));
+  markNav();
+}
+function renderMain(openIdx){
+  const s=DATA[CUR];main.innerHTML='';
+  if(draftBanner)main.append(draftBanner);
+  if(!CAN_SAVE)main.append(h('div',{class:'banner info'},'You can look and make changes, but to save them click ',h('b',{},'Connect to save'),' at the top.'));
+  main.append(h('h2',{},'Activity '+s.id+' · '+s.title),
+    h('p',{class:'sub'},s.en+' · workbook pages '+s.pages.join('–')+' · student link: ',
+      h('a',{href:`https://${OWNER}.github.io/${REPO}/${s.id}/`,target:'_blank'},`${OWNER}.github.io/${REPO}/${s.id}/`)));
+  main.append(h('section',{},h('h3',{},'Start screen'),h('div',{class:'grid'},
+    txt(s,'title','Title (Vietnamese)'),txt(s,'en','Title (English)'),txt(s,'role','Role badge'),
+    h('label',{class:'f'},'Cover picture',picField(s,'img')),
+    txt(s,'mission','Mission (Nhiệm vụ)',{wide:true,area:true}))));
+  main.append(h('section',{},h('h3',{},'Vocabulary cards'),listEd(s.vocab,[{k:'img',pic:true},{k:'en',label:'English'},{k:'vi',label:'Vietnamese'}],{add:()=>({en:'',vi:'',img:''}),addLabel:'Add word'})));
+  const tasks=h('section',{},h('h3',{},'Questions ('+s.tasks.length+')',h('span',{class:'sp'},h('button',{type:'button',class:'mini',onclick:()=>tasks.querySelectorAll('details.task').forEach(d=>d.open=true)},'Open all'),h('button',{type:'button',class:'mini',onclick:()=>tasks.querySelectorAll('details.task').forEach(d=>d.open=false)},'Close all'))),
+    h('p',{class:'note'},'To add a question, duplicate one of the same kind and change it.'));
+  s.tasks.forEach((t,i)=>{const c=taskCard(s,t,i);if(i===openIdx)c.open=true;tasks.append(c);});
+  main.append(tasks);
+  main.append(h('section',{},h('h3',{},'End screen'),
+    h('h4',{style:{margin:'0 0 6px',fontSize:'13px',color:'var(--muted)'}},'"I can…" checklist'),
+    listEd(s.can,[{k:0,label:'English'},{k:1,label:'Vietnamese'}],{add:()=>['',''],addLabel:'Add line'}),
+    h('h4',{style:{margin:'14px 0 6px',fontSize:'13px',color:'var(--muted)'}},'Workbook helper'),
+    listEd(s.helper,[{k:0,label:'Page / question'},{k:1,label:'What to do',area:true}],{add:()=>['',''],addLabel:'Add line'}),
+    h('h4',{style:{margin:'14px 0 6px',fontSize:'13px',color:'var(--muted)'}},'Colouring reward pictures'),
+    h('div',{style:{display:'flex',gap:'8px'}},s.reward.map((_,i)=>picField(s.reward,i)))));
+  if(openIdx!=null){const c=tasks.querySelectorAll('details.task')[openIdx];c&&c.scrollIntoView({block:'center'});}
+}
+
+$('#btnConnect').addEventListener('click',openConnect);
+$('#btnSave').addEventListener('click',save);
+$('#btnPreview').addEventListener('click',preview);
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();save();}});
+load().catch(e=>{status('Could not load the activities: '+e.message,'err');});
+</script>
+</body>
+</html>
