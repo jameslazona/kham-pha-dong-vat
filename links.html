@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Khám phá động vật – Activity links</title>
+<style>
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;background:#f6f8f3;color:#1f2a1c}
+  main{max-width:820px;margin:0 auto;padding:28px 18px 60px}
+  h1{margin:0 0 4px;font-size:26px}
+  p.sub{margin:0 0 22px;color:#5b6657}
+  .row{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;background:#fff;border:1px solid #dfe5da;border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .no{font-weight:800;font-size:20px;text-align:center;color:#2f7d32}
+  .t b{display:block}
+  .t small{color:#5b6657}
+  .t a{font-size:13px;color:#1b5fa8;word-break:break-all}
+  button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:9px 14px;background:#2f7d32;color:#fff;cursor:pointer}
+  button.ok{background:#7a8a75}
+  .all{margin-bottom:18px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Khám phá động vật · Activity links</h1>
+  <p class="sub">Copy a link and send it to students. Each link opens that activity straight away. Workbook pages are shown under each title.</p>
+  <div class="row all"><div class="no">★</div><div class="t"><b>Full map (all 15 activities)</b><a id="home"></a></div><button data-i="0">Copy</button></div>
+  <div id="list"></div>
+</main>
+<script>
+const A=[
+[1,'46–47','Bí mật trong lưng của em','What is a vertebrate?'],
+[2,'48–49','Năm chiếc hộp màu','Vertebrate groups'],
+[3,'50–51','Cánh cổng Có – Không','What is a key?'],
+[4,'52–53','Nhà phát minh khóa nhận dạng','Differences between vertebrate groups'],
+[5,'54–55','Ba bí kíp sự sống','Life processes'],
+[6,'56–57','Vũ điệu di chuyển','Animals move in different ways'],
+[7,'58–59','Mẹ và con lớn lên','Animals grow'],
+[8,'60–61','Trứng to, trứng nhỏ','Big eggs and small eggs'],
+[9,'62–63','Hành trình chú chim non','Birds grow and change'],
+[10,'64–65','Làng bò sát','Reptiles'],
+[11,'66–67','Hai cuộc đời của ếch','Amphibians'],
+[12,'68–69','Ăn để sống','Nutrition'],
+[13,'70–71','Ăn và di chuyển','Eating and moving'],
+[14,'72–73','Chế độ ăn khác nhau','Different diets'],
+[15,'74–75','Tôi đã học được gì?','What have I learned?']];
+const base=location.href.replace(/[#?].*$/,'').replace(/links\.html$/,'');
+const urls=[base];
+const home=document.getElementById('home');home.href=home.textContent=base;
+const list=document.getElementById('list');
+A.forEach(([n,pg,vi,en])=>{
+  const u=base+'#chang-'+n;urls.push(u);
+  const r=document.createElement('div');r.className='row';
+  r.innerHTML=`<div class="no">${n}</div><div class="t"><b>${vi}</b><small>${en} · tr.${pg}</small><br><a href="${u}" target="_blank">${u}</a></div><button data-i="${n}">Copy</button>`;
+  list.append(r);
+});
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('button[data-i]');if(!b)return;
+  const u=urls[+b.dataset.i];
+  try{await navigator.clipboard.writeText(u);}catch(_){const t=document.createElement('textarea');t.value=u;document.body.append(t);t.select();document.execCommand('copy');t.remove();}
+  b.textContent='Copied';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok');},1500);
+});
+</script>
+</body>
+</html>
