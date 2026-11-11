@@ -244,7 +244,7 @@ const MISSIONS = [
    final:'The width of the mirror is <b>20 cm</b>.' },
  { id:'m3', n:3, code:'161', title:['Garden ','dash!'], img:'boy_cheer', sol:'img/solution3.jpg',
    bubble:{en:'Lanterns go all the way around the garden. <b>How long</b> are the lanterns?'},
-   shape:{style:'garden', unit:'m', scale:50, caption:'GARDEN', pts:[[0,0],[7,0],[7,4],[0,4]], edges:[{len:7},{len:4},{len:7},{len:4}]},
+   shape:{style:'garden', unit:'m', scale:50, caption:'GARDEN', lanterns:true, pts:[[0,0],[7,0],[7,4],[0,4]], edges:[{len:7},{len:4},{len:7},{len:4}]},
    steps:[
     {type:'tap', q:{en:'Tap each side of the garden.'}},
     {type:'sum', answer:22, q:{en:'Add the four sides. How long are the lanterns?'}}
@@ -321,7 +321,7 @@ function robot(i){ /* only if the recorded voice cannot load */
 function drawShape(sh, o={}){
   const s=sh.scale, P=sh.pts.map(p=>[p[0]*s,p[1]*s]), n=P.length;
   const xs=P.map(p=>p[0]), ys=P.map(p=>p[1]);
-  const x0=Math.min(...xs)-100, x1=Math.max(...xs)+100, y0=Math.min(...ys)-58, y1=Math.max(...ys)+58;
+  const ex=sh.lanterns?16:0, x0=Math.min(...xs)-100-ex, x1=Math.max(...xs)+100+ex, y0=Math.min(...ys)-58-ex, y1=Math.max(...ys)+58+ex;
   const d=P.map((p,i)=>(i?'L':'M')+p[0]+' '+p[1]).join(' ')+'Z';
   const st={mirror:['#ff7fc4','#c2187f'],garden:['#86d94e','#7a4a1c'],pink:['#ff9ad5','#14124a'],plain:['#e7dcff','#14124a']}[sh.style];
   let g=`<path d="${d}" fill="${st[0]}"/>`;
@@ -331,12 +331,17 @@ function drawShape(sh, o={}){
     [[P[0][0]+26,P[0][1]+24],[P[1][0]-28,P[1][1]+26],[P[n-1][0]+28,P[n-1][1]-26]].forEach(([x,y])=>{
       g+=`<circle cx="${x}" cy="${y}" r="15" fill="#3f9b24"/>`+[0,72,144,216,288].map(a=>`<circle cx="${x+9*Math.cos(a*Math.PI/180)}" cy="${y+9*Math.sin(a*Math.PI/180)}" r="5.5" fill="#ff8fb5"/>`).join('')+`<circle cx="${x}" cy="${y}" r="4" fill="#ffd21f"/>`; }); }
   if(sh.caption){ g+=`<text x="${(Math.min(...xs)+Math.max(...xs))/2}" y="${(Math.min(...ys)+Math.max(...ys))/2+9}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="30" fill="#1d5c12" stroke="#fff" stroke-width="5" paint-order="stroke">${sh.caption}</text>`; }
-  let lines='', pills='', hits='';
+  let lines='', pills='', hits='', lant='';
   sh.edges.forEach((e,i)=>{
     const a=P[i], b=P[(i+1)%n]; let dx=b[0]-a[0], dy=b[1]-a[1]; const L=Math.hypot(dx,dy); dx/=L; dy/=L;
     let nx=dy, ny=-dx; if(e.inside){ nx=-nx; ny=-ny; }
-    const off=Math.abs(nx)>.5?52:30, sl=e.slide||0, mx=(a[0]+b[0])/2+nx*off+dx*sl, my=(a[1]+b[1])/2+ny*off+dy*sl;
+    const off=(Math.abs(nx)>.5?52:30)+ex, sl=e.slide||0, mx=(a[0]+b[0])/2+nx*off+dx*sl, my=(a[1]+b[1])/2+ny*off+dy*sl;
     const on = o.all || (o.tapped && o.tapped.includes(i));
+    if(sh.lanterns){ /* a string of lanterns hung along the outside of every side, one per unit */
+      const sx=a[0]+nx*9, sy=a[1]+ny*9, ex2=b[0]+nx*9, ey2=b[1]+ny*9, cnt=Math.round(L/s), cols=['#e8262d','#ff8a1f','#ffd21f'];
+      lant+=`<line x1="${sx}" y1="${sy}" x2="${ex2}" y2="${ey2}" stroke="#14124a" stroke-width="2"/>`;
+      for(let k=0;k<cnt;k++){ const t=(k+.5)/cnt, cx=sx+(ex2-sx)*t+nx*7, cy=sy+(ey2-sy)*t+ny*7, c=cols[(k+i)%3];
+        lant+=`<g><ellipse cx="${cx}" cy="${cy}" rx="7" ry="8.5" fill="${c}" stroke="#7a1414" stroke-width="1.5"/><rect x="${cx-3.5}" y="${cy-11}" width="7" height="3.5" fill="#14124a"/><rect x="${cx-3.5}" y="${cy+7.5}" width="7" height="3.5" fill="#14124a"/><line x1="${cx}" y1="${cy-6}" x2="${cx}" y2="${cy+6}" stroke="#fff" stroke-opacity=".55" stroke-width="1.5"/></g>`; } }
     const ln=`x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"`;
     lines+= on ? `<line ${ln} stroke="#5b21b6" stroke-width="11" stroke-linecap="round"/><line ${ln} stroke="#ffd21f" stroke-width="3.5" stroke-dasharray="12 9" stroke-linecap="round"/>`
                : `<line ${ln} stroke="${st[1]}" stroke-width="6" stroke-linecap="round"/>`;
@@ -344,7 +349,7 @@ function drawShape(sh, o={}){
     if(txt.trim()) pills+=`<g><rect x="${mx-w/2}" y="${my-17}" width="${w}" height="34" rx="17" fill="${on?'#5b21b6':'#fff3b0'}" stroke="${on?'#3b0f8c':'#f5b800'}" stroke-width="3"/><text x="${mx}" y="${my+7}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="20" fill="${on?'#fff':'#14124a'}">${txt}</text></g>`;
     if(o.tappable) hits+=`<line class="hit" ${ln} stroke="transparent" stroke-width="34" stroke-linecap="round" data-edge="${i}" tabindex="0" role="button" aria-label="Side ${txt}"/>`;
   });
-  return `<svg class="shape" viewBox="${x0} ${y0} ${x1-x0} ${y1-y0}" role="img" aria-label="Shape with side lengths">${g}${lines}${pills}${hits}</svg>`;
+  return `<svg class="shape" viewBox="${x0} ${y0} ${x1-x0} ${y1-y0}" role="img" aria-label="Shape with side lengths">${g}${lines}${lant}${pills}${hits}</svg>`;
 }
 
 /* ---------- AI scientist portrait ---------- */
