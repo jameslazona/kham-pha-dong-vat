@@ -310,7 +310,7 @@ function beep(ok){
 let clip=null;
 function hush(){ try{ if(clip){ clip.pause(); clip=null; } window.speechSynthesis && speechSynthesis.cancel(); }catch(e){} }
 function say(i){
-  hush(); if(!voice || i!==0) return; /* he speaks only in the welcome scene */
+  hush(); if(!voice) return;
   try{ clip=new Audio('img/voice'+(i+1)+'.mp3'); const fb=()=>robot(i); clip.onerror=fb; const p=clip.play(); if(p&&p.catch) p.catch(()=>{}); }catch(e){ robot(i); }
 }
 function robot(i){ /* only if the recorded voice cannot load */
@@ -453,7 +453,7 @@ function renderIntro(){
    <div class="talk"><div class="speech"><span class="who">Dr. Nova, AI mathematician</span>${T(sc)}</div>
     <div class="visual">${introVisual(scene)}</div>
     <div class="introbar"><div class="dots">${SCENES.map((_,i)=>`<i class="${i<=scene?'on':''}"></i>`).join('')}</div>
-     ${scene===0?`<button class="btn ghost small" data-act="voice">${voice?'Voice on':'Voice off'}</button><button class="btn ghost small" data-act="again">Say it again</button>`:''}<span class="sp"></span>
+     <button class="btn ghost small" data-act="voice">${voice?'Voice on':'Voice off'}</button><button class="btn ghost small" data-act="again">Say it again</button><span class="sp"></span>
      <button class="btn ghost" data-act="prev" ${scene?'':'disabled'}>Back</button>
      <button class="btn ${last?'sun':''}" data-act="next">${last?'Go to the missions':'Next'}</button></div></div></div>`;
 }
