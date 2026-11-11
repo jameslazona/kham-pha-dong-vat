@@ -56,6 +56,16 @@ main{flex:1;padding:16px 22px 18px;width:100%;display:flex;flex-direction:column
 .nova-card{background:var(--wash);border:4px solid var(--violet);border-radius:28px;padding:18px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
 .nova-card svg.doc{width:140px;height:auto}
 .intro .nova svg.doc{width:100%;max-width:240px;height:auto;display:block;margin:auto}
+.doc .armL,.doc .armR,.doc .foreR,.doc .head{transform-box:view-box}
+.doc .armL{transform-origin:86px 165px}.doc .armR{transform-origin:176px 165px}.doc .foreR{transform-origin:198px 236px}.doc .head{transform-origin:130px 124px}
+body.talking .doc .armR{animation:armR 1.7s ease-in-out infinite}
+body.talking .doc .foreR{animation:foreR .95s ease-in-out infinite}
+body.talking .doc .armL{animation:armL 2.3s ease-in-out infinite}
+body.talking .doc .head{animation:headN 2.6s ease-in-out infinite}
+@keyframes armR{0%,100%{transform:rotate(0)}50%{transform:rotate(-7deg)}}
+@keyframes foreR{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(13deg)}}
+@keyframes armL{0%,100%{transform:rotate(0)}50%{transform:rotate(6deg)}}
+@keyframes headN{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.8deg)}}
 .tbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px;padding-top:14px;border-top:3px dashed #d6ccf5}
 .nova-card h2{font-family:var(--display);margin:0;font-size:26px}
 .nova-card p{margin:0;font-size:17px}
@@ -307,11 +317,15 @@ function beep(ok){
       o.connect(g); g.connect(actx.destination); o.start(actx.currentTime+i*.12); o.stop(actx.currentTime+i*.12+.26); });
   }catch(e){}
 }
-let clip=null;
-function hush(){ try{ if(clip){ clip.pause(); clip=null; } window.speechSynthesis && speechSynthesis.cancel(); }catch(e){} }
+let clip=null, raf=0;
+const ENV=["0000000069638897875432000686897421223555443236874422101774363221111100002443227998301663431126482014989975457365533476322443336766554420000000000000279866772899840046556788632444210000001369999999678765444688763000441116943222221000000000000588865699994223433986211222434557632233322111000000134888863423238996214698884246997431146872134233332100000000", "000000003622898855432100299972233237999876321001452100046655788545524542100000000000005759987568654443331045249932104443110000003799983275478776765357676434422216652100000000000", "00000001166201999997531541016797744543543210000002999758766457721354322238877865412100000033333158867311164337765310001111100000000", "0000000158743279950014854543564211365412101257544320113788778522310100342003553121777765431101110000000000000571136665568986799555477643200000243333599644468510000000000000235766899999998311267776212258977765421111100000000", "00000000112379954644543995213324643556996464420008999873222888876432211111000000000000004999734999982552222697875321001111000000000000397797852249632139855543210000000", "00000002698494897320168878888863015565699720133322105753100011111000000000000011994223106865633311110007998873111168752000000000000000015767874996544410066327533334422235333211110000000"]; /* loudness of each recording, 30 values per second */
+function still(){ document.body.classList.remove('talking'); cancelAnimationFrame(raf); mouth(0); }
+function mouth(v){ const m=document.getElementById('mouthOpen'), sh=document.getElementById('mouthShut'); if(m){ m.setAttribute('ry',(v*8.5).toFixed(1)); m.setAttribute('rx',(8+v*3).toFixed(1)); } if(sh) sh.style.opacity=v>.12?0:1; }
+function lips(i){ const c=clip; if(!c||c.paused||c.ended){ still(); return; } const e=ENV[i]||''; mouth((+e[Math.floor(c.currentTime*30)]||0)/9); raf=requestAnimationFrame(()=>lips(i)); }
+function hush(){ still(); try{ if(clip){ clip.onpause=null; clip.pause(); clip=null; } window.speechSynthesis && speechSynthesis.cancel(); }catch(e){} }
 function say(i){
   hush(); if(!voice) return;
-  try{ clip=new Audio('img/voice'+(i+1)+'.mp3'); const fb=()=>robot(i); clip.onerror=fb; const p=clip.play(); if(p&&p.catch) p.catch(()=>{}); }catch(e){ robot(i); }
+  try{ clip=new Audio('img/voice'+(i+1)+'.mp3'); const fb=()=>robot(i); clip.onerror=fb; clip.onplaying=()=>{ document.body.classList.add('talking'); cancelAnimationFrame(raf); lips(i); }; clip.onended=clip.onpause=still; const p=clip.play(); if(p&&p.catch) p.catch(()=>{}); }catch(e){ robot(i); }
 }
 function robot(i){ /* only if the recorded voice cannot load */
   try{ if(!window.speechSynthesis) return; const u=new SpeechSynthesisUtterance(SCENES[i].en.replace(/<[^>]+>/g,'')); u.lang='en-US'; u.rate=.9; speechSynthesis.speak(u); }catch(e){}
@@ -368,7 +382,7 @@ const NOVA = `<svg class="doc" viewBox="0 0 260 520" role="img" aria-label="Dr. 
 <path d="M98 300h30l-2 172h-26z" fill="url(#gL)"/><path d="M132 300h30l-2 172h-26z" fill="url(#gL)"/>
 <path d="M92 498q-2-22 14-26h20q4 12 2 26z" fill="#0d0f2e"/><path d="M168 498q2-22-14-26h-20q-4 12-2 26z" fill="#0d0f2e"/>
 <path d="M92 494h36M132 494h36" stroke="#3b3f73" stroke-width="3"/>
-<!-- ruler in the lowered hand -->
+<g class="armL"><!-- ruler in the lowered hand -->
 <g transform="rotate(14 60 300)"><rect x="50" y="196" width="20" height="150" rx="3" fill="#ffd21f" stroke="#a87800" stroke-width="1.5"/>
 <path d="M50 210h9M50 222h6M50 234h9M50 246h6M50 258h9M50 270h6M50 282h9M50 294h6M50 306h9M50 318h6M50 330h9" stroke="#6b4d00" stroke-width="1.4"/></g>
 <!-- far arm (lowered) -->
@@ -376,7 +390,7 @@ const NOVA = `<svg class="doc" viewBox="0 0 260 520" role="img" aria-label="Dr. 
 <path d="M58 262h24v10H58z" fill="#d8deeb" stroke="#8d97b3" stroke-width="1.2"/>
 <path d="M60 272q-4 16 4 26q8 6 14-2q4-12 2-24z" fill="url(#gM)" stroke="#6f7d99" stroke-width="1.5"/>
 <path d="M66 280v14M72 280v15" stroke="#6f7d99" stroke-width="1.2"/>
-<!-- lab coat body -->
+</g><!-- lab coat body -->
 <path d="M84 150q46-18 92 0q10 6 10 24l8 150q-64 14-128 0l8-150q0-18 10-24z" fill="url(#gC)" stroke="#8d97b3" stroke-width="1.8"/>
 <!-- vest, shirt and tie -->
 <path d="M108 146l22 26 22-26 8 150q-30 8-60 0z" fill="url(#gV)"/>
@@ -388,14 +402,14 @@ const NOVA = `<svg class="doc" viewBox="0 0 260 520" role="img" aria-label="Dr. 
 <path d="M148 246h30v30h-30z" fill="none" stroke="#aab3ca" stroke-width="1.5"/>
 <rect x="150" y="204" width="34" height="20" rx="4" fill="#1f4fd1" stroke="#0e2f8c" stroke-width="1.2"/><text x="167" y="219" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="13" fill="#fff">AI</text>
 <path d="M90 236h24" stroke="#aab3ca" stroke-width="1.5"/><path d="M96 236v-16l3-5 3 5v16" fill="#d81e2c" stroke="#7d0f18" stroke-width="1"/><path d="M105 236v-13h4v13" fill="#1f4fd1"/>
-<!-- near arm (raised, explaining) -->
+<g class="armR"><!-- near arm (raised, explaining) -->
 <path d="M172 160q22 4 28 34l6 34q2 12-8 14t-14-8l-14-44z" fill="url(#gC)" stroke="#8d97b3" stroke-width="1.5"/>
-<path d="M186 236q-6-10 0-22l22-48q5-9 14-5t6 14l-18 56q-4 12-14 12t-10-7z" fill="url(#gC)" stroke="#8d97b3" stroke-width="1.5"/>
+<g class="foreR"><path d="M186 236q-6-10 0-22l22-48q5-9 14-5t6 14l-18 56q-4 12-14 12t-10-7z" fill="url(#gC)" stroke="#8d97b3" stroke-width="1.5"/>
 <path d="M207 160l22 8-3 9-22-8z" fill="#d8deeb" stroke="#8d97b3" stroke-width="1.2"/>
 <path d="M210 158q-2-18 6-26q3-3 6 0l2 10q2-12 6-12t4 6l-1 12q4-8 7-7t3 7l-4 12q4-4 6-2t0 8l-8 14q-6 8-16 4z" fill="url(#gM)" stroke="#6f7d99" stroke-width="1.5" stroke-linejoin="round"/>
-<!-- neck -->
+</g></g><!-- neck -->
 <path d="M116 118h28v26q-14 8-28 0z" fill="url(#gM)" stroke="#6f7d99" stroke-width="1.5"/><path d="M116 126h28M116 134h28" stroke="#6f7d99" stroke-width="1.2"/>
-<!-- head -->
+<g class="head"><!-- head -->
 <ellipse cx="85" cy="72" rx="8" ry="13" fill="#1f4fd1" stroke="#0e2f8c" stroke-width="1.5"/><ellipse cx="175" cy="72" rx="8" ry="13" fill="#1f4fd1" stroke="#0e2f8c" stroke-width="1.5"/>
 <path d="M130 12q46 0 46 54q0 34-20 50q-12 10-26 10t-26-10q-20-16-20-50q0-54 46-54z" fill="url(#gH)" stroke="#6f7d99" stroke-width="1.8"/>
 <path d="M92 40q38-22 76 0" fill="none" stroke="#b5c1d8" stroke-width="1.5"/><path d="M130 13v20" stroke="#b5c1d8" stroke-width="1.5"/>
@@ -405,9 +419,9 @@ const NOVA = `<svg class="doc" viewBox="0 0 260 520" role="img" aria-label="Dr. 
 <circle cx="113" cy="68" r="6" fill="url(#gE)"/><circle cx="147" cy="68" r="6" fill="url(#gE)"/><circle cx="111" cy="66" r="1.6" fill="#fff"/><circle cx="145" cy="66" r="1.6" fill="#fff"/>
 <g fill="none" stroke="#14124a" stroke-width="2.2"><rect x="98" y="56" width="29" height="24" rx="9"/><rect x="133" y="56" width="29" height="24" rx="9"/><path d="M127 66q3-3 6 0M98 64l-12-3M162 64l12-3"/></g>
 <path d="M130 74l-5 16q5 4 10 0" fill="none" stroke="#9aa8c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M116 102q14 9 28 0" fill="none" stroke="#56627f" stroke-width="2.4" stroke-linecap="round"/>
+<path id="mouthShut" d="M116 102q14 9 28 0" fill="none" stroke="#56627f" stroke-width="2.4" stroke-linecap="round"/><ellipse id="mouthOpen" cx="130" cy="105" rx="9" ry="0" fill="#0c1740" stroke="#56627f" stroke-width="1.6"/>
 <ellipse cx="112" cy="30" rx="16" ry="6" fill="#fff" opacity=".7" transform="rotate(-20 112 30)"/>
-</svg>`;
+</g></svg>`;
 
 /* ---------- views ---------- */
 function render(){
