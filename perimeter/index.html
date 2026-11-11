@@ -254,8 +254,8 @@ const MISSIONS = [
    bubble:{en:'This is a <b>rectilinear shape</b>. It has straight sides and right-angle corners.'},
    shape:{style:'garden', unit:'m', scale:46, pts:[[0,0],[7,0],[7,3],[4,3],[4,5],[0,5]], edges:[{len:7},{len:3},{len:3,slide:-34},{len:2,slide:28},{len:4},{len:5}]},
    steps:[
-    {type:'choice', q:{en:'How many outside sides does this flower bed have?'}, options:['4','6','8'], answer:1, log:'Outside sides: <b>6</b>', explain:''},
-    {type:'tap', q:{en:'Count all the outside sides. Tap each one.'}},
+    {type:'choice', q:{en:'How many sides does this flower bed have?'}, options:['4','6','8'], answer:1, log:'Sides: <b>6</b>', explain:''},
+    {type:'tap', q:{en:'Count all the sides. Tap each one.'}},
     {type:'sum', answer:24, q:{en:'Add the lengths. What is the perimeter?'}}
    ],
    final:'The perimeter of the flower bed is <b>24 m</b>.' },
@@ -264,7 +264,7 @@ const MISSIONS = [
    shape:{style:'pink', unit:'m', scale:30, pts:[[0,0],[12,0],[12,3],[6,3],[6,5],[12,5],[12,8],[0,8]],
           edges:[{len:12},{len:3},{len:6,inside:true},{len:2},{len:6,inside:true},{len:3},{len:12},{len:8}]},
    steps:[
-    {type:'tap', q:{en:"Check the bot's work. Tap every outside side."}},
+    {type:'tap', q:{en:"Check the bot's work. Tap every side."}},
     {type:'choice', sumline:true, q:{en:'Add your sides. What is the perimeter?'}, options:['A. 40 m','B. 52 m'], answer:1, log:'12 + 3 + 6 + 2 + 6 + 3 + 12 + 8 = <b>52 m</b>', explain:''},
     {type:'choice', q:{en:'Did the bot miss any sides?'}, options:['YES','NO'], answer:0, log:'Did the bot miss any sides? <b>YES</b>',
      explain:'The bot only added the big box: 12 + 8 + 12 + 8. It did not follow the sides that go in and out of the cut.'}
@@ -278,7 +278,7 @@ const SCENES = [
  {en:'Today’s big word is <mark>perimeter</mark>. Perimeter is the distance all the way around a shape.'},
  {en:'To find the perimeter, <mark>follow every side</mark> and add the lengths.'},
  {en:'A rectangle has two pairs of <mark>equal sides</mark>. If you know one length and one width, you know all four sides.'},
- {en:'Some shapes have more than four sides. Count <mark>all the outside sides</mark>. Do not miss any!'},
+ {en:'Some shapes have more than four sides. Count <mark>all the sides</mark>. Do not miss any!'},
  {en:'Even an AI can make mistakes. Good scientists <mark>always check</mark>. Are you ready for your missions?'}
 ];
 
@@ -443,7 +443,7 @@ function introVisual(i){
     <text x="140" y="92" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="34" fill="#3b0f8c">perimeter</text></svg>`;
   if(i===2) return drawShape(rect,{all:true})+`<div class="big">5 + 3 + 5 + 3 = <b>16 cm</b></div>`;
   if(i===3) return drawShape({style:'plain',unit:'m',scale:40,pts:[[0,0],[7,0],[7,4],[0,4]],edges:[{len:7},{len:4},{len:7},{len:4}]})+`<div class="big">Opposite sides are <b>equal</b>.</div>`;
-  if(i===4) return drawShape({style:'plain',unit:'',scale:40,pts:[[0,0],[7,0],[7,3],[4,3],[4,5],[0,5]],edges:[1,2,3,4,5,6].map(k=>({text:' '+k+' ', slide:k===3?-40:k===4?36:0}))},{all:true})+`<div class="big"><b>6</b> outside sides</div>`;
+  if(i===4) return drawShape({style:'plain',unit:'',scale:40,pts:[[0,0],[7,0],[7,3],[4,3],[4,5],[0,5]],edges:[1,2,3,4,5,6].map(k=>({text:' '+k+' ', slide:k===3?-40:k===4?36:0}))},{all:true})+`<div class="big"><b>6</b> sides</div>`;
   return `<img src="img/robot.png" alt="The mission robot"><img src="img/boy_detective.png" alt="Boy detective"><div class="big">Check every answer!</div>`;
 }
 function renderIntro(){
