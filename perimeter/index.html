@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perimeter Mission Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* One bright world, matched to the mission pictures: violet banners, sun-yellow highlights, navy ink on white.
+     Layout: guide on the left, shape in the middle, working-out on the right. */
+  --ink:#14124a; --violet:#5b21b6; --violet-deep:#3b0f8c; --sun:#ffd21f; --sun-soft:#fff3b0;
+  --paper:#fffdf7; --wash:#f3eeff; --pink:#ff7fc4; --leaf:#22a03a; --leaf-soft:#e9fbe4; --red:#d81e2c; --sky:#49b6f5;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif; --body:"Nunito","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-weight:700;font-size:18px;line-height:1.35}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,.hit:focus-visible{outline:4px solid var(--sky);outline-offset:2px}
+img{max-width:100%}
+.vi{display:none;font-weight:600;color:#5a4fa0;font-size:.82em;font-style:italic}
+body.show-vi .vi{display:block}
+#app{min-height:100vh;display:flex;flex-direction:column}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 18px;background:var(--violet-deep);color:#fff}
+.brand{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:.5px;margin-right:auto;background:none;border:0;color:#fff;padding:0}
+.brand em{color:var(--sun);font-style:normal}
+.chip{border:2px solid rgba(255,255,255,.45);background:transparent;color:#fff;border-radius:999px;padding:5px 14px;font-size:15px}
+.chip.on{background:var(--sun);border-color:var(--sun);color:var(--ink)}
+.chip.teacher{background:#fff;color:var(--violet-deep);border-color:#fff}
+
+main{flex:1;padding:16px 22px 18px;width:100%;display:flex;flex-direction:column;min-height:0}
+
+/* banner like the mission pictures */
+.banner{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.kicker{font-family:var(--display);font-weight:800;font-size:22px;color:#fff;background:linear-gradient(#6d2fd0,#3b0f8c);border-radius:999px;padding:4px 22px;box-shadow:0 4px 0 #f5a623}
+.kicker b{color:var(--sun)}
+.banner h1{flex:1;min-width:260px;margin:0;text-align:center;font-family:var(--display);font-weight:800;font-size:clamp(26px,3.6vw,46px);line-height:1.1;text-transform:uppercase;color:#fff;background:linear-gradient(#6d2fd0,#3b0f8c);border-radius:999px;padding:8px 26px;box-shadow:0 5px 0 #23095a;text-wrap:balance}
+.banner h1 em{color:var(--sun);font-style:normal}
+.back{border:3px solid var(--violet);background:#fff;color:var(--violet);border-radius:999px;padding:6px 16px;font-weight:800}
+
+/* buttons */
+.btn{border:0;border-radius:999px;padding:10px 24px;font-family:var(--display);font-weight:800;font-size:20px;background:var(--violet);color:#fff;box-shadow:0 4px 0 var(--violet-deep)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--violet-deep)}
+.btn.sun{background:var(--sun);color:var(--ink);box-shadow:0 4px 0 #d99a00}
+.btn.ghost{background:#fff;color:var(--violet);box-shadow:inset 0 0 0 3px var(--violet)}
+.btn.small{font-size:16px;padding:6px 16px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+/* home */
+.home{display:grid;grid-template-columns:minmax(260px,360px) 1fr;gap:22px;align-items:start}
+.nova-card{background:var(--wash);border:4px solid var(--violet);border-radius:28px;padding:18px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.nova-card svg.doc{width:140px;height:auto}
+.intro .nova svg.doc{width:100%;max-width:240px;height:auto;display:block;margin:auto}
+.tbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px;padding-top:14px;border-top:3px dashed #d6ccf5}
+.nova-card h2{font-family:var(--display);margin:0;font-size:26px}
+.nova-card p{margin:0;font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.card{position:relative;text-align:left;border:4px solid var(--violet);background:#fff;border-radius:24px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:6px;min-height:190px;overflow:hidden}
+.card .num{font-family:var(--display);font-weight:800;color:var(--violet);font-size:17px;text-transform:uppercase;letter-spacing:1px}
+.card .name{font-family:var(--display);font-weight:800;font-size:23px;line-height:1.1;max-width:62%}
+.card .thumb{position:absolute;right:-6px;bottom:-8px;height:120px;width:auto}
+.card .stars{margin-top:auto;display:flex;gap:3px}
+.card.locked{border-color:#b9b3d6;background:#f5f4fa}
+.card.locked .thumb{filter:grayscale(1);opacity:.45}
+.card.locked .name{color:#77739a}
+.lockline{margin-top:auto;display:flex;align-items:center;gap:6px;font-size:15px;color:#6a6690}
+.star{width:24px;height:24px;fill:#ddd9ee}
+.star.on{fill:var(--sun);stroke:#d99a00;stroke-width:1}
+.note{margin-top:16px;font-size:16px;color:#5d598a}
+
+/* mission */
+.stage{display:grid;grid-template-columns:minmax(200px,.8fr) minmax(300px,1.25fr) minmax(300px,1.15fr);gap:18px;align-items:start}
+.guide{display:flex;flex-direction:column;align-items:center;gap:6px}
+.bubble{position:relative;background:#fff;border:4px solid #f5b800;border-radius:32px;padding:14px 18px;text-align:center;font-size:21px;font-weight:800;line-height:1.25}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-20px;margin-left:-6px;border:10px solid transparent;border-top-color:#f5b800;border-bottom:0;border-top-width:18px}
+.bubble b{color:var(--red)}
+.guide img{width:min(100%,260px);margin-top:10px}
+.board{background:#fff;border-radius:24px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.board svg.shape{width:100%;max-width:520px;height:auto;touch-action:manipulation}
+.hit{cursor:pointer}
+.tapnote{font-size:16px;color:var(--violet);min-height:22px;text-align:center}
+.work{background:var(--wash);border:4px solid #b9a3f5;border-radius:26px;padding:0 16px 16px;display:flex;flex-direction:column;gap:12px}
+.work h2{align-self:center;margin:-18px 0 0;font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase;color:var(--sun);background:linear-gradient(#6d2fd0,#3b0f8c);border-radius:999px;padding:3px 22px}
+.done{background:#fff;border-radius:16px;padding:8px 12px;font-size:19px;display:flex;gap:10px;align-items:baseline}
+.done .n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--violet);color:#fff;display:inline-grid;place-items:center;font-size:16px}
+.done b{color:var(--red)}
+.q{font-size:21px;font-weight:800}
+.sum{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-family:var(--display);font-weight:800;font-size:30px;min-height:46px}
+.sum .c{background:#fff;border:3px solid var(--violet);border-radius:12px;padding:0 10px;line-height:1.3}
+.sum .ghost{border-style:dashed;color:#b9b3d6;border-color:#b9b3d6}
+.entry{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--display);font-weight:800;font-size:30px}
+.entry input{width:120px;font:inherit;text-align:center;border:4px solid var(--violet);border-radius:14px;padding:2px 6px;background:var(--sun-soft);color:var(--ink)}
+.pad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.pad button{border:0;border-radius:12px;background:#fff;box-shadow:0 3px 0 #b9a3f5;font-family:var(--display);font-weight:800;font-size:24px;padding:4px 0;min-height:44px}
+.pad button:active{transform:translateY(2px);box-shadow:0 1px 0 #b9a3f5}
+.choices{display:flex;gap:12px;flex-wrap:wrap}
+.choices .btn{font-size:26px;padding:8px 30px}
+.fb{min-height:28px;font-size:18px;border-radius:14px;padding:0 4px}
+.fb.bad{color:var(--red)} .fb.good{color:var(--leaf)}
+.fb.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.final{background:var(--leaf-soft);border:4px solid var(--leaf);border-radius:22px;padding:12px 16px;text-align:center;font-family:var(--display);font-weight:800;font-size:26px;line-height:1.2}
+.final b{color:var(--red)}
+.final .stars{display:flex;justify-content:center;gap:4px;margin-top:6px}
+.final .star{width:38px;height:38px}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.bar{width:100%;max-width:440px}
+.bar .tot{text-align:center;font-family:var(--display);font-weight:800;border-bottom:3px solid var(--ink);margin:0 2px 6px;font-size:18px}
+.bar .segs{display:flex}
+.bar .segs span{border:3px solid var(--ink);margin-right:-3px;text-align:center;font-family:var(--display);font-weight:800;font-size:19px;padding:6px 0;background:#cfe6ff}
+.bar .segs span.w{background:var(--sun-soft)}
+.lights{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:440px;border:4px solid var(--pink);border-radius:22px;padding:4px 14px;font-family:var(--display);font-weight:800;font-size:26px}
+.lights svg{width:130px;flex:none}
+.lights b{color:var(--red)}
+.bot{display:flex;align-items:center;gap:8px;width:100%;max-width:480px}
+.bot img{width:120px;flex:none}
+.bot .says{flex:1;border:4px solid var(--sky);border-radius:22px;padding:6px 12px;text-align:center}
+.bot .says small{display:inline-block;background:#1f4fd1;color:var(--sun);border-radius:999px;padding:0 14px;font-family:var(--display);font-weight:800;font-size:16px;text-transform:uppercase}
+.bot .says strong{display:block;font-family:var(--display);font-size:34px;color:var(--red);line-height:1.1}
+.bot .says span{display:inline-block;background:var(--sun-soft);border-radius:999px;padding:0 12px;font-size:18px}
+
+/* intro */
+.intro{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:20px;align-items:center}
+
+.talk{display:flex;flex-direction:column;gap:14px}
+.speech{position:relative;background:#fff;border:4px solid var(--violet);border-radius:28px;padding:16px 22px;font-size:clamp(21px,2.3vw,30px);font-weight:800;line-height:1.3;min-height:120px}
+.speech::before{content:"";position:absolute;left:-22px;top:46px;border:12px solid transparent;border-right-color:var(--violet);border-left:0;border-right-width:20px}
+.speech .who{display:block;font-family:var(--display);font-size:16px;text-transform:uppercase;letter-spacing:1px;color:var(--violet)}
+.speech mark{background:var(--sun);color:var(--ink);border-radius:8px;padding:0 6px}
+.visual{background:var(--wash);border-radius:24px;min-height:230px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;padding:12px}
+.visual svg{max-width:420px;width:100%;height:auto}
+.visual img{height:200px;width:auto}
+.visual .big{font-family:var(--display);font-weight:800;font-size:clamp(26px,3vw,40px)}
+.visual .big b{color:var(--red)}
+.dots{display:flex;gap:8px;align-items:center}
+.dots i{width:14px;height:14px;border-radius:50%;background:#d6ccf5}
+.dots i.on{background:var(--violet)}
+.introbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.introbar .sp{flex:1}
+
+/* overlay */
+.ov{position:fixed;inset:0;background:rgba(20,18,74,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.dlg{background:#fff;border-radius:26px;border:4px solid var(--violet);max-width:760px;width:100%;max-height:94%;overflow:auto;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.dlg.wide{max-width:1180px}
+.dlg h2{margin:0;font-family:var(--display);font-size:26px}
+.dlg p{margin:0}
+.dlg .x{align-self:flex-end;margin-bottom:-36px;position:relative;z-index:1}
+.pinrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pinrow input{font:inherit;font-size:26px;width:150px;text-align:center;border:4px solid var(--violet);border-radius:14px;padding:2px 6px;letter-spacing:4px}
+table.t{width:100%;border-collapse:collapse;font-size:17px}
+table.t td,table.t th{padding:6px 6px;border-bottom:2px solid #ece6ff;text-align:left}
+table.t th{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#6a6690}
+.code{font-family:var(--display);font-size:22px;letter-spacing:3px;font-variant-numeric:tabular-nums}
+.tog{border:3px solid var(--violet);border-radius:999px;background:#fff;color:var(--violet);padding:3px 14px;font-weight:800;min-width:96px}
+.tog.on{background:var(--leaf);border-color:var(--leaf);color:#fff}
+.opts{display:flex;flex-direction:column;gap:6px;font-size:17px}
+.opts label{display:flex;gap:8px;align-items:center}
+.opts input{width:22px;height:22px;accent-color:var(--violet)}
+.solimg{width:100%;border-radius:16px;border:3px solid #ece6ff}
+
+/* presentation layout: every view fills the screen */
+@media (min-width:1051px){
+  .home{flex:1;grid-template-columns:minmax(300px,27%) 1fr;align-items:stretch}
+  .nova-card{justify-content:center;gap:14px;padding:22px}
+  .nova-card svg.doc{width:auto;height:330px}
+  .nova-card h2{font-size:34px}.nova-card p{font-size:21px}
+  .nova-card .btn{font-size:26px;padding:12px 34px}
+  .home>div:last-child{display:flex;flex-direction:column;min-height:0}
+  .grid{flex:1;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:18px}
+  .card{padding:20px 20px 16px;min-height:0}
+  .card .num{font-size:20px}.card .name{font-size:28px;max-width:52%}
+  .card .thumb{height:64%;max-height:200px;max-width:46%;object-fit:contain;object-position:right bottom;right:0;bottom:-6px}
+  .card .star{width:34px;height:34px}
+  .note{margin:12px 0 0;font-size:18px}
+  .intro{flex:1;grid-template-columns:minmax(260px,24%) 1fr;align-items:stretch}
+  .intro .nova{display:flex;align-items:center}
+  .intro .nova svg.doc{max-width:none;width:100%;max-height:560px}
+  .talk{min-height:0}.visual{flex:1}
+  .visual svg{max-width:520px}.visual img{height:260px}
+  .stage{flex:1;grid-template-columns:minmax(240px,.85fr) minmax(340px,1.35fr) minmax(340px,1.15fr);align-items:stretch}
+  .guide{justify-content:center}.guide img{width:auto;max-width:100%;height:300px;object-fit:contain}
+  .bubble{font-size:22px}
+  .board{justify-content:center}
+  .board{gap:6px}.board svg.shape{max-width:none;max-height:350px}
+  .work{align-self:start;margin-top:18px}
+  .q{font-size:24px}
+  .tbar{margin-top:10px;padding-top:10px}
+  .banner{margin-bottom:10px}
+}
+@media (max-width:1050px){
+  .stage{grid-template-columns:1fr 1fr}
+  .guide{grid-column:1/-1;flex-direction:row-reverse;justify-content:center}
+  .guide img{width:150px;margin:0}
+  .bubble::after{display:none}
+}
+@media (max-width:720px){
+  .home,.intro,.stage{grid-template-columns:1fr}
+  .speech::before{display:none}
+  .intro .nova svg.doc{max-width:130px}
+  .pad{grid-template-columns:repeat(6,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top">
+    <button class="brand" data-act="home">Perimeter <em>Mission Lab</em></button>
+    <button class="chip" id="sndBtn" data-act="snd">Sound</button>
+    <button class="chip" id="fsBtn" data-act="full">Full screen</button>
+  </div>
+  <main id="main"></main>
+</div>
+<div id="ov"></div>
+
+<script>
+/* ---------- data ---------- */
+const MISSIONS = [
+ { id:'m1', n:1, code:'314', title:['Follow all ','four sides!'], img:'boy_point', sol:'img/solution1.jpg',
+   lights:true,
+   bubble:{en:"I have <b>120 cm</b> of lights. Is that enough to go all the way around the mirror? Let's find the <b>perimeter</b>!"},
+   shape:{style:'mirror', unit:'cm', scale:62, pts:[[0,0],[3,0],[3,4],[0,4]], edges:[{len:30},{len:40},{len:30},{len:40}]},
+   steps:[
+    {type:'tap', q:{en:'Tap each side of the mirror.'}},
+    {type:'sum', answer:140, q:{en:'Add the four sides. What is the perimeter?'}},
+    {type:'choice', q:{en:'The lights are <b>120 cm</b> long. Are they enough to go around the mirror?'},
+     options:['YES','NO'], answer:1, log:'Are the lights enough? <b>NO</b>',
+     explain:'The mirror needs 140 cm. The lights are only 120 cm, so they are 20 cm too short.'}
+   ],
+   final:'Perimeter of the mirror = <b>140 cm</b>. The lights are <b>not</b> enough.' },
+ { id:'m2', n:2, code:'271', title:['Make the ','lights fit!'], img:'girl', sol:'img/solution2.jpg',
+   bubble:{en:'A new mirror has a perimeter of <b>120 cm</b>. Its height is <b>40 cm</b>. What is its width?'},
+   shape:{style:'mirror', unit:'cm', scale:48, pts:[[0,0],[2.4,0],[2.4,4],[0,4]], edges:[{text:'? cm'},{len:40},{text:'? cm'},{len:40}]},
+   steps:[
+    {type:'calc', label:{en:'Two heights'}, expr:'40 + 40', answer:80, hint:'Add the two heights: 40 and 40.'},
+    {type:'calc', label:{en:'The two widths'}, expr:'120 − 80', answer:40, hint:'Take the two heights away from the perimeter.'},
+    {type:'calc', label:{en:'One width'}, expr:'40 ÷ 2', answer:20, hint:'The two widths are equal. Share 40 into 2 equal parts.'}
+   ],
+   final:'The width of the mirror is <b>20 cm</b>.' },
+ { id:'m3', n:3, code:'161', title:['Garden ','dash!'], img:'boy_cheer', sol:'img/solution3.jpg',
+   bubble:{en:'Lanterns go all the way around the garden. <b>How long</b> are the lanterns?'},
+   shape:{style:'garden', unit:'m', scale:50, caption:'GARDEN', pts:[[0,0],[7,0],[7,4],[0,4]], edges:[{len:7},{len:4},{len:7},{len:4}]},
+   steps:[
+    {type:'tap', q:{en:'Tap each side of the garden.'}},
+    {type:'sum', answer:22, q:{en:'Add the four sides. How long are the lanterns?'}}
+   ],
+   final:'The lanterns are <b>22 metres</b> long.' },
+ { id:'m4', n:4, code:'577', title:['A new shape, ','more sides!'], img:'boy_point', sol:'img/solution4.jpg',
+   bubble:{en:'This is a <b>rectilinear shape</b>. It has straight sides and right-angle corners.'},
+   shape:{style:'garden', unit:'m', scale:46, pts:[[0,0],[7,0],[7,3],[4,3],[4,5],[0,5]], edges:[{len:7},{len:3},{len:3,slide:-34},{len:2,slide:28},{len:4},{len:5}]},
+   steps:[
+    {type:'choice', q:{en:'How many outside sides does this flower bed have?'}, options:['4','6','8'], answer:1, log:'Outside sides: <b>6</b>', explain:''},
+    {type:'tap', q:{en:'Count all the outside sides. Tap each one.'}},
+    {type:'sum', answer:24, q:{en:'Add the lengths. What is the perimeter?'}}
+   ],
+   final:'The perimeter of the flower bed is <b>24 m</b>.' },
+ { id:'m5', n:5, code:'141', title:['AI ','detective!'], img:'boy_detective', sol:null, bot:true,
+   bubble:{en:'A robot tried to find the perimeter. <b>Is the bot right?</b>'},
+   shape:{style:'pink', unit:'m', scale:30, pts:[[0,0],[12,0],[12,3],[6,3],[6,5],[12,5],[12,8],[0,8]],
+          edges:[{len:12},{len:3},{len:6,inside:true},{len:2},{len:6,inside:true},{len:3},{len:12},{len:8}]},
+   steps:[
+    {type:'tap', q:{en:"Check the bot's work. Tap every outside side."}},
+    {type:'choice', sumline:true, q:{en:'Add your sides. What is the perimeter?'}, options:['A. 40 m','B. 52 m'], answer:1, log:'12 + 3 + 6 + 2 + 6 + 3 + 12 + 8 = <b>52 m</b>', explain:''},
+    {type:'choice', q:{en:'Did the bot miss any sides?'}, options:['YES','NO'], answer:0, log:'Did the bot miss any sides? <b>YES</b>',
+     explain:'The bot only added the big box: 12 + 8 + 12 + 8. It did not follow the sides that go in and out of the cut.'}
+   ],
+   final:'The bot was wrong. The perimeter is <b>52 m</b>, not 40 m.' }
+];
+const BONUS = {id:'bonus', code:'909'};
+const CHARS = {m1:'boy_point',m2:'girl',m3:'boy_cheer',m4:'boy_point',m5:'boy_detective',bonus:'girl'};
+const SCENES = [
+ {en:'Hello, explorers, and <mark>welcome</mark> to the Perimeter Mission Lab! I am <mark>Dr. Nova</mark>, your AI mathematician. I love shapes and measuring, and I am so glad you are here today.'},
+ {en:'Today’s big word is <mark>perimeter</mark>. Perimeter is the distance all the way around a shape.'},
+ {en:'To find the perimeter, <mark>follow every side</mark> and add the lengths.'},
+ {en:'A rectangle has two pairs of <mark>equal sides</mark>. If you know one length and one width, you know all four sides.'},
+ {en:'Some shapes have more than four sides. Count <mark>all the outside sides</mark>. Do not miss any!'},
+ {en:'Even an AI can make mistakes. Good scientists <mark>always check</mark>. Are you ready for your missions?'}
+];
+
+/* ---------- state ---------- */
+const KEY='perimeterMissionLab.v1';
+const S = Object.assign({pin:'1234', open:{}, stars:{}, vi:true, snd:true, sol:true}, load());
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||{} }catch(e){ return {} } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)) }catch(e){} }
+let teacher=false, view='home', cur=null, scene=0, voice=true, bonus=null;
+const $ = s=>document.querySelector(s);
+const main = $('#main'), ov = $('#ov');
+const T = o => `<span>${o.en}</span>`;
+const starSVG = on => `<svg class="star${on?' on':''}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.6 7.2.8-5.4 4.9 1.6 7.1L12 17.8 5.6 21.4l1.6-7.1L1.8 9.4 9 8.6z"/></svg>`;
+const stars = n => [1,2,3].map(i=>starSVG(i<=n)).join('');
+const lockSVG = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 10V8a6 6 0 1112 0v2h1.5v12h-15V10zm3 0h6V8a3 3 0 10-6 0z"/></svg>`;
+
+/* ---------- sound ---------- */
+let actx;
+function beep(ok){
+  if(!S.snd) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const notes = ok?[660,880]:[220];
+    notes.forEach((f,i)=>{ const o=actx.createOscillator(), g=actx.createGain(); o.type=ok?'triangle':'sawtooth'; o.frequency.value=f;
+      g.gain.setValueAtTime(.12, actx.currentTime+i*.12); g.gain.exponentialRampToValueAtTime(.001, actx.currentTime+i*.12+.25);
+      o.connect(g); g.connect(actx.destination); o.start(actx.currentTime+i*.12); o.stop(actx.currentTime+i*.12+.26); });
+  }catch(e){}
+}
+let clip=null;
+function hush(){ try{ if(clip){ clip.pause(); clip=null; } window.speechSynthesis && speechSynthesis.cancel(); }catch(e){} }
+function say(i){
+  hush(); if(!voice || i!==0) return; /* he speaks only in the welcome scene */
+  try{ clip=new Audio('img/voice'+(i+1)+'.mp3'); const fb=()=>robot(i); clip.onerror=fb; const p=clip.play(); if(p&&p.catch) p.catch(()=>{}); }catch(e){ robot(i); }
+}
+function robot(i){ /* only if the recorded voice cannot load */
+  try{ if(!window.speechSynthesis) return; const u=new SpeechSynthesisUtterance(SCENES[i].en.replace(/<[^>]+>/g,'')); u.lang='en-US'; u.rate=.9; speechSynthesis.speak(u); }catch(e){}
+}
+
+/* ---------- shape drawing ---------- */
+function drawShape(sh, o={}){
+  const s=sh.scale, P=sh.pts.map(p=>[p[0]*s,p[1]*s]), n=P.length;
+  const xs=P.map(p=>p[0]), ys=P.map(p=>p[1]);
+  const x0=Math.min(...xs)-100, x1=Math.max(...xs)+100, y0=Math.min(...ys)-58, y1=Math.max(...ys)+58;
+  const d=P.map((p,i)=>(i?'L':'M')+p[0]+' '+p[1]).join(' ')+'Z';
+  const st={mirror:['#ff7fc4','#c2187f'],garden:['#86d94e','#7a4a1c'],pink:['#ff9ad5','#14124a'],plain:['#e7dcff','#14124a']}[sh.style];
+  let g=`<path d="${d}" fill="${st[0]}"/>`;
+  if(sh.style==='mirror'){ const w=Math.max(...xs), h=Math.max(...ys);
+    g+=`<rect x="16" y="16" width="${w-32}" height="${h-32}" fill="#49b6f5"/><path d="M16 ${h*.55} L${w*.6} 16 H${w-16} L16 ${h*.8}Z" fill="#fff" opacity=".35"/>`; }
+  if(sh.style==='garden'){ g+=`<path d="${d}" fill="none" stroke="#4fae2a" stroke-width="3" stroke-dasharray="3 5" transform="translate(0 0)" opacity=".7"/>`;
+    [[P[0][0]+26,P[0][1]+24],[P[1][0]-28,P[1][1]+26],[P[n-1][0]+28,P[n-1][1]-26]].forEach(([x,y])=>{
+      g+=`<circle cx="${x}" cy="${y}" r="15" fill="#3f9b24"/>`+[0,72,144,216,288].map(a=>`<circle cx="${x+9*Math.cos(a*Math.PI/180)}" cy="${y+9*Math.sin(a*Math.PI/180)}" r="5.5" fill="#ff8fb5"/>`).join('')+`<circle cx="${x}" cy="${y}" r="4" fill="#ffd21f"/>`; }); }
+  if(sh.caption){ g+=`<text x="${(Math.min(...xs)+Math.max(...xs))/2}" y="${(Math.min(...ys)+Math.max(...ys))/2+9}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="30" fill="#1d5c12" stroke="#fff" stroke-width="5" paint-order="stroke">${sh.caption}</text>`; }
+  let lines='', pills='', hits='';
+  sh.edges.forEach((e,i)=>{
+    const a=P[i], b=P[(i+1)%n]; let dx=b[0]-a[0], dy=b[1]-a[1]; const L=Math.hypot(dx,dy); dx/=L; dy/=L;
+    let nx=dy, ny=-dx; if(e.inside){ nx=-nx; ny=-ny; }
+    const off=Math.abs(nx)>.5?52:30, sl=e.slide||0, mx=(a[0]+b[0])/2+nx*off+dx*sl, my=(a[1]+b[1])/2+ny*off+dy*sl;
+    const on = o.all || (o.tapped && o.tapped.includes(i));
+    const ln=`x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"`;
+    lines+= on ? `<line ${ln} stroke="#5b21b6" stroke-width="11" stroke-linecap="round"/><line ${ln} stroke="#ffd21f" stroke-width="3.5" stroke-dasharray="12 9" stroke-linecap="round"/>`
+               : `<line ${ln} stroke="${st[1]}" stroke-width="6" stroke-linecap="round"/>`;
+    const txt = e.text || (e.len+' '+sh.unit), w=22+txt.length*10.5;
+    if(txt.trim()) pills+=`<g><rect x="${mx-w/2}" y="${my-17}" width="${w}" height="34" rx="17" fill="${on?'#5b21b6':'#fff3b0'}" stroke="${on?'#3b0f8c':'#f5b800'}" stroke-width="3"/><text x="${mx}" y="${my+7}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="20" fill="${on?'#fff':'#14124a'}">${txt}</text></g>`;
+    if(o.tappable) hits+=`<line class="hit" ${ln} stroke="transparent" stroke-width="34" stroke-linecap="round" data-edge="${i}" tabindex="0" role="button" aria-label="Side ${txt}"/>`;
+  });
+  return `<svg class="shape" viewBox="${x0} ${y0} ${x1-x0} ${y1-y0}" role="img" aria-label="Shape with side lengths">${g}${lines}${pills}${hits}</svg>`;
+}
+
+/* ---------- AI scientist portrait ---------- */
+const NOVA = `<svg class="doc" viewBox="0 0 260 520" role="img" aria-label="Dr. Nova, the AI mathematician">
+<defs>
+<linearGradient id="gH" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#e6edf8"/><stop offset="1" stop-color="#aebbd3"/></linearGradient>
+<linearGradient id="gC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#eef1f8"/><stop offset="1" stop-color="#c5cde0"/></linearGradient>
+<linearGradient id="gV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a34b0"/><stop offset="1" stop-color="#231460"/></linearGradient>
+<linearGradient id="gL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2c3480"/><stop offset=".5" stop-color="#1c2260"/><stop offset="1" stop-color="#10143e"/></linearGradient>
+<linearGradient id="gM" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6f9fd"/><stop offset="1" stop-color="#93a3bf"/></linearGradient>
+<radialGradient id="gE" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#e9fdff"/><stop offset=".45" stop-color="#2fd0ff"/><stop offset="1" stop-color="#0b4fa3"/></radialGradient>
+<radialGradient id="gS" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#14124a" stop-opacity=".35"/><stop offset="1" stop-color="#14124a" stop-opacity="0"/></radialGradient>
+</defs>
+<ellipse cx="130" cy="500" rx="92" ry="13" fill="url(#gS)"/>
+<!-- legs and shoes -->
+<path d="M98 300h30l-2 172h-26z" fill="url(#gL)"/><path d="M132 300h30l-2 172h-26z" fill="url(#gL)"/>
+<path d="M92 498q-2-22 14-26h20q4 12 2 26z" fill="#0d0f2e"/><path d="M168 498q2-22-14-26h-20q-4 12-2 26z" fill="#0d0f2e"/>
+<path d="M92 494h36M132 494h36" stroke="#3b3f73" stroke-width="3"/>
+<!-- ruler in the lowered hand -->
+<g transform="rotate(14 60 300)"><rect x="50" y="196" width="20" height="150" rx="3" fill="#ffd21f" stroke="#a87800" stroke-width="1.5"/>
+<path d="M50 210h9M50 222h6M50 234h9M50 246h6M50 258h9M50 270h6M50 282h9M50 294h6M50 306h9M50 318h6M50 330h9" stroke="#6b4d00" stroke-width="1.4"/></g>
+<!-- far arm (lowered) -->
+<path d="M88 160q-22 6-24 40l-4 62q-1 12 9 13t13-10l10-60z" fill="url(#gC)" stroke="#8d97b3" stroke-width="1.5"/>
+<path d="M58 262h24v10H58z" fill="#d8deeb" stroke="#8d97b3" stroke-width="1.2"/>
+<path d="M60 272q-4 16 4 26q8 6 14-2q4-12 2-24z" fill="url(#gM)" stroke="#6f7d99" stroke-width="1.5"/>
+<path d="M66 280v14M72 280v15" stroke="#6f7d99" stroke-width="1.2"/>
+<!-- lab coat body -->
+<path d="M84 150q46-18 92 0q10 6 10 24l8 150q-64 14-128 0l8-150q0-18 10-24z" fill="url(#gC)" stroke="#8d97b3" stroke-width="1.8"/>
+<!-- vest, shirt and tie -->
+<path d="M108 146l22 26 22-26 8 150q-30 8-60 0z" fill="url(#gV)"/>
+<path d="M116 144h28l-14 22z" fill="#fdfdff" stroke="#b8c0d6" stroke-width="1"/>
+<path d="M130 160l7 10-5 46-2 6-2-6-5-46z" fill="#ffc21a" stroke="#a87800" stroke-width="1"/>
+<!-- lapels -->
+<path d="M108 144l-22 12 30 56 14-46z" fill="#f7f8fc" stroke="#8d97b3" stroke-width="1.5"/><path d="M152 144l22 12-30 56-14-46z" fill="#e3e8f3" stroke="#8d97b3" stroke-width="1.5"/>
+<path d="M130 212v104" stroke="#aab3ca" stroke-width="1.5"/><circle cx="136" cy="236" r="2.6" fill="#8d97b3"/><circle cx="136" cy="266" r="2.6" fill="#8d97b3"/>
+<path d="M148 246h30v30h-30z" fill="none" stroke="#aab3ca" stroke-width="1.5"/>
+<rect x="150" y="204" width="34" height="20" rx="4" fill="#1f4fd1" stroke="#0e2f8c" stroke-width="1.2"/><text x="167" y="219" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="13" fill="#fff">AI</text>
+<path d="M90 236h24" stroke="#aab3ca" stroke-width="1.5"/><path d="M96 236v-16l3-5 3 5v16" fill="#d81e2c" stroke="#7d0f18" stroke-width="1"/><path d="M105 236v-13h4v13" fill="#1f4fd1"/>
+<!-- near arm (raised, explaining) -->
+<path d="M172 160q22 4 28 34l6 34q2 12-8 14t-14-8l-14-44z" fill="url(#gC)" stroke="#8d97b3" stroke-width="1.5"/>
+<path d="M186 236q-6-10 0-22l22-48q5-9 14-5t6 14l-18 56q-4 12-14 12t-10-7z" fill="url(#gC)" stroke="#8d97b3" stroke-width="1.5"/>
+<path d="M207 160l22 8-3 9-22-8z" fill="#d8deeb" stroke="#8d97b3" stroke-width="1.2"/>
+<path d="M210 158q-2-18 6-26q3-3 6 0l2 10q2-12 6-12t4 6l-1 12q4-8 7-7t3 7l-4 12q4-4 6-2t0 8l-8 14q-6 8-16 4z" fill="url(#gM)" stroke="#6f7d99" stroke-width="1.5" stroke-linejoin="round"/>
+<!-- neck -->
+<path d="M116 118h28v26q-14 8-28 0z" fill="url(#gM)" stroke="#6f7d99" stroke-width="1.5"/><path d="M116 126h28M116 134h28" stroke="#6f7d99" stroke-width="1.2"/>
+<!-- head -->
+<ellipse cx="85" cy="72" rx="8" ry="13" fill="#1f4fd1" stroke="#0e2f8c" stroke-width="1.5"/><ellipse cx="175" cy="72" rx="8" ry="13" fill="#1f4fd1" stroke="#0e2f8c" stroke-width="1.5"/>
+<path d="M130 12q46 0 46 54q0 34-20 50q-12 10-26 10t-26-10q-20-16-20-50q0-54 46-54z" fill="url(#gH)" stroke="#6f7d99" stroke-width="1.8"/>
+<path d="M92 40q38-22 76 0" fill="none" stroke="#b5c1d8" stroke-width="1.5"/><path d="M130 13v20" stroke="#b5c1d8" stroke-width="1.5"/>
+<path d="M98 96q8 22 32 26q24-4 32-26" fill="none" stroke="#b5c1d8" stroke-width="1.3"/>
+<path d="M102 54q11-6 22-1M136 53q11-5 22 1" fill="none" stroke="#56627f" stroke-width="2.6" stroke-linecap="round"/>
+<ellipse cx="113" cy="68" rx="10" ry="7.5" fill="#0c1740"/><ellipse cx="147" cy="68" rx="10" ry="7.5" fill="#0c1740"/>
+<circle cx="113" cy="68" r="6" fill="url(#gE)"/><circle cx="147" cy="68" r="6" fill="url(#gE)"/><circle cx="111" cy="66" r="1.6" fill="#fff"/><circle cx="145" cy="66" r="1.6" fill="#fff"/>
+<g fill="none" stroke="#14124a" stroke-width="2.2"><rect x="98" y="56" width="29" height="24" rx="9"/><rect x="133" y="56" width="29" height="24" rx="9"/><path d="M127 66q3-3 6 0M98 64l-12-3M162 64l12-3"/></g>
+<path d="M130 74l-5 16q5 4 10 0" fill="none" stroke="#9aa8c2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M116 102q14 9 28 0" fill="none" stroke="#56627f" stroke-width="2.4" stroke-linecap="round"/>
+<ellipse cx="112" cy="30" rx="16" ry="6" fill="#fff" opacity=".7" transform="rotate(-20 112 30)"/>
+</svg>`;
+
+/* ---------- views ---------- */
+function render(){
+  $('#sndBtn').classList.toggle('on', !!S.snd);
+  if(view==='home') renderHome(); else if(view==='intro') renderIntro(); else if(view==='mission') renderMission(); else renderBonus();
+}
+function isOpen(id){ return true; }
+function renderHome(){
+  const cards = MISSIONS.map(m=>{
+    const open=isOpen(m.id);
+    return `<button class="card${open?'':' locked'}" data-act="open" data-id="${m.id}">
+      <span class="num">Mission ${m.n}</span><span class="name">${m.title[0]}${m.title[1]}</span>
+      ${open?`<span class="stars">${stars(S.stars[m.id]||0)}</span>`:`<span class="lockline">${lockSVG} Locked</span>`}
+      <img class="thumb" src="img/${m.img}.png" alt=""></button>`; }).join('');
+  const bo=isOpen('bonus');
+  main.innerHTML = `<div class="home">
+    <div class="nova-card">${NOVA}<h2>Meet Dr. Nova</h2>
+      <p>${T({en:'Our AI mathematician explains what perimeter is.'})}</p>
+      <button class="btn sun" data-act="intro">Start the lesson</button></div>
+    <div><div class="grid">${cards}
+      <button class="card${bo?'':' locked'}" data-act="open" data-id="bonus"><span class="num">Bonus</span><span class="name">Quick practice round</span>
+      ${bo?`<span class="stars">${stars(S.stars.bonus||0)}</span>`:`<span class="lockline">${lockSVG} Locked</span>`}<img class="thumb" src="img/girl.png" alt=""></button>
+    </div>
+    <p class="note">Pick any mission to show it on the screen. <button class="btn ghost small" data-act="resetstars">Clear stars</button></p></div></div>`;
+}
+
+function introVisual(i){
+  const rect={style:'plain',unit:'cm',scale:44,pts:[[0,0],[5,0],[5,3],[0,3]],edges:[{len:5},{len:3},{len:5},{len:3}]};
+  if(i===0) return `<img src="img/boy_point.png" alt="Boy explorer"><img src="img/girl.png" alt="Girl explorer"><div class="big">Your mission team</div>`;
+  if(i===1) return `<svg viewBox="-30 -30 340 220" role="img" aria-label="A dot walking around a rectangle"><rect x="0" y="0" width="280" height="160" fill="#e7dcff" stroke="#5b21b6" stroke-width="10" stroke-linejoin="round"/>
+    <rect x="0" y="0" width="280" height="160" fill="none" stroke="#ffd21f" stroke-width="4" stroke-dasharray="14 10"><animate attributeName="stroke-dashoffset" from="0" to="-240" dur="6s" repeatCount="indefinite"/></rect>
+    <circle r="13" fill="#d81e2c" stroke="#fff" stroke-width="4" cx="0" cy="0"><animateMotion dur="6s" repeatCount="indefinite" path="M0 0H280V160H0Z"/></circle>
+    <text x="140" y="92" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="34" fill="#3b0f8c">perimeter</text></svg>`;
+  if(i===2) return drawShape(rect,{all:true})+`<div class="big">5 + 3 + 5 + 3 = <b>16 cm</b></div>`;
+  if(i===3) return drawShape({style:'plain',unit:'m',scale:40,pts:[[0,0],[7,0],[7,4],[0,4]],edges:[{len:7},{len:4},{len:7},{len:4}]})+`<div class="big">Opposite sides are <b>equal</b>.</div>`;
+  if(i===4) return drawShape({style:'plain',unit:'',scale:40,pts:[[0,0],[7,0],[7,3],[4,3],[4,5],[0,5]],edges:[1,2,3,4,5,6].map(k=>({text:' '+k+' ', slide:k===3?-40:k===4?36:0}))},{all:true})+`<div class="big"><b>6</b> outside sides</div>`;
+  return `<img src="img/robot.png" alt="The mission robot"><img src="img/boy_detective.png" alt="Boy detective"><div class="big">Check every answer!</div>`;
+}
+function renderIntro(){
+  const sc=SCENES[scene], last=scene===SCENES.length-1;
+  main.innerHTML = `<div class="banner"><button class="back" data-act="home">Missions</button><h1>What is <em>perimeter?</em></h1></div>
+  <div class="intro"><div class="nova">${NOVA}</div>
+   <div class="talk"><div class="speech"><span class="who">Dr. Nova, AI mathematician</span>${T(sc)}</div>
+    <div class="visual">${introVisual(scene)}</div>
+    <div class="introbar"><div class="dots">${SCENES.map((_,i)=>`<i class="${i<=scene?'on':''}"></i>`).join('')}</div>
+     ${scene===0?`<button class="btn ghost small" data-act="voice">${voice?'Voice on':'Voice off'}</button><button class="btn ghost small" data-act="again">Say it again</button>`:''}<span class="sp"></span>
+     <button class="btn ghost" data-act="prev" ${scene?'':'disabled'}>Back</button>
+     <button class="btn ${last?'sun':''}" data-act="next">${last?'Go to the missions':'Next'}</button></div></div></div>`;
+}
+
+function startMission(id){ const m=MISSIONS.find(x=>x.id===id); cur={m, step:0, tapped:[], wrong:0, log:[], done:false, fb:null, note:''}; view='mission'; render(); }
+function sumChips(c){ const es=c.m.shape.edges, n=es.length;
+  let h=c.tapped.map(i=>`<span class="c">${es[i].len}</span>`).join('<span>+</span>');
+  for(let k=c.tapped.length;k<n;k++) h+=(k?'<span>+</span>':'')+`<span class="c ghost">?</span>`; return h; }
+function entry(unit){ return `<div class="entry"><span>=</span><input id="ans" inputmode="numeric" autocomplete="off" maxlength="4" aria-label="Your answer"><span>${unit}</span><button class="btn" data-act="check">Check</button></div>
+  <div class="pad">${[1,2,3,4,5,6,7,8,9,0].map(k=>`<button data-k="${k}">${k}</button>`).join('')}<button data-k="del" aria-label="Delete" style="grid-column:span 2">Delete</button></div>`; }
+function renderMission(){
+  const c=cur, m=c.m, st=m.steps[c.step], sh=m.shape;
+  let shape=sh;
+  if(m.id==='m2' && c.done) shape=Object.assign({},sh,{edges:[{text:'20 cm'},{len:40},{text:'20 cm'},{len:40}]});
+  let board = drawShape(shape,{tappable:!c.done&&st.type==='tap', tapped:c.tapped});
+  board += `<div class="tapnote">${c.note||''}</div>`;
+  if(m.id==='m2'){ const w=c.done?'20 cm':'?';
+    board+=`<div class="bar"><div class="tot">120 cm</div><div class="segs"><span style="flex:2">40 cm</span><span style="flex:2">40 cm</span><span class="w" style="flex:1">${w}</span><span class="w" style="flex:1">${w}</span></div></div>`; }
+  if(m.lights) board+=`<div class="lights"><svg viewBox="0 0 150 50" aria-hidden="true"><path d="M4 14q36 22 71 4t71 4" fill="none" stroke="#14124a" stroke-width="3"/>${[[18,24,'#d81e2c'],[42,28,'#ffd21f'],[66,24,'#49b6f5'],[92,20,'#22a03a'],[118,22,'#ff8a1f'],[138,24,'#ff7fc4']].map(([x,y,c])=>`<rect x="${x-3}" y="${y-6}" width="6" height="6" fill="#14124a"/><ellipse cx="${x}" cy="${y+7}" rx="6" ry="9" fill="${c}" stroke="#14124a" stroke-width="1.5"/>`).join('')}</svg><span>Lights = <b>120 cm</b></span></div>`;
+  if(m.bot) board+=`<div class="bot"><div class="says"><small>Bot says</small><strong>“40 m”</strong><span>12 + 8 + 12 + 8 = 40</span></div><img src="img/robot.png" alt="The robot"></div>`;
+  let work = c.log.map((l,i)=>`<div class="done"><span class="n">${i+1}</span><span>${l}</span></div>`).join('');
+  if(c.done){
+    const s=S.stars[m.id]||0, nx=MISSIONS[m.n], canSol=true;
+    work+=`<div class="final">${m.final}<div class="stars">${stars(c.earned)}</div></div>
+      <div class="row">${canSol?`<button class="btn ghost small" data-act="sol" data-id="${m.id}">See the solution</button>`:''}
+      <button class="btn ghost small" data-act="retry">Try again</button>
+      ${nx&&isOpen(nx.id)?`<button class="btn sun small" data-act="open" data-id="${nx.id}">Next mission</button>`:`<button class="btn sun small" data-act="home">All missions</button>`}</div>`;
+  } else if(st.type==='tap'){
+    work+=`<div class="q">${T(st.q)}</div><div class="sum">${sumChips(c)}</div><div class="fb">${c.tapped.length} of ${sh.edges.length} sides counted</div>`;
+  } else if(st.type==='sum'){
+    work+=`<div class="q">${T(st.q)}</div><div class="sum">${sumChips(c)}</div>${entry(sh.unit)}`;
+  } else if(st.type==='calc'){
+    work+=`<div class="q">${T(st.label)}</div><div class="sum"><span>${st.expr}</span></div>${entry(sh.unit)}`;
+  } else if(st.type==='choice'){
+    work+=`<div class="q">${T(st.q)}</div>${st.sumline?`<div class="sum" style="font-size:24px">${sumChips(c)}</div>`:''}
+      <div class="choices">${st.options.map((o,i)=>`<button class="btn ${i?'':'sun'}" data-act="pick" data-i="${i}">${o}</button>`).join('')}</div>`;
+  }
+  if(!c.done && st.type!=='tap') work+=`<div class="fb ${c.fb?c.fb.cls:''}" id="fb">${c.fb?c.fb.msg:''}</div>`;
+  main.innerHTML = `<div class="banner"><button class="back" data-act="home">Missions</button><span class="kicker">MISSION <b>${m.n}</b></span><h1>${m.title[0]}<em>${m.title[1]}</em></h1></div>
+   <div class="stage"><div class="guide"><div class="bubble">${T(m.bubble)}</div><img src="img/${m.img}.png" alt="Mission guide"></div>
+   <div class="board">${board}</div><div class="work"><h2>Let’s solve!</h2>${work}</div></div>
+   <div class="tbar"><button class="btn ghost small" data-act="open" data-id="${m.n>1?MISSIONS[m.n-2].id:m.id}" ${m.n>1?'':'disabled'}>Previous mission</button>
+   <button class="btn ghost small" data-act="retry">Start again</button><button class="btn small" data-act="sol" data-id="${m.id}">Show solution</button>
+   <button class="btn ghost small" data-act="open" data-id="${m.n<MISSIONS.length?MISSIONS[m.n].id:'bonus'}">${m.n<MISSIONS.length?'Next mission':'Bonus round'}</button></div>`;
+  const a=$('#ans'); if(a && matchMedia('(pointer:fine)').matches) a.focus();
+}
+function advance(logLine){
+  const c=cur; if(logLine) c.log.push(logLine); c.fb=null; c.note=''; c.step++;
+  if(c.step>=c.m.steps.length){ c.done=true; c.earned = c.wrong===0?3:(c.wrong<=2?2:1); S.stars[c.m.id]=Math.max(S.stars[c.m.id]||0,c.earned); save(); }
+  beep(true); render();
+}
+function wrong(msg){ const c=cur; c.wrong++; c.fb={cls:'bad shake', msg}; beep(false); render(); }
+function partials(c){ const v=c.tapped.map(i=>c.m.shape.edges[i].len); let t=v[0], out=[];
+  for(let i=1;i<v.length;i++){ out.push(i<v.length-1?`${t} + ${v[i]} = ${t+v[i]}`:`${t} + ${v[i]} = ?`); t+=v[i]; } return out.join(', then '); }
+function check(){
+  const el=$('#ans'); if(!el) return; const v=parseInt(el.value,10);
+  if(view==='bonus') return bonusCheck(v);
+  const c=cur, st=c.m.steps[c.step], u=c.m.shape.unit;
+  if(isNaN(v)){ c.fb={cls:'bad',msg:'Type a number first.'}; render(); return; }
+  if(v===st.answer){
+    if(st.type==='sum') advance(c.tapped.map(i=>c.m.shape.edges[i].len).join(' + ')+` = <b>${v} ${u}</b>`);
+    else advance(`${st.label.en}: ${st.expr} = <b>${v} ${u}</b>`);
+  } else {
+    const tries = (c.fb&&c.fb.n||0)+1;
+    const hint = st.type==='sum' ? 'Add step by step: '+partials(c)+'.' : st.hint;
+    wrong(tries>=2 ? 'Not yet. Hint: '+hint : 'Not yet. Check your working and try again.'); c.fb.n=tries;
+  }
+}
+function pick(i){
+  const c=cur, st=c.m.steps[c.step];
+  if(i===st.answer){ advance(st.log + (st.explain?`<br><span style="font-size:.85em">${st.explain}</span>`:'')); }
+  else wrong(st.sumline?'Add again. Use every side you tapped.':'Look again and think about it.');
+}
+function tap(i){
+  const c=cur; if(!c||c.done||c.m.steps[c.step].type!=='tap') return;
+  if(c.tapped.includes(i)){ c.note='You already counted that side.'; render(); return; }
+  c.tapped.push(i); c.note=''; beep(true);
+  if(c.tapped.length===c.m.shape.edges.length){ c.step++; c.note='All sides counted. Now add them.'; }
+  render();
+}
+
+/* ---------- bonus round ---------- */
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function newBonusQ(){
+  const type=['a','b'][R(0,1)], unit=Math.random()<.5?'m':'cm'; let L=R(6,12), W=R(2,Math.floor(L*0.6)), q, ans, edges, hint; /* width at most 60% of the length, so it never looks square */
+  if(type==='a'){ ans=2*(L+W); q={en:'Find the perimeter of the rectangle.'}; edges=[{len:L},{text:'  '},{text:'  '},{len:W}]; hint=`${L} + ${W} + ${L} + ${W}`; }
+  else if(type==='b'){ ans=W; const P=2*(L+W); q={en:`The perimeter is <b>${P} ${unit}</b>. The length is <b>${L} ${unit}</b>. Find the width.`}; edges=[{len:L},{text:'?'},{len:L},{text:'?'}]; hint=`${P} − ${L} − ${L} = ${P-2*L}, then share it into 2 equal parts`; }
+  const scale=Math.min(300/L,180/W);
+  return {q, ans, unit, hint, tries:0, shape:{style:'plain',unit,scale,pts:[[0,0],[L,0],[L,W],[0,W]],edges}};
+}
+function startBonus(){ bonus={i:0,score:0,q:newBonusQ(),fb:null,end:false}; view='bonus'; render(); }
+function renderBonus(){
+  const b=bonus; let work;
+  if(b.end){ const s=b.score>=5?3:b.score>=3?2:1;
+    work=`<div class="final">You got <b>${b.score} out of 5</b> right first time.<div class="stars">${stars(s)}</div></div><div class="row"><button class="btn sun small" data-act="bonus">Play again</button><button class="btn ghost small" data-act="home">All missions</button></div>`;
+  } else work=`<div class="q">${T(b.q.q)}</div>${entry(b.q.unit)}<div class="fb ${b.fb?b.fb.cls:''}">${b.fb?b.fb.msg:''}</div>`;
+  main.innerHTML=`<div class="banner"><button class="back" data-act="home">Missions</button><span class="kicker">BONUS</span><h1>Quick <em>practice round</em></h1></div>
+   <div class="stage"><div class="guide"><div class="bubble">Question <b>${Math.min(b.i+1,5)}</b> of 5</div><img src="img/girl.png" alt="Mission guide"></div>
+   <div class="board">${b.end?'':drawShape(b.q.shape)}</div><div class="work"><h2>Let’s solve!</h2>${work}</div></div>`;
+  const a=$('#ans'); if(a && matchMedia('(pointer:fine)').matches) a.focus();
+}
+function bonusCheck(v){
+  const b=bonus; if(isNaN(v)){ b.fb={cls:'bad',msg:'Type a number first.'}; return render(); }
+  if(v===b.q.ans){ if(b.q.tries===0) b.score++; beep(true); b.i++; b.fb={cls:'good',msg:'Correct!'};
+    if(b.i>=5){ b.end=true; const s=b.score>=5?3:b.score>=3?2:1; S.stars.bonus=Math.max(S.stars.bonus||0,s); save(); } else b.q=newBonusQ(); }
+  else { b.q.tries++; beep(false); b.fb={cls:'bad shake',msg:b.q.tries>=2?'Not yet. Hint: '+b.q.hint+'.':'Not yet. Try again.'}; }
+  render();
+}
+
+/* ---------- overlays ---------- */
+function closeOv(){ ov.innerHTML=''; }
+function dlg(html, wide){ ov.innerHTML=`<div class="ov" data-act="ovbg"><div class="dlg${wide?' wide':''}" role="dialog" aria-modal="true"><button class="btn ghost small x" data-act="close">Close</button>${html}</div></div>`; const f=ov.querySelector('input'); if(f) f.focus(); }
+function askPin(){ dlg(`<h2>Teacher sign-in</h2><p>Enter the teacher PIN to open missions and solutions.</p><div class="pinrow"><input id="pin" type="password" inputmode="numeric" maxlength="8" aria-label="Teacher PIN"><button class="btn" data-act="pinok">Enter</button></div><div class="fb bad" id="pfb"></div>`); }
+function askCode(id){ const name=id==='bonus'?'The bonus round':'Mission '+MISSIONS.find(m=>m.id===id).n;
+  dlg(`<h2>${name} is locked</h2><p>${T({en:'Ask your teacher for the mission code.'})}</p><div class="pinrow"><input id="code" inputmode="numeric" maxlength="3" data-id="${id}" aria-label="Mission code"><button class="btn" data-act="codeok">Open</button></div><div class="fb bad" id="pfb"></div>`); }
+function panel(){
+  const rows=[...MISSIONS,BONUS].map(m=>`<tr><td>${m.n?'Mission '+m.n+': '+m.title[0]+m.title[1]:'Bonus practice round'}</td><td class="code">${m.code}</td>
+    <td><button class="tog ${S.open[m.id]?'on':''}" data-act="tog" data-id="${m.id}">${S.open[m.id]?'Open':'Locked'}</button></td>
+    <td>${m.n?`<button class="btn ghost small" data-act="sol" data-id="${m.id}">Solution</button>`:''}</td></tr>`).join('');
+  dlg(`<h2>Teacher panel</h2>
+   <p>Open a mission on this screen, or give students its code so they can open it on their own device.</p>
+   <table class="t"><tr><th>Activity</th><th>Student code</th><th>This screen</th><th></th></tr>${rows}</table>
+   <div class="row" style="justify-content:flex-start"><button class="btn small" data-act="openall">Open all</button><button class="btn ghost small" data-act="lockall">Lock all</button><button class="btn ghost small" data-act="resetstars">Clear stars</button></div>
+   <div class="opts"><label><input type="checkbox" id="oSol" ${S.sol?'checked':''}> Students can see the solution picture after they finish a mission</label>
+   <label><input type="checkbox" id="oVi" ${S.vi?'checked':''}> Show Vietnamese support text</label></div>
+   <div class="pinrow"><span>New PIN</span><input id="newpin" type="text" inputmode="numeric" maxlength="8" style="font-size:20px;width:130px" aria-label="New PIN"><button class="btn ghost small" data-act="setpin">Save PIN</button><span class="fb good" id="pfb"></span></div>
+   <div class="row" style="justify-content:flex-end"><button class="btn sun small" data-act="tout">Leave teacher mode</button></div>`);
+}
+function showSolution(id){
+  const m=MISSIONS.find(x=>x.id===id);
+  if(m.sol) dlg(`<h2>Mission ${m.n} solution</h2><img class="solimg" src="${m.sol}" alt="Worked solution for mission ${m.n}">`, true);
+  else dlg(`<h2>Mission ${m.n} solution</h2><div class="board">${drawShape(m.shape,{all:true})}</div>
+    <div class="final">12 + 3 + 6 + 2 + 6 + 3 + 12 + 8 = <b>52 m</b></div>
+    <p>The bot added only the big box, 12 + 8 + 12 + 8 = 40. The cut has three more sides (6 m, 2 m and 6 m), and the right side is two short pieces of 3 m.</p>`);
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', e=>{
+  const k=e.target.closest('[data-k]');
+  if(k){ const a=$('#ans'); if(a){ a.value = k.dataset.k==='del' ? a.value.slice(0,-1) : (a.value+k.dataset.k).slice(0,4); } return; }
+  const h=e.target.closest('.hit'); if(h){ tap(+h.dataset.edge); return; }
+  const t=e.target.closest('[data-act]'); if(!t) return; const act=t.dataset.act, id=t.dataset.id;
+  if(act==='ovbg'){ if(e.target===t) closeOv(); return; }
+  switch(act){
+    case 'home': hush(); view='home'; render(); break;
+    case 'intro': scene=0; view='intro'; render(); say(0); break;
+    case 'next': if(scene<SCENES.length-1){ scene++; render(); say(scene); } else { hush(); view='home'; render(); } break;
+    case 'prev': if(scene>0){ scene--; render(); say(scene); } break;
+    case 'voice': voice=!voice; if(voice) say(scene); else hush(); render(); break;
+    case 'again': voice=true; say(scene); render(); break;
+    case 'snd': S.snd=!S.snd; save(); render(); break;
+    case 'full': try{ document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{}); }catch(err){} break;
+    case 'close': closeOv(); break;
+    case 'pinok': if($('#pin').value===S.pin){ teacher=true; render(); panel(); } else $('#pfb').textContent='That PIN is not right. Try again.'; break;
+    case 'codeok': { const c=$('#code'), tid=c.dataset.id, m=[...MISSIONS,BONUS].find(x=>x.id===tid);
+      if(c.value===m.code){ S.open[tid]=true; save(); closeOv(); tid==='bonus'?startBonus():startMission(tid); } else $('#pfb').textContent='That code is not right. Ask your teacher.'; break; }
+    case 'open': closeOv(); if(isOpen(id)){ id==='bonus'?startBonus():startMission(id); } else askCode(id); break;
+    case 'bonus': startBonus(); break;
+    case 'retry': startMission(cur.m.id); break;
+    case 'check': check(); break;
+    case 'pick': pick(+t.dataset.i); break;
+    case 'sol': showSolution(id); break;
+    case 'tog': S.open[id]=!S.open[id]; save(); render(); panel(); break;
+    case 'openall': [...MISSIONS,BONUS].forEach(m=>S.open[m.id]=true); save(); render(); panel(); break;
+    case 'lockall': S.open={}; save(); render(); panel(); break;
+    case 'resetstars': S.stars={}; save(); render(); break;
+    case 'setpin': { const v=$('#newpin').value.trim(); if(v.length>=3){ S.pin=v; save(); $('#pfb').textContent='PIN saved.'; } else $('#pfb').textContent='Use at least 3 characters.'; break; }
+    case 'tout': teacher=false; closeOv(); view='home'; render(); break;
+  }
+});
+document.addEventListener('change', e=>{
+  if(e.target.id==='oSol'){ S.sol=e.target.checked; save(); }
+  if(e.target.id==='oVi'){ S.vi=e.target.checked; save(); render(); }
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter'){
+    if(e.target.id==='ans'){ check(); }
+    else if(e.target.id==='pin'){ ov.querySelector('[data-act=pinok]').click(); }
+    else if(e.target.id==='code'){ ov.querySelector('[data-act=codeok]').click(); }
+    else if(e.target.classList && e.target.classList.contains('hit')){ tap(+e.target.dataset.edge); }
+  }
+  if(e.key==='Escape') closeOv();
+  if(view==='intro' && !ov.innerHTML){ const b=e.key==='ArrowRight'?'next':e.key==='ArrowLeft'?'prev':''; if(b){ const el=document.querySelector('[data-act='+b+']'); if(el&&!el.disabled) el.click(); } }
+});
+const appEl=document.getElementById('app');
+function fit(){ /* scale the whole page up on big screens so it fills a projector or full-screen display */
+  const w=innerWidth, h=innerHeight, k = w>=1100 ? Math.max(1, Math.min(w/1366, h/768)) : 1;
+  appEl.style.zoom=k; ov.style.zoom=k; appEl.style.minHeight=(h/k)+'px';
+}
+addEventListener('resize', fit); document.addEventListener('fullscreenchange', fit); fit();
+render();
+</script>
+</body>
+</html>
