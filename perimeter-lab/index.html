@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perimeter Practice Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2340; --paper:#fff9f0; --card:#ffffff; --line:#e6dccb;
+  --pink:#d81b72; --purple:#4b2a86; --green:#1f8a4c; --lime:#8cc63f; --teal:#17717b;
+  --yellow:#ffe98a; --yellow-d:#e2b93b; --red:#d6453d; --soft:#f3ecdf;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:var(--paper);
+  display:grid;grid-template-rows:auto 1fr auto;height:100vh;overflow:hidden}
+h1,h2,h3,.fred{font-family:Fredoka,Nunito,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,.box:focus-visible{outline:3px solid #2b7fff;outline-offset:2px}
+
+/* header */
+header{display:flex;align-items:center;gap:14px;padding:8px 16px;background:var(--ink);color:#fff}
+header h1{font-size:clamp(16px,1.7vw,24px);margin:0;white-space:nowrap}
+header h1 span{color:#ffd166}
+nav{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+nav button{padding:7px 14px;border-radius:999px;font-weight:800;font-size:clamp(12px,1.15vw,17px);color:#cfd5ee;background:#2b3460}
+nav button.on{background:#ffd166;color:var(--ink)}
+.hbtn{padding:7px 12px;border-radius:10px;background:#2b3460;color:#fff;font-weight:800;font-size:14px}
+.stars{font-weight:800;font-size:clamp(13px,1.2vw,18px);white-space:nowrap}
+
+/* main */
+main{overflow:auto;padding:14px 16px;min-height:0}
+.view{height:100%;display:none}
+.view.on{display:block}
+
+/* intro */
+.intro{display:grid;grid-template-columns:minmax(260px,34%) 1fr;gap:16px;height:100%}
+.avatarCard{background:linear-gradient(180deg,#dff3f1,#bfe3e6);border-radius:22px;border:2px solid #9fd0d4;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;position:relative;overflow:hidden;min-height:0}
+.avatarCard svg{width:100%;height:100%;max-height:100%;display:block}
+.nameplate{position:absolute;left:12px;right:12px;bottom:12px;background:#fff;border-radius:14px;padding:8px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 0 rgba(0,0,0,.08)}
+.nameplate b{font-family:Fredoka;font-size:clamp(16px,1.6vw,24px)}
+.nameplate small{color:#5b6485;font-weight:700}
+.live{width:12px;height:12px;border-radius:50%;background:#b9c0d6;flex:none}
+.speaking .live{background:#2bb673;animation:pulse 1s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 7px rgba(43,182,115,.25)}}
+.aiTag{margin-left:auto;background:var(--ink);color:#fff;border-radius:8px;padding:3px 8px;font-size:12px;font-weight:800}
+.board{background:var(--card);border:2px solid var(--line);border-radius:22px;display:grid;grid-template-rows:1fr auto auto;min-height:0;overflow:hidden}
+.visual{display:flex;align-items:center;justify-content:center;padding:18px;min-height:0;text-align:center}
+.visual svg{max-width:100%;max-height:100%}
+.bigfact{font-family:Fredoka;font-size:clamp(30px,5vw,78px);font-weight:700;line-height:1.15}
+.bigfact em{font-style:normal;color:var(--pink)}
+.bigfact small{display:block;font-size:.45em;color:#5b6485;font-family:Nunito;font-weight:800;margin-top:.4em}
+.combo{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;width:100%;gap:6px}
+.combo svg{flex:1 1 0;min-height:0;height:auto;width:auto}
+.combo .bigfact{font-size:clamp(24px,3.6vw,56px);flex:none}
+.caption{background:var(--soft);padding:14px 20px;font-size:clamp(18px,2.1vw,32px);font-weight:800;min-height:3.2em;display:flex;align-items:center;border-top:2px solid var(--line)}
+.introCtl{display:flex;gap:10px;align-items:center;padding:10px 14px;flex-wrap:wrap;border-top:2px solid var(--line)}
+.dots{display:flex;gap:6px;margin-left:6px}
+.dots i{width:10px;height:10px;border-radius:50%;background:#d9d0bf}
+.dots i.done{background:var(--teal)}
+select{font:inherit;font-weight:700;padding:8px;border-radius:10px;border:2px solid var(--line);background:#fff;max-width:230px}
+
+.btn{padding:10px 18px;border-radius:12px;font-weight:800;font-size:clamp(14px,1.3vw,20px);background:#fff;border:2px solid var(--line);box-shadow:0 3px 0 var(--line)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.btn.pri{background:var(--pink);border-color:#a8125a;color:#fff;box-shadow:0 3px 0 #a8125a}
+.btn.go{background:var(--green);border-color:#156637;color:#fff;box-shadow:0 3px 0 #156637}
+.btn.dark{background:var(--ink);border-color:#000;color:#fff;box-shadow:0 3px 0 #000}
+.btn[disabled]{opacity:.4;pointer-events:none}
+
+/* avatar animation */
+.lid{transform-box:fill-box;transform-origin:center top;transform:scaleY(0);animation:blink 4.6s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(0)}96%,98%{transform:scaleY(1)}}
+#headG{transform-box:fill-box;transform-origin:50% 90%;animation:idle 5s ease-in-out infinite}
+.speaking #headG{animation:talk 1.7s ease-in-out infinite}
+@keyframes idle{50%{transform:translateY(1.5px)}}
+@keyframes talk{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.4deg) translateY(1px)}}
+.trace{stroke-dasharray:1000;stroke-dashoffset:1000;animation:trace 3.2s linear infinite}
+@keyframes trace{to{stroke-dashoffset:0}}
+
+/* question */
+.q{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,1fr);gap:16px;height:100%}
+.pic{background:#fff;border:2px solid var(--line);border-radius:20px;padding:10px;display:flex;flex-direction:column;min-height:0}
+.pic .fig{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.pic img,.pic svg{max-width:100%;max-height:100%;object-fit:contain}
+.tagrow{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.tag{font-family:Fredoka;font-weight:600;color:#fff;border-radius:999px;padding:4px 16px;font-size:clamp(14px,1.4vw,22px)}
+.tag.Discover{background:#123b22;box-shadow:0 0 0 3px #7ee08a}
+.tag.Think{background:var(--purple)}
+.tag.Challenge{background:#222;color:var(--lime)}
+.tag.Practice{background:var(--teal)}
+.unit{font-weight:800;color:#5b6485;font-size:clamp(12px,1.1vw,16px)}
+.ans{background:#fff;border:2px solid var(--line);border-radius:20px;padding:14px 16px;display:flex;flex-direction:column;min-height:0;overflow:auto}
+.ans h2{margin:0 0 4px;font-size:clamp(18px,1.9vw,30px);line-height:1.2}
+.ans .hint{color:#5b6485;font-weight:700;margin:0 0 8px;font-size:clamp(13px,1.15vw,18px)}
+.lines{display:flex;flex-direction:column;gap:10px;margin:6px 0 10px}
+.ln{font-size:clamp(17px,1.75vw,30px);font-weight:800;display:flex;align-items:center;flex-wrap:wrap;gap:7px;line-height:1.3}
+.ln .lab{color:var(--pink);font-family:Fredoka}
+.box{display:inline-flex;align-items:center;justify-content:center;min-width:2.3em;height:1.7em;padding:0 .3em;background:var(--yellow);border:3px solid var(--yellow-d);border-radius:10px;font-family:Fredoka;font-weight:600;cursor:pointer}
+.box.act{border-color:var(--ink);box-shadow:0 0 0 4px rgba(28,35,64,.18)}
+.box.ok{background:#c9f2d6;border-color:var(--green)}
+.box.no{background:#ffd6d2;border-color:var(--red)}
+.frac{display:inline-flex;flex-direction:column;align-items:center;gap:3px}
+.frac .box{height:1.25em;min-width:1.6em;font-size:.8em}
+.frac .bar{width:100%;height:3px;background:var(--ink);border-radius:2px}
+.opts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:8px 0}
+.opt{font-family:Fredoka;font-size:clamp(22px,2.6vw,40px);padding:12px;border-radius:14px;background:var(--yellow);border:3px solid var(--yellow-d)}
+.opt.sel{border-color:var(--ink);box-shadow:0 0 0 4px rgba(28,35,64,.18)}
+.opt.ok{background:#c9f2d6;border-color:var(--green)}
+.opt.no{background:#ffd6d2;border-color:var(--red)}
+.fb{border-radius:14px;padding:10px 14px;font-weight:800;font-size:clamp(15px,1.5vw,22px);display:none;margin-bottom:8px}
+.fb.good{display:block;background:#d9f6e2;color:#12592f}
+.fb.bad{display:block;background:#ffe1de;color:#8f231c}
+.fb.info{display:block;background:#e7e3fb;color:#34216b}
+.pad{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:auto;padding-top:8px}
+.pad button{font-family:Fredoka;font-size:clamp(17px,1.7vw,28px);padding:5px 0;border-radius:12px;background:var(--soft);border:2px solid var(--line);box-shadow:0 3px 0 var(--line)}
+.pad button:active{transform:translateY(2px);box-shadow:none}
+.pad .wide{grid-column:span 2;font-size:clamp(14px,1.3vw,20px);font-weight:800;font-family:Nunito}
+.topics{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.chip{padding:6px 14px;border-radius:999px;border:2px solid var(--line);background:#fff;font-weight:800;font-size:clamp(12px,1.1vw,17px)}
+.chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.pwrap{display:flex;flex-direction:column;height:100%;min-height:0}
+.pwrap .q{flex:1;min-height:0;height:auto}
+
+/* teacher bar */
+footer{background:#fff;border-top:3px solid var(--ink);padding:7px 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+footer .btn{padding:8px 11px;font-size:clamp(12px,1.05vw,17px)}
+.tlabel{font-family:Fredoka;font-size:13px;background:var(--ink);color:#fff;border-radius:8px;padding:4px 8px;letter-spacing:.04em}
+.step{font-weight:800;color:#5b6485;min-width:3.4em;text-align:center}
+.sp{flex:1}
+.team{display:flex;align-items:center;gap:4px;border:2px solid var(--line);border-radius:12px;padding:3px 6px;font-weight:800}
+.team span[contenteditable]{min-width:3em;padding:0 4px}
+.team b{font-family:Fredoka;font-size:20px;min-width:1.4em;text-align:center}
+.team button{width:30px;height:30px;border-radius:8px;background:var(--soft);font-weight:800;font-size:18px}
+.timer{font-family:Fredoka;font-size:20px;min-width:2.6em;text-align:center}
+.timer.up{color:var(--red);animation:pulse2 .6s infinite alternate}
+@keyframes pulse2{to{opacity:.3}}
+
+/* share overlay */
+.ov{position:fixed;inset:0;background:rgba(20,24,48,.82);display:none;align-items:center;justify-content:center;padding:18px;z-index:10;flex-direction:column;gap:12px}
+.ov.on{display:flex}
+.ov img{max-width:100%;max-height:calc(100vh - 110px);border-radius:16px;background:#fff}
+
+@media (max-width:860px){
+  body{height:auto;min-height:100vh;overflow:auto}
+  .intro,.q{grid-template-columns:1fr;height:auto}
+  .avatarCard{height:300px}
+  .pic .fig img{max-height:50vh}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Perimeter <span>Practice Lab</span></h1>
+  <nav id="nav"></nav>
+  <span class="stars" id="stars">★ 0</span>
+  <button class="hbtn" id="fs">Full screen</button>
+</header>
+
+<main>
+  <!-- INTRO -->
+  <section class="view" id="v-intro">
+    <div class="intro">
+      <div class="avatarCard" id="avatarCard">
+        <svg viewBox="0 0 320 380" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Teacher Jennifer, the AI maths guide">
+          <defs>
+            <radialGradient id="skin" cx="50%" cy="38%" r="70%"><stop offset="0" stop-color="#f8d6b3"/><stop offset=".7" stop-color="#e9b98c"/><stop offset="1" stop-color="#d79e70"/></radialGradient>
+            <linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a2e1e"/><stop offset="1" stop-color="#1d110b"/></linearGradient>
+            <linearGradient id="jkt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#23808a"/><stop offset="1" stop-color="#124850"/></linearGradient>
+            <radialGradient id="iris" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#8a5a34"/><stop offset="1" stop-color="#3b2413"/></radialGradient>
+            <clipPath id="mclip"><ellipse id="mClipE" cx="160" cy="243" rx="17" ry="9"/></clipPath>
+          </defs>
+          <path d="M30 380 C34 322 92 304 132 294 L160 334 L188 294 C228 304 286 322 290 380Z" fill="url(#jkt)"/>
+          <path d="M132 294 L160 344 L188 294 L178 286 L160 316 L142 286Z" fill="#fff"/>
+          <g id="headG">
+            <path d="M72 158 C56 44 264 44 248 158 L258 262 C246 296 214 300 200 280 L120 280 C106 300 74 296 62 262Z" fill="url(#hair)"/>
+            <path d="M134 246 h52 v48 c-10 20 -42 20 -52 0z" fill="#d49c6e"/>
+            <path d="M134 262 c16 12 36 12 52 0 v-10 h-52z" fill="#b98056" opacity=".55"/>
+            <ellipse cx="88" cy="192" rx="9" ry="15" fill="#e2ad80"/><ellipse cx="232" cy="192" rx="9" ry="15" fill="#e2ad80"/>
+            <circle cx="87" cy="208" r="3" fill="#ffd166"/><circle cx="233" cy="208" r="3" fill="#ffd166"/>
+            <path d="M90 172 C90 108 230 108 230 172 C230 232 200 274 160 274 C120 274 90 232 90 172Z" fill="url(#skin)"/>
+            <path d="M84 176 C76 92 244 88 236 176 C228 142 202 124 172 122 C152 142 112 150 84 176Z" fill="url(#hair)"/>
+            <path d="M172 122 C196 126 222 146 232 176" stroke="#5c3a26" stroke-width="2" fill="none" opacity=".6"/>
+            <path d="M108 164 q16 -10 32 -3" stroke="#2a1a12" stroke-width="5" stroke-linecap="round" fill="none"/>
+            <path d="M180 161 q16 -7 32 3" stroke="#2a1a12" stroke-width="5" stroke-linecap="round" fill="none"/>
+            <g>
+              <ellipse cx="124" cy="186" rx="14" ry="9.5" fill="#fff"/><circle cx="125" cy="186" r="7.5" fill="url(#iris)"/><circle cx="125" cy="186" r="3.4" fill="#120a05"/><circle cx="122.500" cy="183.500" r="1.800" fill="#fff"/>
+              <path d="M110 184 q14 -12 28 0" stroke="#2a1a12" stroke-width="2.600" fill="none" stroke-linecap="round"/>
+              <ellipse class="lid" cx="124" cy="186" rx="15" ry="10.500" fill="#e9b98c"/>
+              <ellipse cx="196" cy="186" rx="14" ry="9.5" fill="#fff"/><circle cx="197" cy="186" r="7.5" fill="url(#iris)"/><circle cx="197" cy="186" r="3.4" fill="#120a05"/><circle cx="194.500" cy="183.500" r="1.800" fill="#fff"/>
+              <path d="M182 184 q14 -12 28 0" stroke="#2a1a12" stroke-width="2.600" fill="none" stroke-linecap="round"/>
+              <ellipse class="lid" cx="196" cy="186" rx="15" ry="10.500" fill="#e9b98c"/>
+            </g>
+            <path d="M160 196 c-3 14 -9 20 -7 25 c4 4 11 4 15 0" stroke="#c48a5e" stroke-width="2.600" fill="none" stroke-linecap="round"/>
+            <ellipse cx="112" cy="222" rx="14" ry="8" fill="#ef9a86" opacity=".4"/><ellipse cx="208" cy="222" rx="14" ry="8" fill="#ef9a86" opacity=".4"/>
+            <path id="mSmile" d="M141 240 q19 14 38 0" stroke="#b2455c" stroke-width="4.500" fill="none" stroke-linecap="round"/>
+            <g id="mOpen" style="display:none">
+              <ellipse id="mIn" cx="160" cy="243" rx="17" ry="9" fill="#5e1624"/>
+              <g clip-path="url(#mclip)">
+                <rect x="140" y="230" width="40" height="8" rx="2" fill="#fff" id="mTeeth"/>
+                <ellipse cx="160" cy="255" rx="11" ry="6" fill="#d9697a"/>
+              </g>
+              <ellipse id="mLip" cx="160" cy="243" rx="17" ry="9" fill="none" stroke="#b2455c" stroke-width="4"/>
+            </g>
+          </g>
+        </svg>
+        <div class="nameplate"><i class="live"></i><div><b>Teacher Jennifer</b><br><small>AI maths guide</small></div><span class="aiTag">AI</span></div>
+      </div>
+      <div class="board">
+        <div class="visual" id="visual"></div>
+        <div class="caption" id="caption">Press Start and Teacher Jennifer will introduce the lesson.</div>
+        <div class="introCtl">
+          <button class="btn pri" id="iPlay">▶ Start</button>
+          <button class="btn" id="iBack">◀ Line</button>
+          <button class="btn" id="iFwd">Line ▶</button>
+          <button class="btn" id="iReplay">↺ Replay</button>
+          <div class="dots" id="dots"></div>
+          <span class="sp"></span>
+          <button class="btn go" id="iGo">Start Lesson 1 ▶</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUESTIONS -->
+  <section class="view" id="v-q">
+    <div class="pwrap">
+      <div class="topics" id="topics"></div>
+      <div class="q">
+        <div class="pic">
+          <div class="tagrow"><span class="tag" id="qTag"></span><span class="unit" id="qUnit"></span></div>
+          <div class="fig" id="qFig"></div>
+        </div>
+        <div class="ans">
+          <h2 id="qTitle"></h2>
+          <p class="hint" id="qHint"></p>
+          <div class="lines" id="qLines"></div>
+          <div class="fb" id="qFb"></div>
+          <div class="pad" id="pad"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span class="tlabel">TEACHER</span>
+  <button class="btn" id="tPrev">◀ Back</button>
+  <span class="step" id="tStep"></span>
+  <button class="btn dark" id="tNext">Next ▶</button>
+  <button class="btn pri" id="tCheck">Check</button>
+  <button class="btn" id="tShow">Show answer</button>
+  <button class="btn" id="tShare">Show Share page</button>
+  <button class="btn" id="tClear">Clear</button>
+  <span class="sp"></span>
+  <button class="btn" id="t30">30 s</button>
+  <button class="btn" id="t60">60 s</button>
+  <span class="timer" id="timer">–</span>
+  <div class="team"><span contenteditable="true" spellcheck="false">Team A</span><button data-t="0" data-d="-1">−</button><b id="s0">0</b><button data-t="0" data-d="1">+</button></div>
+  <div class="team"><span contenteditable="true" spellcheck="false">Team B</span><button data-t="1" data-d="-1">−</button><b id="s1">0</b><button data-t="1" data-d="1">+</button></div>
+</footer>
+
+<div class="ov" id="ov"><img id="ovImg" alt="Share page from the textbook"><button class="btn pri" id="ovClose">Close</button></div>
+
+<script>
+const $=s=>document.querySelector(s), fmt=n=>n.toLocaleString('en-US');
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)), pick=a=>a[rnd(0,a.length-1)];
+
+/* ---------- rectangle drawing ---------- */
+function rectSVG(o){
+  const W=o.w,H=o.h,sc=Math.min(340/W,240/H),w=W*sc,h=H*sc,x=(560-w)/2,y=(360-h)/2;
+  let g='';
+  if(o.grid){for(let i=1;i<W;i++)g+=`<line x1="${x+i*sc}" y1="${y}" x2="${x+i*sc}" y2="${y+h}" stroke="#2b8fb5" stroke-width="1.5"/>`;
+    for(let j=1;j<H;j++)g+=`<line x1="${x}" y1="${y+j*sc}" x2="${x+w}" y2="${y+j*sc}" stroke="#2b8fb5" stroke-width="1.5"/>`;}
+  const L=o.labels||{},t=(s,X,Y,c,an)=>s?`<text x="${X}" y="${Y}" text-anchor="${an||'middle'}" dominant-baseline="middle" font-family="Fredoka" font-size="30" font-weight="600" fill="${c||'#1c2340'}">${s}</text>`:'';
+  const c1=o.pair?'#d81b72':null,c2=o.pair?'#4b2a86':null;
+  let ex='';
+  if(o.pair)ex=`<line x1="${x}" y1="${y}" x2="${x+w}" y2="${y}" stroke="#d81b72" stroke-width="8"/><line x1="${x}" y1="${y+h}" x2="${x+w}" y2="${y+h}" stroke="#d81b72" stroke-width="8"/><line x1="${x}" y1="${y}" x2="${x}" y2="${y+h}" stroke="#4b2a86" stroke-width="8"/><line x1="${x+w}" y1="${y}" x2="${x+w}" y2="${y+h}" stroke="#4b2a86" stroke-width="8"/>`;
+  if(o.trace)ex=`<rect class="trace" x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#d81b72" stroke-width="9" pathLength="1000" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 560 360" width="560" height="360"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${o.fill||'#a9dcf5'}" stroke="#1c2340" stroke-width="4"/>${g}${ex}${t(L.top,x+w/2,y-24,c1)}${t(L.bottom,x+w/2,y+h+28,c1)}${t(L.left,x-16,y+h/2,c2,'end')}${t(L.right,x+w+16,y+h/2,c2,'start')}</svg>`;
+}
+
+/* ---------- textbook steps ---------- */
+const L1=[
+ {tag:'Discover',unit:'Lesson 1 · Measure in km and m',img:'l1_discover',title:'How many metres away is the station?',hint:'Look at the road sign. Then draw a bar model on your board.',lines:['The station is [[2000]] m away.'],share:'l1_share',explain:'1 km = 1,000 m, so 2 km = 1,000 m + 1,000 m = 2,000 m.'},
+ {tag:'Think together',unit:'Lesson 1 · Question 1a',img:'l1_tt1a',title:'How many metres is it to the beach?',lines:['4 × 1,000 m = [[4000]] m','The beach is [[4000]] metres away.'],explain:'Four lots of 1,000 m make 4,000 m.'},
+ {tag:'Think together',unit:'Lesson 1 · Question 1b',img:'l1_tt1b',title:'The nearest town is 6½ km away. How many metres is this?',lines:['½ km is the same as [[500]] m.','6 km is equivalent to [[6000]] m.','So the nearest town is [[6500]] m away.'],explain:'Half of 1,000 m is 500 m. 6,000 m + 500 m = 6,500 m.'},
+ {tag:'Think together',unit:'Lesson 1 · Question 2',img:'l1_tt2',title:'What are these distances in kilometres?',lines:['<span class="lab">a)</span> 4,000 m = [[4]] km','<span class="lab">b)</span> 4,100 m = [[4]] km [[100]] m','<span class="lab">c)</span> 4,500 m = [[4]] km [[500]] m = [[4]] [[1/2]] km','<span class="lab">d)</span> 4,250 m = [[4]] km [[250]] m = [[4]] [[1/4]] km'],explain:'500 m is half of a kilometre. 250 m is a quarter of a kilometre.'},
+ {tag:'Challenge',unit:'Lesson 1 · Question 3',img:'l1_ch3',title:'Rewrite the table to show metres instead of kilometres.',lines:['Little Bampton: [[3000]] m','Battley: [[750]] m','Kingsbridge: [[7500]] m','Southwell: [[1250]] m'],explain:'¼ km = 250 m, ½ km = 500 m, ¾ km = 750 m.'}
+];
+const L2=[
+ {tag:'Discover',unit:'Lesson 2 · Perimeter on a grid',img:'l2_discover',title:'a) How far will Amelia walk?',hint:'She walks all the way around the edge of the pool.',lines:['10 + 4 + 10 + 4 = [[28]]','Amelia will walk [[28]] m.'],share:'l2_share_a',explain:'Add every side: 10 m + 4 m + 10 m + 4 m = 28 m.'},
+ {tag:'Discover',unit:'Lesson 2 · Perimeter on a grid',img:'l2_discover',title:'b) Another pool is a square with a side length of 4 m. What is the distance around this pool?',lines:['4 + 4 + 4 + 4 = [[16]]','The distance around the pool is [[16]] m.'],share:'l2_share_b',explain:'All four sides of a square are the same length. 4 lots of 4 m = 16 m.'},
+ {tag:'Think together',unit:'Lesson 2 · Question 1',img:'l2_tt1',title:'A swimming pool is 8 m long and 5 m wide. What is the distance around it?',lines:['5 + 8 + 5 + 8 = [[26]]','The perimeter is [[26]] m.'],explain:'Two lots of 8 m = 16 m. Two lots of 5 m = 10 m. 16 m + 10 m = 26 m.'},
+ {tag:'Think together',unit:'Lesson 2 · Question 2',img:'l2_tt2',title:'What is the perimeter of this rectangle?',lines:['5 + 3 + 5 + 3 = [[16]]','The perimeter is [[16]] cm.'],explain:'5 cm + 3 cm + 5 cm + 3 cm = 16 cm.'},
+ {tag:'Challenge',unit:'Lesson 2 · Question 3a',img:'l2_ch3a',title:'How many measurements do you need to work out the perimeter?',hint:'Talk with your partner first. Why?',opts:['1','2','3','4'],answer:'2',explain:'Two: the length and the width. The opposite sides of a rectangle are equal, so you already know the other two sides.'},
+ {tag:'Challenge',unit:'Lesson 2 · Question 3b',img:'l2_ch3b',title:'Part of the pool is covered. Explain how you could still work out the perimeter.',hint:'Class discussion. Press “Show answer” when the class is ready.',talk:true,explain:'You can still see one whole long side and one whole short side. Measure those two. The opposite sides are equal, so add two lengths and two widths. If the pool were a square, one measurement would be enough: multiply it by 4.'}
+];
+
+/* ---------- extra practice generators ---------- */
+const FR=[['',0],['½',500],['¼',250],['¾',750]];
+const GEN={
+ 'km to m':()=>{const k=rnd(1,9),f=pick(FR);return{title:`Change ${k}${f[0]} km into metres.`,fig:`<div class="bigfact">${k}${f[0]} km<small>1 km = 1,000 m</small></div>`,lines:[`${k}${f[0]} km = [[${k*1000+f[1]}]] m`],explain:`${k} km = ${fmt(k*1000)} m${f[1]?` and ${f[0]} km = ${f[1]} m, so the total is ${fmt(k*1000+f[1])} m`:''}.`}},
+ 'm to km':()=>{const k=rnd(1,9);if(Math.random()<.4){const f=pick(FR.slice(1)),n={'½':'1/2','¼':'1/4','¾':'3/4'}[f[0]];return{title:`Write ${fmt(k*1000+f[1])} m in kilometres.`,fig:`<div class="bigfact">${fmt(k*1000+f[1])} m</div>`,lines:[`${fmt(k*1000+f[1])} m = [[${k}]] km [[${f[1]}]] m = [[${k}]] [[${n}]] km`],explain:`${f[1]} m is ${f[0]} of a kilometre.`}}
+   const m=rnd(1,18)*50;return{title:`Write ${fmt(k*1000+m)} m in kilometres and metres.`,fig:`<div class="bigfact">${fmt(k*1000+m)} m</div>`,lines:[`${fmt(k*1000+m)} m = [[${k}]] km [[${m}]] m`],explain:`${fmt(k*1000)} m makes ${k} km. ${m} m is left over.`}},
+ 'Count the squares':()=>{const w=rnd(3,10),h=rnd(2,6),u=pick(['cm','m']);return{title:`Each square is 1 ${u} long. What is the perimeter of the shape?`,hint:'Count the squares along each side.',fig:rectSVG({w,h,grid:true}),lines:[`Length = [[${w}]] ${u}   Width = [[${h}]] ${u}`,`Perimeter = [[${2*(w+h)}]] ${u}`],explain:`${w} + ${h} + ${w} + ${h} = ${2*(w+h)} ${u}.`}},
+ 'Add the sides':()=>{const l=rnd(4,12),w=rnd(2,Math.min(8,l)),u=pick(['m','cm']);return{title:'Find the perimeter of the shape on the grid.',hint:`Each square is 1 ${u} long.`,fig:rectSVG({w:l,h:w,grid:true,labels:{top:l+' '+u,left:w+' '+u},fill:'#c9ecc0'}),lines:[`Two lots of ${l} ${u} = [[${2*l}]] ${u}`,`Two lots of ${w} ${u} = [[${2*w}]] ${u}`,`Perimeter = [[${2*(l+w)}]] ${u}`],explain:`${2*l} + ${2*w} = ${2*(l+w)} ${u}.`}},
+ 'Missing side':()=>{const l=rnd(5,12),w=rnd(2,Math.min(8,l-1)),p=2*(l+w);return{title:`The perimeter of this shape is ${p} cm. Its length is ${l} cm. What is the width?`,hint:'Each square is 1 cm long. Work it out, then count to check.',fig:rectSVG({w:l,h:w,grid:true,labels:{top:l+' cm',left:'?'},fill:'#ffe0b8'}),lines:[`Two lengths = [[${2*l}]] cm`,`Two widths = ${p} − ${2*l} = [[${2*w}]] cm`,`Width = [[${w}]] cm`],explain:`${p} − ${2*l} = ${2*w}. Half of ${2*w} is ${w} cm.`}},
+ 'Word problems':()=>pick([
+   ()=>{const l=rnd(5,12),w=rnd(2,Math.min(8,l-1));return{title:`A garden is drawn on a grid. It is ${l} m long and ${w} m wide. How much fence is needed to go all the way around it?`,hint:'Each square is 1 m long.',fig:rectSVG({w:l,h:w,grid:true,labels:{top:l+' m',left:w+' m'},fill:'#bfe6a8'}),lines:[`${l} + ${w} + ${l} + ${w} = [[${2*(l+w)}]]`,`The fence is [[${2*(l+w)}]] m long.`],explain:`Two lengths (${2*l} m) plus two widths (${2*w} m) = ${2*(l+w)} m.`}},
+   ()=>{const [l,w]=pick([[300,200],[350,150],[400,100]]),n=rnd(2,4);return{title:`A park is drawn on a grid. It is ${l} m long and ${w} m wide. Minh walks around it ${n} times. How far does he walk?`,hint:'Each square is 50 m long.',fig:rectSVG({w:l/50,h:w/50,grid:true,labels:{top:l+' m',left:w+' m'},fill:'#bfe6a8'}),lines:[`Once around = [[1000]] m`,`${n} times around = [[${n*1000}]] m = [[${n}]] km`],explain:`${l} + ${w} + ${l} + ${w} = 1,000 m. ${n} × 1,000 m = ${fmt(n*1000)} m = ${n} km.`}},
+   ()=>{const l=rnd(5,9)*5,w=rnd(2,l/5-1)*5;return{title:`A picture frame is drawn on a grid. It is ${l} cm long and ${w} cm wide. Lan puts ribbon around the edge. How much ribbon does she need?`,hint:'Each square is 5 cm long.',fig:rectSVG({w:l/5,h:w/5,grid:true,labels:{top:l+' cm',left:w+' cm'},fill:'#f7d3e3'}),lines:[`Two lots of ${l} cm = [[${2*l}]] cm`,`Two lots of ${w} cm = [[${2*w}]] cm`,`She needs [[${2*(l+w)}]] cm of ribbon.`],explain:`${2*l} + ${2*w} = ${2*(l+w)} cm.`}}
+ ])()
+};
+const TOPICS=['Mixed',...Object.keys(GEN)];
+
+/* ---------- state ---------- */
+const S={sec:'intro',i:{l1:0,l2:0},vals:{},done:new Set(),stars:0,topic:'Mixed',pq:null,pn:0,act:null,team:[0,0]};
+const SECS=[['intro','Introduction'],['l1','Lesson 1: km and m'],['l2','Lesson 2: Perimeter on a grid'],['practice','Extra practice']];
+const HASH={intro:'intro',l1:'lesson-1',l2:'lesson-2',practice:'practice'};
+
+$('#nav').innerHTML=SECS.map(([k,n])=>`<button data-s="${k}">${n}</button>`).join('');
+$('#nav').onclick=e=>{const b=e.target.closest('button');if(b)go(b.dataset.s)};
+$('#topics').innerHTML=TOPICS.map(t=>`<button class="chip" data-t="${t}">${t}</button>`).join('');
+$('#topics').onclick=e=>{const b=e.target.closest('button');if(b){S.topic=b.dataset.t;newPractice()}};
+$('#pad').innerHTML=[1,2,3,4,5,6,7,8,9,0].map(n=>`<button data-k="${n}">${n}</button>`).join('')+'<button data-k="back" aria-label="Delete">⌫</button><button data-k="tab" aria-label="Next box">⇥</button>';
+
+function cur(){return S.sec==='l1'?L1[S.i.l1]:S.sec==='l2'?L2[S.i.l2]:S.sec==='practice'?S.pq:null}
+function key(){return S.sec==='practice'?'p'+S.pn:S.sec+S.i[S.sec]}
+
+function go(sec){
+  stopTalk();S.sec=sec;
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.s===sec));
+  $('#v-intro').classList.toggle('on',sec==='intro');$('#v-q').classList.toggle('on',sec!=='intro');
+  $('#topics').style.display=sec==='practice'?'flex':'none';
+  try{history.replaceState(null,'','#'+HASH[sec])}catch(e){}
+  if(sec==='practice'&&!S.pq)return newPractice();
+  render();
+}
+function newPractice(){
+  const t=S.topic==='Mixed'?pick(Object.keys(GEN)):S.topic;
+  S.pq=Object.assign({tag:'Practice',unit:t},GEN[t]());S.pn++;render();
+}
+
+function lineHTML(s){
+  return s.replace(/\[\[(.+?)\]\]/g,(m,a)=>{
+    if(a.includes('/')){const[n,d]=a.split('/');return `<span class="frac" data-n="${n}" data-d="${d}"><span class="box" tabindex="0"></span><span class="bar"></span><span class="box" tabindex="0"></span></span>`}
+    return `<span class="box" tabindex="0" data-a="${a}"></span>`});
+}
+function boxes(){return [...document.querySelectorAll('#qLines .box')]}
+function setAct(b){boxes().forEach(x=>x.classList.remove('act'));S.act=b;if(b)b.classList.add('act')}
+function save(){S.vals[key()]=boxes().map(b=>b.textContent)}
+
+function render(){
+  document.querySelectorAll('#topics .chip').forEach(c=>c.classList.toggle('on',c.dataset.t===S.topic));
+  const q=cur(),isQ=!!q;
+  ['tCheck','tShow','tClear'].forEach(id=>$('#'+id).style.display=isQ?'':'none');
+  $('#tShare').style.display=q&&q.share?'':'none';
+  $('#tCheck').style.display=q&&!q.talk?'':'none';
+  $('#tClear').style.display=q&&!q.talk?'':'none';
+  $('#tPrev').disabled=S.sec==='intro'||S.sec==='practice';
+  $('#tNext').textContent=S.sec==='practice'?'New question ▶':'Next ▶';
+  $('#tStep').textContent=S.sec==='intro'?'Intro':S.sec==='practice'?'Q '+S.pn:`${S.i[S.sec]+1} / ${(S.sec==='l1'?L1:L2).length}`;
+  $('#stars').textContent='★ '+S.stars;
+  if(!isQ)return;
+  const tg=$('#qTag');tg.textContent=q.tag;tg.className='tag '+q.tag.split(' ')[0];
+  $('#qUnit').textContent=q.unit||'';
+  $('#qFig').innerHTML=q.img?`<img src="img/${q.img}.png" alt="Textbook picture for this question">`:q.fig;
+  $('#qTitle').textContent=q.title;$('#qHint').textContent=q.hint||'';
+  $('#qHint').style.display=q.hint?'':'none';
+  const fb=$('#qFb');fb.className='fb';fb.textContent='';
+  $('#pad').style.display=q.lines?'grid':'none';
+  if(q.lines){
+    $('#qLines').innerHTML=q.lines.map(l=>`<div class="ln">${lineHTML(l)}</div>`).join('');
+    const v=S.vals[key()];if(v)boxes().forEach((b,i)=>b.textContent=v[i]||'');
+    setAct(boxes().find(b=>!b.textContent)||boxes()[0]);
+  }else if(q.opts){
+    $('#qLines').innerHTML=`<div class="opts">${q.opts.map(o=>`<button class="opt" data-o="${o}">${o}</button>`).join('')}</div>`;setAct(null);
+  }else{$('#qLines').innerHTML='';setAct(null)}
+}
+
+/* input */
+$('#qLines').addEventListener('click',e=>{
+  const b=e.target.closest('.box');if(b){setAct(b);return}
+  const o=e.target.closest('.opt');if(o){document.querySelectorAll('.opt').forEach(x=>x.className='opt');o.classList.add('sel')}
+});
+function type(k){
+  const b=S.act;if(!b)return;
+  if(k==='tab'){const a=boxes();setAct(a[(a.indexOf(b)+1)%a.length]);return}
+  b.classList.remove('ok','no');
+  if(k==='back')b.textContent=b.textContent.slice(0,-1);
+  else if(b.textContent.length<6)b.textContent+=k;
+  save();
+}
+$('#pad').onclick=e=>{const b=e.target.closest('button');if(b)type(b.dataset.k)};
+document.addEventListener('keydown',e=>{
+  if(e.target.isContentEditable||e.target.tagName==='SELECT')return;
+  if(S.sec==='intro')return;
+  if(/^\d$/.test(e.key))type(e.key);
+  else if(e.key==='Backspace'){type('back');e.preventDefault()}
+  else if(e.key==='Tab'){type('tab');e.preventDefault()}
+  else if(e.key==='Enter'){check();e.preventDefault()}
+  else if(e.key==='ArrowRight')next();
+  else if(e.key==='ArrowLeft')prev();
+});
+
+function reward(){const k=key();if(!S.done.has(k)){S.done.add(k);S.stars++;$('#stars').textContent='★ '+S.stars}}
+function fb(cls,t){const f=$('#qFb');f.className='fb '+cls;f.textContent=t}
+function check(){
+  const q=cur();if(!q||q.talk)return;
+  if(q.opts){const s=$('.opt.sel');if(!s)return fb('info','Choose an answer first.');
+    if(s.dataset.o===q.answer){s.classList.add('ok');reward();fb('good','Correct! '+q.explain)}else{s.classList.add('no');fb('bad','Not yet. Think about the opposite sides.')}return}
+  let all=true,empty=false;
+  document.querySelectorAll('#qLines .frac').forEach(f=>{const[n,d]=[...f.querySelectorAll('.box')],a=+n.textContent,b=+d.textContent;
+    const ok=n.textContent&&d.textContent&&b>0&&a*(+f.dataset.d)===b*(+f.dataset.n);
+    if(!n.textContent||!d.textContent)empty=true;[n,d].forEach(x=>{x.classList.toggle('ok',!!ok);x.classList.toggle('no',!ok)});if(!ok)all=false});
+  boxes().filter(b=>b.dataset.a).forEach(b=>{const ok=b.textContent===b.dataset.a;if(!b.textContent)empty=true;b.classList.toggle('ok',ok);b.classList.toggle('no',!ok);if(!ok)all=false});
+  if(all){reward();fb('good','Correct! '+q.explain)}
+  else fb('bad',empty?'Fill in every yellow box, then check again.':'Not yet. Look at the red boxes and try again.');
+}
+function show(){
+  const q=cur();if(!q)return;
+  if(q.opts){document.querySelectorAll('.opt').forEach(o=>o.className='opt'+(o.dataset.o===q.answer?' ok':''))}
+  if(q.lines){document.querySelectorAll('#qLines .frac').forEach(f=>{const[n,d]=[...f.querySelectorAll('.box')];n.textContent=f.dataset.n;d.textContent=f.dataset.d;[n,d].forEach(x=>{x.classList.remove('no');x.classList.add('ok')})});
+    boxes().filter(b=>b.dataset.a).forEach(b=>{b.textContent=b.dataset.a;b.classList.remove('no');b.classList.add('ok')});save()}
+  fb('info',q.explain);
+}
+function clearQ(){const q=cur();if(!q)return;delete S.vals[key()];render()}
+function next(){
+  if(S.sec==='intro')return go('l1');
+  if(S.sec==='practice')return newPractice();
+  const a=S.sec==='l1'?L1:L2;
+  if(S.i[S.sec]<a.length-1){S.i[S.sec]++;render()}else go(S.sec==='l1'?'l2':'practice');
+}
+function prev(){
+  if(S.sec==='l1'||S.sec==='l2'){if(S.i[S.sec]>0){S.i[S.sec]--;render()}else go(S.sec==='l1'?'intro':'l1')}
+}
+$('#tNext').onclick=next;$('#tPrev').onclick=prev;$('#tCheck').onclick=check;$('#tShow').onclick=show;$('#tClear').onclick=clearQ;
+$('#tShare').onclick=()=>{const q=cur();if(q&&q.share){$('#ovImg').src='img/'+q.share+'.png';$('#ov').classList.add('on')}};
+$('#ovClose').onclick=()=>$('#ov').classList.remove('on');
+$('#ov').onclick=e=>{if(e.target.id==='ov')$('#ov').classList.remove('on')};
+$('#fs').onclick=()=>{try{(document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()).catch(()=>{})}catch(e){}};
+
+/* teams + timer */
+document.querySelectorAll('.team button').forEach(b=>b.onclick=()=>{const t=+b.dataset.t;S.team[t]=Math.max(0,S.team[t]+(+b.dataset.d));$('#s'+t).textContent=S.team[t]});
+let tI=null;
+function timer(n){clearInterval(tI);const el=$('#timer');el.classList.remove('up');el.textContent=n;
+  tI=setInterval(()=>{n--;el.textContent=n;if(n<=0){clearInterval(tI);el.textContent="Time!";el.classList.add('up')}},1000)}
+$('#t30').onclick=()=>timer(30);$('#t60').onclick=()=>timer(60);
+$('#timer').onclick=()=>{clearInterval(tI);$('#timer').textContent='–';$('#timer').classList.remove('up')};
+
+/* ---------- AI avatar intro ---------- */
+const big=(h)=>`<div class="bigfact">${h}</div>`;
+const SCRIPT=[
+ {cap:'Hello, 4G1 students! I’m Teacher Jennifer, your AI maths guide, and I’m so happy to see you today!',vis:big('Hello, <em>4G1 Students!</em><small>Length and perimeter</small>')},
+ {cap:'We have a really fun lesson today! We’re going to practise two things: measuring in kilometres and metres, and finding the perimeter on a grid!',vis:big('<em>1</em> km and m<br><em>2</em> Perimeter on a grid')},
+ {cap:'First, here’s something cool to remember! One kilometre is the same as one thousand metres!',vis:big('1 km = <em>1,000 m</em>')},
+ {cap:'So, two kilometres is two thousand metres! And half a kilometre is five hundred metres. Easy, right?',vis:big('2 km = <em>2,000 m</em><br>½ km = <em>500 m</em>')},
+ {cap:'Now, my favourite part: perimeter on a grid! The perimeter is the distance all the way around a shape.',vis:rectSVG({w:10,h:4,grid:true,trace:true})},
+ {cap:'On a grid, it’s easy! Just count the squares along each side to find its length!',vis:rectSVG({w:10,h:4,grid:true,labels:{top:'10 m',bottom:'10 m',left:'4 m',right:'4 m'}})},
+ {cap:'Look at this pool! It’s 10 squares long and 4 squares wide, and each square is 1 m. 10 + 4 + 10 + 4 = 28 m! Wow!',vis:`<div class="combo">${rectSVG({w:10,h:4,grid:true,labels:{top:'10 m',bottom:'10 m',left:'4 m',right:'4 m'}})}<div class="bigfact">10 + 4 + 10 + 4 = <em>28 m</em></div></div>`},
+ {cap:'So remember: count the squares on every side, then add all the sides together! You can do it!',vis:big('<em>Count</em> every side<br>then <em>add</em>')},
+ {cap:'Your teacher will lead the activity. Listen, think, and share your answers! Are you ready? Yay! Let’s begin!',vis:big('Ready? <em>Let’s begin!</em>')}
+];
+const T={i:0,on:false,tok:0,mouth:null};
+$('#dots').innerHTML=SCRIPT.map(()=>'<i></i>').join('');
+const ENV=["001877777642266763466644444334223234300000000058764354446546675233321268636655414543221000079761432644433310000798864465346504344444443334321110000", "005657465356656531156655444343333322211000000001748654114641354323443135422234200000008976466655564225567754554456566533223410000077237666567621466743433442233221110000", "00168654321000388646634652213465434455556331100000000038976434668854444364153355665433356734544455455422112330000", "0023776443652277776555545433365155564665676322343000000008869826226679876655742165676267563677632223420000000388974532233332100000", "00697776567662256625301233223300000017898986655664245532220000000000853978776774765462775445546236665775665444444344443211100000", "00899726667533100072437753322100000000047522366536435766747667777624355543415554334355321110000", "00775636411555454000000293524666541777647778877315665425555435544443367364443166545534566555422110000000000036778876200127642166665401564323566655411564314655566333317755763477633223420000000015754322100000", "0034775898676422100000000248643552677775764845644454444210499657765667474455553435244122200000007934864664321310000", "0077144524565554666355541335332222100000000069744766404664455435555546653332234000000687646544442000006777642214634315234322200000"];
+const AUD=SCRIPT.map((_,i)=>{const a=new Audio('audio/happy'+i+'.mp3');a.preload='auto';return a});
+function mouth(o){
+  const sm=$('#mSmile'),op=$('#mOpen');
+  if(o<.12){sm.style.display='';op.style.display='none';return}
+  sm.style.display='none';op.style.display='';
+  const ry=2.5+11*o,rx=18-5*o;
+  ['mIn','mLip','mClipE'].forEach(id=>{const e=$('#'+id);e.setAttribute('rx',rx);e.setAttribute('ry',ry)});
+  $('#mTeeth').setAttribute('y',243-ry-2);
+}
+function mouthOn(a,i){clearInterval(T.mouth);let c=0;
+  T.mouth=setInterval(()=>{c++;if(a){const e=ENV[i],k=Math.floor(a.currentTime*20);mouth((+(e[k]||0))/9)}else mouth(c%5===4?0:.25+Math.random()*.75)},50);
+  $('#avatarCard').classList.add('speaking')}
+function mouthOff(){clearInterval(T.mouth);mouth(0);$('#avatarCard').classList.remove('speaking')}
+
+function showLine(i){
+  const l=SCRIPT[i];$('#visual').innerHTML=l.vis;$('#caption').textContent=l.cap;
+  document.querySelectorAll('#dots i').forEach((d,k)=>d.classList.toggle('done',k<=i));
+}
+function speak(i){
+  if(i>=SCRIPT.length){T.on=false;T.i=SCRIPT.length-1;mouthOff();$('#iPlay').textContent='▶ Start';return}
+  T.i=i;const tok=++T.tok,l=SCRIPT[i],a=AUD[i];showLine(i);
+  let finished=false;
+  const done=()=>{if(finished||tok!==T.tok)return;finished=true;mouthOff();setTimeout(()=>{if(T.on&&tok===T.tok)speak(i+1)},350)};
+  const silent=()=>{if(finished||tok!==T.tok)return;mouthOn();setTimeout(done,l.cap.split(' ').length*400+500)};
+  try{
+    AUD.forEach(x=>{x.pause();x.onended=x.onerror=null});
+    a.currentTime=0;a.onended=done;a.onerror=silent;
+    const pr=a.play();mouthOn(a,i);
+    if(pr&&pr.catch)pr.catch(()=>{if(tok===T.tok)silent()});
+  }catch(e){silent()}
+}
+function stopTalk(){T.on=false;T.tok++;AUD.forEach(x=>{try{x.pause()}catch(e){}});mouthOff();$('#iPlay').textContent='▶ Start'}
+$('#iPlay').onclick=()=>{if(T.on){stopTalk();$('#iPlay').textContent='▶ Continue'}else{T.on=true;$('#iPlay').textContent='❚❚ Pause';speak(T.i)}};
+$('#iReplay').onclick=()=>{stopTalk();T.on=true;$('#iPlay').textContent='❚❚ Pause';speak(0)};
+$('#iFwd').onclick=()=>{const n=Math.min(T.i+1,SCRIPT.length-1),was=T.on;stopTalk();T.i=n;if(was){T.on=true;$('#iPlay').textContent='❚❚ Pause';speak(n)}else showLine(n)};
+$('#iBack').onclick=()=>{const n=Math.max(T.i-1,0),was=T.on;stopTalk();T.i=n;if(was){T.on=true;$('#iPlay').textContent='❚❚ Pause';speak(n)}else showLine(n)};
+$('#iGo').onclick=()=>go('l1');
+$('#visual').innerHTML=SCRIPT[0].vis;
+
+/* start */
+const h=(location.hash||'').slice(1),start=Object.keys(HASH).find(k=>HASH[k]===h)||'intro';
+window.addEventListener('hashchange',()=>{const x=location.hash.slice(1),k=Object.keys(HASH).find(k=>HASH[k]===x);if(k&&k!==S.sec)go(k)});
+go(start);
+</script>
+</body>
+</html>
