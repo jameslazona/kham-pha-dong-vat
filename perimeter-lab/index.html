@@ -21,12 +21,21 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 button:focus-visible,.box:focus-visible{outline:3px solid #2b7fff;outline-offset:2px}
 
 /* header */
-header{display:flex;align-items:center;gap:14px;padding:8px 16px;background:var(--ink);color:#fff}
-header h1{font-size:clamp(16px,1.7vw,24px);margin:0;white-space:nowrap}
+header{display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--ink);color:#fff}
+header h1{font-size:clamp(15px,1.5vw,22px);margin:0;white-space:nowrap}
 header h1 span{color:#ffd166}
 nav{display:flex;gap:6px;flex:1;flex-wrap:wrap}
-nav button{padding:7px 14px;border-radius:999px;font-weight:800;font-size:clamp(12px,1.15vw,17px);color:#cfd5ee;background:#2b3460}
+nav button{padding:6px 10px;border-radius:999px;font-weight:800;font-size:clamp(11px,1.02vw,16px);color:#cfd5ee;background:#2b3460}
 nav button.on{background:#ffd166;color:var(--ink)}
+.cls{display:flex;background:#2b3460;border-radius:12px;padding:3px;gap:3px}
+.cls button{padding:6px 12px;border-radius:9px;font-family:Fredoka;font-weight:600;font-size:clamp(13px,1.2vw,18px);color:#cfd5ee;white-space:nowrap}
+.cls button.on{background:#fff;color:var(--ink)}
+.box.pick{min-width:3.4em;background:#dff1ff;border-color:#5aa9e6;font-size:.86em;white-space:nowrap}
+.box.pick.act{border-color:var(--ink)}
+.box.pick:empty::before{content:'tap';color:#7b93b0;font-size:.72em;font-family:Nunito;font-weight:800}
+.opts.wide{grid-template-columns:repeat(2,1fr)}
+.opts.wide .opt{font-size:clamp(17px,1.8vw,28px)}
+.bigfact .or{display:block;font-size:.4em;color:#5b6485;font-family:Nunito;font-weight:800;margin:.3em 0}
 .hbtn{padding:7px 12px;border-radius:10px;background:#2b3460;color:#fff;font-weight:800;font-size:14px}
 .stars{font-weight:800;font-size:clamp(13px,1.2vw,18px);white-space:nowrap}
 
@@ -49,7 +58,7 @@ main{overflow:auto;padding:14px 16px;min-height:0}
 .board{background:var(--card);border:2px solid var(--line);border-radius:22px;display:grid;grid-template-rows:1fr auto auto;min-height:0;overflow:hidden}
 .visual{display:flex;align-items:center;justify-content:center;padding:18px;min-height:0;text-align:center}
 .visual svg{max-width:100%;max-height:100%}
-.bigfact{font-family:Fredoka;font-size:clamp(30px,5vw,78px);font-weight:700;line-height:1.15}
+.bigfact{text-align:center;font-family:Fredoka;font-size:clamp(30px,5vw,78px);font-weight:700;line-height:1.15}
 .bigfact em{font-style:normal;color:var(--pink)}
 .bigfact small{display:block;font-size:.45em;color:#5b6485;font-family:Nunito;font-weight:800;margin-top:.4em}
 .combo{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;width:100%;gap:6px}
@@ -153,7 +162,8 @@ footer .btn{padding:8px 11px;font-size:clamp(12px,1.05vw,17px)}
 </head>
 <body>
 <header>
-  <h1>Perimeter <span>Practice Lab</span></h1>
+  <h1>Length &amp; Perimeter <span>Lab</span></h1>
+  <div class="cls" id="cls"></div>
   <nav id="nav"></nav>
   <span class="stars" id="stars">★ 0</span>
   <button class="hbtn" id="fs">Full screen</button>
@@ -164,7 +174,7 @@ footer .btn{padding:8px 11px;font-size:clamp(12px,1.05vw,17px)}
   <section class="view" id="v-intro">
     <div class="intro">
       <div class="avatarCard" id="avatarCard">
-        <svg viewBox="0 0 320 380" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Teacher Jennifer, the AI maths guide">
+        <svg id="avJen" viewBox="0 0 320 380" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Teacher Jennifer, the AI maths guide">
           <defs>
             <radialGradient id="skin" cx="50%" cy="38%" r="70%"><stop offset="0" stop-color="#f8d6b3"/><stop offset=".7" stop-color="#e9b98c"/><stop offset="1" stop-color="#d79e70"/></radialGradient>
             <linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a2e1e"/><stop offset="1" stop-color="#1d110b"/></linearGradient>
@@ -206,7 +216,16 @@ footer .btn{padding:8px 11px;font-size:clamp(12px,1.05vw,17px)}
             </g>
           </g>
         </svg>
-        <div class="nameplate"><i class="live"></i><div><b>Teacher Jennifer</b><br><small>AI maths guide</small></div><span class="aiTag">AI</span></div>
+        <svg id="avJames" viewBox="0 0 600 825" preserveAspectRatio="xMidYMin slice" role="img" aria-label="Teacher James, the AI maths guide" style="display:none">
+          <defs><clipPath id="jClip"><ellipse id="jClipE" cx="300" cy="378" rx="44" ry="2"/></clipPath></defs>
+          <image href="img/james.jpg" width="600" height="825"/>
+          <g id="jMouth" style="display:none">
+            <ellipse id="jIn" cx="300" cy="378" rx="44" ry="2" fill="#3a1114"/>
+            <g clip-path="url(#jClip)"><rect x="266" y="374.5" width="68" height="4" rx="2" fill="#e8e0d6"/></g>
+          </g>
+          <image id="jJaw" href="img/james_jaw.png" x="182" y="373" width="237" height="135"/>
+        </svg>
+        <div class="nameplate"><i class="live"></i><div><b id="tName">Teacher Jennifer</b><br><small>AI maths guide</small></div><span class="aiTag">AI</span></div>
       </div>
       <div class="board">
         <div class="visual" id="visual"></div>
@@ -295,7 +314,7 @@ const L2=[
  {tag:'Discover',unit:'Lesson 2 · Perimeter on a grid',img:'l2_discover',title:'b) Another pool is a square with a side length of 4 m. What is the distance around this pool?',lines:['4 + 4 + 4 + 4 = [[16]]','The distance around the pool is [[16]] m.'],share:'l2_share_b',explain:'All four sides of a square are the same length. 4 lots of 4 m = 16 m.'},
  {tag:'Think together',unit:'Lesson 2 · Question 1',img:'l2_tt1',title:'A swimming pool is 8 m long and 5 m wide. What is the distance around it?',lines:['5 + 8 + 5 + 8 = [[26]]','The perimeter is [[26]] m.'],explain:'Two lots of 8 m = 16 m. Two lots of 5 m = 10 m. 16 m + 10 m = 26 m.'},
  {tag:'Think together',unit:'Lesson 2 · Question 2',img:'l2_tt2',title:'What is the perimeter of this rectangle?',lines:['5 + 3 + 5 + 3 = [[16]]','The perimeter is [[16]] cm.'],explain:'5 cm + 3 cm + 5 cm + 3 cm = 16 cm.'},
- {tag:'Challenge',unit:'Lesson 2 · Question 3a',img:'l2_ch3a',title:'How many measurements do you need to work out the perimeter?',hint:'Talk with your partner first. Why?',opts:['1','2','3','4'],answer:'2',explain:'Two: the length and the width. The opposite sides of a rectangle are equal, so you already know the other two sides.'},
+ {tag:'Challenge',unit:'Lesson 2 · Question 3a',img:'l2_ch3a',title:'How many measurements do you need to work out the perimeter?',hint:'Talk with your partner first. Why?',opts:['1','2','3','4'],answer:'2',wrong:'Not yet. Think about the opposite sides.',explain:'Two: the length and the width. The opposite sides of a rectangle are equal, so you already know the other two sides.'},
  {tag:'Challenge',unit:'Lesson 2 · Question 3b',img:'l2_ch3b',title:'Part of the pool is covered. Explain how you could still work out the perimeter.',hint:'Class discussion. Press “Show answer” when the class is ready.',talk:true,explain:'You can still see one whole long side and one whole short side. Measure those two. The opposite sides are equal, so add two lengths and two widths. If the pool were a square, one measurement would be enough: multiply it by 4.'}
 ];
 
@@ -314,38 +333,95 @@ const GEN={
    ()=>{const l=rnd(5,9)*5,w=rnd(2,l/5-1)*5;return{title:`A picture frame is drawn on a grid. It is ${l} cm long and ${w} cm wide. Lan puts ribbon around the edge. How much ribbon does she need?`,hint:'Each square is 5 cm long.',fig:rectSVG({w:l/5,h:w/5,grid:true,labels:{top:l+' cm',left:w+' cm'},fill:'#f7d3e3'}),lines:[`Two lots of ${l} cm = [[${2*l}]] cm`,`Two lots of ${w} cm = [[${2*w}]] cm`,`She needs [[${2*(l+w)}]] cm of ribbon.`],explain:`${2*l} + ${2*w} = ${2*(l+w)} cm.`}}
  ])()
 };
-const TOPICS=['Mixed',...Object.keys(GEN)];
+
+/* ---------- Grade 3 (3G1) textbook steps ---------- */
+const L6=[
+ {tag:'Discover',unit:'Lesson 6 · Compare lengths',img:'l6_discover',title:'Write each height in metres and centimetres.',hint:'The minimum height for the ride is 1 m 30 cm.',lines:['Ambika: 125 cm = [[1]] m [[25]] cm','Olivia: 39 cm more than 1 m = [[1]] m [[39]] cm','Lee: [[1]] m [[33]] cm'],explain:'100 cm makes 1 m, so 125 cm = 1 m 25 cm.'},
+ {tag:'Discover',unit:'Lesson 6 · Compare lengths',img:'l6_discover',title:'a) Who is tall enough to go on the ride?',hint:'You must be 1 m 30 cm or taller.',opts:['Ambika only','Olivia and Lee','Lee only','All three'],answer:'Olivia and Lee',share:'l6_share',explain:'1 m 25 cm is less than 1 m 30 cm, so Ambika cannot go. 1 m 39 cm and 1 m 33 cm are both more than 1 m 30 cm.'},
+ {tag:'Discover',unit:'Lesson 6 · Compare lengths',img:'l6_discover',title:'b) Whose height is closest to 1 m 30 cm?',opts:['Ambika','Olivia','Lee'],answer:'Lee',share:'l6_share',explain:'Lee is 3 cm away from 1 m 30 cm. Ambika is 5 cm away and Olivia is 9 cm away.'},
+ {tag:'Think together',unit:'Lesson 6 · Question 1',img:'l6_tt1',title:'Who is in first, second and third place?',hint:'Type the numbers. Tap a blue box to choose a name.',lines:['Lexi: 363 cm = [[3]] m [[63]] cm','First place: [[=Lexi|Mo,Lexi,Danny]]','Second place: [[=Mo|Mo,Lexi,Danny]]','Third place: [[=Danny|Mo,Lexi,Danny]]'],explain:'3 m 63 cm is the longest throw, then 3 m 59 cm, then 2 m 99 cm.'},
+ {tag:'Think together',unit:'Lesson 6 · Question 2',img:'l6_tt2',title:'Which box contains the shortest ribbons?',lines:['Box B: 880 mm = [[88]] cm','Box C: 1 metre = [[100]] cm','The shortest ribbons are in box [[=B|A,B,C]]'],explain:'A is 95 cm, B is 88 cm and C is 100 cm. 88 cm is the shortest.'},
+ {tag:'Challenge',unit:'Lesson 6 · Question 3',img:'l6_ch3',title:'In each pair, which is the longer measurement?',hint:'Change each pair to the same unit first.',lines:['<span class="lab">a)</span> 30 cm = [[300]] mm, so [[=30 cm|294 mm,30 cm]] is longer.','<span class="lab">b)</span> 4 m 9 cm = [[409]] cm, so [[=490 cm|4 m 9 cm,490 cm]] is longer.','<span class="lab">c)</span> 3 m 1 cm = [[301]] cm, so [[=3 m 1 cm|199 cm,3 m 1 cm]] is longer.'],explain:'Look at the units, not only the numbers. 300 mm is more than 294 mm, 490 cm is more than 409 cm, and 301 cm is more than 199 cm.'}
+];
+const L7=[
+ {tag:'Discover',unit:'Lesson 7 · Add lengths',img:'l7_discover',title:'a) Kate and Ebo join the three pieces of bunting. How long is the new piece?',lines:['450 cm = [[4]] m [[50]] cm','Metres: 0 m + 4 m + 3 m = [[7]] m','Centimetres: 25 cm + 50 cm + 0 cm = [[75]] cm','The new piece is [[7]] m [[75]] cm long.'],share:'l7_share',explain:'Add the metres, then add the centimetres: 7 m + 75 cm = 7 m 75 cm.'},
+ {tag:'Discover',unit:'Lesson 7 · Add lengths',img:'l7_discover',title:'b) They join only the 3 m piece and the 450 cm piece. What is the total length?',lines:['450 cm = [[4]] m [[50]] cm','3 m + 4 m 50 cm = [[7]] m [[50]] cm','This is the same as [[750]] cm.'],share:'l7_share',explain:'3 m + 4 m = 7 m, and there are 50 cm more. 7 m 50 cm = 750 cm.'},
+ {tag:'Think together',unit:'Lesson 7 · Question 1a',img:'l7_tt1a',title:'Find the total length of these three pieces of bunting.',lines:['125 cm = [[1]] m [[25]] cm','Metres: 0 m + 1 m + 2 m = [[3]] m','Centimetres: 35 cm + 25 cm + 15 cm = [[75]] cm','Total = [[3]] m [[75]] cm = [[375]] cm'],explain:'In centimetres: 35 + 125 + 215 = 375 cm. Both methods give the same answer.'},
+ {tag:'Think together',unit:'Lesson 7 · Question 1b',img:'l7_tt1b',title:'What is the total height of the model?',lines:['2 cm 1 mm = [[21]] mm','5 mm + 12 mm + 21 mm = [[38]] mm','The model is [[3]] cm [[8]] mm tall.'],explain:'10 mm makes 1 cm, so 38 mm = 3 cm 8 mm.'},
+ {tag:'Think together',unit:'Lesson 7 · Question 2',img:'l7_tt2',title:'Work out the missing numbers.',lines:['<span class="lab">a)</span> 50 cm + 50 cm = [[1]] m','<span class="lab">b)</span> 4 cm + 60 mm = [[10]] cm','<span class="lab">c)</span> 12 mm + [[8]] mm = 2 cm','<span class="lab">d)</span> 1 m 40 cm + [[160]] cm = 3 m'],explain:'60 mm = 6 cm. 2 cm = 20 mm. 3 m = 300 cm and 1 m 40 cm = 140 cm.'},
+ {tag:'Challenge',unit:'Lesson 7 · Question 3',img:'l7_ch3',title:'What lengths can you make by joining the pieces of wool?',lines:['50 cm + 60 cm = [[1]] m [[10]] cm','1 m 85 cm + 50 cm = [[2]] m [[35]] cm','1 m 85 cm + 60 cm = [[2]] m [[45]] cm','All three pieces = [[2]] m [[95]] cm'],explain:'1 m 85 cm needs 15 cm more to make 2 m. Or change everything to centimetres: 185 + 50 + 60 = 295 cm.'}
+];
+const L8=[
+ {tag:'Discover',unit:'Lesson 8 · Subtract lengths',img:'l8_discover',title:'a) What length of board will be left after Holly cuts off the 1 m piece?',lines:['2 m 50 cm = [[250]] cm','250 cm − 100 cm = [[150]] cm','[[1]] m [[50]] cm of board is left.'],share:'l8_share',explain:'1 m = 100 cm. 250 − 100 = 150 cm, which is 1 m 50 cm.'},
+ {tag:'Discover',unit:'Lesson 8 · Subtract lengths',img:'l8_discover',title:'b) Will there be enough left to cut another 1 m piece?',hint:'Explain your answer to your partner.',opts:['Yes','No'],answer:'Yes',share:'l8_share',explain:'Yes. 150 cm is left and 1 m is only 100 cm. After the second cut, 50 cm is left.'},
+ {tag:'Think together',unit:'Lesson 8 · Question 1a',img:'l8_tt1a',title:'A plank is 3 metres long. Amal cuts off a piece that is 50 cm long. How much is left?',lines:['[[300]] cm − 50 cm = [[250]] cm'],explain:'3 m = 300 cm. 300 − 50 = 250 cm, which is 2 m 50 cm.'},
+ {tag:'Think together',unit:'Lesson 8 · Question 1b',img:'l8_tt1b',title:'Emma’s picture is 1 m 10 cm long. She trims off 35 cm. How long is the picture now?',lines:['1 m 10 cm = [[110]] cm','110 cm − 35 cm = [[75]] cm'],explain:'Count back 35 from 110 on the number line: 110 − 10 = 100, then 100 − 25 = 75 cm.'},
+ {tag:'Think together',unit:'Lesson 8 · Question 2',img:'l8_tt2',title:'Lee’s string is 8 cm 5 mm long. He cuts some off and now it is 65 mm long. How much has he cut off?',lines:['8 cm 5 mm = [[85]] mm','85 mm − 65 mm = [[20]] mm','He cut off [[2]] cm.'],explain:'10 mm = 1 cm, so 20 mm = 2 cm.'},
+ {tag:'Challenge',unit:'Lesson 8 · Question 3',img:'l8_ch3',title:'There are 10 metres of ribbon. Danny cuts off 1 m 50 cm and Bella cuts off 77 cm. How much is left?',hint:'There is more than one way. Share your method.',lines:['Cut off altogether: 150 cm + 77 cm = [[227]] cm','1,000 cm − 227 cm = [[773]] cm','[[7]] m [[73]] cm of ribbon is left.'],explain:'10 m = 1,000 cm. Another way: 10 m − 1 m 50 cm = 8 m 50 cm, then take away 77 cm to leave 7 m 73 cm.'}
+];
+const bf=(a,b)=>`<div class="bigfact">${a}<small>${b}</small></div>`;
+const GEN3={
+ 'cm and m':()=>{const m=rnd(1,9),c=rnd(1,99),t=m*100+c;return Math.random()<.5?
+   {title:`Write ${t} cm in metres and centimetres.`,fig:bf(t+' cm','1 m = 100 cm'),lines:[`${t} cm = [[${m}]] m [[${c}]] cm`],explain:`${m*100} cm makes ${m} m. ${c} cm is left over.`}:
+   {title:`Write ${m} m ${c} cm in centimetres.`,fig:bf(`${m} m ${c} cm`,'1 m = 100 cm'),lines:[`${m} m ${c} cm = [[${t}]] cm`],explain:`${m} m = ${m*100} cm. ${m*100} + ${c} = ${t} cm.`}},
+ 'mm and cm':()=>{const c=rnd(1,20),m=rnd(1,9),t=c*10+m;return Math.random()<.5?
+   {title:`Write ${t} mm in centimetres and millimetres.`,fig:bf(t+' mm','1 cm = 10 mm'),lines:[`${t} mm = [[${c}]] cm [[${m}]] mm`],explain:`${c*10} mm makes ${c} cm. ${m} mm is left over.`}:
+   {title:`Write ${c} cm ${m} mm in millimetres.`,fig:bf(`${c} cm ${m} mm`,'1 cm = 10 mm'),lines:[`${c} cm ${m} mm = [[${t}]] mm`],explain:`${c} cm = ${c*10} mm. ${c*10} + ${m} = ${t} mm.`}},
+ 'Compare':()=>{const m=rnd(1,5),c=rnd(1,99),t=m*100+c,o=t+pick([-30,-12,-5,-2,3,8,25,40]),A=`${m} m ${c} cm`,B=`${o} cm`,lg=o>t?B:A;
+   return{title:'Which is the longer measurement?',hint:'Change them to the same unit first. Tap the blue box to choose.',fig:`<div class="bigfact">${A}<span class="or">or</span>${B}</div>`,lines:[`${A} = [[${t}]] cm`,`[[=${lg}|${A},${B}]] is longer.`],explain:`${A} = ${t} cm. ${Math.max(t,o)} cm is more than ${Math.min(t,o)} cm.`}},
+ 'Add lengths':()=>{const m1=rnd(1,5),c1=rnd(1,9)*5,m2=rnd(1,4),c2=rnd(1,10)*5,b=m2*100+c2;
+   return{title:`Add ${m1} m ${c1} cm and ${b} cm.`,fig:`<div class="bigfact">${m1} m ${c1} cm<span class="or">+</span>${b} cm</div>`,lines:[`${b} cm = [[${m2}]] m [[${c2}]] cm`,`Metres: ${m1} m + ${m2} m = [[${m1+m2}]] m`,`Centimetres: ${c1} cm + ${c2} cm = [[${c1+c2}]] cm`,`Total = [[${m1+m2}]] m [[${c1+c2}]] cm`],explain:`${m1+m2} m + ${c1+c2} cm = ${m1+m2} m ${c1+c2} cm.`}},
+ 'Subtract lengths':()=>{const m=rnd(2,6),c=rnd(1,9)*10,cut=rnd(2,9)*10+pick([0,5]),t=m*100+c,l=t-cut;
+   return{title:`A plank is ${m} m ${c} cm long. A piece ${cut} cm long is cut off. How much is left?`,fig:`<div class="bigfact">${m} m ${c} cm<span class="or">−</span>${cut} cm</div>`,lines:[`${m} m ${c} cm = [[${t}]] cm`,`${t} cm − ${cut} cm = [[${l}]] cm`,`[[${Math.floor(l/100)}]] m [[${l%100}]] cm is left.`],explain:`${t} − ${cut} = ${l} cm, which is ${Math.floor(l/100)} m ${l%100} cm.`}},
+ 'Word problems':()=>pick([
+   ()=>{const a=rnd(11,18)*10,b=rnd(5,9)*10+5,t=a+b;return{title:`Mai has a ribbon 1 m ${a-100} cm long and another ribbon ${b} cm long. She joins them together. How long is the new ribbon?`,fig:`<div class="bigfact">1 m ${a-100} cm<span class="or">+</span>${b} cm</div>`,lines:[`1 m ${a-100} cm = [[${a}]] cm`,`${a} cm + ${b} cm = [[${t}]] cm`,`The new ribbon is [[${Math.floor(t/100)}]] m [[${t%100}]] cm long.`],explain:`${a} + ${b} = ${t} cm, which is ${Math.floor(t/100)} m ${t%100} cm.`}},
+   ()=>{const a=rnd(120,139),b=rnd(101,a-4);return{title:`Nam is 1 m ${a-100} cm tall. His sister is ${b} cm tall. How much taller is Nam?`,fig:`<div class="bigfact">1 m ${a-100} cm<span class="or">and</span>${b} cm</div>`,lines:[`1 m ${a-100} cm = [[${a}]] cm`,`${a} cm − ${b} cm = [[${a-b}]] cm`],explain:`Nam is ${a} cm tall. ${a} − ${b} = ${a-b} cm.`}},
+   ()=>{const c=rnd(6,12),m=rnd(1,9),t=c*10+m,cut=rnd(15,45);return{title:`A string is ${c} cm ${m} mm long. Lan cuts off ${cut} mm. How long is the string now?`,fig:`<div class="bigfact">${c} cm ${m} mm<span class="or">−</span>${cut} mm</div>`,lines:[`${c} cm ${m} mm = [[${t}]] mm`,`${t} mm − ${cut} mm = [[${t-cut}]] mm`],explain:`${t} − ${cut} = ${t-cut} mm.`}}
+ ])()
+};
 
 /* ---------- state ---------- */
-const S={sec:'intro',i:{l1:0,l2:0},vals:{},done:new Set(),stars:0,topic:'Mixed',pq:null,pn:0,act:null,team:[0,0]};
-const SECS=[['intro','Introduction'],['l1','Lesson 1: km and m'],['l2','Lesson 2: Perimeter on a grid'],['practice','Extra practice']];
-const HASH={intro:'intro',l1:'lesson-1',l2:'lesson-2',practice:'practice'};
-
-$('#nav').innerHTML=SECS.map(([k,n])=>`<button data-s="${k}">${n}</button>`).join('');
+const S={cls:'g4',sec:'intro',i:{l1:0,l2:0,l6:0,l7:0,l8:0},vals:{},done:new Set(),stars:0,topic:{g4:'Mixed',g3:'Mixed'},pq:{g4:null,g3:null},pn:0,act:null,team:[0,0]};
+const LES={l1:L1,l2:L2,l6:L6,l7:L7,l8:L8};
+let CLS={};
+const C=()=>CLS[S.cls];
+const hashOf=(c,x)=>(c==='g3'?'g3-':'')+(x==='intro'||x==='practice'?x:'lesson-'+x.slice(1));
 $('#nav').onclick=e=>{const b=e.target.closest('button');if(b)go(b.dataset.s)};
-$('#topics').innerHTML=TOPICS.map(t=>`<button class="chip" data-t="${t}">${t}</button>`).join('');
-$('#topics').onclick=e=>{const b=e.target.closest('button');if(b){S.topic=b.dataset.t;newPractice()}};
+$('#topics').onclick=e=>{const b=e.target.closest('button');if(b){S.topic[S.cls]=b.dataset.t;newPractice()}};
+$('#cls').onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.c!==S.cls)setClass(b.dataset.c,'intro')};
 $('#pad').innerHTML=[1,2,3,4,5,6,7,8,9,0].map(n=>`<button data-k="${n}">${n}</button>`).join('')+'<button data-k="back" aria-label="Delete">⌫</button><button data-k="tab" aria-label="Next box">⇥</button>';
+function setClass(c,sec){
+  stopTalk();S.cls=c;T.i=0;
+  document.querySelectorAll('#cls button').forEach(b=>b.classList.toggle('on',b.dataset.c===c));
+  $('#nav').innerHTML=C().secs.map(([k,n])=>`<button data-s="${k}">${n}</button>`).join('');
+  $('#topics').innerHTML=['Mixed',...Object.keys(C().gen)].map(t=>`<button class="chip" data-t="${t}">${t}</button>`).join('');
+  $('#avJen').style.display=c==='g4'?'':'none';$('#avJames').style.display=c==='g3'?'':'none';
+  $('#tName').textContent=C().teacher;
+  $('#iGo').textContent='Start '+C().secs[1][1].split(':')[0]+' ▶';
+  $('#dots').innerHTML=C().script.map(()=>'<i></i>').join('');
+  $('#visual').innerHTML=C().script[0].vis;$('#caption').textContent='Press Start and '+C().teacher+' will introduce the lesson.';
+  go(sec);
+}
 
-function cur(){return S.sec==='l1'?L1[S.i.l1]:S.sec==='l2'?L2[S.i.l2]:S.sec==='practice'?S.pq:null}
-function key(){return S.sec==='practice'?'p'+S.pn:S.sec+S.i[S.sec]}
+function cur(){return S.sec==='practice'?S.pq[S.cls]:LES[S.sec]?LES[S.sec][S.i[S.sec]]:null}
+function key(){return S.sec==='practice'?'p'+S.cls+S.pn:S.sec+S.i[S.sec]}
 
 function go(sec){
   stopTalk();S.sec=sec;
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.s===sec));
   $('#v-intro').classList.toggle('on',sec==='intro');$('#v-q').classList.toggle('on',sec!=='intro');
   $('#topics').style.display=sec==='practice'?'flex':'none';
-  try{history.replaceState(null,'','#'+HASH[sec])}catch(e){}
-  if(sec==='practice'&&!S.pq)return newPractice();
+  try{history.replaceState(null,'','#'+hashOf(S.cls,sec))}catch(e){}
+  if(sec==='practice'&&!S.pq[S.cls])return newPractice();
   render();
 }
 function newPractice(){
-  const t=S.topic==='Mixed'?pick(Object.keys(GEN)):S.topic;
-  S.pq=Object.assign({tag:'Practice',unit:t},GEN[t]());S.pn++;render();
+  const g=C().gen,tp=S.topic[S.cls],t=tp==='Mixed'?pick(Object.keys(g)):tp;
+  S.pq[S.cls]=Object.assign({tag:'Practice',unit:t},g[t]());S.pn++;render();
 }
-
 function lineHTML(s){
   return s.replace(/\[\[(.+?)\]\]/g,(m,a)=>{
+    if(a[0]==='='){const[ans,o]=a.slice(1).split('|');return `<span class="box pick" tabindex="0" data-a="${ans}" data-o="${o}"></span>`}
     if(a.includes('/')){const[n,d]=a.split('/');return `<span class="frac" data-n="${n}" data-d="${d}"><span class="box" tabindex="0"></span><span class="bar"></span><span class="box" tabindex="0"></span></span>`}
     return `<span class="box" tabindex="0" data-a="${a}"></span>`});
 }
@@ -354,7 +430,7 @@ function setAct(b){boxes().forEach(x=>x.classList.remove('act'));S.act=b;if(b)b.
 function save(){S.vals[key()]=boxes().map(b=>b.textContent)}
 
 function render(){
-  document.querySelectorAll('#topics .chip').forEach(c=>c.classList.toggle('on',c.dataset.t===S.topic));
+  document.querySelectorAll('#topics .chip').forEach(c=>c.classList.toggle('on',c.dataset.t===S.topic[S.cls]));
   const q=cur(),isQ=!!q;
   ['tCheck','tShow','tClear'].forEach(id=>$('#'+id).style.display=isQ?'':'none');
   $('#tShare').style.display=q&&q.share?'':'none';
@@ -362,7 +438,7 @@ function render(){
   $('#tClear').style.display=q&&!q.talk?'':'none';
   $('#tPrev').disabled=S.sec==='intro'||S.sec==='practice';
   $('#tNext').textContent=S.sec==='practice'?'New question ▶':'Next ▶';
-  $('#tStep').textContent=S.sec==='intro'?'Intro':S.sec==='practice'?'Q '+S.pn:`${S.i[S.sec]+1} / ${(S.sec==='l1'?L1:L2).length}`;
+  $('#tStep').textContent=S.sec==='intro'?'Intro':S.sec==='practice'?'Q '+S.pn:`${S.i[S.sec]+1} / ${LES[S.sec].length}`;
   $('#stars').textContent='★ '+S.stars;
   if(!isQ)return;
   const tg=$('#qTag');tg.textContent=q.tag;tg.className='tag '+q.tag.split(' ')[0];
@@ -375,20 +451,21 @@ function render(){
   if(q.lines){
     $('#qLines').innerHTML=q.lines.map(l=>`<div class="ln">${lineHTML(l)}</div>`).join('');
     const v=S.vals[key()];if(v)boxes().forEach((b,i)=>b.textContent=v[i]||'');
-    setAct(boxes().find(b=>!b.textContent)||boxes()[0]);
+    setAct(boxes().find(b=>!b.textContent&&!b.classList.contains('pick'))||boxes()[0]);
   }else if(q.opts){
-    $('#qLines').innerHTML=`<div class="opts">${q.opts.map(o=>`<button class="opt" data-o="${o}">${o}</button>`).join('')}</div>`;setAct(null);
+    $('#qLines').innerHTML=`<div class="opts${q.opts.some(o=>o.length>2)?' wide':''}">${q.opts.map(o=>`<button class="opt" data-o="${o}">${o}</button>`).join('')}</div>`;setAct(null);
   }else{$('#qLines').innerHTML='';setAct(null)}
 }
 
 /* input */
 $('#qLines').addEventListener('click',e=>{
-  const b=e.target.closest('.box');if(b){setAct(b);return}
+  const b=e.target.closest('.box');if(b){setAct(b);if(b.classList.contains('pick')){const o=b.dataset.o.split(',');b.textContent=o[(o.indexOf(b.textContent)+1)%o.length];b.classList.remove('ok','no');save()}return}
   const o=e.target.closest('.opt');if(o){document.querySelectorAll('.opt').forEach(x=>x.className='opt');o.classList.add('sel')}
 });
 function type(k){
   const b=S.act;if(!b)return;
   if(k==='tab'){const a=boxes();setAct(a[(a.indexOf(b)+1)%a.length]);return}
+  if(b.classList.contains('pick'))return;
   b.classList.remove('ok','no');
   if(k==='back')b.textContent=b.textContent.slice(0,-1);
   else if(b.textContent.length<6)b.textContent+=k;
@@ -411,14 +488,14 @@ function fb(cls,t){const f=$('#qFb');f.className='fb '+cls;f.textContent=t}
 function check(){
   const q=cur();if(!q||q.talk)return;
   if(q.opts){const s=$('.opt.sel');if(!s)return fb('info','Choose an answer first.');
-    if(s.dataset.o===q.answer){s.classList.add('ok');reward();fb('good','Correct! '+q.explain)}else{s.classList.add('no');fb('bad','Not yet. Think about the opposite sides.')}return}
+    if(s.dataset.o===q.answer){s.classList.add('ok');reward();fb('good','Correct! '+q.explain)}else{s.classList.add('no');fb('bad',q.wrong||'Not yet. Try again.')}return}
   let all=true,empty=false;
   document.querySelectorAll('#qLines .frac').forEach(f=>{const[n,d]=[...f.querySelectorAll('.box')],a=+n.textContent,b=+d.textContent;
     const ok=n.textContent&&d.textContent&&b>0&&a*(+f.dataset.d)===b*(+f.dataset.n);
     if(!n.textContent||!d.textContent)empty=true;[n,d].forEach(x=>{x.classList.toggle('ok',!!ok);x.classList.toggle('no',!ok)});if(!ok)all=false});
   boxes().filter(b=>b.dataset.a).forEach(b=>{const ok=b.textContent===b.dataset.a;if(!b.textContent)empty=true;b.classList.toggle('ok',ok);b.classList.toggle('no',!ok);if(!ok)all=false});
   if(all){reward();fb('good','Correct! '+q.explain)}
-  else fb('bad',empty?'Fill in every yellow box, then check again.':'Not yet. Look at the red boxes and try again.');
+  else fb('bad',empty?'Fill in every box, then check again.':'Not yet. Look at the red boxes and try again.');
 }
 function show(){
   const q=cur();if(!q)return;
@@ -428,14 +505,16 @@ function show(){
   fb('info',q.explain);
 }
 function clearQ(){const q=cur();if(!q)return;delete S.vals[key()];render()}
+function secIdx(){return C().secs.findIndex(x=>x[0]===S.sec)}
 function next(){
-  if(S.sec==='intro')return go('l1');
   if(S.sec==='practice')return newPractice();
-  const a=S.sec==='l1'?L1:L2;
-  if(S.i[S.sec]<a.length-1){S.i[S.sec]++;render()}else go(S.sec==='l1'?'l2':'practice');
+  const a=LES[S.sec];
+  if(a&&S.i[S.sec]<a.length-1){S.i[S.sec]++;return render()}
+  go(C().secs[secIdx()+1][0]);
 }
 function prev(){
-  if(S.sec==='l1'||S.sec==='l2'){if(S.i[S.sec]>0){S.i[S.sec]--;render()}else go(S.sec==='l1'?'intro':'l1')}
+  const a=LES[S.sec];if(!a)return;
+  if(S.i[S.sec]>0){S.i[S.sec]--;render()}else go(C().secs[secIdx()-1][0]);
 }
 $('#tNext').onclick=next;$('#tPrev').onclick=prev;$('#tCheck').onclick=check;$('#tShow').onclick=show;$('#tClear').onclick=clearQ;
 $('#tShare').onclick=()=>{const q=cur();if(q&&q.share){$('#ovImg').src='img/'+q.share+'.png';$('#ov').classList.add('on')}};
@@ -464,11 +543,26 @@ const SCRIPT=[
  {cap:'So remember: count the squares on every side, then add all the sides together! You can do it!',vis:big('<em>Count</em> every side<br>then <em>add</em>')},
  {cap:'Your teacher will lead the activity. Listen, think, and share your answers! Are you ready? Yay! Let’s begin!',vis:big('Ready? <em>Let’s begin!</em>')}
 ];
+const SCRIPT3=[
+ {cap:'Hello, 3G1 students! I’m Teacher James, your AI maths guide, and I’m so happy to see you today!',vis:big('Hello, <em>3G1 Students!</em><small>Compare, add and subtract lengths</small>')},
+ {cap:'We have three fun lessons! We’re going to compare lengths, add lengths, and subtract lengths!',vis:big('<em>1</em> Compare<br><em>2</em> Add<br><em>3</em> Subtract')},
+ {cap:'First, remember these facts! One metre is one hundred centimetres. And one centimetre is ten millimetres.',vis:big('1 m = <em>100 cm</em><br>1 cm = <em>10 mm</em>')},
+ {cap:'To compare lengths, change them to the same unit first! 125 cm is 1 m 25 cm.',vis:big('125 cm = <em>1 m 25 cm</em>')},
+ {cap:'Now look! 1 m 25 cm is shorter than 1 m 30 cm. Easy, right?',vis:big('1 m 25 cm <em>&lt;</em> 1 m 30 cm')},
+ {cap:'To add lengths, add the metres first, then add the centimetres! 3 m + 4 m 50 cm = 7 m 50 cm!',vis:big('3 m + 4 m 50 cm<br>= <em>7 m 50 cm</em>')},
+ {cap:'To subtract lengths, change them to centimetres! 250 take away 100 leaves 150 cm.',vis:big('250 cm − 100 cm<br>= <em>150 cm</em>')},
+ {cap:'So remember: same units first, then compare, add, or subtract! You can do it!',vis:big('<em>Same units</em> first!')},
+ {cap:'Listen, think, and share your answers! Are you ready? Let’s begin!',vis:big('Ready? <em>Let’s begin!</em>')}
+];
+const ENV3=["00155589874222444324333334443513432111320000000003663335334423444443323441454312453211000000024664233125556432221244443446542344123234433323323256521100000", "0034567521345422265444544321112000000002638975515432455445764224300004566534555432334445422355530245531123200000", "0012798646211454455444233343256631002320000000024886555545432343354332444243244443244432111120000001055547654436424344434314430234344444444321111210000", "00351553236664566421231000000155656543244322324443444443444312267621123110000000000026976426653453442335432244442434432444323333100244335654444444443111124432354422444442434432443321101210000", "00356653397111000003776555441415323224444432345434553424444444344332215553211000000000344444332344311000000", "00157178883568764234200004788455555455542487535411100376513567335546534554321112200000000101247887777665434025756215776555445554267212432111256355469755555554543454227421344455435554221112200000", "0036659921348872034676421341000027665644454324545643554422111230000000000356664586546455227832033221004842655554554436653442101111023655444466543465445344226420344455434544222112200000", "00257995665677543110000003688776655354238754513553454235555413566665334455542336653101100000035246544764210000000", "0024975465226533445455445246643432123111111375443886543100001476240432564211000000"];
 const T={i:0,on:false,tok:0,mouth:null};
-$('#dots').innerHTML=SCRIPT.map(()=>'<i></i>').join('');
 const ENV=["001877777642266763466644444334223234300000000058764354446546675233321268636655414543221000079761432644433310000798864465346504344444443334321110000", "005657465356656531156655444343333322211000000001748654114641354323443135422234200000008976466655564225567754554456566533223410000077237666567621466743433442233221110000", "00168654321000388646634652213465434455556331100000000038976434668854444364153355665433356734544455455422112330000", "0023776443652277776555545433365155564665676322343000000008869826226679876655742165676267563677632223420000000388974532233332100000", "00697776567662256625301233223300000017898986655664245532220000000000853978776774765462775445546236665775665444444344443211100000", "00899726667533100072437753322100000000047522366536435766747667777624355543415554334355321110000", "00775636411555454000000293524666541777647778877315665425555435544443367364443166545534566555422110000000000036778876200127642166665401564323566655411564314655566333317755763477633223420000000015754322100000", "0034775898676422100000000248643552677775764845644454444210499657765667474455553435244122200000007934864664321310000", "0077144524565554666355541335332222100000000069744766404664455435555546653332234000000687646544442000006777642214634315234322200000"];
-const AUD=SCRIPT.map((_,i)=>{const a=new Audio('audio/happy'+i+'.mp3');a.preload='auto';return a});
+const mkA=u=>{const a=new Audio(u);a.preload='auto';return a};
+const AUD={g4:SCRIPT.map((_,i)=>mkA('audio/happy'+i+'.mp3')),g3:SCRIPT3.map((_,i)=>mkA('audio/james'+i+'.mp3'))};
+const allAud=()=>[...AUD.g4,...AUD.g3];
 function mouth(o){
+  const d=o<.12?0:12*o;$('#jJaw').setAttribute('transform',`translate(0,${d})`);$('#jMouth').style.display=d?'':'none';
+  if(d){['jIn','jClipE'].forEach(id=>{const e=$('#'+id);e.setAttribute('cy',376+d/2);e.setAttribute('ry',d/2+1.5)})}
   const sm=$('#mSmile'),op=$('#mOpen');
   if(o<.12){sm.style.display='';op.style.display='none';return}
   sm.style.display='none';op.style.display='';
@@ -477,39 +571,43 @@ function mouth(o){
   $('#mTeeth').setAttribute('y',243-ry-2);
 }
 function mouthOn(a,i){clearInterval(T.mouth);let c=0;
-  T.mouth=setInterval(()=>{c++;if(a){const e=ENV[i],k=Math.floor(a.currentTime*20);mouth((+(e[k]||0))/9)}else mouth(c%5===4?0:.25+Math.random()*.75)},50);
+  T.mouth=setInterval(()=>{c++;if(a){const e=C().env[i],k=Math.floor(a.currentTime*20);mouth((+(e[k]||0))/9)}else mouth(c%5===4?0:.25+Math.random()*.75)},50);
   $('#avatarCard').classList.add('speaking')}
 function mouthOff(){clearInterval(T.mouth);mouth(0);$('#avatarCard').classList.remove('speaking')}
 
 function showLine(i){
-  const l=SCRIPT[i];$('#visual').innerHTML=l.vis;$('#caption').textContent=l.cap;
+  const l=C().script[i];$('#visual').innerHTML=l.vis;$('#caption').textContent=l.cap;
   document.querySelectorAll('#dots i').forEach((d,k)=>d.classList.toggle('done',k<=i));
 }
 function speak(i){
-  if(i>=SCRIPT.length){T.on=false;T.i=SCRIPT.length-1;mouthOff();$('#iPlay').textContent='▶ Start';return}
-  T.i=i;const tok=++T.tok,l=SCRIPT[i],a=AUD[i];showLine(i);
+  const SC=C().script;if(i>=SC.length){T.on=false;T.i=SC.length-1;mouthOff();$('#iPlay').textContent='▶ Start';return}
+  T.i=i;const tok=++T.tok,l=SC[i],a=AUD[S.cls][i];showLine(i);
   let finished=false;
   const done=()=>{if(finished||tok!==T.tok)return;finished=true;mouthOff();setTimeout(()=>{if(T.on&&tok===T.tok)speak(i+1)},350)};
   const silent=()=>{if(finished||tok!==T.tok)return;mouthOn();setTimeout(done,l.cap.split(' ').length*400+500)};
   try{
-    AUD.forEach(x=>{x.pause();x.onended=x.onerror=null});
+    allAud().forEach(x=>{x.pause();x.onended=x.onerror=null});
     a.currentTime=0;a.onended=done;a.onerror=silent;
     const pr=a.play();mouthOn(a,i);
     if(pr&&pr.catch)pr.catch(()=>{if(tok===T.tok)silent()});
   }catch(e){silent()}
 }
-function stopTalk(){T.on=false;T.tok++;AUD.forEach(x=>{try{x.pause()}catch(e){}});mouthOff();$('#iPlay').textContent='▶ Start'}
+function stopTalk(){T.on=false;T.tok++;allAud().forEach(x=>{try{x.pause()}catch(e){}});mouthOff();$('#iPlay').textContent='▶ Start'}
 $('#iPlay').onclick=()=>{if(T.on){stopTalk();$('#iPlay').textContent='▶ Continue'}else{T.on=true;$('#iPlay').textContent='❚❚ Pause';speak(T.i)}};
 $('#iReplay').onclick=()=>{stopTalk();T.on=true;$('#iPlay').textContent='❚❚ Pause';speak(0)};
-$('#iFwd').onclick=()=>{const n=Math.min(T.i+1,SCRIPT.length-1),was=T.on;stopTalk();T.i=n;if(was){T.on=true;$('#iPlay').textContent='❚❚ Pause';speak(n)}else showLine(n)};
+$('#iFwd').onclick=()=>{const n=Math.min(T.i+1,C().script.length-1),was=T.on;stopTalk();T.i=n;if(was){T.on=true;$('#iPlay').textContent='❚❚ Pause';speak(n)}else showLine(n)};
 $('#iBack').onclick=()=>{const n=Math.max(T.i-1,0),was=T.on;stopTalk();T.i=n;if(was){T.on=true;$('#iPlay').textContent='❚❚ Pause';speak(n)}else showLine(n)};
-$('#iGo').onclick=()=>go('l1');
-$('#visual').innerHTML=SCRIPT[0].vis;
+$('#iGo').onclick=()=>go(C().secs[1][0]);
 
 /* start */
-const h=(location.hash||'').slice(1),start=Object.keys(HASH).find(k=>HASH[k]===h)||'intro';
-window.addEventListener('hashchange',()=>{const x=location.hash.slice(1),k=Object.keys(HASH).find(k=>HASH[k]===x);if(k&&k!==S.sec)go(k)});
-go(start);
+CLS={
+ g4:{label:'Grade 4 · 4G1',teacher:'Teacher Jennifer',gen:GEN,script:SCRIPT,env:ENV,secs:[['intro','Intro'],['l1','Lesson 1: km and m'],['l2','Lesson 2: Perimeter on a grid'],['practice','Extra practice']]},
+ g3:{label:'Grade 3 · 3G1',teacher:'Teacher James',gen:GEN3,script:SCRIPT3,env:ENV3,secs:[['intro','Intro'],['l6','Lesson 6: Compare'],['l7','Lesson 7: Add'],['l8','Lesson 8: Subtract'],['practice','Extra practice']]}
+};
+$('#cls').innerHTML=Object.keys(CLS).map(k=>`<button data-c="${k}">${CLS[k].label}</button>`).join('');
+function fromHash(){const h=(location.hash||'').slice(1),c=h.startsWith('g3-')?'g3':'g4',x=CLS[c].secs.map(v=>v[0]).find(v=>hashOf(c,v)===h)||'intro';return[c,x]}
+window.addEventListener('hashchange',()=>{const[c,x]=fromHash();if(c!==S.cls)setClass(c,x);else if(x!==S.sec)go(x)});
+{const[c,x]=fromHash();setClass(c,x)}
 </script>
 </body>
 </html>
