@@ -58,7 +58,12 @@ nav button.on{background:#ffd166;color:var(--ink)}
 .eqb{font-family:Fredoka!important;font-size:clamp(26px,2.8vw,44px)!important;height:1.7em!important;width:1.7em!important;padding:0!important}
 .adj{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;flex-basis:100%}
 .adj button{padding:4px 10px;border-radius:9px;background:var(--soft);border:2px solid var(--line);font-weight:800;font-size:clamp(12px,1.05vw,16px)}
-.pstage{background:#fff;border:2px solid var(--line);border-radius:18px;min-height:0;padding:6px;display:flex}
+.pstage{background:#fff;border:2px solid var(--line);border-radius:18px;min-height:0;padding:6px;display:flex;position:relative;overflow:hidden}
+#pSvg{touch-action:none;user-select:none;-webkit-user-select:none}
+.drag{cursor:grab}
+.drag.dragging{cursor:grabbing;filter:drop-shadow(0 7px 6px rgba(0,0,0,.3))}
+.cf{position:absolute;top:-14px;width:10px;height:15px;border-radius:2px;pointer-events:none;animation:fall 1.4s ease-in forwards}
+@keyframes fall{to{top:106%;transform:rotate(600deg)}}
 .pstage svg{width:100%;height:100%}
 .hbtn{padding:7px 12px;border-radius:10px;background:#2b3460;color:#fff;font-weight:800;font-size:14px}
 .stars{font-weight:800;font-size:clamp(13px,1.2vw,18px);white-space:nowrap}
@@ -584,19 +589,19 @@ const UN={
  mm:{name:'cm and mm',big:'cm',small:'mm',per:10,tick:1,max:150,presets:[5,8,12,20,21,35,40,50,60,65,85,100],adj:[[-10,'− 1 cm'],[10,'+ 1 cm'],[-1,'− 1 mm'],[1,'+ 1 mm']]}
 };
 const TH={ribbon:{name:'Ribbon',a:'#e23d5b',b:'#f5a623'},rope:{name:'Rope',a:'#c79a5b',b:'#8d6e4a'},wood:{name:'Wood',a:'#a8683a',b:'#dba56b'}};
-S.play={unit:'m',theme:'ribbon',a:null,b:null,op:'+',act:'a',show:false};
+S.play={unit:'m',theme:'ribbon',a:null,b:null,op:'+',act:'a',show:false,pl:{a:false,b:false},note:''};
 const fmtLen=(v,u)=>{const B=Math.floor(v/u.per),r=v%u.per;return v===0?`0 ${u.small}`:(B?`${B} ${u.big}`:'')+(B&&r?' ':'')+(r?`${r} ${u.small}`:'')};
 const slotHTML=(v,u,ph)=>v==null?`<span style="opacity:.45">${ph}</span>`:`${fmtLen(v,u)}<small>${fmt(v)} ${u.small}</small>`;
 $('#pUnit').innerHTML=Object.keys(UN).map(k=>`<button data-u="${k}">${UN[k].name}</button>`).join('');
 $('#pTheme').innerHTML=Object.keys(TH).map(k=>`<button data-t="${k}">${TH[k].name}</button>`).join('');
-$('#pUnit').onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.u!==S.play.unit){Object.assign(S.play,{unit:b.dataset.u,a:null,b:null,act:'a',show:false});playRender()}};
+$('#pUnit').onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.u!==S.play.unit){Object.assign(S.play,{unit:b.dataset.u,a:null,b:null,act:'a',show:false,pl:{a:false,b:false}});playRender()}};
 $('#pTheme').onclick=e=>{const b=e.target.closest('button');if(b){S.play.theme=b.dataset.t;playRender()}};
-$('#pTray').onclick=e=>{const b=e.target.closest('button');if(!b)return;const P=S.play;P[P.act]=+b.dataset.v;P.show=false;if(P.act==='a'&&P.b==null)P.act='b';playRender()};
+$('#pTray').onclick=e=>{const b=e.target.closest('button');if(!b)return;const P=S.play;P[P.act]=+b.dataset.v;P.show=false;P.pl={a:false,b:false};if(P.act==='a'&&P.b==null)P.act='b';playRender()};
 $('#pA').onclick=()=>{S.play.act='a';playRender()};$('#pB').onclick=()=>{S.play.act='b';playRender()};
-$('#pOps').onclick=e=>{const b=e.target.closest('button');if(b){S.play.op=b.dataset.op;S.play.show=false;playRender()}};
-$('#pAdj').onclick=e=>{const b=e.target.closest('button');if(!b)return;const P=S.play,u=UN[P.unit];P[P.act]=Math.max(0,Math.min(u.max,(P[P.act]||0)+(+b.dataset.d)));P.show=false;playRender()};
-$('#pEq').onclick=()=>{const P=S.play;if(P.a!=null&&P.b!=null){P.show=!P.show;playRender()}};
-$('#pClear').onclick=()=>{Object.assign(S.play,{a:null,b:null,act:'a',show:false});playRender()};
+$('#pOps').onclick=e=>{const b=e.target.closest('button');if(b){S.play.op=b.dataset.op;S.play.show=false;S.play.pl={a:false,b:false};playRender()}};
+$('#pAdj').onclick=e=>{const b=e.target.closest('button');if(!b)return;const P=S.play,u=UN[P.unit];P[P.act]=Math.max(0,Math.min(u.max,(P[P.act]||0)+(+b.dataset.d)));P.show=false;P.pl={a:false,b:false};playRender()};
+$('#pEq').onclick=()=>{const P=S.play;if(P.a!=null&&P.b!=null){P.show=!P.show;P.pl={a:P.show,b:P.show};playRender()}};
+$('#pClear').onclick=()=>{Object.assign(S.play,{a:null,b:null,act:'a',show:false,pl:{a:false,b:false}});playRender()};
 function playRender(){
   const P=S.play,u=UN[P.unit];
   document.querySelectorAll('#pUnit button').forEach(b=>b.classList.toggle('on',b.dataset.u===P.unit));
@@ -609,9 +614,20 @@ function playRender(){
   const ready=P.a!=null&&P.b!=null,bad=ready&&P.op==='−'&&P.b>P.a,res=ready&&!bad?(P.op==='+'?P.a+P.b:P.a-P.b):null;
   const an=$('#pAns');an.classList.toggle('on',P.show&&res!=null);
   an.innerHTML=P.show&&res!=null?slotHTML(res,u):'?';
-  $('#pTip').textContent=!ready?'Tap a length to put it in the yellow box.':bad?'You cannot take away more than you have. Choose a smaller second length.':P.show?`${fmt(P.a)} ${u.small} ${P.op} ${fmt(P.b)} ${u.small} = ${fmt(res)} ${u.small}`:'What is the answer? Tap = to check.';
+  $('#pTip').textContent=!ready?'Tap a length to put it in the yellow box.':bad?'You cannot take away more than you have. Choose a smaller second length.':P.show?`${fmt(P.a)} ${u.small} ${P.op} ${fmt(P.b)} ${u.small} = ${fmt(res)} ${u.small}`:P.note||'Drag the bars down to the number line, or tap =.';
+  P.note='';
   playDraw(res);
 }
+let DR=null;const psvg=$('#pSvg');
+const spt=e=>{const p=psvg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(psvg.getScreenCTM().inverse())};
+psvg.addEventListener('pointerdown',e=>{const g=e.target.closest('.drag');if(!g)return;e.preventDefault();const p=spt(e);DR={g,w:g.dataset.w,x:p.x,y:p.y,dy:0,home:!S.play.pl[g.dataset.w]};psvg.appendChild(g);g.classList.add('dragging');try{psvg.setPointerCapture(e.pointerId)}catch(_){}});
+psvg.addEventListener('pointermove',e=>{if(!DR)return;const p=spt(e);DR.dy=p.y-DR.y;DR.g.setAttribute('transform',`translate(${p.x-DR.x},${DR.dy})`)});
+function pDrop(){if(!DR)return;const P=S.play,w=DR.w,cy=(DR.home?(w==='a'?38:102):188)+DR.dy,on=cy>135;DR=null;
+  if(w==='b'&&on&&P.op==='−'&&!P.pl.a)P.note='Put the first length on the number line first.';else P.pl[w]=on;
+  if(!P.pl.a&&P.op==='−')P.pl.b=false;
+  const was=P.show,ok=P.pl.a&&P.pl.b&&!(P.op==='−'&&P.b>P.a);P.show=P.pl.a&&P.pl.b;playRender();if(ok&&!was)party()}
+psvg.addEventListener('pointerup',pDrop);psvg.addEventListener('pointercancel',pDrop);
+function party(){const st=$('.pstage');for(let i=0;i<30;i++){const c=document.createElement('i');c.className='cf';c.style.cssText=`left:${rnd(4,96)}%;background:${pick(['#e23d5b','#f5a623','#1f8a4c','#4b2a86','#17a2b8'])};animation-delay:${Math.random()*.35}s`;st.appendChild(c);setTimeout(()=>c.remove(),1900)}}
 function playDraw(res){
   const P=S.play,u=UN[P.unit],t=TH[P.theme],a=P.a||0,b=P.b||0,X0=150,SP=830,H=40;
   const top=Math.max(P.op==='+'?a+b:a,b,u.per),bigs=Math.ceil(top/u.per),k=SP/(bigs*u.per);
@@ -626,15 +642,16 @@ function playDraw(res){
    <pattern id="ov-ribbon" width="10" height="${H}" patternUnits="userSpaceOnUse"><rect width="10" height="7" fill="#fff" opacity=".28"/><rect y="${H-9}" width="10" height="9" fill="#000" opacity=".1"/></pattern>
    <pattern id="ov-rope" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="5" height="12" fill="#fff" opacity=".3"/></pattern>
    <pattern id="ov-wood" width="60" height="13" patternUnits="userSpaceOnUse"><path d="M0 4 q15 -4 30 0 t30 0 M0 10 q15 3 30 0 t30 0" stroke="#000" stroke-opacity=".18" fill="none" stroke-width="1.5"/></pattern></defs>`;
-  const rows=[[18,'First',P.a,t.a],[82,'Second',P.b,t.b]];
-  rows.forEach(([y,lab,v,col])=>{g+=tx(X0-12,y+H/2-9,lab,{an:'end',fs:15,fill:'#5b6485'})+tx(X0-12,y+H/2+11,v==null?'':fmtLen(v,u),{an:'end',fs:19});
-    g+=v==null?`<rect x="${X0}" y="${y}" width="${SP}" height="${H}" rx="5" fill="none" stroke="#d9d0bf" stroke-width="2" stroke-dasharray="6 6"/>`:bar(X0,y,v,col,0)});
+  const pl=P.pl,D=(w,inner)=>`<g class="drag" data-w="${w}">${inner}</g>`;
+  const ghost=(y,w)=>`<rect x="${X0}" y="${y}" width="${w}" height="${H}" rx="5" fill="none" stroke="#d9d0bf" stroke-width="2" stroke-dasharray="6 6"/>`;
+  [[18,'First',P.a,t.a,'a'],[82,'Second',P.b,t.b,'b']].forEach(([y,lab,v,col,w])=>{g+=tx(X0-12,y+H/2-9,lab,{an:'end',fs:15,fill:'#5b6485'})+tx(X0-12,y+H/2+11,v==null?'':fmtLen(v,u),{an:'end',fs:19});
+    g+=v==null?ghost(y,SP):pl[w]?ghost(y,v*k):D(w,bar(X0,y,v,col,0))});
   const y=168,show=P.show&&res!=null;
   g+=`<line x1="20" y1="146" x2="980" y2="146" stroke="#e6dccb" stroke-width="2"/>`+tx(X0-12,y+H/2-9,'Answer',{an:'end',fs:15,fill:'#5b6485'})+tx(X0-12,y+H/2+11,show?fmtLen(res,u):'?',{an:'end',fs:19,fill:show?'#1f8a4c':'#9aa3c2'});
-  if(show){
-    if(P.op==='+'){g+=bar(X0,y,a,t.a,0)+bar(X0+a*k,y,b,t.b,a)}
-    else{g+=bar(X0,y,res,t.a,0)+bar(X0+res*k,y,b,t.a,res,{cut:true});if(b)g+=tx(X0+(res+b/2)*k,y-11,'cut off '+fmtLen(b,u),{fs:14,fill:'#d6453d'})}
-  }else g+=`<rect x="${X0}" y="${y}" width="${SP}" height="${H}" rx="5" fill="none" stroke="#d9d0bf" stroke-width="2" stroke-dasharray="6 6"/>`;
+  g+=`<rect x="${X0}" y="${y}" width="${SP}" height="${H}" rx="5" fill="#f8f3ea" stroke="#d9d0bf" stroke-width="2" stroke-dasharray="6 6"/>`;
+  if(!pl.a&&!pl.b&&P.a!=null)g+=tx(X0+SP/2,y+H/2,'Drag the lengths here',{fs:16,fill:'#a39a86'});
+  if(P.op==='+'){if(pl.a)g+=D('a',bar(X0,y,a,t.a,0));if(pl.b)g+=D('b',bar(X0+(pl.a?a:0)*k,y,b,t.b,pl.a?a:0))}
+  else if(pl.a){if(pl.b&&res!=null)g+=D('a',bar(X0,y,res,t.a,0))+D('b',bar(X0+res*k,y,b,t.a,res,{cut:true})+(b?tx(X0+(res+b/2)*k,y-11,'cut off '+fmtLen(b,u),{fs:14,fill:'#d6453d'}):''));else g+=D('a',bar(X0,y,a,t.a,0))}
   const ry=y+H+26;g+=`<line x1="${X0}" y1="${ry}" x2="${X0+SP}" y2="${ry}" stroke="#1c2340" stroke-width="2.5"/>`;
   for(let q=0;q<=bigs*u.per;q+=u.tick){const big=q%u.per===0,half=q%(u.per/2)===0,xx=X0+q*k;
     if(big||half||k*u.tick>=5)g+=`<line x1="${xx}" y1="${ry-(big?11:half?8:5)}" x2="${xx}" y2="${ry+(big?11:half?8:5)}" stroke="#1c2340" stroke-width="${big?2.5:1.3}"/>`;
