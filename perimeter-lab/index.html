@@ -137,6 +137,7 @@ select{font:inherit;font-weight:700;padding:8px;border-radius:10px;border:2px so
 .pic{background:#fff;border:2px solid var(--line);border-radius:20px;padding:10px;display:flex;flex-direction:column;min-height:0}
 .pic .fig{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
 .pic img,.pic svg{max-width:100%;max-height:100%;object-fit:contain}
+.pic .fig img{width:100%;height:100%}
 .tagrow{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
 .tag{font-family:Fredoka;font-weight:600;color:#fff;border-radius:999px;padding:4px 16px;font-size:clamp(14px,1.4vw,22px)}
 .tag.Discover{background:#123b22;box-shadow:0 0 0 3px #7ee08a}
@@ -487,6 +488,18 @@ const K4=[
  {tag:'Think together',unit:'Lesson 4 · Question 2',img:'k4_tt2',title:'Write two number sentences for the flowers.',hint:'Count the red flowers. Count the yellow flowers.',lines:['[[a:5]] + [[a:2]] = [[7]]','[[b:2]] + [[b:5]] = [[7]]'],distinct:[['a','b']],explain:'5 red flowers and 2 yellow flowers make 7. 5 + 2 = 7 and 2 + 5 = 7.'},
  {tag:'Challenge',unit:'Lesson 4 · Question 3',img:'k4_ch3',title:'Complete the number sentences.',lines:['[[a:5]] + [[a:1]] = 6','[[b:1]] + [[b:5]] = 6','6 = [[c:5]] + [[c:1]]','6 = [[d:1]] + [[d:5]]'],distinct:[['a','b'],['c','d']],explain:'Part plus part is equal to the whole. The whole is equal to part plus part.'}
 ];
+const KP=[
+ {tag:'Practice',unit:'Individual Practice · A. Write number sentences · 1',img:'ip1',title:'Write the number sentence.',hint:'Count the red cubes. Count the blue cubes.',lines:['[[q:3]] + [[q:2]] = [[5]]'],explain:'3 red cubes and 2 blue cubes make 5. 3 + 2 = 5.'},
+ {tag:'Practice',unit:'Individual Practice · A. Write number sentences · 2',img:'ip2',title:'Write the number sentence.',hint:'Count the stars in each group.',lines:['[[q:4]] + [[q:1]] = [[5]]'],explain:'4 stars and 1 star make 5. 4 + 1 = 5.'},
+ {tag:'Practice',unit:'Individual Practice · A. Write number sentences · 3',img:'ip3',title:'Write the number sentence.',hint:'Count the circles in each group.',lines:['[[q:7]] + [[q:2]] = [[9]]'],explain:'7 circles and 2 circles make 9. 7 + 2 = 9.'},
+ {tag:'Practice',unit:'Individual Practice · A. Write number sentences · 4',img:'ip4',title:'Write the number sentence.',hint:'Count the strawberries in each group.',lines:['[[q:4]] + [[q:3]] = [[7]]'],explain:'4 strawberries and 3 strawberries make 7. 4 + 3 = 7.'},
+ {tag:'Practice',unit:'Individual Practice · A. Write number sentences · 5',img:'ip5',title:'Write the number sentence.',hint:'Count the flowers in each group.',lines:['[[q:4]] + [[q:1]] = [[5]]'],explain:'4 flowers and 1 flower make 5. 4 + 1 = 5.'},
+ {tag:'Practice',unit:'Individual Practice · B. Four addition facts · 6',img:'ip6',title:'Complete the addition facts.',hint:'Look at the part-whole model.',lines:['5 + 1 = [[6]]','1 + 5 = [[6]]'],explain:'The parts are 5 and 1. The whole is 6. You can add in any order.'},
+ {tag:'Practice',unit:'Individual Practice · B. Four addition facts · 7',img:'ip7',title:'Complete the addition facts.',hint:'Look at the part-whole model.',lines:['4 + 4 = [[8]]','8 = 4 + [[4]]'],explain:'4 and 4 make 8. The whole is equal to part plus part.'},
+ {tag:'Practice',unit:'Individual Practice · B. Four addition facts · 8',img:'ip8',title:'Find the missing part.',lines:['PW:7|2|[[5]]','2 + [[5]] = 7'],explain:'2 and 5 make 7.'},
+ {tag:'Practice',unit:'Individual Practice · B. Four addition facts · 9',img:'ip9',title:'Find the missing part.',lines:['PW:9|[[3]]|6','[[3]] + 6 = 9'],explain:'3 and 6 make 9.'},
+ {tag:'Practice',unit:'Individual Practice · B. Four addition facts · 10',img:'ip10',title:'Find the missing part.',lines:['PW:10|3|[[7]]','3 + [[7]] = 10'],explain:'3 and 7 make 10.'}
+];
 const two=()=>{const w=rnd(3,10),a=rnd(1,w-1);return[w,a,w-a]};
 const GEN1={
  'Part-whole model':()=>{const[w,a,b]=two();return{title:'Complete the part-whole model.',hint:'Count the red counters. Count the yellow counters.',fig:ringsSVG(a,b),lines:[`PW:[[${w}]]|[[p:${a}]]|[[p:${b}]]`],explain:`${a} and ${b} make ${w}.`}},
@@ -495,11 +508,11 @@ const GEN1={
  'Fact family':()=>{let w,a,b;do{[w,a,b]=two()}while(a===b);return{title:'Write the number sentence in two ways.',fig:ringsSVG(a,b),lines:[`[[a:${a}]] + [[a:${b}]] = [[${w}]]`,`[[b:${b}]] + [[b:${a}]] = [[${w}]]`,`[[${w}]] = [[c:${a}]] + [[c:${b}]]`],distinct:[['a','b']],explain:`${a} + ${b} = ${w} and ${b} + ${a} = ${w}. You can put the parts in any order.`}}
 };
 
-const S={cls:'g4',sec:'intro',i:{l1:0,l2:0,l6:0,l7:0,l8:0,a3:0,a4:0},vals:{},done:new Set(),stars:0,topic:{g4:'Mixed',g3:'Mixed',g1:'Mixed'},pq:{g4:null,g3:null,g1:null},pn:0,act:null,team:[0,0],snd:true};
-const LES={l1:L1,l2:L2,l6:L6,l7:L7,l8:L8,a3:K3,a4:K4};
+const S={cls:'g4',sec:'intro',i:{l1:0,l2:0,l6:0,l7:0,l8:0,a3:0,a4:0,ip:0},vals:{},done:new Set(),stars:0,topic:{g4:'Mixed',g3:'Mixed',g1:'Mixed'},pq:{g4:null,g3:null,g1:null},pn:0,act:null,team:[0,0],snd:true};
+const LES={l1:L1,l2:L2,l6:L6,l7:L7,l8:L8,a3:K3,a4:K4,ip:KP};
 let CLS={};
 const C=()=>CLS[S.cls];
-const hashOf=(c,x)=>(c==='g4'?'':c+'-')+(x==='intro'||x==='practice'||x==='play'||x==='pw'?x:'lesson-'+x.slice(1));
+const hashOf=(c,x)=>(c==='g4'?'':c+'-')+(x==='intro'||x==='practice'||x==='play'||x==='pw'?x:x==='ip'?'individual':'lesson-'+x.slice(1));
 $('#nav').onclick=e=>{const b=e.target.closest('button');if(b)go(b.dataset.s)};
 $('#topics').onclick=e=>{const b=e.target.closest('button');if(b){S.topic[S.cls]=b.dataset.t;newPractice()}};
 $('#cls').onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.c!==S.cls)setClass(b.dataset.c,'intro')};
@@ -896,7 +909,7 @@ $('#iGo').onclick=()=>go(C().secs[1][0]);
 
 /* start */
 CLS={
- g1:{label:'Grade 1',start:'Lesson 3',teacher:'Teacher Jennifer',gen:GEN1,script:SCRIPT1,env:ENV1,secs:[['intro','Intro'],['a3','L3: Sentences'],['a4','L4: Fact families'],['pw','Part-Whole Play'],['practice','Extra practice']]},
+ g1:{label:'Grade 1',start:'Lesson 3',teacher:'Teacher Jennifer',gen:GEN1,script:SCRIPT1,env:ENV1,secs:[['intro','Intro'],['a3','Lesson 3'],['a4','Lesson 4'],['pw','Play'],['ip','Individual Practice'],['practice','Extra practice']]},
  g4:{label:'4G1',start:'Lesson 1',teacher:'Teacher Jennifer',gen:GEN,script:SCRIPT,env:ENV,secs:[['intro','Intro'],['l1','Lesson 1: km and m'],['l2','Lesson 2: Perimeter on a grid'],['practice','Extra practice']]},
  g3:{label:'3G1',start:'Lesson 6',teacher:'Teacher James',gen:GEN3,script:SCRIPT3,env:ENV3,secs:[['intro','Intro'],['l6','L6: Compare'],['l7','L7: Add'],['l8','L8: Subtract'],['play','Length Play'],['practice','Extra practice']]}
 };
