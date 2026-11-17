@@ -5,5 +5,6 @@ Interactive Science activities for Pearson International Primary Science workboo
 - Student link for one activity: `https://jameslazona.github.io/kham-pha-dong-vat/N/` (N = 1 to 15)
 - Full map of all activities: `https://jameslazona.github.io/kham-pha-dong-vat/`
 - Teacher list of all links: `links.html`
+- Science Lab simulations (Evaporating and condensing, Freezing, Skeleton and muscles), for the class TV: `https://jameslazona.github.io/kham-pha-dong-vat/lab/`
 
 Teachers: edit activities at `https://jameslazona.github.io/kham-pha-dong-vat/admin/`, or edit `activities.js` by hand. See [EDITING.md](EDITING.md).

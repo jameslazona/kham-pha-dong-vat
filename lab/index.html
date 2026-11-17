@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Science Lab: Evaporating and Condensing</title>
+<style>
+:root{--navy:#12263a;--ink:#16283a;--green:#2e9e4f;--green-d:#1f7a3a;--yellow:#ffd23f;--red:#e5432d;--blue:#2f86d6;--paper:#f4f7fa;--line:#d5dde6}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:clamp(13px,1.12vw,26px)}
+html,body{height:100%}
+body{font-family:"Nunito","Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;background:var(--paper);color:var(--ink);overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+button{font:inherit;color:inherit;border:0;cursor:pointer}
+.vi{display:none;font-weight:600;opacity:.75;font-size:.78em}
+body.vi-on .vi{display:block}
+body.vi-on .vi.inline{display:inline}
+#app{display:flex;flex-direction:column;height:100%}
+/* top bar */
+#bar{display:flex;align-items:center;gap:.8rem;background:var(--navy);color:#fff;padding:.5rem 1rem;flex:none}
+#bar .brand{font-weight:900;font-size:1.25rem;display:flex;align-items:center;gap:.5rem;background:none;color:#fff}
+#bar .brand i{width:1.9rem;height:1.9rem;border-radius:50%;background:var(--yellow);display:grid;place-items:center;font-style:normal;color:var(--navy);font-size:1.1rem}
+#bar .topic{opacity:.8;font-weight:700;margin-right:auto;padding-left:.8rem;border-left:2px solid rgba(255,255,255,.25)}
+.tabs{display:flex;gap:.35rem;background:rgba(255,255,255,.1);padding:.3rem;border-radius:999px}
+.tabs button{background:none;color:#fff;font-weight:800;padding:.55rem 1.2rem;border-radius:999px;min-height:2.9rem}
+.tabs button.on{background:var(--yellow);color:var(--navy)}
+.chip{background:rgba(255,255,255,.12);color:#fff;font-weight:800;padding:.55rem 1rem;border-radius:999px;min-height:2.9rem}
+.chip.on{background:#fff;color:var(--navy)}
+.screen{flex:1;min-height:0;display:none}
+.screen.on{display:flex}
+/* home */
+#home{flex-direction:column;align-items:center;justify-content:center;gap:2rem;background:linear-gradient(160deg,#e8f1f8,#f7fafc)}
+#home h1{font-size:3rem;font-weight:900}
+#home p{font-size:1.2rem;opacity:.75}
+.cards{display:flex;gap:1.5rem}
+.card{width:19rem;border-radius:1.4rem;background:#fff;box-shadow:0 .5rem 1.6rem rgba(18,38,58,.14);padding:1.4rem;text-align:left;display:flex;flex-direction:column;gap:.7rem}
+.card canvas{width:100%;border-radius:1rem;background:#6f8799}
+.card h2{font-size:1.5rem;font-weight:900}
+.card .go{align-self:flex-start;background:var(--green);color:#fff;font-weight:900;padding:.8rem 1.6rem;border-radius:999px;font-size:1.1rem}
+.card.empty{border:.2rem dashed var(--line);background:transparent;box-shadow:none;justify-content:center;align-items:center;text-align:center;color:#6b7c8d;font-weight:700}
+/* lab */
+#lab{gap:.8rem;padding:.8rem}
+#stageCol{flex:1;min-width:0;display:flex;flex-direction:column;gap:.6rem}
+.strip{display:none;align-items:center;justify-content:center;gap:.4rem;flex:none}
+body[data-lab=evap] #stripE,body[data-lab=freeze] #stripF{display:flex}
+.only-evap,.only-freeze,.only-skel,#skinBtn{display:none}
+body[data-lab=evap] .only-evap,body[data-lab=freeze] .only-freeze,body[data-lab=skel] .only-skel{display:contents}
+body[data-lab=skel] #stripK{display:flex}
+body[data-lab=skel] #skinBtn{display:block}
+body[data-lab=skel] #zoomBtn{display:none}
+.st{padding:.45rem 1rem;border-radius:999px;background:#e3eaf1;color:#8493a3;font-weight:900;text-align:center;line-height:1.1;transition:.3s}
+.st.on{background:#d6efff;color:#0d4f8b;box-shadow:0 0 0 .18rem #58b3f0}
+.ar{padding:.3rem .8rem;border-radius:.6rem;color:#a3afbb;font-weight:900;font-size:.85rem;text-align:center;line-height:1.1;transition:.3s}
+.ar::after{content:"➜";display:block;font-size:1.1rem}
+.ar.on{background:var(--yellow);color:var(--navy)}
+#stageWrap{flex:1;min-height:0;border-radius:1.2rem;overflow:hidden;background:#5d7385;position:relative}
+#stage{width:100%;height:100%;object-fit:contain;display:block;touch-action:none}
+#caption{flex:none;background:#fff;border:.18rem solid #f2b400;border-radius:1.2rem;padding:.7rem 1.2rem;font-size:1.55rem;font-weight:800;text-align:center;min-height:4.6rem;display:flex;flex-direction:column;justify-content:center}
+#panel{width:21rem;flex:none;display:flex;flex-direction:column;gap:.5rem;min-height:0}
+.box{background:#fff;border-radius:1.1rem;padding:.6rem .7rem;box-shadow:0 .15rem .5rem rgba(18,38,58,.08)}
+.box h3{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:#6b7c8d;margin-bottom:.45rem}
+.reads{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:.45rem}
+.read{background:#eef3f8;border-radius:.8rem;padding:.45rem;text-align:center}
+.read b{display:block;font-size:1.7rem;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.1}
+.read span{font-size:.75rem;font-weight:700;color:#5c6e80}
+.read.hot b{color:var(--red)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}
+.big{background:#e8f1fa;border-radius:.9rem;padding:.7rem .4rem;font-weight:900;font-size:1rem;min-height:3.3rem;line-height:1.15;box-shadow:0 .2rem 0 #c5d6e6}
+.big:active{transform:translateY(.15rem);box-shadow:none}
+.big.on{background:var(--blue);color:#fff;box-shadow:0 .2rem 0 #1c5fa0}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+.seg .big.on{background:var(--red);box-shadow:0 .2rem 0 #a52c1c}
+.seg .big.off.on{background:#5c6e80;box-shadow:0 .2rem 0 #3f4e5c}
+#reset{background:#fff;border:.15rem solid var(--line);box-shadow:none}
+#missions{flex:1;min-height:0;overflow:auto}
+#missions li{list-style:none;display:flex;gap:.55rem;align-items:flex-start;padding:.2rem 0;font-weight:700;font-size:.86rem;line-height:1.2}
+#missions li i{flex:none;width:1.5rem;height:1.5rem;border-radius:50%;border:.15rem solid #b9c6d3;display:grid;place-items:center;font-style:normal;font-size:.9rem;color:transparent}
+#missions li.done{color:var(--green-d)}
+#missions li.done i{background:var(--green);border-color:var(--green);color:#fff}
+#win{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(18,38,58,.55)}
+#win.on{display:flex}
+#win div{background:#fff;border-radius:1.5rem;padding:2rem 3rem;text-align:center}
+#win h2{font-size:2.4rem;font-weight:900;color:var(--green-d)}
+#win p{font-size:1.2rem;margin:.6rem 0 1.2rem}
+#win button{background:var(--green);color:#fff;font-weight:900;padding:.8rem 1.8rem;border-radius:999px;font-size:1.1rem;margin:0 .3rem}
+/* warm-up + quiz */
+.center{flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;padding:1.5rem;background:linear-gradient(160deg,#e8f1f8,#f7fafc)}
+.center h1{font-size:2.4rem;font-weight:900;text-align:center}
+#warmC{width:min(62vw,95vh);border-radius:1.4rem;background:#5d7385}
+.heat{display:flex;align-items:center;gap:1rem;font-weight:900;font-size:1.3rem;width:min(62vw,95vh)}
+.heat input{flex:1;height:3rem;accent-color:var(--red)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:min(70vw,60rem)}
+.opts.three{grid-template-columns:repeat(3,1fr)}
+.opt{background:#fff;border:.2rem solid var(--green);border-radius:1.2rem;padding:1.1rem;font-size:1.5rem;font-weight:800;min-height:5.5rem;display:flex;align-items:center;gap:.9rem;text-align:left}
+.opt i{flex:none;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--yellow);display:grid;place-items:center;font-style:normal;font-weight:900}
+.opt.right{background:#d9f5e1;border-color:var(--green-d)}
+.opt.wrong{background:#fde3df;border-color:var(--red);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-.5rem)}75%{transform:translateX(.5rem)}}
+.fb{font-size:1.4rem;font-weight:800;min-height:2.2rem;text-align:center}
+.next{background:var(--green);color:#fff;font-weight:900;padding:.9rem 2.2rem;border-radius:999px;font-size:1.3rem}
+.qn{font-weight:800;color:#6b7c8d;font-size:1.1rem}
+.stars{font-size:3rem;letter-spacing:.3rem}
+</style>
+</head>
+<body data-lab="evap">
+<div id="app">
+  <div id="bar">
+    <button class="brand" data-go="home"><i>⚗</i>Science Lab</button>
+    <span class="topic" id="topic"></span>
+    <div class="tabs">
+      <button data-go="warm">1 Warm-up</button>
+      <button data-go="lab">2 Lab</button>
+      <button data-go="quiz">3 Quiz</button>
+    </div>
+    <button class="chip" id="viBtn">Tiếng Việt</button>
+    <button class="chip" id="fsBtn">Full screen</button>
+  </div>
+
+  <section class="screen on" id="home">
+    <h1>Science Lab</h1>
+    <p>Pick a lab to start.<span class="vi">Chọn một phòng thí nghiệm để bắt đầu.</span></p>
+    <div class="cards">
+      <div class="card">
+        <canvas id="thumb" width="600" height="340"></canvas>
+        <h2>Evaporating and condensing<span class="vi">Bay hơi và ngưng tụ</span></h2>
+        <button class="go" data-lab="evap" data-go="warm">Start the lab ➜</button>
+      </div>
+      <div class="card">
+        <canvas id="thumb2" width="600" height="340"></canvas>
+        <h2>Freezing<span class="vi">Đông đặc</span></h2>
+        <button class="go" data-lab="freeze" data-go="warm">Start the lab ➜</button>
+      </div>
+      <div class="card">
+        <canvas id="thumb3" width="600" height="340"></canvas>
+        <h2>Skeleton and muscles<span class="vi">Bộ xương và cơ</span></h2>
+        <button class="go" data-lab="skel" data-go="warm">Start the lab ➜</button>
+      </div>
+      <div class="card empty">Your next lab<br>goes here</div>
+    </div>
+  </section>
+
+  <section class="screen center" id="warm">
+    <h1 id="warmH"></h1>
+    <canvas id="warmC" width="900" height="380"></canvas>
+    <label class="heat"><span id="heatLbl"></span><input type="range" id="heatR" min="0" max="100" value="0"><span id="heatIco">🔥</span></label>
+    <div class="opts" id="warmOpts"></div>
+    <div class="fb" id="warmFb"></div>
+  </section>
+
+  <section class="screen" id="lab">
+    <div id="stageCol">
+      <div class="strip" id="stripE">
+        <div class="st" id="sIce">ICE<span class="vi">nước đá</span></div>
+        <div class="ar" id="aMelt">melting<span class="vi">nóng chảy</span></div>
+        <div class="st" id="sWater">WATER<span class="vi">nước</span></div>
+        <div class="ar" id="aEvap">evaporating<span class="vi">bay hơi</span></div>
+        <div class="st" id="sVap">WATER VAPOUR<span class="vi">hơi nước</span></div>
+        <div class="ar" id="aCond">condensing<span class="vi">ngưng tụ</span></div>
+        <div class="st" id="sBack">WATER<span class="vi">nước</span></div>
+      </div>
+      <div class="strip" id="stripK">
+        <div class="st" id="kB">BRAIN<span class="vi">não</span></div>
+        <div class="ar" id="kI">impulse<span class="vi">xung thần kinh</span></div>
+        <div class="st" id="kN">NERVES<span class="vi">dây thần kinh</span></div>
+        <div class="ar" id="kC">contract<span class="vi">co lại</span></div>
+        <div class="st" id="kM">MUSCLE<span class="vi">cơ</span></div>
+        <div class="ar" id="kP">pull<span class="vi">kéo</span></div>
+        <div class="st" id="kBo">BONE MOVES<span class="vi">xương chuyển động</span></div>
+      </div>
+      <div class="strip" id="stripF">
+        <div class="st" id="fW">WATER<span class="vi">nước</span></div>
+        <div class="ar" id="fFz">freezing<span class="vi">đông đặc</span></div>
+        <div class="st" id="fI">ICE<span class="vi">nước đá</span></div>
+        <div class="ar" id="fMl">melting<span class="vi">nóng chảy</span></div>
+        <div class="st" id="fW2">WATER<span class="vi">nước</span></div>
+      </div>
+      <div id="stageWrap">
+        <canvas id="stage" width="1800" height="1200"></canvas>
+        <div id="win"><div>
+          <h2>Lab complete! ⭐⭐⭐</h2>
+          <p id="winP"></p>
+          <button id="winClose">Keep exploring</button><button data-go="quiz">Go to the quiz ➜</button>
+        </div></div>
+      </div>
+      <div id="caption"></div>
+    </div>
+    <aside id="panel">
+      <div class="box reads">
+        <div class="read" id="rT"><b>25°C</b><span id="rTl"></span></div>
+        <div class="read"><b id="rW">0</b><span id="rWl"></span></div>
+        <div class="read"><b id="rD">0</b><span id="rDl"></span></div>
+      </div>
+      <div class="only-evap">
+      <div class="box">
+        <h3>Beaker<span class="vi inline"> · Cốc thủy tinh</span></h3>
+        <div class="row">
+          <button class="big" id="addIce">🧊 Add ice<span class="vi">Thêm đá</span></button>
+          <button class="big" id="addWater">💧 Pour water<span class="vi">Rót nước</span></button>
+        </div>
+      </div>
+      <div class="box">
+        <h3>Spirit burner<span class="vi inline"> · Đèn cồn</span></h3>
+        <div class="seg">
+          <button class="big off on" data-p="0">Off<span class="vi">Tắt</span></button>
+          <button class="big" data-p="1">Low<span class="vi">Lửa nhỏ</span></button>
+          <button class="big" data-p="2">High<span class="vi">Lửa to</span></button>
+        </div>
+      </div>
+      </div>
+      <div class="only-skel">
+      <div class="box">
+        <h3>Contract a muscle<span class="vi inline"> · Làm cơ co lại</span></h3>
+        <div class="seg" id="kAct">
+          <button class="big" data-a="b">Biceps<span class="vi">Cơ nhị đầu</span></button>
+          <button class="big" data-a="t">Triceps<span class="vi">Cơ tam đầu</span></button>
+          <button class="big off on" data-a="">Relax<span class="vi">Giãn ra</span></button>
+        </div>
+      </div>
+      <div class="box">
+        <h3>Weight in the hand<span class="vi inline"> · Quả tạ trong tay</span></h3>
+        <div class="seg" id="kLoad">
+          <button class="big off on" data-l="0">None<span class="vi">Không</span></button>
+          <button class="big" data-l="2">2 kg</button>
+          <button class="big" data-l="5">5 kg</button>
+        </div>
+      </div>
+      </div>
+      <div class="only-freeze">
+      <div class="box">
+        <h3>Test tube<span class="vi inline"> · Ống nghiệm</span></h3>
+        <div class="row">
+          <button class="big" id="fPour">💧 Pour water<span class="vi">Rót nước</span></button>
+          <button class="big" id="fMove"></button>
+        </div>
+      </div>
+      <div class="box">
+        <h3>Big beaker<span class="vi inline"> · Cốc lớn</span></h3>
+        <div class="row">
+          <button class="big" id="fIce">🧊 Add ice<span class="vi">Thêm đá</span></button>
+          <button class="big" id="fSalt">🧂 Add salt<span class="vi">Thêm muối</span></button>
+        </div>
+      </div>
+      </div>
+      <div class="box">
+        <div class="row">
+          <button class="big" id="zoomBtn">🔍 Zoom in<span class="vi">Phóng to</span></button>
+          <button class="big" id="skinBtn">✋ Skin<span class="vi">Da</span></button>
+          <button class="big on" id="lblBtn">🏷 Labels<span class="vi">Tên dụng cụ</span></button>
+        </div>
+        <div style="height:.45rem"></div>
+        <button class="big" id="reset" style="width:100%;min-height:2.6rem">↺ Start again<span class="vi">Làm lại</span></button>
+      </div>
+      <div class="box" id="missions">
+        <h3>Missions<span class="vi inline"> · Nhiệm vụ</span></h3>
+        <ul id="mList"></ul>
+      </div>
+    </aside>
+  </section>
+
+  <section class="screen center" id="quiz">
+    <div class="qn" id="qNum"></div>
+    <h1 id="qText"></h1>
+    <div class="opts three" id="qOpts"></div>
+    <div class="fb" id="qFb"></div>
+    <button class="next" id="qNext" style="visibility:hidden">Next ➜</button>
+  </section>
+</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const bi=(en,vi)=>en+'<span class="vi">'+vi+'</span>';
+let viOn=false;
+
+/* ---------- navigation ---------- */
+function go(id){
+  $$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));
+  $$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
+  if(id==='quiz'&&qi<0)startQuiz();
+}
+document.addEventListener('click',e=>{const l=e.target.closest('button[data-lab]');if(l)setLab(l.dataset.lab);const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)});
+$('#viBtn').onclick=()=>{viOn=!viOn;document.body.classList.toggle('vi-on',viOn);$('#viBtn').classList.toggle('on',viOn)};
+$('#fsBtn').onclick=()=>{try{(document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()).catch(()=>{})}catch(e){}};
+
+/* ---------- shared drawing helpers ---------- */
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath()}
+function iceCube(c,x,y,s,rot){
+  if(s<3)return;
+  c.save();c.translate(x,y);c.rotate(rot);
+  const g=c.createLinearGradient(-s/2,-s/2,s/2,s/2);
+  g.addColorStop(0,'rgba(255,255,255,.95)');g.addColorStop(.45,'rgba(205,235,250,.8)');g.addColorStop(1,'rgba(150,205,240,.85)');
+  rr(c,-s/2,-s/2,s,s,s*.2);c.fillStyle=g;c.fill();
+  c.lineWidth=Math.max(1.5,s*.05);c.strokeStyle='rgba(255,255,255,.95)';c.stroke();
+  rr(c,-s*.36,-s*.36,s*.72,s*.72,s*.14);c.strokeStyle='rgba(255,255,255,.45)';c.lineWidth=Math.max(1,s*.03);c.stroke();
+  c.fillStyle='rgba(255,255,255,.75)';
+  c.beginPath();c.ellipse(-s*.2,-s*.24,s*.16,s*.05,-.5,0,7);c.fill();
+  c.strokeStyle='rgba(255,255,255,.5)';c.beginPath();c.moveTo(-s*.05,s*.1);c.lineTo(s*.2,s*.28);c.moveTo(s*.1,-s*.05);c.lineTo(s*.25,s*.05);c.stroke();
+  c.restore();
+}
+function flame(c,x,by,h,t){
+  const hh=h*(1+.06*Math.sin(t*23)+.04*Math.sin(t*37+1)),w=h*.3,sw=Math.sin(t*9)*h*.06;
+  let g=c.createRadialGradient(x,by-hh*.4,2,x,by-hh*.4,hh*1.4);
+  g.addColorStop(0,'rgba(255,190,80,.38)');g.addColorStop(1,'rgba(255,190,80,0)');
+  c.fillStyle=g;c.fillRect(x-hh*1.5,by-hh*1.9,hh*3,hh*2.6);
+  const shape=(w,hh)=>{c.beginPath();c.moveTo(x,by);c.bezierCurveTo(x-w*1.4,by-hh*.12,x-w*.9,by-hh*.55,x+sw,by-hh);c.bezierCurveTo(x+w*.9,by-hh*.55,x+w*1.4,by-hh*.12,x,by)};
+  g=c.createLinearGradient(0,by,0,by-hh);
+  g.addColorStop(0,'rgba(60,110,255,.9)');g.addColorStop(.3,'rgba(255,140,30,.95)');g.addColorStop(.75,'rgba(255,200,60,.95)');g.addColorStop(1,'rgba(255,235,150,.7)');
+  shape(w,hh);c.fillStyle=g;c.fill();
+  g=c.createLinearGradient(0,by,0,by-hh*.65);
+  g.addColorStop(0,'rgba(140,180,255,.9)');g.addColorStop(.5,'rgba(255,250,210,.95)');g.addColorStop(1,'rgba(255,240,170,.3)');
+  shape(w*.5,hh*.65);c.fillStyle=g;c.fill();
+}
+const puff=document.createElement('canvas');puff.width=puff.height=64;
+{const p=puff.getContext('2d'),g=p.createRadialGradient(32,32,2,32,32,32);g.addColorStop(0,'rgba(255,255,255,.9)');g.addColorStop(.5,'rgba(255,255,255,.35)');g.addColorStop(1,'rgba(255,255,255,0)');p.fillStyle=g;p.fillRect(0,0,64,64)}
+
+/* ---------- the lab simulation ---------- */
+const cv=$('#stage'),ctx=cv.getContext('2d');
+const W=1200,H=800,BX=600,BW=250,BT=224,BY=484,BENCH=640;
+const fresh=()=>({ice:0,water:0,T:25,power:0,drops:0,evap:0,cond:0,fog:0,steam:[],bub:[],fall:[],cubes:[],
+  plate:{x:1000,y:600},pd:[-108,-82,-52,-22,8,38,66,90,108].map(d=>({dx:d,r:0})),
+  hadIce:false,hadWater:false,done:[0,0,0,0,0,0],won:false});
+let S=fresh(),zoom=false,labels=true,time=0,drag=null;
+const surfY=()=>BY-6-(S.water+S.ice*.5*Math.min(1,S.water/40))*.52;
+const plateOver=()=>Math.abs(S.plate.x-BX)<140&&S.plate.y<BT-8;
+
+function update(dt){
+  const P=[0,1,2.2][S.power];
+  S.evap=0;
+  if(S.ice>0){
+    const m=Math.min(S.ice,(.5+4*P+Math.max(0,S.T)*.05)*dt);
+    S.ice-=m;S.water+=m;S.T+=(1-S.T)*Math.min(1,dt*1.5);
+    if(S.ice<.05){S.ice=0;S.cubes=[]}
+  }else if(S.water>0){
+    S.T=Math.min(100,S.T+(P*3*200/Math.max(S.water,90)-.03*(S.T-25))*dt);
+    if(S.T>45){S.evap=Math.pow((S.T-45)/55,2)*1.2+(S.T>=99.5?P*2:0);S.water-=S.evap*dt}
+    if(S.water<=.5){S.water=0;S.evap=0}
+  }else S.T+=(25+P*15-S.T)*Math.min(1,dt*.8);
+  const sy=surfY();
+  // steam
+  let n=S.evap*7*dt;if(Math.random()<n%1)n++;n=Math.floor(n);
+  while(n-->0&&S.steam.length<260)S.steam.push({x:BX+(Math.random()-.5)*190,y:sy,vx:(Math.random()-.5)*26,vy:-95-Math.random()*75,r:14+Math.random()*10,life:0,max:2.6+Math.random()*1.4,ph:Math.random()*6});
+  const over=plateOver();
+  S.cond=Math.max(0,S.cond-dt);S.fog=Math.max(0,S.fog-dt*.04);
+  for(let i=S.steam.length-1;i>=0;i--){
+    const p=S.steam[i];p.life+=dt;p.x+=(p.vx+Math.sin(time*3+p.ph)*18)*dt;p.y+=p.vy*dt;p.r+=14*dt;
+    if(p.y>BT)p.x=Math.max(BX-BW/2+p.r*.5,Math.min(BX+BW/2-p.r*.5,p.x));
+    if(p.y<S.plate.y+22&&p.y>S.plate.y-20&&Math.abs(p.x-S.plate.x)<148){
+      const d=S.pd[Math.floor(Math.random()*S.pd.length)];d.r+=.9;S.fog=Math.min(1,S.fog+.02);S.cond=1.2;S.steam.splice(i,1);
+      if(d.r>11){S.fall.push({x:S.plate.x+d.dx,y:S.plate.y+24,vy:0});d.r=2.5}
+    }else if(p.life>p.max||p.y<-40)S.steam.splice(i,1);
+  }
+  // falling drops
+  for(let i=S.fall.length-1;i>=0;i--){
+    const f=S.fall[i];f.vy+=900*dt;f.y+=f.vy*dt;
+    const inB=Math.abs(f.x-BX)<BW/2-8;
+    if(inB&&f.y>Math.min(sy,BY-10)){S.water+=3;S.drops++;S.hadWater=true;S.fall.splice(i,1)}
+    else if(f.y>BENCH+25)S.fall.splice(i,1);
+  }
+  // bubbles
+  if(S.water>20&&S.T>70&&S.ice===0){
+    const rate=(S.T-70)/30*(S.power?26:5)*(S.T>=99.5?2:1);
+    if(Math.random()<rate*dt)S.bub.push({x:BX+(Math.random()-.5)*200,y:BY-8,r:2+Math.random()*(S.T>=99.5?7:3),v:70+Math.random()*80});
+  }
+  for(let i=S.bub.length-1;i>=0;i--){const b=S.bub[i];b.y-=b.v*dt;b.x+=Math.sin(time*8+b.y*.1)*.5;if(b.y<sy+b.r)S.bub.splice(i,1)}
+  // missions
+  const d=S.done;
+  if(S.ice>0)d[0]=1; if(S.power>0)d[1]=1;
+  if(S.hadIce&&S.ice===0&&S.water>0)d[2]=1;
+  if(S.T>=99.5&&S.water>0)d[3]=1; if(S.cond>0)d[4]=1; if(S.drops>=5)d[5]=1;
+  if(!S.won&&d.every(Boolean)){S.won=true;setTimeout(()=>$('#win').classList.add('on'),900)}
+}
+
+function beakerPath(){const l=BX-BW/2,r=BX+BW/2,b=BY,q=22;ctx.beginPath();ctx.moveTo(l,BT);ctx.lineTo(l,b-q);ctx.quadraticCurveTo(l,b,l+q,b);ctx.lineTo(r-q,b);ctx.quadraticCurveTo(r,b,r,b-q);ctx.lineTo(r,BT)}
+function pill(x,y,en,vi,lx,ly){
+  ctx.font='800 19px system-ui,sans-serif';const w1=ctx.measureText(en).width;
+  ctx.font='600 15px system-ui,sans-serif';const w2=viOn?ctx.measureText(vi).width:0;
+  const w=Math.max(w1,w2)+26,h=viOn?50:32;
+  if(lx!==undefined){ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(lx,ly);ctx.stroke();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(lx,ly,4,0,7);ctx.fill()}
+  rr(ctx,x-w/2,y-h/2,w,h,14);ctx.fillStyle='rgba(255,255,255,.95)';ctx.fill();
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#12263a';
+  ctx.font='800 19px system-ui,sans-serif';ctx.fillText(en,x,viOn?y-9:y+1);
+  if(viOn){ctx.font='600 15px system-ui,sans-serif';ctx.fillStyle='#4b5f73';ctx.fillText(vi,x,y+13)}
+}
+
+function draw(){
+  ctx.setTransform(1.5,0,0,1.5,0,0);
+  // wall
+  let g=ctx.createLinearGradient(0,0,0,BENCH);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');ctx.fillStyle=g;ctx.fillRect(0,0,W,BENCH);
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=2;
+  for(let x=0;x<=W;x+=150){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,BENCH);ctx.stroke()}
+  for(let y=40;y<BENCH;y+=150){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+  // bench
+  g=ctx.createLinearGradient(0,BENCH,0,H);g.addColorStop(0,'#3d4856');g.addColorStop(.12,'#2f3843');g.addColorStop(1,'#1f262e');ctx.fillStyle=g;ctx.fillRect(0,BENCH,W,H-BENCH);
+  ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(0,BENCH,W,3);
+  // shadows
+  ctx.fillStyle='rgba(0,0,0,.28)';
+  ctx.beginPath();ctx.ellipse(BX,676,185,16,0,0,7);ctx.fill();
+  ctx.beginPath();ctx.ellipse(240,660,105,10,0,0,7);ctx.fill();
+  // thermometer unit
+  rr(ctx,150,572,180,86,14);g=ctx.createLinearGradient(0,572,0,658);g.addColorStop(0,'#59636f');g.addColorStop(1,'#2c333b');ctx.fillStyle=g;ctx.fill();
+  rr(ctx,164,586,152,48,8);ctx.fillStyle='#c6d6bd';ctx.fill();
+  ctx.fillStyle='#1c2a1c';ctx.font='700 34px ui-monospace,Menlo,Consolas,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
+  ctx.fillText(Math.round(S.T)+' °C',306,611);
+  ctx.fillStyle='#e5432d';ctx.beginPath();ctx.arc(176,646,4,0,7);ctx.fill();
+  // tripod back leg
+  ctx.lineCap='round';ctx.strokeStyle='#39424c';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(BX,498);ctx.lineTo(BX,560);ctx.stroke();
+  // spirit burner
+  g=ctx.createRadialGradient(BX-22,628,6,BX,640,72);g.addColorStop(0,'rgba(240,250,255,.75)');g.addColorStop(.5,'rgba(170,205,225,.5)');g.addColorStop(1,'rgba(120,160,185,.55)');
+  ctx.beginPath();ctx.ellipse(BX,640,66,32,0,0,7);ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='rgba(235,245,255,.8)';ctx.lineWidth=2.5;ctx.stroke();
+  ctx.save();ctx.beginPath();ctx.ellipse(BX,640,63,29,0,0,7);ctx.clip();ctx.fillStyle='rgba(190,120,220,.5)';ctx.fillRect(BX-70,642,140,40);ctx.restore();
+  ctx.fillStyle='rgba(255,255,255,.6)';ctx.beginPath();ctx.ellipse(BX-34,628,14,5,-.5,0,7);ctx.fill();
+  g=ctx.createLinearGradient(BX-20,0,BX+20,0);g.addColorStop(0,'#8b949c');g.addColorStop(.4,'#e9eef2');g.addColorStop(1,'#70787f');
+  rr(ctx,BX-19,598,38,16,4);ctx.fillStyle=g;ctx.fill();
+  rr(ctx,BX-7,584,14,16,3);ctx.fillStyle=S.power?'#3a2a1c':'#efe7d6';ctx.fill();
+  if(S.power)flame(ctx,BX,588,S.power===1?58:98,time);
+  // tripod legs + ring
+  const leg=(x1,x2)=>{g=ctx.createLinearGradient(x1-6,0,x1+6,0);g.addColorStop(0,'#2e353c');g.addColorStop(.5,'#9aa4ad');g.addColorStop(1,'#3a424a');ctx.strokeStyle=g;ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(x1,496);ctx.lineTo(x2,672);ctx.stroke()};
+  leg(BX-140,BX-172);leg(BX+140,BX+172);
+  // gauze
+  ctx.beginPath();ctx.moveTo(BX-165,494);ctx.lineTo(BX+165,494);ctx.lineTo(BX+140,480);ctx.lineTo(BX-140,480);ctx.closePath();
+  ctx.fillStyle='#7d8790';ctx.fill();
+  ctx.save();ctx.clip();ctx.strokeStyle='rgba(30,36,42,.55)';ctx.lineWidth=1;
+  for(let x=-170;x<=170;x+=9){ctx.beginPath();ctx.moveTo(BX+x,494);ctx.lineTo(BX+x*.85,480);ctx.stroke()}
+  for(let y=482;y<494;y+=3.5){ctx.beginPath();ctx.moveTo(BX-170,y);ctx.lineTo(BX+170,y);ctx.stroke()}
+  ctx.fillStyle='rgba(235,232,222,.8)';ctx.beginPath();ctx.ellipse(BX,487,82,6,0,0,7);ctx.fill();ctx.restore();
+  ctx.fillStyle='#4a535c';ctx.fillRect(BX-165,494,330,5);
+  // beaker glass (back)
+  beakerPath();ctx.closePath();ctx.fillStyle='rgba(215,238,255,.13)';ctx.fill();
+  // water
+  const sy=surfY(),boil=S.T>=99.5&&S.power?1:S.T>85?.3:0;
+  ctx.save();beakerPath();ctx.closePath();ctx.clip();
+  if(S.water>0){
+    g=ctx.createLinearGradient(0,sy,0,BY);g.addColorStop(0,'rgba(125,200,240,.72)');g.addColorStop(1,'rgba(35,120,205,.82)');
+    ctx.beginPath();ctx.moveTo(BX-BW/2,BY);ctx.lineTo(BX-BW/2,sy);
+    for(let x=-BW/2;x<=BW/2;x+=10)ctx.lineTo(BX+x,sy+Math.sin(x*.09+time*9)*3*boil+Math.sin(x*.21-time*13)*2*boil);
+    ctx.lineTo(BX+BW/2,BY);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+    ctx.fillStyle='rgba(215,240,255,.55)';ctx.beginPath();ctx.ellipse(BX,sy+1,BW/2-4,5,0,0,7);ctx.fill();
+    for(const b of S.bub){ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,7);ctx.fillStyle='rgba(255,255,255,.25)';ctx.fill();ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1.2;ctx.stroke()}
+  }
+  // ice
+  if(S.cubes.length){
+    const sc=Math.cbrt(S.ice/(S.cubes.length*40)),lvl=BY-6-sy;
+    S.cubes.forEach((c,i)=>{const s=56*sc,y=lvl>s*.6?sy+s*.12+Math.sin(time*2+i)*2:BY-6-s/2;iceCube(ctx,BX+c.x*(lvl>30?1:.98),y,s,c.rot+(lvl>30?Math.sin(time+i)*.06:0))});
+  }
+  ctx.restore();
+  // probe + cable
+  ctx.strokeStyle='#20262c';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(536,150);ctx.bezierCurveTo(520,40,300,330,240,574);ctx.stroke();
+  g=ctx.createLinearGradient(530,0,548,0);g.addColorStop(0,'#7f8890');g.addColorStop(.5,'#f2f5f7');g.addColorStop(1,'#6e767d');
+  ctx.strokeStyle=g;ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(537,170);ctx.lineTo(548,456);ctx.stroke();
+  rr(ctx,527,138,20,40,6);ctx.fillStyle='#22292f';ctx.fill();
+  // beaker glass (front)
+  beakerPath();ctx.strokeStyle='rgba(120,160,185,.55)';ctx.lineWidth=7;ctx.stroke();
+  beakerPath();ctx.strokeStyle='rgba(240,250,255,.95)';ctx.lineWidth=3;ctx.stroke();
+  ctx.beginPath();ctx.ellipse(BX,BT,BW/2+3,9,0,0,7);ctx.strokeStyle='rgba(240,250,255,.95)';ctx.lineWidth=4;ctx.stroke();
+  g=ctx.createLinearGradient(BX-BW/2+14,0,BX-BW/2+34,0);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(.5,'rgba(255,255,255,.5)');g.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=g;ctx.fillRect(BX-BW/2+14,BT+18,20,BY-BT-50);
+  ctx.fillStyle='rgba(255,255,255,.25)';ctx.fillRect(BX+BW/2-22,BT+30,6,BY-BT-80);
+  ctx.textAlign='right';ctx.textBaseline='middle';ctx.font='700 13px system-ui,sans-serif';
+  for(let v=100;v<=400;v+=50){const y=BY-6-v*.52,big=v%100===0;ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(BX+BW/2-30,y);ctx.lineTo(BX+BW/2-(big?58:46),y);ctx.stroke();if(big){ctx.fillStyle='rgba(255,255,255,.9)';ctx.fillText(v,BX+BW/2-62,y)}}
+  ctx.fillStyle='rgba(255,255,255,.9)';ctx.fillText('mL',BX+BW/2-34,BT+32);
+  // steam
+  for(const p of S.steam){const a=Math.min(1,p.life*3)*(1-p.life/p.max);ctx.globalAlpha=Math.max(0,a*.6);ctx.drawImage(puff,p.x-p.r*1.6,p.y-p.r*1.6,p.r*3.2,p.r*3.2)}
+  ctx.globalAlpha=1;
+  // target hint
+  const over=plateOver();
+  if(S.evap>.25&&!over&&!drag){
+    ctx.setLineDash([12,10]);ctx.strokeStyle='rgba(255,230,90,'+(.6+.4*Math.sin(time*5))+')';ctx.lineWidth=4;
+    ctx.beginPath();ctx.ellipse(BX,150,155,24,0,0,7);ctx.stroke();ctx.setLineDash([]);
+    pill(BX,100,'Drag the cold plate here','Kéo đĩa lạnh vào đây');
+  }
+  // cold plate
+  const pl=S.plate;
+  ctx.fillStyle='rgba(0,0,0,.2)';if(pl.y>560){ctx.beginPath();ctx.ellipse(pl.x,pl.y+26,150,10,0,0,7);ctx.fill()}
+  g=ctx.createLinearGradient(pl.x-150,0,pl.x+150,0);g.addColorStop(0,'rgba(200,232,250,.55)');g.addColorStop(.5,'rgba(240,250,255,.4)');g.addColorStop(1,'rgba(180,220,245,.55)');
+  ctx.beginPath();ctx.ellipse(pl.x,pl.y+6,152,20,0,0,7);ctx.fillStyle='rgba(150,195,225,.45)';ctx.fill();
+  ctx.beginPath();ctx.ellipse(pl.x,pl.y,152,20,0,0,7);ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='rgba(245,252,255,.95)';ctx.lineWidth=3;ctx.stroke();
+  if(S.fog>0){ctx.beginPath();ctx.ellipse(pl.x,pl.y+5,146,19,0,0,7);ctx.fillStyle='rgba(255,255,255,'+S.fog*.45+')';ctx.fill()}
+  iceCube(ctx,pl.x-52,pl.y-18,34,.15);iceCube(ctx,pl.x+2,pl.y-20,38,-.1);iceCube(ctx,pl.x+54,pl.y-17,32,.25);
+  for(const d of S.pd)if(d.r>.6){const x=pl.x+d.dx,y=pl.y+10+14*Math.sqrt(1-Math.pow(d.dx/152,2));
+    ctx.beginPath();ctx.moveTo(x-d.r*.7,y);ctx.bezierCurveTo(x-d.r,y+d.r*1.5,x+d.r,y+d.r*1.5,x+d.r*.7,y);ctx.closePath();
+    ctx.fillStyle='rgba(150,210,250,.9)';ctx.fill();ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=1.2;ctx.stroke()}
+  for(const f of S.fall){ctx.beginPath();ctx.moveTo(f.x,f.y-12);ctx.bezierCurveTo(f.x-9,f.y+2,f.x-6,f.y+9,f.x,f.y+9);ctx.bezierCurveTo(f.x+6,f.y+9,f.x+9,f.y+2,f.x,f.y-12);ctx.fillStyle='rgba(140,205,250,.95)';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.stroke()}
+  // labels
+  if(labels){
+    pill(868,385,'beaker','cốc thủy tinh',BX+BW/2,385);
+    pill(880,440,'gauze','lưới thép',BX+160,488);
+    pill(880,540,'tripod','kiềng ba chân',BX+160,590);
+    pill(420,725,'spirit burner','đèn cồn',BX-52,655);
+    pill(240,535,'thermometer','nhiệt kế');
+    pill(pl.x,pl.y-62,'cold plate','đĩa lạnh');
+  }
+  if(zoom)drawZoom();
+}
+
+/* particle view */
+const ZX=1040,ZY=170,ZR=108,parts=[];
+for(let i=0;i<28;i++)parts.push({x:ZX,y:ZY+40,vx:0,vy:0,gx:ZX-63+(i%7)*21,gy:ZY+18+Math.floor(i/7)*21});
+function drawZoom(){
+  const fr=cur==='freeze',solid=fr?F.fz>.5:S.ice>0&&S.ice>=S.water*.3,liquid=!solid&&(fr?F.water>0:S.water>0),nGas=liquid&&!fr?Math.round(Math.min(1,S.evap/3)*12):0,zT=fr?F.T:S.T;
+  ctx.beginPath();ctx.arc(ZX,ZY,ZR+6,0,7);ctx.fillStyle='#12263a';ctx.fill();
+  ctx.beginPath();ctx.arc(ZX,ZY,ZR,0,7);ctx.fillStyle='#f4f9fd';ctx.fill();
+  ctx.save();ctx.beginPath();ctx.arc(ZX,ZY,ZR,0,7);ctx.clip();
+  if(solid||liquid)parts.forEach((p,i)=>{
+    if(solid){p.x+=(p.gx-p.x)*.2+(Math.random()-.5)*2.4;p.y+=(p.gy-p.y)*.2+(Math.random()-.5)*2.4;p.vx=p.vy=0}
+    else{
+      const gas=i<nGas,sp=gas?4.2:.5+Math.max(0,zT)*.018;
+      if(gas){if(Math.hypot(p.vx,p.vy)<2){const a=Math.random()*6.28;p.vx=Math.cos(a)*sp;p.vy=-Math.abs(Math.sin(a)*sp)}}
+      else{p.vx=(p.vx+(Math.random()-.5)*sp)*.9;p.vy=(p.vy+(Math.random()-.5)*sp)*.9}
+      p.x+=p.vx;p.y+=p.vy;
+      if(!gas&&p.y<ZY+12){p.y=ZY+12;p.vy=Math.abs(p.vy)*.5}
+      const dx=p.x-ZX,dy=p.y-ZY,d=Math.hypot(dx,dy);
+      if(d>ZR-12){const nx=dx/d,ny=dy/d,dot=p.vx*nx+p.vy*ny;p.x=ZX+nx*(ZR-12);p.y=ZY+ny*(ZR-12);if(dot>0){p.vx-=2*dot*nx;p.vy-=2*dot*ny}}
+    }
+    const gas=!solid&&i<nGas;
+    ctx.beginPath();ctx.arc(p.x,p.y,8,0,7);ctx.fillStyle=gas?'#e5432d':solid?'#7cc4ee':'#2f86d6';ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.beginPath();ctx.arc(p.x-2.5,p.y-2.5,2.5,0,7);ctx.fill();
+  });
+  ctx.restore();
+  const t=solid?['solid: particles stay in place','chất rắn: hạt đứng yên tại chỗ']:liquid?(nGas?['some particles fly away as gas','một số hạt bay đi thành khí']:['liquid: particles slide around','chất lỏng: hạt trượt qua lại']):fr?['nothing in the test tube','ống nghiệm đang trống']:['nothing in the beaker','cốc đang trống'];
+  pill(ZX,ZY+ZR+34,t[0],t[1]);pill(ZX,ZY-ZR-26,'Zoom in','Phóng to');
+}
+
+/* pointer input (touch + mouse) */
+function pt(e){const r=cv.getBoundingClientRect(),s=Math.min(r.width/W,r.height/H);return{x:(e.clientX-r.left-(r.width-W*s)/2)/s,y:(e.clientY-r.top-(r.height-H*s)/2)/s}}
+cv.addEventListener('pointerdown',e=>{
+  if(cur==='skel')return kDown(pt(e));
+  if(cur==='freeze')return fDown(e,pt(e));
+  const p=pt(e),pl=S.plate;
+  if(Math.abs(p.x-pl.x)<175&&Math.abs(p.y-pl.y)<65){drag={dx:p.x-pl.x,dy:p.y-pl.y};try{cv.setPointerCapture(e.pointerId)}catch(_){}}
+  else if(Math.abs(p.x-BX)<90&&p.y>540&&p.y<690)setPower((S.power+1)%3);
+  else if(Math.abs(p.x-BX)<BW/2&&p.y>BT&&p.y<BY)addIce();
+});
+cv.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e);if(cur==='freeze')return fMove(p);S.plate.x=Math.max(165,Math.min(W-165,p.x-drag.dx));S.plate.y=Math.max(60,Math.min(BENCH-20,p.y-drag.dy));
+  if(Math.abs(S.plate.x-BX)<170&&S.plate.y>BT-30&&S.plate.y<520)S.plate.y=BT-30});
+const endDrag=()=>{if(drag&&cur==='freeze')fUp();drag=null};cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
+
+/* controls */
+function addIce(){if(S.cubes.length>=4||S.water+S.ice>330)return;const slots=[-84,-28,28,84];S.cubes.push({x:slots[S.cubes.length],rot:(Math.random()-.5)*.5});
+  S.ice=S.ice>0?S.ice+40*Math.min(1,S.ice/((S.cubes.length-1)*40)):40;S.hadIce=true}
+function setPower(p){S.power=p;$$('.only-evap .seg .big').forEach(b=>b.classList.toggle('on',+b.dataset.p===p))}
+$('#addIce').onclick=addIce;
+$('#addWater').onclick=()=>{if(S.water+S.ice>330)return;if(!S.ice)S.T=(S.T*S.water+25*100)/(S.water+100);S.water+=100;S.hadWater=true};
+$$('.only-evap .seg .big').forEach(b=>b.onclick=()=>setPower(+b.dataset.p));
+$('#zoomBtn').onclick=e=>{zoom=!zoom;e.currentTarget.classList.toggle('on',zoom)};
+$('#lblBtn').onclick=e=>{labels=!labels;e.currentTarget.classList.toggle('on',labels)};
+$('#reset').onclick=()=>{if(cur==='skel'){K=freshK();kBtns()}else if(cur==='freeze')F=freshF();else{S=fresh();setPower(0)}lastCap=''};
+$('#winClose').onclick=()=>$('#win').classList.remove('on');
+
+let mLi=[];
+let lastCap='';
+function hud(){cur==='skel'?hudK():cur==='freeze'?hudF():hudE()}
+function hudE(){
+  $('#rT b').textContent=Math.round(S.T)+'°C';$('#rT').classList.toggle('hot',S.T>=60);
+  $('#rW').textContent=Math.round(S.water);$('#rD').textContent=S.drops;
+  mLi.forEach((li,i)=>li.classList.toggle('done',!!S.done[i]));
+  const ev=S.evap>.05,on=(id,v)=>$(id).classList.toggle('on',!!v);
+  on('#sIce',S.ice>0);on('#aMelt',S.ice>0&&S.power>0);on('#sWater',S.water>0);on('#aEvap',ev);on('#sVap',ev);on('#aCond',S.cond>0);on('#sBack',S.cond>0||S.fall.length);
+  let c;
+  if(S.cond>0)c=['The water vapour condenses on the cold plate. Drops of water come back!','Hơi nước ngưng tụ trên đĩa lạnh. Những giọt nước xuất hiện trở lại!'];
+  else if(!S.ice&&!S.water)c=S.hadWater?['The beaker is empty. The water went into the air as water vapour.','Cốc đã cạn. Nước đã bay vào không khí thành hơi nước.']:['Tap “Add ice” to put ice in the beaker.','Bấm “Thêm đá” để cho nước đá vào cốc.'];
+  else if(S.ice>0)c=S.power?['The ice is melting. It turns into water.','Nước đá đang nóng chảy. Nó biến thành nước.']:['Ice is a solid. Light the burner to heat it.','Nước đá là chất rắn. Hãy thắp đèn cồn để làm nóng.'];
+  else if(S.T>=99.5&&S.power)c=['The water is boiling. It evaporates fast and goes into the air.','Nước đang sôi. Nước bay hơi nhanh và bay vào không khí.'];
+  else if(ev)c=['The water is evaporating. It turns into water vapour.','Nước đang bay hơi. Nó biến thành hơi nước.'];
+  else c=S.power?['The water is getting hotter.','Nước đang nóng dần lên.']:['Water is a liquid. Light the burner to heat it.','Nước là chất lỏng. Hãy thắp đèn cồn để đun nóng.'];
+  if(c[0]!==lastCap){lastCap=c[0];$('#caption').innerHTML=bi(c[0],c[1])}
+}
+
+/* ---------- warm-up ---------- */
+const wc=$('#warmC'),wx=wc.getContext('2d');
+function drawWarm(){
+  if(cur==='skel')return warmK();
+  const fr=cur==='freeze',v=$('#heatR').value/100,h=fr?1-v:v;
+  let g=wx.createLinearGradient(0,0,0,300);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');wx.fillStyle=g;wx.fillRect(0,0,900,300);
+  wx.fillStyle='#2f3843';wx.fillRect(0,290,900,90);wx.fillStyle='rgba(255,255,255,.18)';wx.fillRect(0,290,900,3);
+  if(v>0){g=wx.createRadialGradient(450,330,10,450,330,420);g.addColorStop(0,fr?'rgba(120,200,255,'+v*.4+')':'rgba(255,120,40,'+h*.45+')');g.addColorStop(1,fr?'rgba(120,200,255,0)':'rgba(255,120,40,0)');wx.fillStyle=g;wx.fillRect(0,0,900,380)}
+  const pw=40+h*300;
+  wx.beginPath();wx.ellipse(450,318,pw,10+h*18,0,0,7);wx.fillStyle='rgba(110,185,235,.75)';wx.fill();
+  wx.beginPath();wx.ellipse(450-pw*.25,313,pw*.4,3+h*5,0,0,7);wx.fillStyle='rgba(255,255,255,.35)';wx.fill();
+  const s=200*Math.cbrt(Math.max(0,1-h));
+  iceCube(wx,450,316-s/2,s,.04);
+  wx.font='800 30px system-ui,sans-serif';wx.textAlign='center';wx.fillStyle='#fff';
+  wx.fillText(fr?(v>=1?'ICE':v>0?'WATER  ➜  ICE':'WATER'):(h>=1?'WATER':h>0?'ICE  ➜  WATER':'ICE'),450,50);
+}
+$('#heatR').oninput=drawWarm;
+function buildWarm(){
+  const w=LABS[cur].w;$('#warmFb').innerHTML='';
+  $('#warmOpts').innerHTML='<button class="opt" data-a="1"><i>A</i><span>'+bi(w.a[0],w.a[1])+'</span></button><button class="opt" data-a="0"><i>B</i><span>'+bi(w.b[0],w.b[1])+'</span></button>';
+  $$('#warmOpts .opt').forEach(b=>b.onclick=()=>{
+    $$('#warmOpts .opt').forEach(o=>o.classList.remove('right','wrong'));
+    if(b.dataset.a==='1'){b.classList.add('right');$('#warmFb').innerHTML=bi(w.yes[0]+' <button class="next" data-go="lab" style="margin-left:1rem">Go to the lab ➜</button>',w.yes[1])}
+    else{b.classList.add('wrong');$('#warmFb').innerHTML=bi(w.no[0],w.no[1])}
+  });
+}
+
+/* ---------- quiz ---------- */
+let Q=[];
+let qi=-1,score=0,first=true;
+function startQuiz(){qi=0;score=0;showQ()}
+function showQ(){
+  const q=Q[qi];first=true;
+  $('#qNum').textContent='Question '+(qi+1)+' of '+Q.length;$('#qText').innerHTML=bi(q.q[0],q.q[1]);$('#qFb').innerHTML='';
+  $('#qNext').style.visibility='hidden';$('#qOpts').style.display='';
+  const order=q.o.map((o,i)=>({o,ok:i===0})).sort(()=>Math.random()-.5);
+  $('#qOpts').innerHTML=order.map((x,i)=>'<button class="opt" data-ok="'+(x.ok?1:0)+'"><i>'+'ABC'[i]+'</i><span>'+bi(x.o[0],x.o[1])+'</span></button>').join('');
+  $$('#qOpts .opt').forEach(b=>b.onclick=()=>{
+    if($('#qNext').style.visibility==='visible')return;
+    if(b.dataset.ok==='1'){b.classList.add('right');if(first)score++;$('#qFb').innerHTML=bi('Correct! ⭐','Chính xác!');$('#qNext').style.visibility='visible'}
+    else{b.classList.remove('wrong');void b.offsetWidth;b.classList.add('wrong');first=false;$('#qFb').innerHTML=bi('Not yet. Try again.','Chưa đúng. Thử lại nhé.')}
+  });
+}
+$('#qNext').onclick=()=>{
+  if(qi>=Q.length){startQuiz();$('#qNext').textContent='Next ➜';return}
+  qi++;
+  if(qi<Q.length)return showQ();
+  $('#qNum').textContent='';$('#qOpts').style.display='none';
+  $('#qText').innerHTML=bi('You got '+score+' out of '+Q.length+' on the first try!','Em trả lời đúng '+score+' trên '+Q.length+' câu ngay lần đầu!');
+  $('#qFb').innerHTML='<span class="stars">'+'⭐'.repeat(score)+'</span>';$('#qNext').textContent='Play again ↺';
+};
+
+/* ---------- home thumbnail ---------- */
+{const t=$('#thumb').getContext('2d');let g=t.createLinearGradient(0,0,0,340);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');t.fillStyle=g;t.fillRect(0,0,600,340);
+ t.fillStyle='#2f3843';t.fillRect(0,270,600,70);iceCube(t,170,225,90,.1);iceCube(t,255,238,64,-.2);
+ t.beginPath();t.ellipse(430,285,110,16,0,0,7);t.fillStyle='rgba(110,185,235,.8)';t.fill();
+ for(let i=0;i<9;i++){t.globalAlpha=.5-i*.04;t.drawImage(puff,395+Math.sin(i)*30-40,220-i*24-40,90+i*6,90+i*6)}t.globalAlpha=1}
+
+/* ---------- freezing lab ---------- */
+const TW=64,TH=330,RACK={x:960,y:318},BATH={x:600,y:262};
+const chunks=[];for(let i=0;i<120;i++)chunks.push({x:408+Math.random()*384,f:Math.random(),s:26+Math.random()*18,rot:Math.random()*3});
+chunks.sort((a,b)=>a.f-b.f);
+const saltDots=[];for(let i=0;i<110;i++)saltDots.push({x:405+Math.random()*390,y:Math.random()*40,r:1.4+Math.random()*1.8});
+const freshF=()=>({water:0,T:25,fz:0,lvl:0,lvlT:0,salt:0,Tb:25,inBath:false,tx:RACK.x,ty:RACK.y,mist:[],fx:[],done:[0,0,0,0,0,0],won:false});
+let F=freshF(),cur='evap';
+const iceTop=()=>660-F.lvl*215;
+const seated=()=>F.inBath&&Math.abs(F.tx-BATH.x)<8&&Math.abs(F.ty-BATH.y)<8;
+function updateF(dt){
+  F.lvl+=(F.lvlT-F.lvl)*Math.min(1,dt*4);
+  F.Tb+=((F.lvlT>0?1-13*F.salt:25)-F.Tb)*Math.min(1,dt*.9);
+  if(!drag){const t=F.inBath?BATH:RACK;F.tx+=(t.x-F.tx)*Math.min(1,dt*7);F.ty+=(t.y-F.ty)*Math.min(1,dt*7)}
+  const cold=seated()&&F.lvl>.05,Te=cold?F.Tb:25,k=cold?.25*Math.min(1,F.lvl*1.5):.06;
+  if(F.water){
+    if(F.fz<=0){F.T+=(Te-F.T)*k*dt;if(F.T<=.3&&Te<-.5){F.T=0;F.fz=.001}}
+    else if(F.fz>=1){F.T+=(Te-F.T)*k*dt;if(F.T>0){F.T=0;F.fz=.999}}
+    else{F.T=0;F.fz=Math.max(0,Math.min(1,F.fz+(Te<0?-Te*.007:-Te*.0016)*dt))}
+  }else F.T+=(Te-F.T)*Math.min(1,dt*.8);
+  if(F.salt>0&&F.lvl>.3&&Math.random()<9*dt)F.mist.push({x:400+Math.random()*400,y:iceTop()-4,vx:(Math.random()-.5)*30,vy:-4-Math.random()*10,r:24+Math.random()*16,life:0,max:2.6});
+  for(let i=F.mist.length-1;i>=0;i--){const m=F.mist[i];m.life+=dt;m.x+=m.vx*dt;m.y+=m.vy*dt;if(m.life>m.max)F.mist.splice(i,1)}
+  for(let i=F.fx.length-1;i>=0;i--){const g=F.fx[i];g.vy+=700*dt;g.y+=g.vy*dt;if(g.y>iceTop())F.fx.splice(i,1)}
+  const d=F.done;
+  if(F.water)d[0]=1; if(F.lvlT>0)d[1]=1; if(seated())d[2]=1; if(F.salt>0)d[3]=1;
+  if(F.water&&F.T<=.5)d[4]=1; if(F.fz>=1)d[5]=1;
+  if(!F.won&&d.every(Boolean)){F.won=true;setTimeout(()=>$('#win').classList.add('on'),900)}
+}
+function tubeDraw(){
+  const x=F.tx,y=F.ty,l=x-TW/2,r=x+TW/2,b=y+TH;
+  const path=()=>{ctx.beginPath();ctx.moveTo(l,y);ctx.lineTo(l,b-TW/2);ctx.arc(x,b-TW/2,TW/2,Math.PI,0,true);ctx.lineTo(r,y)};
+  path();ctx.closePath();ctx.fillStyle='rgba(215,238,255,.2)';ctx.fill();
+  if(F.water){
+    const hW=150,top=b-hW;ctx.save();path();ctx.closePath();ctx.clip();
+    let g=ctx.createLinearGradient(0,top,0,b);
+    if(F.fz>0){
+      g.addColorStop(0,'rgba(245,251,255,.97)');g.addColorStop(1,'rgba(196,226,244,.97)');ctx.fillStyle=g;ctx.fillRect(l,top,TW,hW);
+      ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=1.5;ctx.beginPath();
+      ctx.moveTo(l+8,top+30);ctx.lineTo(l+22,top+52);ctx.lineTo(l+14,top+78);ctx.moveTo(r-10,top+60);ctx.lineTo(r-24,top+86);ctx.lineTo(r-14,top+112);ctx.stroke();
+    }
+    if(F.fz<1){
+      const q=1-F.fz,cw=F.fz>0?(TW-10)*q:TW,ch=F.fz>0?(hW-8)*q:hW;
+      g=ctx.createLinearGradient(0,top,0,top+ch);g.addColorStop(0,'rgba(125,200,240,.85)');g.addColorStop(1,'rgba(35,120,205,.9)');
+      if(F.fz>0)rr(ctx,x-cw/2,top-10,cw,ch+10,Math.min(cw/2,(ch+10)/2));else{ctx.beginPath();ctx.rect(l,top,TW,hW)}
+      ctx.fillStyle=g;ctx.fill();
+    }
+    ctx.restore();
+    ctx.fillStyle=F.fz>=1?'rgba(255,255,255,.9)':'rgba(215,240,255,.7)';ctx.beginPath();ctx.ellipse(x,top+1,TW/2-3,4,0,0,7);ctx.fill();
+  }
+  // probe + cable
+  ctx.strokeStyle='#20262c';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x+4,y-60);ctx.bezierCurveTo(x-60,y-260,300,300,240,574);ctx.stroke();
+  let g=ctx.createLinearGradient(x-2,0,x+10,0);g.addColorStop(0,'#7f8890');g.addColorStop(.5,'#f2f5f7');g.addColorStop(1,'#6e767d');
+  ctx.strokeStyle=g;ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(x+4,y-30);ctx.lineTo(x+3,b-70);ctx.stroke();
+  rr(ctx,x-6,y-66,20,40,6);ctx.fillStyle='#22292f';ctx.fill();
+  // glass
+  path();ctx.strokeStyle='rgba(120,160,185,.55)';ctx.lineWidth=6;ctx.stroke();
+  path();ctx.strokeStyle='rgba(240,250,255,.95)';ctx.lineWidth=2.5;ctx.stroke();
+  ctx.beginPath();ctx.ellipse(x,y,TW/2+4,6,0,0,7);ctx.strokeStyle='rgba(240,250,255,.95)';ctx.lineWidth=3.5;ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.4)';ctx.fillRect(l+8,y+16,7,TH-70);
+}
+function drawF(){
+  ctx.setTransform(1.5,0,0,1.5,0,0);ctx.lineCap='round';
+  let g=ctx.createLinearGradient(0,0,0,BENCH);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');ctx.fillStyle=g;ctx.fillRect(0,0,W,BENCH);
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=2;
+  for(let x=0;x<=W;x+=150){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,BENCH);ctx.stroke()}
+  for(let y=40;y<BENCH;y+=150){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+  g=ctx.createLinearGradient(0,BENCH,0,H);g.addColorStop(0,'#3d4856');g.addColorStop(.12,'#2f3843');g.addColorStop(1,'#1f262e');ctx.fillStyle=g;ctx.fillRect(0,BENCH,W,H-BENCH);
+  ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(0,BENCH,W,3);
+  ctx.fillStyle='rgba(0,0,0,.28)';
+  ctx.beginPath();ctx.ellipse(600,674,235,16,0,0,7);ctx.fill();
+  ctx.beginPath();ctx.ellipse(240,660,105,10,0,0,7);ctx.fill();
+  ctx.beginPath();ctx.ellipse(960,674,110,10,0,0,7);ctx.fill();
+  // thermometer unit
+  rr(ctx,150,572,180,86,14);g=ctx.createLinearGradient(0,572,0,658);g.addColorStop(0,'#59636f');g.addColorStop(1,'#2c333b');ctx.fillStyle=g;ctx.fill();
+  rr(ctx,164,586,152,48,8);ctx.fillStyle='#c6d6bd';ctx.fill();
+  ctx.fillStyle='#1c2a1c';ctx.font='700 34px ui-monospace,Menlo,Consolas,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
+  ctx.fillText(Math.round(F.T)+' °C',306,611);
+  ctx.fillStyle='#2f86d6';ctx.beginPath();ctx.arc(176,646,4,0,7);ctx.fill();
+  // rack (back)
+  ctx.fillStyle='#9a6a3a';ctx.fillRect(884,440,14,230);ctx.fillRect(1022,440,14,230);
+  g=ctx.createLinearGradient(0,452,0,472);g.addColorStop(0,'#cf9a5e');g.addColorStop(1,'#a87440');ctx.fillStyle=g;rr(ctx,868,452,184,20,5);ctx.fill();
+  ctx.fillStyle='rgba(40,25,10,.55)';ctx.beginPath();ctx.ellipse(960,461,40,5,0,0,7);ctx.fill();
+  // big beaker of ice
+  const bl=390,br=810,bt=420,bb=668,q=26,bowl=()=>{ctx.beginPath();ctx.moveTo(bl,bt);ctx.lineTo(bl,bb-q);ctx.quadraticCurveTo(bl,bb,bl+q,bb);ctx.lineTo(br-q,bb);ctx.quadraticCurveTo(br,bb,br,bb-q);ctx.lineTo(br,bt)};
+  bowl();ctx.closePath();ctx.fillStyle='rgba(215,238,255,.13)';ctx.fill();
+  const near=Math.abs(F.tx-BATH.x)<70,it=iceTop();
+  const chunk=c=>{const y=660-c.s/2-c.f*205;if(c.f<=F.lvl)iceCube(ctx,c.x,y,c.s,c.rot)};
+  ctx.save();bowl();ctx.closePath();ctx.clip();
+  if(F.lvl>.01){g=ctx.createLinearGradient(0,it,0,bb);g.addColorStop(0,'rgba(225,242,252,.85)');g.addColorStop(1,'rgba(150,200,232,.85)');ctx.fillStyle=g;ctx.fillRect(bl,it,br-bl,bb-it)}
+  chunks.forEach(c=>{if(Math.abs(c.x-600)<52)chunk(c)});
+  ctx.restore();
+  if(near)tubeDraw();
+  ctx.save();bowl();ctx.closePath();ctx.clip();
+  chunks.forEach(c=>{if(Math.abs(c.x-600)>=52)chunk(c)});
+  if(F.salt>0&&F.lvl>.05){ctx.fillStyle='#fff';const n=Math.round(saltDots.length*F.salt);for(let i=0;i<n;i++){const d=saltDots[i];if(Math.abs(d.x-600)<40)continue;ctx.beginPath();ctx.arc(d.x,it+4+d.y,d.r,0,7);ctx.fill()}}
+  ctx.restore();
+  bowl();ctx.strokeStyle='rgba(120,160,185,.55)';ctx.lineWidth=7;ctx.stroke();
+  bowl();ctx.strokeStyle='rgba(240,250,255,.95)';ctx.lineWidth=3;ctx.stroke();
+  ctx.beginPath();ctx.ellipse(600,bt,(br-bl)/2+3,10,0,0,7);ctx.strokeStyle='rgba(240,250,255,.95)';ctx.lineWidth=4;ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.3)';ctx.fillRect(bl+16,bt+20,12,bb-bt-60);
+  for(const m of F.mist){ctx.globalAlpha=Math.max(0,Math.min(1,m.life*2)*(1-m.life/m.max)*.35);ctx.drawImage(puff,m.x-m.r*1.6,m.y-m.r*1.6,m.r*3.2,m.r*3.2)}
+  ctx.globalAlpha=1;
+  ctx.fillStyle='#fff';for(const s of F.fx){ctx.beginPath();ctx.arc(s.x,s.y,2.2,0,7);ctx.fill()}
+  if(!near)tubeDraw();
+  // rack (front)
+  g=ctx.createLinearGradient(0,640,0,672);g.addColorStop(0,'#b07a44');g.addColorStop(1,'#7c5227');ctx.fillStyle=g;rr(ctx,864,640,192,32,6);ctx.fill();
+  if(F.water&&F.lvl>.3&&!F.inBath&&!drag&&F.fz===0){
+    ctx.setLineDash([12,10]);ctx.strokeStyle='rgba(255,230,90,'+(.6+.4*Math.sin(time*5))+')';ctx.lineWidth=4;
+    rr(ctx,BATH.x-46,BATH.y-10,92,TH+20,40);ctx.stroke();ctx.setLineDash([]);
+    pill(BATH.x,BATH.y-50,'Drag the test tube here','Kéo ống nghiệm vào đây');
+  }
+  if(labels){
+    pill(F.tx-125,F.ty+60,'test tube','ống nghiệm',F.tx-TW/2,F.ty+60);
+    pill(300,470,F.salt>0?'ice and salt':'beaker of ice',F.salt>0?'nước đá và muối':'cốc nước đá',390,480);
+    pill(240,535,'thermometer','nhiệt kế');
+    pill(960,722,'test tube rack','giá ống nghiệm');
+  }
+  if(zoom)drawZoom();
+}
+function fDown(e,p){
+  if(Math.abs(p.x-F.tx)<65&&p.y>F.ty-75&&p.y<F.ty+TH+15){drag={dx:p.x-F.tx,dy:p.y-F.ty};try{cv.setPointerCapture(e.pointerId)}catch(_){}}
+  else if(Math.abs(p.x-600)<210&&p.y>420&&p.y<668)addIceF();
+}
+function fMove(p){F.tx=Math.max(80,Math.min(W-80,p.x-drag.dx));F.ty=Math.max(60,Math.min(330,p.y-drag.dy))}
+function fUp(){F.inBath=Math.abs(F.tx-BATH.x)<230}
+function addIceF(){F.lvlT=Math.min(1,F.lvlT+.34)}
+$('#fPour').onclick=()=>{if(!F.water){F.water=40;F.T=25;F.fz=0}};
+$('#fMove').onclick=()=>{F.inBath=!F.inBath};
+$('#fIce').onclick=addIceF;
+$('#fSalt').onclick=()=>{if(F.lvlT<=0)return;F.salt=Math.min(1,F.salt+.5);for(let i=0;i<70;i++)F.fx.push({x:420+Math.random()*360,y:300+Math.random()*90,vy:Math.random()*80})};
+let moveState=null;
+function hudF(){
+  $('#rT b').textContent=Math.round(F.T)+'°C';$('#rT').classList.remove('hot');
+  $('#rW').textContent=F.water?Math.round(F.water*(1-F.fz)):0;$('#rD').textContent=Math.round(F.fz*100)+'%';
+  mLi.forEach((li,i)=>li.classList.toggle('done',!!F.done[i]));
+  if(moveState!==F.inBath){moveState=F.inBath;$('#fMove').innerHTML=F.inBath?bi('⬆ Take out','Lấy ra'):bi('⬇ Put in ice','Đặt vào đá')}
+  const cold=seated()&&F.lvl>.05,Te=cold?F.Tb:25,part=F.fz>0&&F.fz<1,frz=part&&Te<0,mlt=F.fz>0&&Te>0&&F.T>=0,on=(id,v)=>$(id).classList.toggle('on',!!v);
+  on('#fW',F.water&&F.fz<1);on('#fFz',frz);on('#fI',F.fz>0);on('#fMl',mlt);on('#fW2',mlt);
+  let c;
+  if(!F.water)c=['Tap “Pour water” to fill the test tube.','Bấm “Rót nước” để rót nước vào ống nghiệm.'];
+  else if(mlt||(F.fz>0&&Te>0))c=['The ice is warming up. It melts back into water.','Nước đá đang ấm lên. Nó nóng chảy thành nước trở lại.'];
+  else if(F.fz>=1)c=['All the water is frozen. It is ice now. Ice is a solid.','Toàn bộ nước đã đông đặc. Bây giờ nó là nước đá. Nước đá là chất rắn.'];
+  else if(frz)c=['The water is freezing. It turns into ice.','Nước đang đông đặc. Nó biến thành nước đá.'];
+  else if(!F.inBath)c=F.lvlT>0?['Put the test tube in the ice.','Đặt ống nghiệm vào nước đá.']:['Water is a liquid. Fill the big beaker with ice.','Nước là chất lỏng. Hãy cho nước đá vào cốc lớn.'];
+  else if(F.lvlT<=0)c=['There is no ice yet. Tap “Add ice”.','Chưa có nước đá. Bấm “Thêm đá”.'];
+  else if(F.T<=2.5&&F.salt===0)c=['The water is very cold, but it is still a liquid. Add salt to make the ice colder.','Nước rất lạnh nhưng vẫn là chất lỏng. Thêm muối để nước đá lạnh hơn.'];
+  else c=['The water is getting colder.','Nước đang lạnh dần.'];
+  if(c[0]!==lastCap){lastCap=c[0];$('#caption').innerHTML=bi(c[0],c[1])}
+}
+
+/* ---------- skeleton and muscles lab ---------- */
+const freshK=()=>({th:15,act:'',t:0,load:0,pulses:[],pt:0,info:null,infoT:0,cover:false,wasBent:false,done:[0,0,0,0,0,0],won:false});
+let K=freshK();
+function armPts(th){const a=th*Math.PI/180,d={x:Math.sin(a),y:Math.cos(a)},n={x:Math.cos(a),y:-Math.sin(a)},S={x:470,y:270},E={x:470,y:500};
+  return{S,E,d,n,H:{x:E.x+d.x*220,y:E.y+d.y*220},bO:{x:S.x+20,y:S.y+14},bI:{x:E.x+d.x*52+n.x*10,y:E.y+d.y*52+n.y*10},tO:{x:S.x-22,y:S.y+14},tI:{x:E.x-d.x*30-n.x*6,y:E.y-d.y*30-n.y*6}}}
+const mid=(A,B)=>({x:(A.x+B.x)/2,y:(A.y+B.y)/2}),len=(A,B)=>Math.hypot(B.x-A.x,B.y-A.y);
+function spPath(c,A,B,th){const dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy),nx=-dy/L*th*1.3,ny=dx/L*th*1.3,P=t=>[A.x+dx*t,A.y+dy*t],a=P(.1),b=P(.9),m1=P(.36),m2=P(.66);
+  c.beginPath();c.moveTo(a[0],a[1]);c.bezierCurveTo(m1[0]+nx,m1[1]+ny,m2[0]+nx,m2[1]+ny,b[0],b[1]);c.bezierCurveTo(m2[0]-nx,m2[1]-ny,m1[0]-nx,m1[1]-ny,a[0],a[1]);c.closePath()}
+function seg(c,A,B,w,col){c.lineCap='round';c.strokeStyle=col;c.lineWidth=w;c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.stroke()}
+function muscle(c,A,B,th,act){
+  seg(c,A,B,9,'#f3ecdc');
+  const m=mid(A,B),L=len(A,B),nx=-(B.y-A.y)/L,ny=(B.x-A.x)/L;
+  const g=c.createLinearGradient(m.x-nx*th,m.y-ny*th,m.x+nx*th,m.y+ny*th),e=act?'#a3121a':'#b4555b';
+  g.addColorStop(0,e);g.addColorStop(.5,act?'#f24a43':'#e58c8e');g.addColorStop(1,e);
+  spPath(c,A,B,th);c.fillStyle=g;c.fill();
+  c.save();c.clip();c.strokeStyle='rgba(255,255,255,.3)';c.lineWidth=1.5;
+  for(let k=-2;k<=2;k++){c.beginPath();c.moveTo(A.x+nx*k*th*.1,A.y+ny*k*th*.1);c.quadraticCurveTo(m.x+nx*k*th*.5,m.y+ny*k*th*.5,B.x+nx*k*th*.1,B.y+ny*k*th*.1);c.stroke()}
+  c.restore();
+  if(act){spPath(c,A,B,th);c.strokeStyle='rgba(255,225,90,.95)';c.lineWidth=3.5;c.stroke()}
+}
+function bone(c,A,B,w){
+  for(const [col,ww] of [['#b3a070',w+5],['#f1e6c6',w]]){seg(c,A,B,ww,col);c.fillStyle=col;[A,B].forEach(p=>{c.beginPath();c.arc(p.x,p.y,ww*.72,0,7);c.fill()})}
+  seg(c,{x:A.x-w*.18,y:A.y-w*.1},{x:B.x-w*.18,y:B.y-w*.1},w*.2,'rgba(255,255,255,.55)');
+}
+function drawArm(c,th,o){
+  const P=armPts(th),{S,E,d,n,H}=P,SK='#e9b792';
+  const bT=24*264/len(P.bO,P.bI)*(o.bAct?1.1:1),tT=20*215/len(P.tO,P.tI)*(o.tAct?1.12:1);
+  const skin=()=>{seg(c,S,E,96,SK);seg(c,E,H,70,SK);c.fillStyle=SK;spPath(c,P.bO,P.bI,bT+18);c.fill();spPath(c,P.tO,P.tI,tT+16);c.fill();
+    seg(c,{x:S.x-30,y:S.y+10},{x:E.x-30,y:E.y-20},8,'rgba(255,255,255,.18)')};
+  skin();
+  // shoulder socket + bones
+  c.strokeStyle='#b3a070';c.lineWidth=20;c.lineCap='round';c.beginPath();c.arc(S.x,S.y,30,Math.PI*.95,Math.PI*1.75);c.stroke();
+  c.strokeStyle='#f1e6c6';c.lineWidth=15;c.beginPath();c.arc(S.x,S.y,30,Math.PI*.95,Math.PI*1.75);c.stroke();
+  bone(c,{x:E.x-n.x*8,y:E.y-n.y*8},{x:H.x-n.x*8,y:H.y-n.y*8},12);
+  bone(c,{x:E.x+n.x*8,y:E.y+n.y*8},{x:H.x+n.x*8,y:H.y+n.y*8},12);
+  seg(c,E,P.tI,14,'#f1e6c6');
+  bone(c,S,E,24);
+  c.fillStyle='#b9c6ef';c.strokeStyle='#fff';c.lineWidth=2.5;
+  c.beginPath();c.arc(E.x,E.y,18,0,7);c.fill();c.stroke();
+  c.beginPath();c.arc(S.x,S.y,19,0,7);c.fill();c.stroke();
+  muscle(c,P.tO,P.tI,tT,o.tAct);muscle(c,P.bO,P.bI,bT,o.bAct);
+  if(o.nerve){c.strokeStyle='#f5c542';c.lineWidth=3;[mid(P.bO,P.bI),mid(P.tO,P.tI)].forEach(m=>{c.beginPath();c.moveTo(462,300);c.lineTo(m.x,m.y);c.stroke();c.fillStyle='#f5c542';c.beginPath();c.arc(m.x,m.y,5,0,7);c.fill()})}
+  if(o.cover)skin();
+  // weight + fist
+  if(o.load){const r=15+o.load*3;seg(c,{x:H.x-n.x*50,y:H.y-n.y*50},{x:H.x+n.x*50,y:H.y+n.y*50},9,'#9aa4ad');
+    [-1,1].forEach(s=>{c.fillStyle='#262d36';c.beginPath();c.arc(H.x+n.x*52*s,H.y+n.y*52*s,r,0,7);c.fill();c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=2;c.beginPath();c.arc(H.x+n.x*52*s,H.y+n.y*52*s,r*.6,0,7);c.stroke()})}
+  c.fillStyle=SK;c.beginPath();c.arc(H.x,H.y,32,0,7);c.fill();
+  c.strokeStyle='rgba(150,90,60,.45)';c.lineWidth=2;[-.5,.1,.7].forEach(k=>{c.beginPath();c.moveTo(H.x+n.x*18+d.x*k*18,H.y+n.y*18+d.y*k*18);c.lineTo(H.x+n.x*30+d.x*k*14,H.y+n.y*30+d.y*k*14);c.stroke()});
+  return P;
+}
+const kOn=()=>K.act&&K.t>.6;
+const kForce=()=>({b:K.act==='b'&&kOn()?(12+44*K.load)*Math.max(.3,Math.sin(K.th*Math.PI/180)):0,t:K.act==='t'&&kOn()?20:0});
+function updateK(dt){
+  K.infoT=Math.max(0,K.infoT-dt);
+  if(K.act){
+    K.t+=dt;K.pt-=dt;if(K.pt<=0){K.pt=.22;K.pulses.push(0)}
+    if(K.t>.6){const tg=K.act==='b'?135:15,sp=(K.act==='b'?90/(1+K.load*.25):110)*dt;K.th+=Math.max(-sp,Math.min(sp,tg-K.th))}
+  }else K.th=Math.max(15,K.th-60*dt);
+  K.pulses=K.pulses.map(p=>p+dt/.7).filter(p=>p<1);
+  if(K.th>120)K.wasBent=true;
+  const d=K.done,f=kForce();
+  if(K.act==='b'&&K.th>120)d[0]=1; if(K.act==='t'&&kOn()&&K.th<20&&K.wasBent)d[1]=1;
+  if(K.act==='b'&&K.th>120&&K.load>0)d[4]=1; if(f.b>=200)d[5]=1;
+  if(!K.won&&d.every(Boolean)){K.won=true;setTimeout(()=>$('#win').classList.add('on'),900)}
+}
+function drawK(){
+  ctx.setTransform(1.5,0,0,1.5,0,0);ctx.lineCap='round';
+  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=2;
+  for(let x=0;x<=W;x+=150){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+  for(let y=40;y<H;y+=150){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+  // body
+  ctx.fillStyle='#e9b792';ctx.fillRect(176,205,48,70);
+  rr(ctx,60,250,372,620,70);ctx.fillStyle='#3d63c9';ctx.fill();
+  ctx.fillStyle='#e9b792';ctx.beginPath();ctx.arc(200,145,82,0,7);ctx.fill();
+  // backbone + spinal cord
+  for(let y=262;y<800;y+=30){rr(ctx,180,y,40,20,7);ctx.fillStyle='#f1e6c6';ctx.fill();ctx.strokeStyle='#b3a070';ctx.lineWidth=2;ctx.stroke()}
+  seg(ctx,{x:200,y:150},{x:200,y:800},9,'#c9951f');seg(ctx,{x:200,y:150},{x:200,y:800},5,'#f5c542');
+  ctx.strokeStyle='#f5c542';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(200,290);ctx.lineTo(420,290);ctx.lineTo(462,300);ctx.stroke();
+  // brain
+  ctx.fillStyle='#f29aa8';ctx.strokeStyle='#c96478';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(200,118,64,42,0,0,7);ctx.fill();ctx.stroke();
+  ctx.lineWidth=2.5;ctx.beginPath();
+  [[160,100,14],[188,92,13],[218,96,14],[244,112,12],[172,128,13],[204,124,14],[232,138,11]].forEach(b=>{ctx.moveTo(b[0]+b[2],b[1]);ctx.arc(b[0],b[1],b[2],0,Math.PI*1.3)});ctx.stroke();
+  const on=kOn(),P=drawArm(ctx,K.th,{bAct:on&&K.act==='b',tAct:on&&K.act==='t',load:K.load,cover:K.cover,nerve:true});
+  // impulses
+  if(K.act){const m=K.act==='b'?mid(P.bO,P.bI):mid(P.tO,P.tI),path=[{x:200,y:125},{x:200,y:290},{x:420,y:290},{x:462,y:300},m];
+    let tot=0;const ls=[];for(let i=1;i<path.length;i++){ls.push(len(path[i-1],path[i]));tot+=ls[i-1]}
+    for(const p of K.pulses){let s=p*tot,i=0;while(i<ls.length-1&&s>ls[i]){s-=ls[i];i++}const q=Math.min(1,s/ls[i]),x=path[i].x+(path[i+1].x-path[i].x)*q,y=path[i].y+(path[i+1].y-path[i].y)*q;
+      const gg=ctx.createRadialGradient(x,y,1,x,y,16);gg.addColorStop(0,'#fff');gg.addColorStop(.4,'rgba(255,235,90,.95)');gg.addColorStop(1,'rgba(255,235,90,0)');ctx.fillStyle=gg;ctx.beginPath();ctx.arc(x,y,16,0,7);ctx.fill()}}
+  // force meter
+  const f=kForce(),fv=K.act==='t'?f.t:f.b;
+  ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(975,706,130,10,0,0,7);ctx.fill();
+  ctx.strokeStyle='#e5432d';ctx.lineWidth=10;ctx.beginPath();ctx.arc(975,522,20,Math.PI,0);ctx.stroke();
+  rr(ctx,850,530,250,170,24);g=ctx.createLinearGradient(0,530,0,700);g.addColorStop(0,'#59636f');g.addColorStop(1,'#2c333b');ctx.fillStyle=g;ctx.fill();
+  rr(ctx,870,572,210,84,10);ctx.fillStyle='#c6d6bd';ctx.fill();
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#dfe7ee';ctx.font='800 16px system-ui,sans-serif';
+  ctx.fillText(K.act==='t'?'TRICEPS FORCE':'BICEPS FORCE',975,552);
+  ctx.fillStyle='#1c2a1c';ctx.font='700 50px ui-monospace,Menlo,Consolas,monospace';ctx.fillText(Math.round(fv)+' N',975,616);
+  [-36,0,36].forEach(x=>{ctx.fillStyle='#2f86d6';ctx.beginPath();ctx.arc(975+x,678,7,0,7);ctx.fill()});
+  if(labels){
+    const bA=on&&K.act==='b',tA=on&&K.act==='t',bm=mid(P.bO,P.bI),tm=mid(P.tO,P.tI);
+    pill(200,36,'brain','não');
+    pill(96,470,'spinal cord','tủy sống',200,470);
+    pill(330,238,'nerve','dây thần kinh',330,290);
+    pill(830,190,'shoulder: ball-and-socket joint','vai: khớp cầu',P.S.x+14,P.S.y-8);
+    pill(800,262,'tendon','gân',P.bO.x+3,P.bO.y+10);
+    pill(840,335,'biceps: '+(bA?'contracted':'relaxed'),'cơ nhị đầu: '+(bA?'đang co':'đang giãn'),bm.x+12,bm.y);
+    pill(325,400,'triceps: '+(tA?'contracted':'relaxed'),'cơ tam đầu: '+(tA?'đang co':'đang giãn'),tm.x-10,tm.y);
+    pill(322,610,'elbow: hinge joint','khuỷu tay: khớp bản lề',P.E.x-14,P.E.y+8);
+    pill(690,640,'cartilage','sụn',P.E.x+12,P.E.y+10);
+    pill(975,738,'force meter','máy đo lực');
+  }
+}
+function kBtns(){$$('#kAct .big').forEach(b=>b.classList.toggle('on',b.dataset.a===K.act));$$('#kLoad .big').forEach(b=>b.classList.toggle('on',+b.dataset.l===K.load));$('#skinBtn').classList.toggle('on',K.cover)}
+function kAct(a){if(K.act!==a){K.act=a;K.t=0;K.pt=0;K.pulses=[]}kBtns()}
+function kInfo(en,vi){K.info=[en,vi];K.infoT=5}
+function kDown(p){
+  const P=armPts(K.th),bm=mid(P.bO,P.bI),tm=mid(P.tO,P.tI),db=len(p,bm),dt=len(p,tm);
+  if(len(p,P.E)<36){K.done[2]=1;kInfo('The elbow is a hinge joint. It moves back and forth.','Khuỷu tay là khớp bản lề. Nó chuyển động qua lại.')}
+  else if(len(p,P.S)<38){K.done[3]=1;kInfo('The shoulder is a ball-and-socket joint. It moves in many directions.','Vai là khớp cầu. Nó chuyển động theo nhiều hướng.')}
+  else if(Math.min(db,dt)<60)kAct(db<dt?'b':'t');
+  else if(len(p,{x:200,y:130})<85)kInfo('The brain controls your muscles. It sends impulses.','Não điều khiển các cơ. Não gửi các xung thần kinh.');
+}
+$$('#kAct .big').forEach(b=>b.onclick=()=>kAct(b.dataset.a));
+$$('#kLoad .big').forEach(b=>b.onclick=()=>{K.load=+b.dataset.l;kBtns()});
+$('#skinBtn').onclick=()=>{K.cover=!K.cover;kBtns()};
+function hudK(){
+  const f=kForce(),on=kOn(),tg=K.act==='b'?135:15,moving=on&&Math.abs(K.th-tg)>.5,o=(id,v)=>$(id).classList.toggle('on',!!v);
+  $('#rT b').textContent=Math.round(K.th-15)+'°';$('#rT').classList.remove('hot');$('#rW').textContent=Math.round(f.b);$('#rD').textContent=Math.round(f.t);
+  mLi.forEach((li,i)=>li.classList.toggle('done',!!K.done[i]));
+  o('#kB',K.act);o('#kI',K.act&&K.t>.1);o('#kN',K.act&&K.t>.3);o('#kC',on);o('#kM',on);o('#kP',moving);o('#kBo',moving);
+  let c;
+  if(K.infoT>0)c=K.info;
+  else if(!K.act)c=K.th>16?['Both muscles are relaxed. No muscle is pulling, so the arm drops.','Cả hai cơ đều giãn. Không có cơ nào kéo nên cánh tay hạ xuống.']:['Tap a muscle to make it contract.','Bấm vào một cơ để làm cơ co lại.'];
+  else if(!on)c=['The brain sends an impulse down the spinal cord and along the nerves.','Não gửi xung thần kinh xuống tủy sống và dọc theo dây thần kinh.'];
+  else if(K.act==='b')c=moving?['The biceps contracts. It gets shorter and fatter and pulls the forearm up.','Cơ nhị đầu co lại. Nó ngắn lại, to ra và kéo cẳng tay lên.']:['The biceps is contracted. The triceps is relaxed.','Cơ nhị đầu đang co. Cơ tam đầu đang giãn.'];
+  else c=moving?['The triceps contracts and pulls the forearm down. The biceps relaxes.','Cơ tam đầu co lại và kéo cẳng tay xuống. Cơ nhị đầu giãn ra.']:['The arm is straight. Muscles pull. They cannot push!','Cánh tay duỗi thẳng. Cơ chỉ kéo, không thể đẩy!'];
+  if(c[0]!==lastCap){lastCap=c[0];$('#caption').innerHTML=bi(c[0],c[1])}
+}
+function warmK(){
+  const v=$('#heatR').value/100;
+  let g=wx.createLinearGradient(0,0,0,380);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');wx.fillStyle=g;wx.fillRect(0,0,900,380);
+  wx.save();wx.translate(82,-154);wx.scale(.72,.72);drawArm(wx,15+v*120,{bAct:v>.05,tAct:false,load:0});wx.restore();
+  wx.font='800 30px system-ui,sans-serif';wx.textAlign='left';wx.fillStyle='#fff';wx.fillText(v>.5?'Biceps: contracted':v>.05?'Biceps: contracting…':'Biceps: relaxed',40,60);
+}
+{const t=$('#thumb3').getContext('2d');let g=t.createLinearGradient(0,0,0,340);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');t.fillStyle=g;t.fillRect(0,0,600,340);
+ t.save();t.translate(20,-125);t.scale(.6,.6);drawArm(t,110,{bAct:true,tAct:false,load:2});t.restore()}
+
+/* ---------- lab list ---------- */
+const LABS={
+ evap:{t:['Evaporating and condensing','Bay hơi và ngưng tụ'],r1:['Temperature','Nhiệt độ'],r2:['mL water','mL nước'],r3:['drops','giọt'],
+  win:['You melted ice, evaporated water and condensed water vapour.','Em đã làm nóng chảy nước đá, làm nước bay hơi và làm hơi nước ngưng tụ.'],
+  w:{h:['Look! What happens to ice?','Nhìn này! Điều gì xảy ra với nước đá?'],bar:['HEAT','Nhiệt'],ico:'🔥',
+   a:['It turns into water.','Nó biến thành nước.'],b:['It stays as ice.','Nó vẫn là nước đá.'],
+   yes:['Yes! Heat melts the ice and it turns into water.','Đúng rồi! Nhiệt làm nước đá nóng chảy và biến thành nước.'],
+   no:['Slide the HEAT bar and look at the ice again.','Kéo thanh NHIỆT và quan sát lại nước đá.']},
+  M:[['Put ice in the beaker','Cho nước đá vào cốc'],['Light the spirit burner','Thắp đèn cồn'],['Melt all the ice','Làm nóng chảy hết nước đá'],['Heat the water to 100 °C','Đun nước đến 100 °C'],['Hold the cold plate in the steam','Đặt đĩa lạnh phía trên hơi nước'],['Catch 5 drops of water','Hứng 5 giọt nước']],
+  Q:[
+ {q:['What happens when ice gets hot?','Điều gì xảy ra khi nước đá nóng lên?'],o:[['It turns into water.','Nó biến thành nước.'],['It stays as ice.','Nó vẫn là nước đá.'],['It turns into a rock.','Nó biến thành đá cứng.']]},
+ {q:['Ice turning into water is called…','Nước đá biến thành nước gọi là…'],o:[['melting','nóng chảy'],['evaporating','bay hơi'],['condensing','ngưng tụ']]},
+ {q:['Water turning into water vapour is called…','Nước biến thành hơi nước gọi là…'],o:[['evaporating','bay hơi'],['melting','nóng chảy'],['condensing','ngưng tụ']]},
+ {q:['We keep heating the water. Where does the water go?','Ta tiếp tục đun nước. Nước đi đâu?'],o:[['Into the air','Vào không khí'],['Into the tripod','Vào kiềng ba chân'],['Into the flame','Vào ngọn lửa']]},
+ {q:['What do we see on the cold plate?','Ta nhìn thấy gì trên đĩa lạnh?'],o:[['Drops of water','Những giọt nước'],['Ice cubes growing','Nước đá to dần'],['Nothing at all','Không có gì cả']]},
+ {q:['Water vapour turning back into water is called…','Hơi nước biến trở lại thành nước gọi là…'],o:[['condensing','ngưng tụ'],['evaporating','bay hơi'],['melting','nóng chảy']]}
+]},
+ freeze:{t:['Freezing','Đông đặc'],r1:['Temperature','Nhiệt độ'],r2:['mL water','mL nước'],r3:['ice','nước đá'],
+  win:['You cooled water to 0 °C and froze it into ice.','Em đã làm lạnh nước đến 0 °C và làm nước đông đặc thành nước đá.'],
+  w:{h:['Look! What happens to water?','Nhìn này! Điều gì xảy ra với nước?'],bar:['COLD','Lạnh'],ico:'❄️',
+   a:['It turns into ice.','Nó biến thành nước đá.'],b:['It stays as water.','Nó vẫn là nước.'],
+   yes:['Yes! When water gets very cold, it freezes and turns into ice.','Đúng rồi! Khi nước rất lạnh, nước đông đặc và biến thành nước đá.'],
+   no:['Slide the COLD bar and look at the water again.','Kéo thanh LẠNH và quan sát lại nước.']},
+  M:[['Pour water into the test tube','Rót nước vào ống nghiệm'],['Put ice in the big beaker','Cho nước đá vào cốc lớn'],['Put the test tube in the ice','Đặt ống nghiệm vào nước đá'],['Add salt to the ice','Thêm muối vào nước đá'],['Cool the water to 0 °C','Làm lạnh nước đến 0 °C'],['Freeze all the water','Làm đông đặc toàn bộ nước']],
+  Q:[
+   {q:['What happens when water gets very cold?','Điều gì xảy ra khi nước rất lạnh?'],o:[['It turns into ice.','Nó biến thành nước đá.'],['It turns into water vapour.','Nó biến thành hơi nước.'],['It stays the same.','Nó không thay đổi.']]},
+   {q:['Water turning into ice is called…','Nước biến thành nước đá gọi là…'],o:[['freezing','đông đặc'],['melting','nóng chảy'],['evaporating','bay hơi']]},
+   {q:['Water freezes at…','Nước đông đặc ở…'],o:[['0 °C','0 °C'],['25 °C','25 °C'],['100 °C','100 °C']]},
+   {q:['Ice is a…','Nước đá là…'],o:[['solid','chất rắn'],['liquid','chất lỏng'],['gas','chất khí']]},
+   {q:['Why did we add salt to the ice?','Tại sao ta thêm muối vào nước đá?'],o:[['It makes the ice colder.','Muối làm nước đá lạnh hơn.'],['It makes the ice hotter.','Muối làm nước đá nóng hơn.'],['It makes the ice sweet.','Muối làm nước đá ngọt hơn.']]},
+   {q:['We take the ice out and it warms up. What happens?','Ta lấy nước đá ra và nó ấm lên. Điều gì xảy ra?'],o:[['It melts back into water.','Nó nóng chảy thành nước trở lại.'],['It stays as ice forever.','Nó mãi là nước đá.'],['It turns into salt.','Nó biến thành muối.']]}
+  ]},
+ skel:{t:['Skeleton and muscles','Bộ xương và cơ'],r1:['bend angle','góc gập'],r2:['biceps N','nhị đầu N'],r3:['triceps N','tam đầu N'],
+  win:['You made muscles contract, moved the elbow joint and measured muscle force.','Em đã làm cơ co lại, làm khớp khuỷu tay chuyển động và đo lực của cơ.'],
+  w:{h:['Look! What does the muscle do when the arm bends?','Nhìn này! Cơ làm gì khi cánh tay gập lại?'],bar:['BEND','Gập'],ico:'💪',
+   a:['It gets shorter and fatter.','Nó ngắn lại và to ra.'],b:['It gets longer and thinner.','Nó dài ra và mỏng đi.'],
+   yes:['Yes! The muscle contracts. It gets shorter and fatter and pulls the bone.','Đúng rồi! Cơ co lại. Nó ngắn lại, to ra và kéo xương.'],
+   no:['Slide the BEND bar and look at the muscle again.','Kéo thanh GẬP và quan sát lại cơ.']},
+  M:[['Bend the arm with the biceps','Gập cánh tay bằng cơ nhị đầu'],['Straighten it with the triceps','Duỗi thẳng tay bằng cơ tam đầu'],['Tap the hinge joint','Bấm vào khớp bản lề'],['Tap the ball-and-socket joint','Bấm vào khớp cầu'],['Lift a weight','Nâng một quả tạ'],['Make the biceps pull with 200 N','Làm cơ nhị đầu kéo với lực 200 N']],
+  Q:[
+   {q:['Which joint is a hinge joint?','Khớp nào là khớp bản lề?'],o:[['Elbow','Khuỷu tay'],['Skull','Hộp sọ'],['Hip','Hông']]},
+   {q:['What does a muscle do when it contracts?','Cơ làm gì khi co lại?'],o:[['It gets shorter and fatter.','Nó ngắn lại và to ra.'],['It gets longer and thinner.','Nó dài ra và mỏng đi.'],['It turns into bone.','Nó biến thành xương.']]},
+   {q:['Muscles can only…','Cơ chỉ có thể…'],o:[['pull','kéo'],['push','đẩy'],['pull and push','kéo và đẩy']]},
+   {q:['What connects a muscle to a bone?','Cái gì nối cơ với xương?'],o:[['Tendon','Gân'],['Ligament','Dây chằng'],['Cartilage','Sụn']]},
+   {q:['How does the message travel to the muscle?','Thông điệp đi đến cơ như thế nào?'],o:[['Brain → spinal cord → nerves','Não → tủy sống → dây thần kinh'],['Nerves → brain → bone','Dây thần kinh → não → xương'],['Bone → muscle → brain','Xương → cơ → não']]},
+   {q:['Muscle force is measured in…','Lực của cơ được đo bằng…'],o:[['newtons (N)','niutơn (N)'],['grams (g)','gam (g)'],['metres (m)','mét (m)']]},
+   {q:['Which bones protect the brain?','Xương nào bảo vệ não?'],o:[['Skull','Hộp sọ'],['Ribcage','Lồng ngực'],['Vertebrae','Các đốt sống']]},
+   {q:['The skeleton has 3 jobs: support, protection and…','Bộ xương có 3 nhiệm vụ: nâng đỡ, bảo vệ và…'],o:[['movement','vận động'],['digestion','tiêu hóa'],['breathing','hô hấp']]}
+  ]}
+};
+function setLab(id){
+  cur=id;const L=LABS[id];document.body.dataset.lab=id;
+  $('#topic').innerHTML=L.t[0]+'<span class="vi inline"> · '+L.t[1]+'</span>';
+  $('#mList').innerHTML=L.M.map(m=>'<li><i>✓</i><span>'+bi(m[0],m[1])+'</span></li>').join('');mLi=$$('#mList li');
+  $('#winP').innerHTML=bi(L.win[0],L.win[1]);$('#rTl').innerHTML=bi(L.r1[0],L.r1[1]);$('#rWl').innerHTML=bi(L.r2[0],L.r2[1]);$('#rDl').innerHTML=bi(L.r3[0],L.r3[1]);
+  $('#warmH').innerHTML=bi(L.w.h[0],L.w.h[1]);$('#heatLbl').innerHTML=bi(L.w.bar[0],L.w.bar[1]);$('#heatIco').textContent=L.w.ico;
+  $('#heatR').value=0;buildWarm();drawWarm();
+  Q=L.Q;qi=-1;$('#qNext').textContent='Next ➜';$('#win').classList.remove('on');lastCap='';hud();
+}
+{const t=$('#thumb2').getContext('2d');let g=t.createLinearGradient(0,0,0,340);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');t.fillStyle=g;t.fillRect(0,0,600,340);
+ t.fillStyle='#2f3843';t.fillRect(0,270,600,70);
+ [[200,232,84,.1],[290,236,76,-.15],[378,230,88,.2],[245,160,72,-.1],[335,158,78,.12],[290,92,66,.05]].forEach(c=>iceCube(t,c[0],c[1],c[2],c[3]))}
+
+/* ---------- main loop ---------- */
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;
+  if($('#lab').classList.contains('on')){if(cur==='skel'){updateK(dt);drawK()}else if(cur==='freeze'){updateF(dt);drawF()}else{update(dt);draw()}hud()}
+  requestAnimationFrame(frame);
+}
+setLab('evap');requestAnimationFrame(frame);
+</script>
+</body>
+</html>
