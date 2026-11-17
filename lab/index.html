@@ -865,46 +865,182 @@ const mid=(A,B)=>({x:(A.x+B.x)/2,y:(A.y+B.y)/2}),len=(A,B)=>Math.hypot(B.x-A.x,B
 function spPath(c,A,B,th){const dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy),nx=-dy/L*th*1.3,ny=dx/L*th*1.3,P=t=>[A.x+dx*t,A.y+dy*t],a=P(.1),b=P(.9),m1=P(.36),m2=P(.66);
   c.beginPath();c.moveTo(a[0],a[1]);c.bezierCurveTo(m1[0]+nx,m1[1]+ny,m2[0]+nx,m2[1]+ny,b[0],b[1]);c.bezierCurveTo(m2[0]-nx,m2[1]-ny,m1[0]-nx,m1[1]-ny,a[0],a[1]);c.closePath()}
 function seg(c,A,B,w,col){c.lineCap='round';c.strokeStyle=col;c.lineWidth=w;c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.stroke()}
-function muscle(c,A,B,th,act){
-  seg(c,A,B,9,'#f3ecdc');
-  const m=mid(A,B),L=len(A,B),nx=-(B.y-A.y)/L,ny=(B.x-A.x)/L;
-  const g=c.createLinearGradient(m.x-nx*th,m.y-ny*th,m.x+nx*th,m.y+ny*th),e=act?'#a3121a':'#b4555b';
-  g.addColorStop(0,e);g.addColorStop(.5,act?'#f24a43':'#e58c8e');g.addColorStop(1,e);
-  spPath(c,A,B,th);c.fillStyle=g;c.fill();
-  c.save();c.clip();c.strokeStyle='rgba(255,255,255,.3)';c.lineWidth=1.5;
-  for(let k=-2;k<=2;k++){c.beginPath();c.moveTo(A.x+nx*k*th*.1,A.y+ny*k*th*.1);c.quadraticCurveTo(m.x+nx*k*th*.5,m.y+ny*k*th*.5,B.x+nx*k*th*.1,B.y+ny*k*th*.1);c.stroke()}
+function crPath(c,P,closed){const n=P.length,g=i=>P[closed?(i+n)%n:Math.max(0,Math.min(n-1,i))];
+  c.moveTo(P[0][0],P[0][1]);
+  for(let i=0;i<(closed?n:n-1);i++){const p0=g(i-1),p1=g(i),p2=g(i+1),p3=g(i+2);
+    c.bezierCurveTo(p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6,p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6,p2[0],p2[1])}
+  if(closed)c.closePath()}
+function limb(A,B,prof){const L=len(A,B),u={x:(B.x-A.x)/L,y:(B.y-A.y)/L},N={x:u.y,y:-u.x},f=[],b=[];
+  prof.forEach(([t,wf,wb])=>{const x=A.x+u.x*L*t,y=A.y+u.y*L*t;f.push([x+N.x*wf,y+N.y*wf]);b.push([x-N.x*wb,y-N.y*wb])});
+  return{pts:f.concat(b.reverse()),N,A}}
+function crossGrad(c,A,N,w,stops){const g=c.createLinearGradient(A.x-N.x*w,A.y-N.y*w,A.x+N.x*w,A.y+N.y*w);stops.forEach((s,i)=>g.addColorStop(i/(stops.length-1),s));return g}
+const SKIN=['#a8694a','#d39a76','#efc3a0','#f3cfae','#dba582','#b4754f'];
+const TISSUE=['#8e3f3c','#c06f68','#dc968c','#c06f68','#8e3f3c'];
+const BONE=['#b39b6c','#e6d7b2','#fbf5e6','#e9dbb8','#b9a172'];
+function spPath2(c,A,B,th,f0,f1){const dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy),nx=-dy/L*th*1.3,ny=dx/L*th*1.3,P=t=>[A.x+dx*t,A.y+dy*t],a=P(f0),b=P(f1),m1=P(f0+(f1-f0)*.32),m2=P(f0+(f1-f0)*.68);
+  c.beginPath();c.moveTo(a[0],a[1]);c.bezierCurveTo(m1[0]+nx,m1[1]+ny,m2[0]+nx,m2[1]+ny,b[0],b[1]);c.bezierCurveTo(m2[0]-nx,m2[1]-ny,m1[0]-nx,m1[1]-ny,a[0],a[1]);c.closePath()}
+function tendon(c,A,B,w){c.lineCap='round';c.strokeStyle='#b9bec4';c.lineWidth=w+3;c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.stroke();c.strokeStyle='#eef1f4';c.lineWidth=w;c.stroke();c.strokeStyle='rgba(255,255,255,.9)';c.lineWidth=w*.3;c.stroke()}
+function muscle(c,A,B,th,act,f0,f1){
+  f0=f0||.14;f1=f1||.86;
+  tendon(c,A,B,6);
+  const L=len(A,B),N={x:-(B.y-A.y)/L,y:(B.x-A.x)/L},m=mid(A,B);
+  const g=c.createLinearGradient(m.x-N.x*th*1.25,m.y-N.y*th*1.25,m.x+N.x*th*1.25,m.y+N.y*th*1.25);
+  (act?['#6e0c12','#b8242a','#e8574c','#ff9583','#e8574c','#a51f26','#5e0a10']:['#5f1b1e','#94363a','#bf5a57','#dd8a82','#bf5a57','#8a3034','#561519']).forEach((s,i,a)=>g.addColorStop(i/(a.length-1),s));
+  spPath2(c,A,B,th,f0,f1);c.fillStyle=g;c.fill();
+  c.save();c.clip();
+  const a0={x:A.x+(B.x-A.x)*f0,y:A.y+(B.y-A.y)*f0},b0={x:A.x+(B.x-A.x)*f1,y:A.y+(B.y-A.y)*f1};
+  for(let k=-9;k<=9;k++){const o=k/9;c.strokeStyle=k%2?'rgba(70,5,10,.3)':'rgba(255,200,190,.22)';c.lineWidth=k%2?1.4:1;c.beginPath();c.moveTo(a0.x,a0.y);c.quadraticCurveTo(m.x+N.x*o*th*1.3,m.y+N.y*o*th*1.3,b0.x,b0.y);c.stroke()}
+  c.strokeStyle='rgba(255,255,255,.28)';c.lineWidth=th*.18;c.beginPath();c.moveTo(a0.x+(m.x-a0.x)*.4-N.x*th*.35,a0.y+(m.y-a0.y)*.4-N.y*th*.35);c.quadraticCurveTo(m.x-N.x*th*.62,m.y-N.y*th*.62,b0.x+(m.x-b0.x)*.4-N.x*th*.35,b0.y+(m.y-b0.y)*.4-N.y*th*.35);c.stroke();
   c.restore();
-  if(act){spPath(c,A,B,th);c.strokeStyle='rgba(255,225,90,.95)';c.lineWidth=3.5;c.stroke()}
+  spPath2(c,A,B,th,f0,f1);c.strokeStyle=act?'rgba(255,214,90,.95)':'rgba(70,10,14,.75)';c.lineWidth=act?3.2:1.5;c.stroke();
 }
-function bone(c,A,B,w){
-  for(const [col,ww] of [['#b3a070',w+5],['#f1e6c6',w]]){seg(c,A,B,ww,col);c.fillStyle=col;[A,B].forEach(p=>{c.beginPath();c.arc(p.x,p.y,ww*.72,0,7);c.fill()})}
-  seg(c,{x:A.x-w*.18,y:A.y-w*.1},{x:B.x-w*.18,y:B.y-w*.1},w*.2,'rgba(255,255,255,.55)');
+function boneShape(c,pts,A,N,w){c.beginPath();crPath(c,pts,true);c.fillStyle=crossGrad(c,A,N,w,BONE);c.fill();c.strokeStyle='#8c774d';c.lineWidth=1.6;c.stroke()}
+function drawHand(c,H,d,n,load){
+  c.save();c.translate(H.x,H.y);c.rotate(Math.atan2(n.y,n.x));
+  if(load){
+    const r=load===5?42:32,bl=load===5?66:56;
+    let g=c.createLinearGradient(0,-6,0,6);g.addColorStop(0,'#5d6670');g.addColorStop(.5,'#e3e8ec');g.addColorStop(1,'#4a525b');
+    c.fillStyle=g;rr(c,-bl,34-6,bl*2,12,5);c.fill();
+    [-1,1].forEach(s=>{const x=s*(bl-14);
+      g=c.createLinearGradient(x-12,0,x+12,0);g.addColorStop(0,'#1c2127');g.addColorStop(.45,'#5b6672');g.addColorStop(1,'#1c2127');
+      rr(c,x-12,34-r,24,r*2,7);c.fillStyle=g;c.fill();c.strokeStyle='rgba(255,255,255,.18)';c.lineWidth=1.5;c.stroke();
+      c.fillStyle='rgba(255,255,255,.12)';rr(c,x-9,34-r+5,5,r*2-10,3);c.fill();
+      c.fillStyle='#9aa4ad';rr(c,x+s*-16-4,34-8,8,16,2);c.fill()});
+  }
+  // fist (x along n, y along d)
+  const P=[[-17,-6],[16,-6],[22,10],[25,36],[22,58],[11,70],[-6,71],[-20,63],[-26,40],[-22,12]];
+  c.beginPath();crPath(c,P,true);
+  let g=c.createLinearGradient(-26,0,26,0);SKIN.forEach((s,i)=>g.addColorStop(i/(SKIN.length-1),s));
+  c.fillStyle=g;c.fill();c.strokeStyle='#9a6243';c.lineWidth=2;c.stroke();
+  c.strokeStyle='rgba(120,70,45,.45)';c.lineWidth=1.6;
+  [[46,-20,20],[56,-22,19],[65,-18,14]].forEach(([y,a,b])=>{c.beginPath();c.moveTo(a,y);c.quadraticCurveTo(0,y+3,b,y-1);c.stroke()});
+  // thumb
+  c.beginPath();c.ellipse(-12,34,8.5,20,.12,0,7);c.fillStyle=g;c.fill();c.strokeStyle='#9a6243';c.lineWidth=1.6;c.stroke();
+  c.fillStyle='rgba(255,235,225,.75)';c.beginPath();c.ellipse(-10.5,49,4.5,5.5,.1,0,7);c.fill();
+  c.strokeStyle='rgba(120,70,45,.35)';c.beginPath();c.moveTo(-18,4);c.quadraticCurveTo(0,8,18,4);c.stroke();
+  c.restore();
 }
 function drawArm(c,th,o){
-  const P=armPts(th),{S,E,d,n,H}=P,SK='#e9b792';
+  const P=armPts(th),{S,E,d,n,H}=P,at=(t,f)=>({x:E.x+d.x*t+n.x*f,y:E.y+d.y*t+n.y*f}),A2=p=>[p.x,p.y];
   const bT=24*264/len(P.bO,P.bI)*(o.bAct?1.1:1),tT=20*215/len(P.tO,P.tI)*(o.tAct?1.12:1);
-  const skin=()=>{seg(c,S,E,96,SK);seg(c,E,H,70,SK);c.fillStyle=SK;spPath(c,P.bO,P.bI,bT+18);c.fill();spPath(c,P.tO,P.tI,tT+16);c.fill();
-    seg(c,{x:S.x-30,y:S.y+10},{x:E.x-30,y:E.y-20},8,'rgba(255,255,255,.18)')};
-  skin();
-  // shoulder socket + bones
-  c.strokeStyle='#b3a070';c.lineWidth=20;c.lineCap='round';c.beginPath();c.arc(S.x,S.y,30,Math.PI*.95,Math.PI*1.75);c.stroke();
-  c.strokeStyle='#f1e6c6';c.lineWidth=15;c.beginPath();c.arc(S.x,S.y,30,Math.PI*.95,Math.PI*1.75);c.stroke();
-  bone(c,{x:E.x-n.x*8,y:E.y-n.y*8},{x:H.x-n.x*8,y:H.y-n.y*8},12);
-  bone(c,{x:E.x+n.x*8,y:E.y+n.y*8},{x:H.x+n.x*8,y:H.y+n.y*8},12);
-  seg(c,E,P.tI,14,'#f1e6c6');
-  bone(c,S,E,24);
-  c.fillStyle='#b9c6ef';c.strokeStyle='#fff';c.lineWidth=2.5;
-  c.beginPath();c.arc(E.x,E.y,18,0,7);c.fill();c.stroke();
-  c.beginPath();c.arc(S.x,S.y,19,0,7);c.fill();c.stroke();
-  muscle(c,P.tO,P.tI,tT,o.tAct);muscle(c,P.bO,P.bI,bT,o.bAct);
-  if(o.nerve){c.strokeStyle='#f5c542';c.lineWidth=3;[mid(P.bO,P.bI),mid(P.tO,P.tI)].forEach(m=>{c.beginPath();c.moveTo(462,300);c.lineTo(m.x,m.y);c.stroke();c.fillStyle='#f5c542';c.beginPath();c.arc(m.x,m.y,5,0,7);c.fill()})}
-  if(o.cover)skin();
-  // weight + fist
-  if(o.load){const r=15+o.load*3;seg(c,{x:H.x-n.x*50,y:H.y-n.y*50},{x:H.x+n.x*50,y:H.y+n.y*50},9,'#9aa4ad');
-    [-1,1].forEach(s=>{c.fillStyle='#262d36';c.beginPath();c.arc(H.x+n.x*52*s,H.y+n.y*52*s,r,0,7);c.fill();c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=2;c.beginPath();c.arc(H.x+n.x*52*s,H.y+n.y*52*s,r*.6,0,7);c.stroke()})}
-  c.fillStyle=SK;c.beginPath();c.arc(H.x,H.y,32,0,7);c.fill();
-  c.strokeStyle='rgba(150,90,60,.45)';c.lineWidth=2;[-.5,.1,.7].forEach(k=>{c.beginPath();c.moveTo(H.x+n.x*18+d.x*k*18,H.y+n.y*18+d.y*k*18);c.lineTo(H.x+n.x*30+d.x*k*14,H.y+n.y*30+d.y*k*14);c.stroke()});
+  const bf=Math.max(0,bT-24),tb=Math.max(0,(tT-20)*.8),bend=Math.max(0,Math.min(1,(th-40)/90));
+  const up=limb({x:S.x,y:S.y-44},{x:E.x,y:E.y+6},[[0,6,10],[.08,38,36],[.22,46,42],[.42,40+bf*.5,42+tb*.4],[.62,33+bf*.8,37+tb],[.85,30,31],[1,28,28]]);
+  const fa=limb(at(-6,0),H,[[0,28,28],[.16,35,32],[.4,30,27],[.78,21,20],[1,18,18]]);
+  const shapes=[up,fa],fillAll=(stops,alpha)=>{c.globalAlpha=alpha;shapes.forEach(s=>{c.beginPath();crPath(c,s.pts,true);c.fillStyle=crossGrad(c,s.A,s.N,48,stops);c.fill()});c.globalAlpha=1},
+    edge=(col,w)=>{c.strokeStyle=col;c.lineWidth=w;shapes.forEach(s=>{c.beginPath();crPath(c,s.pts,true);c.stroke()})};
+  edge('#8a5338',4);
+  if(o.cover){
+    fillAll(SKIN,1);
+    // muscle shape under the skin
+    const bm=mid(P.bO,P.bI);c.fillStyle='rgba(255,236,220,.35)';c.beginPath();c.ellipse(bm.x+6,bm.y,7+bf*.25,40-bf*.4,0,0,7);c.fill();
+    if(bend>.2){c.strokeStyle='rgba(120,70,45,'+(.5*bend)+')';c.lineWidth=2;c.beginPath();c.moveTo(E.x+10,E.y-12);c.quadraticCurveTo(E.x+24,E.y-2,E.x+28,E.y+8);c.stroke()}
+  }else{
+    fillAll(TISSUE,1);
+    c.save();shapes.forEach(s=>{});
+    // shoulder blade
+    if(o.body){c.globalAlpha=.35;
+      boneShape(c,[[S.x-18,S.y-26],[S.x-60,S.y-38],[S.x-84,S.y-30],[S.x-74,S.y+50],[S.x-56,S.y+126],[S.x-40,S.y+72],[S.x-26,S.y+30]],{x:S.x-50,y:S.y},{x:1,y:0},40);
+      c.globalAlpha=1}
+    boneShape(c,[[S.x-34,S.y-38],[S.x-2,S.y-46],[S.x+26,S.y-40],[S.x+30,S.y-30],[S.x+4,S.y-31],[S.x-28,S.y-28]],S,{x:0,y:1},10);
+    // forearm muscles (behind the bones)
+    c.globalAlpha=.6;muscle(c,at(-4,8),at(196,4),22,false,.02,.82);c.globalAlpha=1;
+    // humerus
+    const x=S.x,y0=S.y,y1=E.y;
+    boneShape(c,[[x-13,y0+14],[x-9,y0+60],[x-8,y0+130],[x-11,y1-44],[x-19,y1-16],[x-23,y1],[x-12,y1+11],[x,y1+6],[x+12,y1+11],[x+22,y1],[x+19,y1-17],[x+10,y1-44],[x+8,y0+130],[x+9,y0+60],[x+15,y0+12]],{x,y:y0},{x:1,y:0},22);
+    let h=c.createRadialGradient(x-7,y0-9,3,x,y0,26);h.addColorStop(0,'#fffbf2');h.addColorStop(.7,'#e9dab4');h.addColorStop(1,'#b59c6c');
+    c.beginPath();c.arc(x,y0,24,0,7);c.fillStyle=h;c.fill();c.strokeStyle='#8c774d';c.lineWidth=1.6;c.stroke();
+    c.strokeStyle='rgba(140,115,70,.35)';c.lineWidth=1;c.beginPath();c.moveTo(x-3,y0+40);c.lineTo(x-2,y1-60);c.moveTo(x+4,y0+70);c.lineTo(x+3,y1-80);c.stroke();
+    // glenoid socket + cartilage
+    c.lineCap='round';c.strokeStyle='#d9c79c';c.lineWidth=8;c.beginPath();c.arc(x,y0,31,Math.PI*.62,Math.PI*1.38);c.stroke();
+    c.strokeStyle='rgba(150,195,245,.95)';c.lineWidth=5;c.beginPath();c.arc(x,y0,25,Math.PI*.6,Math.PI*1.4);c.stroke();
+    // ulna and radius
+    boneShape(c,[A2(at(-30,-5)),A2(at(-24,-18)),A2(at(-4,-19)),A2(at(30,-14)),A2(at(120,-10)),A2(at(198,-10)),A2(at(212,-7)),A2(at(210,-1)),A2(at(120,-4)),A2(at(30,-4)),A2(at(6,1)),A2(at(-14,4))],E,n,16);
+    boneShape(c,[A2(at(9,1)),A2(at(11,13)),A2(at(40,11)),A2(at(120,10)),A2(at(192,15)),A2(at(212,17)),A2(at(214,7)),A2(at(200,2)),A2(at(120,4)),A2(at(40,5))],E,n,16);
+    c.strokeStyle='rgba(140,115,70,.3)';c.lineWidth=1;c.beginPath();c.moveTo(at(40,-9).x,at(40,-9).y);c.lineTo(at(170,-7).x,at(170,-7).y);c.moveTo(at(50,8).x,at(50,8).y);c.lineTo(at(170,10).x,at(170,10).y);c.stroke();
+    const ang=Math.atan2(d.y,d.x);c.strokeStyle='rgba(150,195,245,.95)';c.lineWidth=5;c.beginPath();c.arc(E.x,E.y+3,14,ang-1.2,ang+1.2);c.stroke();
+    // biceps long-head tendon + muscles
+    tendon(c,{x:S.x+10,y:S.y-28},P.bO,4);
+    muscle(c,P.tO,P.tI,tT,o.tAct,.12,.82);
+    muscle(c,P.bO,P.bI,bT,o.bAct,.12,.8);
+    c.restore();
+    if(o.nerve){const PL={x:452,y:296};
+      [mid(P.bO,P.bI),mid(P.tO,P.tI)].forEach((m,i)=>{const cx=(PL.x+m.x)/2+(i?-12:14),cy=(PL.y+m.y)/2-10;
+        c.strokeStyle='#9c7414';c.lineWidth=5;c.beginPath();c.moveTo(PL.x,PL.y);c.quadraticCurveTo(cx,cy,m.x,m.y);c.stroke();
+        c.strokeStyle='#f5cf4a';c.lineWidth=3;c.stroke();c.fillStyle='#f5cf4a';c.beginPath();c.arc(m.x,m.y,4.5,0,7);c.fill()})}
+    // see-through skin
+    fillAll(SKIN,.2);
+  }
+  edge('rgba(150,95,65,.85)',2);
+  drawHand(c,H,d,n,o.load);
   return P;
+}
+function spX(y){const Q=[[178,442],[215,440],[250,436],[290,432],[340,428],[390,427],[440,428],[490,431],[540,436],[590,441],[640,446],[690,450],[740,452],[820,452]];
+  for(let i=1;i<Q.length;i++)if(y<=Q[i][0]){const t=(y-Q[i-1][0])/(Q[i][0]-Q[i-1][0]);return Q[i-1][1]+(Q[i][1]-Q[i-1][1])*t}return 452}
+const BODY=[[372,120],[379,72],[410,42],[455,31],[496,44],[516,72],[522,98],[530,112],[547,131],[540,141],[526,144],[530,153],[526,161],[522,167],[526,178],[518,193],[499,202],[484,206],[488,226],[503,238],[530,246],[551,273],[563,320],[567,400],[562,480],[568,560],[562,650],[560,830],[400,830],[386,640],[377,520],[375,420],[380,330],[393,272],[405,236],[401,198],[384,170]];
+function drawBody(c){
+  c.lineCap='round';c.lineJoin='round';
+  const sil=()=>{c.beginPath();crPath(c,BODY,true)};
+  sil();c.strokeStyle='#8a5338';c.lineWidth=4;c.stroke();
+  let g=c.createLinearGradient(368,0,570,0);['#a8694a','#d7a07c','#efc3a0','#f2cbaa','#e2ae8a','#b57651'].forEach((s,i,a)=>g.addColorStop(i/(a.length-1),s));
+  sil();c.fillStyle=g;c.fill();
+  c.save();sil();c.clip();
+  // inside of the body (see-through)
+  c.fillStyle='rgba(150,60,60,.16)';c.beginPath();c.ellipse(470,520,95,290,0,0,7);c.fill();
+  // skull
+  c.globalAlpha=.75;
+  c.strokeStyle='#efe4c8';c.lineWidth=9;c.beginPath();c.ellipse(447,98,66,62,-.08,Math.PI*.55,Math.PI*2.18);c.stroke();
+  c.strokeStyle='#efe4c8';c.lineWidth=8;c.beginPath();crPath(c,[[448,150],[458,184],[488,194],[512,186],[519,168]],false);c.stroke();
+  c.beginPath();crPath(c,[[505,72],[516,98],[520,116],[530,130],[520,140],[512,148]],false);c.lineWidth=6;c.stroke();
+  c.fillStyle='#efe4c8';for(let i=0;i<4;i++){rr(c,505+i*4.5,151,4,8,1.5);c.fill();rr(c,504+i*4.5,161,4,7,1.5);c.fill()}
+  c.fillStyle='rgba(70,45,30,.45)';c.beginPath();c.ellipse(501,106,13,11,0,0,7);c.fill();
+  c.globalAlpha=1;
+  // brain
+  g=c.createRadialGradient(430,80,8,440,94,64);g.addColorStop(0,'#fbc6cf');g.addColorStop(.6,'#ee98a8');g.addColorStop(1,'#c96a80');
+  c.beginPath();c.ellipse(441,92,57,45,-.1,0,7);c.fillStyle=g;c.fill();c.strokeStyle='#a9506a';c.lineWidth=2;c.stroke();
+  c.save();c.beginPath();c.ellipse(441,92,55,43,-.1,0,7);c.clip();c.strokeStyle='rgba(160,70,95,.75)';c.lineWidth=2.2;
+  [[400,70],[420,58],[446,54],[472,62],[490,80],[404,96],[426,84],[452,78],[476,92],[492,106],[414,118],[440,108],[464,116],[486,124],[430,132],[456,134]].forEach(([x,y],i)=>{c.beginPath();c.moveTo(x-10,y+3);c.bezierCurveTo(x-5,y-8,x+2,y+9,x+7,y-2);c.bezierCurveTo(x+10,y-9,x+15,y+4,x+16,y+2);c.stroke()});
+  c.restore();
+  c.beginPath();c.ellipse(408,130,24,15,.2,0,7);c.fillStyle='#e48b9d';c.fill();c.strokeStyle='#a9506a';c.lineWidth=1.5;c.stroke();
+  c.strokeStyle='rgba(160,70,95,.6)';for(let i=-2;i<=2;i++){c.beginPath();c.ellipse(408,130+i*4,20-Math.abs(i)*3,2,.2,0,Math.PI);c.stroke()}
+  // spinal cord (brainstem down the back)
+  const cord=[];for(let y=128;y<=830;y+=10)cord.push([y<180?430+(y-128)*.0:spX(y)-22,y]);cord[0]=[432,126];
+  c.beginPath();crPath(c,cord,false);c.strokeStyle='#9c7414';c.lineWidth=11;c.stroke();c.strokeStyle='#f5cf4a';c.lineWidth=7;c.stroke();
+  // nerve to the arm (brachial plexus)
+  c.beginPath();crPath(c,[[spX(240)-22,240],[430,262],[452,296]],false);c.strokeStyle='#9c7414';c.lineWidth=6;c.stroke();c.strokeStyle='#f5cf4a';c.lineWidth=3.5;c.stroke();
+  // ribs and breastbone
+  c.globalAlpha=.6;
+  for(let k=0;k<10;k++){const y0=290+k*24,x0=spX(y0)+12;
+    c.beginPath();crPath(c,[[x0,y0],[x0+40,y0+6+k],[x0+90,y0+30+k*2],[548-Math.abs(k-4)*4,y0+64+k*3]],false);
+    c.strokeStyle='#8c774d';c.lineWidth=9;c.stroke();c.strokeStyle='#efe4c8';c.lineWidth=6;c.stroke()}
+  c.strokeStyle='#e6d7b2';c.lineWidth=12;c.beginPath();c.moveTo(548,300);c.lineTo(552,470);c.stroke();
+  c.globalAlpha=1;
+  // backbone (vertebrae)
+  for(let y=190;y<830;y+=26){const x=spX(y),a=Math.atan2(1,(spX(y+5)-spX(y-5))/10)-Math.PI/2;
+    c.save();c.translate(x,y);c.rotate(-a);
+    c.fillStyle='rgba(150,195,245,.9)';rr(c,-13,9,26,6,3);c.fill();
+    g=c.createLinearGradient(-15,0,15,0);BONE.forEach((s,i)=>g.addColorStop(i/(BONE.length-1),s));
+    c.fillStyle=g;rr(c,-15,-9,30,18,6);c.fill();c.strokeStyle='#8c774d';c.lineWidth=1.3;c.stroke();
+    c.beginPath();c.moveTo(-15,-4);c.lineTo(-40,2);c.lineTo(-42,8);c.lineTo(-15,6);c.closePath();c.fill();c.stroke();
+    c.restore()}
+  // skin layer on top (see-through)
+  g=c.createLinearGradient(368,0,570,0);['#a8694a','#efc3a0','#b57651'].forEach((s,i,a)=>g.addColorStop(i/(a.length-1),s));
+  c.globalAlpha=.16;sil();c.fillStyle=g;c.fill();c.globalAlpha=1;
+  c.restore();
+  sil();c.strokeStyle='rgba(150,95,65,.9)';c.lineWidth=2;c.stroke();
+  // face details
+  c.fillStyle='#fff';c.beginPath();c.moveTo(496,104);c.quadraticCurveTo(504,98,513,104);c.quadraticCurveTo(504,109,496,104);c.fill();
+  c.fillStyle='#4a2c1a';c.beginPath();c.arc(507,104,3.4,0,7);c.fill();
+  c.strokeStyle='#5a3a26';c.lineWidth=3;c.beginPath();c.moveTo(492,92);c.quadraticCurveTo(504,86,517,92);c.stroke();
+  c.strokeStyle='rgba(140,70,55,.8)';c.lineWidth=2;c.beginPath();c.moveTo(519,158);c.lineTo(527,157);c.stroke();
+  c.strokeStyle='rgba(120,70,45,.6)';c.beginPath();c.moveTo(533,134);c.quadraticCurveTo(528,138,531,141);c.stroke();
+  // ear
+  g=c.createLinearGradient(418,0,446,0);g.addColorStop(0,'#c98a66');g.addColorStop(1,'#ebb994');
+  c.beginPath();c.ellipse(432,120,13,21,.15,0,7);c.fillStyle=g;c.fill();c.strokeStyle='#9a6243';c.lineWidth=1.8;c.stroke();
+  c.strokeStyle='rgba(140,80,55,.7)';c.beginPath();c.ellipse(434,119,7,13,.15,Math.PI*1.2,Math.PI*2.6);c.stroke();
+  // hair
+  c.beginPath();crPath(c,[[371,128],[372,74],[404,38],[455,25],[500,35],[521,62],[514,70],[490,60],[466,64],[446,62],[426,78],[414,100],[400,128],[386,150]],true);
+  g=c.createLinearGradient(380,30,500,140);g.addColorStop(0,'#4a3122');g.addColorStop(1,'#1f150e');c.globalAlpha=.6;c.fillStyle=g;c.fill();c.globalAlpha=1;
+  c.strokeStyle='rgba(140,100,70,.4)';c.lineWidth=1.5;for(let i=0;i<7;i++){c.beginPath();c.moveTo(390+i*16,46+Math.abs(i-3)*3);c.quadraticCurveTo(400+i*14,74,388+i*8,110+i*2);c.stroke()}
 }
 const kOn=()=>K.act&&K.t>.6;
 const kForce=()=>({b:K.act==='b'&&kOn()?(12+44*K.load)*Math.max(.3,Math.sin(K.th*Math.PI/180)):0,t:K.act==='t'&&kOn()?20:0});
@@ -927,21 +1063,10 @@ function drawK(){
   ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=2;
   for(let x=0;x<=W;x+=150){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
   for(let y=40;y<H;y+=150){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
-  // body
-  ctx.fillStyle='#e9b792';ctx.fillRect(176,205,48,70);
-  rr(ctx,60,250,372,620,70);ctx.fillStyle='#3d63c9';ctx.fill();
-  ctx.fillStyle='#e9b792';ctx.beginPath();ctx.arc(200,145,82,0,7);ctx.fill();
-  // backbone + spinal cord
-  for(let y=262;y<800;y+=30){rr(ctx,180,y,40,20,7);ctx.fillStyle='#f1e6c6';ctx.fill();ctx.strokeStyle='#b3a070';ctx.lineWidth=2;ctx.stroke()}
-  seg(ctx,{x:200,y:150},{x:200,y:800},9,'#c9951f');seg(ctx,{x:200,y:150},{x:200,y:800},5,'#f5c542');
-  ctx.strokeStyle='#f5c542';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(200,290);ctx.lineTo(420,290);ctx.lineTo(462,300);ctx.stroke();
-  // brain
-  ctx.fillStyle='#f29aa8';ctx.strokeStyle='#c96478';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(200,118,64,42,0,0,7);ctx.fill();ctx.stroke();
-  ctx.lineWidth=2.5;ctx.beginPath();
-  [[160,100,14],[188,92,13],[218,96,14],[244,112,12],[172,128,13],[204,124,14],[232,138,11]].forEach(b=>{ctx.moveTo(b[0]+b[2],b[1]);ctx.arc(b[0],b[1],b[2],0,Math.PI*1.3)});ctx.stroke();
-  const on=kOn(),P=drawArm(ctx,K.th,{bAct:on&&K.act==='b',tAct:on&&K.act==='t',load:K.load,cover:K.cover,nerve:true});
+  drawBody(ctx);
+  const on=kOn(),P=drawArm(ctx,K.th,{bAct:on&&K.act==='b',tAct:on&&K.act==='t',load:K.load,cover:K.cover,nerve:true,body:true});
   // impulses
-  if(K.act){const m=K.act==='b'?mid(P.bO,P.bI):mid(P.tO,P.tI),path=[{x:200,y:125},{x:200,y:290},{x:420,y:290},{x:462,y:300},m];
+  if(K.act){const m=K.act==='b'?mid(P.bO,P.bI):mid(P.tO,P.tI),path=[{x:440,y:92},{x:432,y:128},{x:spX(180)-22,y:180},{x:spX(240)-22,y:240},{x:430,y:262},{x:452,y:296},m];
     let tot=0;const ls=[];for(let i=1;i<path.length;i++){ls.push(len(path[i-1],path[i]));tot+=ls[i-1]}
     for(const p of K.pulses){let s=p*tot,i=0;while(i<ls.length-1&&s>ls[i]){s-=ls[i];i++}const q=Math.min(1,s/ls[i]),x=path[i].x+(path[i+1].x-path[i].x)*q,y=path[i].y+(path[i+1].y-path[i].y)*q;
       const gg=ctx.createRadialGradient(x,y,1,x,y,16);gg.addColorStop(0,'#fff');gg.addColorStop(.4,'rgba(255,235,90,.95)');gg.addColorStop(1,'rgba(255,235,90,0)');ctx.fillStyle=gg;ctx.beginPath();ctx.arc(x,y,16,0,7);ctx.fill()}}
@@ -957,15 +1082,19 @@ function drawK(){
   [-36,0,36].forEach(x=>{ctx.fillStyle='#2f86d6';ctx.beginPath();ctx.arc(975+x,678,7,0,7);ctx.fill()});
   if(labels){
     const bA=on&&K.act==='b',tA=on&&K.act==='t',bm=mid(P.bO,P.bI),tm=mid(P.tO,P.tI);
-    pill(200,36,'brain','não');
-    pill(96,470,'spinal cord','tủy sống',200,470);
-    pill(330,238,'nerve','dây thần kinh',330,290);
-    pill(830,190,'shoulder: ball-and-socket joint','vai: khớp cầu',P.S.x+14,P.S.y-8);
-    pill(800,262,'tendon','gân',P.bO.x+3,P.bO.y+10);
-    pill(840,335,'biceps: '+(bA?'contracted':'relaxed'),'cơ nhị đầu: '+(bA?'đang co':'đang giãn'),bm.x+12,bm.y);
-    pill(325,400,'triceps: '+(tA?'contracted':'relaxed'),'cơ tam đầu: '+(tA?'đang co':'đang giãn'),tm.x-10,tm.y);
-    pill(322,610,'elbow: hinge joint','khuỷu tay: khớp bản lề',P.E.x-14,P.E.y+8);
-    pill(690,640,'cartilage','sụn',P.E.x+12,P.E.y+10);
+    pill(250,52,'brain','não',412,80);
+    pill(250,150,'skull','hộp sọ',382,150);
+    pill(250,250,'nerve','dây thần kinh',432,262);
+    pill(250,380,'triceps: '+(tA?'contracted':'relaxed'),'cơ tam đầu: '+(tA?'đang co':'đang giãn'),tm.x-12,tm.y);
+    pill(250,480,'spinal cord','tủy sống',spX(480)-22,480);
+    pill(250,560,'backbone','xương sống',spX(560)-8,560);
+    pill(270,650,'elbow: hinge joint','khuỷu tay: khớp bản lề',P.E.x-22,P.E.y+6);
+    pill(800,170,'shoulder: ball-and-socket joint','vai: khớp cầu',P.S.x+18,P.S.y-14);
+    if(!K.cover)pill(780,245,'tendon','gân',P.bO.x+5,P.bO.y-14);
+    pill(810,320,'biceps: '+(bA?'contracted':'relaxed'),'cơ nhị đầu: '+(bA?'đang co':'đang giãn'),bm.x+14,bm.y);
+    if(!K.cover){pill(760,410,'upper arm bone','xương cánh tay',P.S.x+6,P.S.y+150);
+    pill(700,505,'cartilage','sụn',P.E.x+12,P.E.y+10)}
+    if(!K.cover){const fb={x:P.E.x+P.d.x*120,y:P.E.y+P.d.y*120};pill(K.th>70?560:700,K.th>70?740:600,'forearm bones','xương cẳng tay',fb.x,fb.y)}
     pill(975,738,'force meter','máy đo lực');
   }
 }
@@ -977,7 +1106,7 @@ function kDown(p){
   if(len(p,P.E)<36){K.done[2]=1;kInfo('The elbow is a hinge joint. It moves back and forth.','Khuỷu tay là khớp bản lề. Nó chuyển động qua lại.')}
   else if(len(p,P.S)<38){K.done[3]=1;kInfo('The shoulder is a ball-and-socket joint. It moves in many directions.','Vai là khớp cầu. Nó chuyển động theo nhiều hướng.')}
   else if(Math.min(db,dt)<60)kAct(db<dt?'b':'t');
-  else if(len(p,{x:200,y:130})<85)kInfo('The brain controls your muscles. It sends impulses.','Não điều khiển các cơ. Não gửi các xung thần kinh.');
+  else if(len(p,{x:441,y:92})<62)kInfo('The brain controls your muscles. It sends impulses.','Não điều khiển các cơ. Não gửi các xung thần kinh.');
 }
 $$('#kAct .big').forEach(b=>b.onclick=()=>kAct(b.dataset.a));
 $$('#kLoad .big').forEach(b=>b.onclick=()=>{K.load=+b.dataset.l;kBtns()});
@@ -998,7 +1127,7 @@ function hudK(){
 function warmK(){
   const v=$('#heatR').value/100;
   let g=wx.createLinearGradient(0,0,0,380);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');wx.fillStyle=g;wx.fillRect(0,0,900,380);
-  wx.save();wx.translate(82,-154);wx.scale(.72,.72);drawArm(wx,15+v*120,{bAct:v>.05,tAct:false,load:0});wx.restore();
+  wx.save();wx.translate(150,-130);wx.scale(.62,.62);drawArm(wx,15+v*120,{bAct:v>.05,tAct:false,load:0});wx.restore();
   wx.font='800 30px system-ui,sans-serif';wx.textAlign='left';wx.fillStyle='#fff';wx.fillText(v>.5?'Biceps: contracted':v>.05?'Biceps: contracting…':'Biceps: relaxed',40,60);
 }
 {const t=$('#thumb3').getContext('2d');let g=t.createLinearGradient(0,0,0,340);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');t.fillStyle=g;t.fillRect(0,0,600,340);
