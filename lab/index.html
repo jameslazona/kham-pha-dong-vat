@@ -170,6 +170,42 @@ body[data-lab=evap] .tabs button[data-go=groups]{display:inline-block}
 @keyframes popin{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
 .conf{position:absolute;top:-2rem;font-size:2rem;animation:fall 1.8s ease-in forwards;pointer-events:none;z-index:40}
 @keyframes fall{to{transform:translateY(60rem) rotate(400deg);opacity:0}}
+
+/* into the freezer */
+.tabs button[data-go=freezer]{display:none}
+body[data-lab=freeze] .tabs button[data-go=freezer]{display:inline-block}
+#freezer{gap:.8rem;padding:.8rem}
+#zCol{flex:1;min-width:0;display:flex;flex-direction:column;gap:.6rem}
+#zSteps{display:flex;align-items:center;justify-content:center;gap:.4rem;flex:none}
+.zst{padding:.45rem 1rem;border-radius:999px;background:#e3eaf1;color:#8493a3;font-weight:900;text-align:center;line-height:1.1}
+.zst.on{background:#d6efff;color:#0d4f8b;box-shadow:0 0 0 .18rem #58b3f0}.zst.done{background:#d9f5e1;color:#1f7a3a}
+.zar{font-style:normal;color:#a3afbb;font-weight:900}
+#zWrap{flex:1;min-height:0;border-radius:1.2rem;overflow:hidden;background:#5d7385}
+#zStage{width:100%;height:100%;object-fit:contain;display:block;touch-action:none}
+#zCap{flex:none;background:#fff;border:.18rem solid #f2b400;border-radius:1.2rem;padding:.7rem 1.2rem;font-size:1.55rem;font-weight:800;text-align:center;min-height:4.6rem;display:flex;flex-direction:column;justify-content:center}
+#zPanel{width:24rem;flex:none;display:flex;flex-direction:column;gap:.55rem;min-height:0;overflow:auto}
+#zBox{display:flex;flex-direction:column;gap:.55rem}
+.zh{font-size:1.25rem;font-weight:900;line-height:1.2}
+.zsub{font-weight:800;color:#5c6e80;margin:.25rem 0 .4rem}
+.big.wide{width:100%}.big.go2{background:var(--green);color:#fff;box-shadow:0 .2rem 0 #17602d}
+.big:disabled{opacity:.45}.big.ready{animation:popin .6s}
+.padw{position:relative;width:100%;aspect-ratio:48/42;border-radius:1rem;background:#fff;border:.18rem solid var(--line);overflow:hidden}
+.padw canvas{position:absolute;inset:0;width:100%;height:100%}
+#zPad{touch-action:none;cursor:crosshair}
+.tools{display:flex;gap:.4rem;align-items:center;margin-top:.45rem}
+.sw{width:2.7rem;height:2.7rem;border-radius:50%;border:.2rem solid #fff;box-shadow:0 0 0 .15rem var(--line);flex:none}
+.sw.on{box-shadow:0 0 0 .28rem var(--navy)}.sw.er{background:#fff;font-weight:900}
+.tools .mb{margin-left:auto;min-height:2.7rem;padding:.3rem .9rem}
+.zpred .big{font-size:.95rem;padding:.5rem .3rem}
+#zGraph{width:100%;border-radius:.8rem}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.45rem}
+.cmp figure{margin:0;text-align:center}
+.cmp img,.cmp canvas,.noimg{width:100%;aspect-ratio:300/230;object-fit:contain;border-radius:.8rem;background:#fff;border:.15rem solid var(--line);display:grid;place-items:center;font-size:2.5rem}
+.cmp canvas{background:#5d7385}
+.cmp figcaption{font-weight:800;font-size:.9rem;color:#5c6e80;line-height:1.2;margin-top:.2rem}
+.cmp figcaption b{display:block;color:var(--ink);font-size:1.1rem}
+.zsay{margin-top:.5rem;background:#fff8d6;border:.2rem solid #f2b400;border-radius:1rem;padding:.6rem;text-align:center;font-weight:900;font-size:1.05rem}
+.zsay p{font-size:1.25rem;margin-top:.2rem}
 </style>
 </head>
 <body data-lab="evap">
@@ -182,6 +218,7 @@ body[data-lab=evap] .tabs button[data-go=groups]{display:inline-block}
       <button data-go="lab">2 Lab</button>
       <button data-go="quiz">3 Quiz</button>
       <button data-go="groups">4 Missions</button>
+      <button data-go="freezer">4 Freezer</button>
     </div>
     <button class="chip" id="viBtn">Tiếng Việt</button>
     <button class="chip" id="fsBtn">Full screen</button>
@@ -201,6 +238,7 @@ body[data-lab=evap] .tabs button[data-go=groups]{display:inline-block}
         <canvas id="thumb2" width="600" height="340"></canvas>
         <h2>Freezing<span class="vi">Đông đặc</span></h2>
         <button class="go" data-lab="freeze" data-go="warm">Start the lab ➜</button>
+        <button class="go" data-lab="freeze" data-go="freezer" style="background:#2f86d6">Into the freezer ➜</button>
       </div>
       <div class="card">
         <canvas id="thumb3" width="600" height="340"></canvas>
@@ -340,6 +378,22 @@ body[data-lab=evap] .tabs button[data-go=groups]{display:inline-block}
     <aside id="mScore"></aside>
   </section>
 
+  <section class="screen" id="freezer">
+    <div id="zCol">
+      <div id="zSteps"></div>
+      <div id="zWrap"><canvas id="zStage" width="1800" height="1200"></canvas></div>
+      <div id="zCap"></div>
+    </div>
+    <aside id="zPanel">
+      <div class="box reads" id="zReads">
+        <div class="read" id="zT"><b>25°C</b><span>water<span class="vi">nước</span></span></div>
+        <div class="read"><b id="zI" style="font-size:1.4rem">0%</b><span>ice<span class="vi">nước đá</span></span></div>
+        <div class="read"><b id="zTi" style="font-size:1rem">0 h 00 min</b><span>time<span class="vi">thời gian</span></span></div>
+      </div>
+      <div id="zBox"></div>
+    </aside>
+  </section>
+
   <section class="screen center" id="quiz">
     <div class="qn" id="qNum"></div>
     <h1 id="qText"></h1>
@@ -361,6 +415,7 @@ function go(id){
   $$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
   if(id==='quiz'&&qi<0)startQuiz();
   if(id==='groups'&&cur!=='evap')return go('home');
+  if(id==='freezer'&&cur!=='freeze')return go('home');
 }
 document.addEventListener('click',e=>{const l=e.target.closest('button[data-lab]');if(l)setLab(l.dataset.lab);const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)});
 $('#viBtn').onclick=()=>{viOn=!viOn;document.body.classList.toggle('vi-on',viOn);$('#viBtn').classList.toggle('on',viOn)};
@@ -1324,10 +1379,254 @@ document.addEventListener('pointercancel',e=>{if(dg){if(dg.g)dg.g.remove();dg.el
 renderScore();openM(0);
 
 
+/* ---------- into the freezer (predict, then test) ---------- */
+const zc=$('#zStage'),zx=zc.getContext('2d');
+const ZF={x:540,y:92,w:380,h:556},ZO={x:568,y:176,w:324,h:420},SHELF=520,TABLE=548,ZBX=240,ZIX=730;
+const ZFROST=[],ZDROPS=[];for(let i=0;i<220;i++)ZFROST.push([(Math.random()-.5)*116,Math.random()*148,.7+Math.random()*1.8]);for(let i=0;i<34;i++)ZDROPS.push([(Math.random()-.5)*108,10+Math.random()*130,2.4+Math.random()*3]);
+const ZSPECK=[];for(let i=0;i<140;i++)ZSPECK.push([Math.random(),Math.random(),.6+Math.random()*1.6]);
+const freshZ=()=>({step:1,water:0,waterT:0,door:0,doorT:0,inF:false,bx:ZBX,by:TABLE,t:0,T:25,fz:0,frost:0,wet:0,run:false,fast:false,hist:[[0,25]],pred:null,img:null,out:false,mist:[],self:null,lastH:0});
+let Z=freshZ(),zDrag=null,zColor='#2f86d6',zLastCap='',zPadDown=false;
+const zTime=m=>{m=Math.round(m);return Math.floor(m/60)+' h '+String(m%60).padStart(2,'0')+' min'};
+function zIceFill(c,x0,y0,w,h){
+  let g=c.createLinearGradient(x0,y0,x0+w,y0+h);g.addColorStop(0,'rgba(246,251,255,.97)');g.addColorStop(.5,'rgba(214,236,250,.95)');g.addColorStop(1,'rgba(188,222,244,.97)');
+  c.fillStyle=g;c.fillRect(x0,y0,w,h);
+  g=c.createRadialGradient(x0+w/2,y0+h*.55,2,x0+w/2,y0+h*.55,Math.max(w,h)*.45);g.addColorStop(0,'rgba(255,255,255,.75)');g.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=g;c.fillRect(x0,y0,w,h);
+  c.strokeStyle='rgba(255,255,255,.95)';c.lineWidth=1.4;c.beginPath();
+  c.moveTo(x0+w*.15,y0+h*.2);c.lineTo(x0+w*.32,y0+h*.45);c.lineTo(x0+w*.26,y0+h*.7);
+  c.moveTo(x0+w*.78,y0+h*.15);c.lineTo(x0+w*.64,y0+h*.4);c.lineTo(x0+w*.72,y0+h*.62);c.stroke();
+  c.fillStyle='rgba(255,255,255,.9)';for(let i=0;i<14;i++){const px=x0+w*(.3+.4*((i*37)%11)/11),py=y0+h*(.35+.5*((i*53)%13)/13);c.beginPath();c.arc(px,py,1+(i%3),0,7);c.fill()}
+}
+function zBeaker(c,x,yb,s){
+  const w=120,h=150,l=x-w/2,r=x+w/2,top=yb-h,q=16;
+  const gp=()=>{c.beginPath();c.moveTo(l,top);c.lineTo(l,yb-q);c.quadraticCurveTo(l,yb,l+q,yb);c.lineTo(r-q,yb);c.quadraticCurveTo(r,yb,r,yb-q);c.lineTo(r,top)};
+  c.fillStyle='rgba(0,0,0,.18)';c.beginPath();c.ellipse(x,yb+3,70,7,0,0,7);c.fill();
+  gp();c.closePath();c.fillStyle='rgba(215,238,255,.16)';c.fill();
+  const lvl=84*s.water*(1+.09*s.fz),st=yb-4-lvl;
+  if(s.water>.01){
+    c.save();gp();c.closePath();c.clip();
+    const wg=c.createLinearGradient(0,st,0,yb);wg.addColorStop(0,'rgba(125,200,240,.75)');wg.addColorStop(1,'rgba(35,120,205,.85)');
+    if((!s.out&&s.fz>0)||s.fz>=.999){
+      zIceFill(c,l,st,w,yb-st);
+      if(s.fz>=.999){c.beginPath();c.moveTo(l,st+1);c.quadraticCurveTo(x,st-12,r,st+1);c.closePath();c.fillStyle='rgba(240,249,255,.97)';c.fill()}
+      else{const k=1-s.fz,cw=(w-12)*k,ch=(yb-st-8)*k;rr(c,x-cw/2,st+(yb-st)*.55-ch/2,cw,ch,Math.min(cw,ch)/2);c.fillStyle=wg;c.fill()}
+      c.fillStyle='rgba(255,255,255,.85)';c.beginPath();c.ellipse(x,st+1,w/2-3,4,0,0,7);c.fill();
+    }else{
+      c.fillStyle=wg;c.fillRect(l,st,w,yb-st);
+      c.fillStyle='rgba(215,240,255,.6)';c.beginPath();c.ellipse(x,st+1,w/2-3,4,0,0,7);c.fill();
+      if(s.out&&s.fz>0){const k=Math.sqrt(s.fz),bw=(w-24)*k,bh=(yb-st)*.86*k,by=st-bh*.1;
+        c.save();rr(c,x-bw/2,by,bw,bh,8*k+2);c.clip();zIceFill(c,x-bw/2,by,bw,bh);c.fillStyle='rgba(60,140,210,.28)';c.fillRect(x-bw/2,st,bw,bh);c.restore();
+        rr(c,x-bw/2,by,bw,bh,8*k+2);c.strokeStyle='rgba(255,255,255,.9)';c.lineWidth=1.5;c.stroke()}
+    }
+    c.restore();
+  }
+  if(s.frost>.01){c.save();gp();c.closePath();c.clip();c.fillStyle='rgba(255,255,255,'+s.frost*.28+')';c.fillRect(l,top,w,h);
+    c.fillStyle='rgba(255,255,255,'+Math.min(1,s.frost*1.1)+')';for(const [dx,dy,rad] of ZFROST){c.beginPath();c.arc(x+dx,top+dy,rad,0,7);c.fill()}c.restore()}
+  if(s.wet>.01){c.globalAlpha=s.wet;for(const [dx,dy,rad] of ZDROPS){const px=x+dx,py=top+dy;c.beginPath();c.moveTo(px,py-rad*1.3);c.bezierCurveTo(px-rad,py,px-rad*.8,py+rad,px,py+rad);c.bezierCurveTo(px+rad*.8,py+rad,px+rad,py,px,py-rad*1.3);c.fillStyle='rgba(190,230,255,.85)';c.fill();c.strokeStyle='rgba(255,255,255,.95)';c.lineWidth=1;c.stroke()}c.globalAlpha=1}
+  gp();c.strokeStyle='rgba(120,160,185,.55)';c.lineWidth=6;c.stroke();gp();c.strokeStyle='rgba(240,250,255,.95)';c.lineWidth=2.5;c.stroke();
+  c.beginPath();c.ellipse(x,top,w/2+3,7,0,0,7);c.strokeStyle='rgba(240,250,255,.95)';c.lineWidth=3;c.stroke();
+  c.fillStyle='rgba(255,255,255,.35)';c.fillRect(l+9,top+14,8,h-46);
+  c.strokeStyle='rgba(255,255,255,.85)';c.lineWidth=1.6;for(let i=1;i<=4;i++){const y=yb-6-i*26;c.beginPath();c.moveTo(r-14,y);c.lineTo(r-(i%2?28:22),y);c.stroke()}
+}
+function zFreezer(c){
+  const F=ZF,O=ZO;
+  c.fillStyle='rgba(0,0,0,.3)';c.beginPath();c.ellipse(F.x+F.w/2,F.y+F.h+10,F.w*.56,14,0,0,7);c.fill();
+  c.fillStyle='#4b545d';rr(c,F.x+24,F.y+F.h-6,30,16,4);c.fill();rr(c,F.x+F.w-54,F.y+F.h-6,30,16,4);c.fill();
+  let g=c.createLinearGradient(F.x,0,F.x+F.w,0);g.addColorStop(0,'#cfd7de');g.addColorStop(.12,'#f6f8fa');g.addColorStop(.8,'#eef2f5');g.addColorStop(1,'#bfc9d2');
+  rr(c,F.x,F.y,F.w,F.h,22);c.fillStyle=g;c.fill();c.strokeStyle='#9eabb6';c.lineWidth=2;c.stroke();
+  // control panel
+  rr(c,F.x+18,F.y+14,F.w-36,56,12);c.fillStyle='#e2e8ed';c.fill();c.strokeStyle='#c2ccd4';c.stroke();
+  c.fillStyle='#2f86d6';c.beginPath();c.arc(F.x+52,F.y+42,17,0,7);c.fill();c.fillStyle='#fff';c.font='700 22px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText('❄',F.x+52,F.y+43);
+  c.fillStyle='#2e9e4f';c.beginPath();c.arc(F.x+86,F.y+42,5,0,7);c.fill();
+  rr(c,F.x+F.w-160,F.y+24,124,36,7);c.fillStyle='#0e1d28';c.fill();c.fillStyle='#7fe0ff';c.font='700 26px ui-monospace,Menlo,Consolas,monospace';c.fillText('-18 °C',F.x+F.w-98,F.y+43);
+  // inside
+  g=c.createLinearGradient(0,O.y,0,O.y+O.h);g.addColorStop(0,'#d9ebf6');g.addColorStop(1,'#a8c7dc');rr(c,O.x,O.y,O.w,O.h,10);c.fillStyle=g;c.fill();
+  const ins=28;c.fillStyle='rgba(120,160,190,.25)';c.fillRect(O.x+ins,O.y+ins,O.w-ins*2,O.h-ins*2);
+  c.strokeStyle='rgba(120,160,190,.45)';c.lineWidth=2;c.beginPath();
+  [[O.x,O.y,O.x+ins,O.y+ins],[O.x+O.w,O.y,O.x+O.w-ins,O.y+ins],[O.x,O.y+O.h,O.x+ins,O.y+O.h-ins],[O.x+O.w,O.y+O.h,O.x+O.w-ins,O.y+O.h-ins]].forEach(([a,b,cc,d])=>{c.moveTo(a,b);c.lineTo(cc,d)});c.stroke();
+  c.fillStyle='rgba(255,255,255,.75)';for(const [u,v,rad] of ZSPECK){c.beginPath();c.arc(O.x+u*O.w,O.y+v*O.h,rad,0,7);c.fill()}
+  c.fillStyle='rgba(255,255,255,.95)';c.beginPath();c.moveTo(O.x,O.y);for(let x=0;x<=O.w;x+=18){c.lineTo(O.x+x,O.y+10+((x/18)%3?4:14+((x/18)%5)*3));c.lineTo(O.x+x+9,O.y+8)}c.lineTo(O.x+O.w,O.y);c.closePath();c.fill();
+  if(Z.door>.05){g=c.createRadialGradient(O.x+O.w/2,O.y+20,4,O.x+O.w/2,O.y+20,O.w*.7);g.addColorStop(0,'rgba(255,255,230,'+Z.door*.55+')');g.addColorStop(1,'rgba(255,255,230,0)');c.fillStyle=g;c.fillRect(O.x,O.y,O.w,O.h)}
+  // wire shelf
+  c.strokeStyle='#c9d3db';c.lineWidth=3;c.beginPath();c.moveTo(O.x+ins,SHELF-22);c.lineTo(O.x+O.w-ins,SHELF-22);c.stroke();
+  for(let i=0;i<=14;i++){const t=i/14;c.beginPath();c.moveTo(O.x+ins+t*(O.w-ins*2),SHELF-22);c.lineTo(O.x+6+t*(O.w-12),SHELF+2);c.stroke()}
+  c.strokeStyle='#eef2f5';c.lineWidth=5;c.beginPath();c.moveTo(O.x+4,SHELF+2);c.lineTo(O.x+O.w-4,SHELF+2);c.stroke();
+}
+function zDoor(c){
+  const a=Z.door*1.8,hx=ZF.x+ZF.w-4,top=ZF.y+80,bot=ZF.y+ZF.h-8,cs=Math.cos(a),fx=hx-(ZF.w-8)*cs,sk=46*Math.sin(a);
+  const P=[[hx,top],[fx,top-sk*.6],[fx,bot+sk*.6],[hx,bot]];
+  const quad=()=>{c.beginPath();P.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath()};
+  if(cs>.03){let g=c.createLinearGradient(fx,0,hx,0);g.addColorStop(0,'#f9fbfc');g.addColorStop(.85,'#e6ebef');g.addColorStop(1,'#c9d2da');
+    quad();c.fillStyle=g;c.fill();c.strokeStyle='#9eabb6';c.lineWidth=2;c.stroke();
+    const t=.07,hxp=fx+(hx-fx)*t,h0=top+90-sk*.5,h1=top+250-sk*.5;g=c.createLinearGradient(hxp-6,0,hxp+6,0);g.addColorStop(0,'#7d8893');g.addColorStop(.5,'#f4f7f9');g.addColorStop(1,'#6e7882');
+    c.strokeStyle=g;c.lineWidth=Math.max(3,12*cs);c.lineCap='round';c.beginPath();c.moveTo(hxp,h0);c.lineTo(hxp,h1);c.stroke();
+    c.fillStyle='rgba(47,134,214,'+(.8*cs)+')';c.font='800 '+Math.round(22*cs+4)+'px system-ui';c.textAlign='center';c.fillText('❄',(fx+hx)/2,top+40)}
+  else if(cs<-.03){let g=c.createLinearGradient(hx,0,fx,0);g.addColorStop(0,'#c5d0d9');g.addColorStop(1,'#e8eef2');
+    quad();c.fillStyle=g;c.fill();c.strokeStyle='#8f9ca7';c.lineWidth=7;c.stroke();c.strokeStyle='#9eabb6';c.lineWidth=2;c.stroke();
+    c.strokeStyle='#f3f6f8';c.lineWidth=6;[.3,.55,.8].forEach(f=>{c.beginPath();c.moveTo(hx,top+(bot-top)*f);c.lineTo(fx,top-sk*.6+(bot-top+sk*1.2)*f);c.stroke()})}
+  else{c.strokeStyle='#9eabb6';c.lineWidth=4;c.beginPath();c.moveTo(hx,top);c.lineTo(hx,bot);c.stroke()}
+}
+function zPill(x,y,en,vi){pillOn(zx,x,y,en,vi)}
+function pillOn(c,x,y,en,vi){
+  c.font='800 19px system-ui,sans-serif';const w1=c.measureText(en).width;c.font='600 15px system-ui,sans-serif';const w2=viOn?c.measureText(vi).width:0;
+  const w=Math.max(w1,w2)+26,h=viOn?50:32;rr(c,x-w/2,y-h/2,w,h,14);c.fillStyle='rgba(255,255,255,.95)';c.fill();
+  c.textAlign='center';c.textBaseline='middle';c.fillStyle='#12263a';c.font='800 19px system-ui,sans-serif';c.fillText(en,x,viOn?y-9:y+1);
+  if(viOn){c.font='600 15px system-ui,sans-serif';c.fillStyle='#4b5f73';c.fillText(vi,x,y+13)}}
+function drawZ(){
+  const c=zx;c.setTransform(1.5,0,0,1.5,0,0);c.lineCap='round';
+  let g=c.createLinearGradient(0,0,0,660);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');c.fillStyle=g;c.fillRect(0,0,W,660);
+  c.strokeStyle='rgba(255,255,255,.06)';c.lineWidth=2;for(let x=0;x<=W;x+=150){c.beginPath();c.moveTo(x,0);c.lineTo(x,660);c.stroke()}for(let y=40;y<660;y+=150){c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke()}
+  g=c.createLinearGradient(0,660,0,H);g.addColorStop(0,'#3a4450');g.addColorStop(1,'#20262d');c.fillStyle=g;c.fillRect(0,660,W,H-660);c.fillStyle='rgba(255,255,255,.15)';c.fillRect(0,660,W,3);
+  // table
+  c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse(255,668,220,10,0,0,7);c.fill();
+  c.fillStyle='#6d4824';c.fillRect(66,TABLE+16,16,96);c.fillRect(428,TABLE+16,16,96);
+  g=c.createLinearGradient(0,TABLE,0,TABLE+22);g.addColorStop(0,'#c99158');g.addColorStop(1,'#8a5b2c');rr(c,40,TABLE,430,22,6);c.fillStyle=g;c.fill();
+  zFreezer(c);
+  const bs={water:Z.water,fz:Z.fz,out:Z.out,frost:Z.frost,wet:Z.wet};
+  if(Z.inF&&!zDrag)zBeaker(c,Z.bx,Z.by,bs);
+  for(const m of Z.mist){c.globalAlpha=Math.max(0,(1-m.life/m.max)*.35);c.drawImage(puff,m.x-m.r,m.y-m.r,m.r*2,m.r*2)}c.globalAlpha=1;
+  zDoor(c);
+  if(!Z.inF||zDrag)zBeaker(c,Z.bx,Z.by,bs);
+  if(Z.water>.5&&!zDrag&&(Z.door>.6||!Z.inF)){const ty=Z.by-190;rr(c,Z.bx-46,ty-18,92,36,18);c.fillStyle=Z.T<=0?'#2f86d6':'#e5432d';c.fill();c.fillStyle='#fff';c.font='800 21px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText(Math.round(Z.T)+' °C',Z.bx,ty+1)}
+  if(Z.step>=3){rr(c,24,22,400,46,23);c.fillStyle='rgba(18,38,58,.85)';c.fill();c.fillStyle='#fff';c.font='800 22px system-ui';c.textAlign='left';c.textBaseline='middle';c.fillText('⏱ '+(Z.out?'Out of the freezer: ':'In the freezer: ')+zTime(Z.t),42,46)}
+  if(Z.step===1&&Z.water>.95&&!Z.inF&&!zDrag){
+    if(Z.door<.8)zPill(ZF.x+ZF.w/2,ZF.y+ZF.h/2,'Tap the door to open it','Chạm vào cửa để mở');
+    else{c.setLineDash([12,10]);c.strokeStyle='rgba(255,230,90,'+(.6+.4*Math.sin(time*5))+')';c.lineWidth=4;rr(c,ZIX-72,SHELF-165,144,165,14);c.stroke();c.setLineDash([]);zPill(ZIX,SHELF-200,'Drag the beaker here','Kéo cốc vào đây')}}
+  if(Z.step===3&&Z.door>.5&&!Z.out)zPill(ZF.x+ZF.w/2,ZF.y+40,'Close the door to start','Đóng cửa để bắt đầu');
+  if(labels){zPill(ZF.x+ZF.w/2,ZF.y+ZF.h+40,'freezer','tủ đông');zPill(255,730,'table','bàn');if(!zDrag&&(!Z.inF||Z.door>.6))zPill(Z.bx+(Z.inF?-130:0),Z.inF?Z.by-60:Z.by+44,'beaker','cốc thủy tinh')}
+}
+function updateZ(dt){
+  Z.door+=(Z.doorT-Z.door)*Math.min(1,dt*4);Z.water+=(Z.waterT-Z.water)*Math.min(1,dt*2);
+  if(!zDrag){const tx=Z.inF?ZIX:ZBX,ty=Z.inF?SHELF:TABLE;Z.bx+=(tx-Z.bx)*Math.min(1,dt*6);Z.by+=(ty-Z.by)*Math.min(1,dt*6)}
+  const running=Z.run&&(Z.out||(Z.step===3&&Z.door<.05));
+  if(running){
+    const dtm=dt*(Z.fast?12:3);Z.t+=dtm;
+    if(!Z.out){
+      if(Z.fz<1&&Z.T<=0){Z.T=0;Z.fz=Math.min(1,Z.fz+.011*dtm)}else Z.T+=(-18-Z.T)*(1-Math.exp(-.03*dtm));
+      Z.frost=Math.min(1,Z.frost+.012*dtm);
+      if(Z.T<=-17.5&&Z.fz>=1)Z.run=false;
+    }else{
+      if(Z.fz>0&&Z.T>=0){Z.T=0;Z.fz=Math.max(0,Z.fz-.008*dtm)}else Z.T+=(25-Z.T)*(1-Math.exp(-.02*dtm));
+      if(Z.frost>0){Z.wet=Math.min(1,Z.wet+Z.frost*.08*dtm);Z.frost=Math.max(0,Z.frost-.08*dtm)}
+      if(Z.T>12)Z.wet=Math.max(0,Z.wet-.01*dtm);
+      if(Z.fz<=0&&Z.T>24)Z.run=false;
+    }
+    if(Z.t-Z.lastH>=2){Z.hist.push([Z.t,Z.T]);Z.lastH=Z.t}
+  }
+  if(Z.door>.3&&Z.inF&&!Z.out&&Math.random()<14*dt*Z.door)Z.mist.push({x:ZO.x+20+Math.random()*(ZO.w-40),y:ZO.y+ZO.h-30,vx:(Math.random()-.5)*30,vy:20+Math.random()*25,r:22+Math.random()*18,life:0,max:2.2});
+  for(let i=Z.mist.length-1;i>=0;i--){const m=Z.mist[i];m.life+=dt;m.x+=m.vx*dt;m.y+=m.vy*dt;m.r+=10*dt;if(m.life>m.max)Z.mist.splice(i,1)}
+}
+function zGraph(){
+  const cv2=$('#zGraph');if(!cv2)return;const c=cv2.getContext('2d'),w=cv2.width,h=cv2.height,L=54,R=14,T0=14,B=40;
+  const X=m=>L+(w-L-R)*Math.min(m,240)/240,Y=t=>T0+(h-T0-B)*(30-t)/50;
+  c.clearRect(0,0,w,h);c.fillStyle='#f6f9fc';c.fillRect(0,0,w,h);
+  c.strokeStyle='#d8e1ea';c.lineWidth=1;c.font='600 15px system-ui';c.fillStyle='#5c6e80';c.textAlign='right';c.textBaseline='middle';
+  for(let t=-20;t<=30;t+=10){c.beginPath();c.moveTo(L,Y(t));c.lineTo(w-R,Y(t));c.stroke();c.fillText(t+'°',L-6,Y(t))}
+  c.textAlign='center';c.textBaseline='top';for(let hh=0;hh<=4;hh++){c.fillText(hh+' h',X(hh*60),h-B+8)}
+  c.setLineDash([6,5]);c.strokeStyle='#2f86d6';c.lineWidth=2;c.beginPath();c.moveTo(L,Y(0));c.lineTo(w-R,Y(0));c.stroke();c.setLineDash([]);
+  c.fillStyle='#2f86d6';c.textAlign='left';c.textBaseline='bottom';c.font='800 15px system-ui';c.fillText('0 °C',L+6,Y(0)-3);
+  c.strokeStyle='#e5432d';c.lineWidth=3.5;c.lineJoin='round';c.beginPath();Z.hist.forEach(([m,t],i)=>i?c.lineTo(X(m),Y(t)):c.moveTo(X(m),Y(t)));c.stroke();
+  const l=Z.hist[Z.hist.length-1];c.fillStyle='#e5432d';c.beginPath();c.arc(X(l[0]),Y(l[1]),5,0,7);c.fill();
+}
+function zSnap(){const out=document.createElement('canvas');out.width=480;out.height=420;const o=out.getContext('2d');o.fillStyle='#fff';o.fillRect(0,0,480,420);o.drawImage($('#zGuide'),0,0);o.drawImage($('#zPad'),0,0);return out.toDataURL('image/png')}
+function zGuide(){const c=$('#zGuide').getContext('2d');c.clearRect(0,0,480,420);c.strokeStyle='#b8c6d4';c.lineWidth=5;c.setLineDash([14,10]);c.lineCap='round';
+  c.beginPath();c.moveTo(120,70);c.lineTo(120,350);c.quadraticCurveTo(120,380,150,380);c.lineTo(330,380);c.quadraticCurveTo(360,380,360,350);c.lineTo(360,70);c.stroke();
+  c.beginPath();c.ellipse(240,70,122,12,0,0,7);c.stroke();c.setLineDash([])}
+function zPadInit(){
+  const p=$('#zPad'),c=p.getContext('2d');let last=null;zGuide();
+  const pos=e=>{const r=p.getBoundingClientRect();return{x:(e.clientX-r.left)*480/r.width,y:(e.clientY-r.top)*420/r.height}};
+  p.addEventListener('pointerdown',e=>{e.preventDefault();zPadDown=true;last=pos(e);try{p.setPointerCapture(e.pointerId)}catch(_){}line(last,last)});
+  p.addEventListener('pointermove',e=>{if(!zPadDown)return;const q=pos(e);line(last,q);last=q});
+  const end=()=>{zPadDown=false};p.addEventListener('pointerup',end);p.addEventListener('pointercancel',end);
+  function line(a,b){c.globalCompositeOperation=zColor==='erase'?'destination-out':'source-over';c.strokeStyle=zColor==='erase'?'#000':zColor;c.lineWidth=zColor==='erase'?34:14;c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();c.globalCompositeOperation='source-over';Z.drew=true}
+}
+const ZSTEPS=[['Before','Trước'],['Predict','Dự đoán'],['In the freezer','Trong tủ đông'],['Later','Sau đó']];
+const ZPRED={water:['💧 water','💧 nước'],ice:['🧊 ice','🧊 nước đá'],empty:['🫙 an empty beaker','🫙 cốc rỗng']};
+function renderZ(){
+  $('#zSteps').innerHTML=ZSTEPS.map((s,i)=>(i?'<i class="zar">➜</i>':'')+'<div class="zst'+(Z.step===i+1?' on':'')+(Z.step>i+1?' done':'')+'">'+(i+1)+' '+s[0]+'<span class="vi">'+s[1]+'</span></div>').join('');
+  let h='';const B=(id,en,vi,cls)=>'<button class="big'+(cls?' '+cls:'')+'" id="'+id+'">'+en+'<span class="vi">'+vi+'</span></button>';
+  $('#zReads').style.display=(Z.step===2||(Z.step===4&&!Z.out))?'none':'';
+  if(Z.step===1){
+    h='<div class="box"><div class="zh">'+bi('Put a beaker of water into a freezer.','Đặt một cốc nước vào tủ đông.')+'</div></div><div class="box"><div class="row">'+B('zPour','💧 Pour water','Rót nước')+B('zDoorB',Z.doorT?'🚪 Close the door':'🚪 Open the door',Z.doorT?'Đóng cửa':'Mở cửa')+'</div><div style="height:.45rem"></div>'+B('zPut','➜ Put it in the freezer','Đặt vào tủ đông','wide')+'</div>';
+  }else if(Z.step===2){
+    h='<div class="box"><div class="zh">'+bi('Let\'s predict! What will you see later?','Cùng dự đoán! Lát nữa em sẽ thấy gì?')+'</div><div class="zsub">'+bi('Draw your prediction!','Hãy vẽ dự đoán của em!')+'</div>'+
+      '<div class="padw"><canvas id="zGuide" width="480" height="420"></canvas><canvas id="zPad" width="480" height="420"></canvas></div>'+
+      '<div class="tools">'+[['#2f86d6','water'],['#bfe6ff','ice'],['#12263a','pencil'],['#e5432d','red']].map(([c,t])=>'<button class="sw'+(zColor===c?' on':'')+'" data-col="'+c+'" title="'+t+'" style="background:'+c+'"></button>').join('')+
+      '<button class="sw er'+(zColor==='erase'?' on':'')+'" data-col="erase">⌫</button><button class="mb" id="zClear">Clear<span class="vi">Xóa</span></button></div></div>'+
+      '<div class="box"><div class="zsub">'+bi('I think I will see…','Em nghĩ em sẽ thấy…')+'</div><div class="seg zpred">'+Object.keys(ZPRED).map(k=>'<button class="big'+(Z.pred===k?' on':'')+'" data-pred="'+k+'">'+ZPRED[k][0]+'<span class="vi">'+ZPRED[k][1]+'</span></button>').join('')+'</div></div>'+
+      B('zDone','✓ Done. Let\'s test it!','Xong. Cùng kiểm tra nhé!','wide go2');
+  }else if(Z.step===3){
+    h='<div class="box"><div class="zh">'+bi('Close the door and wait.','Đóng cửa và chờ.')+'</div><div class="row" style="margin-top:.45rem">'+B('zDoorB','🚪 Door','Cửa')+B('zRun',Z.run?'⏸ Pause':'▶ Start',Z.run?'Tạm dừng':'Bắt đầu')+'</div><div style="height:.45rem"></div><div class="row">'+B('zFast','⏩ Faster','Nhanh hơn',Z.fast?'on':'')+B('zLater','👀 Later!','Sau đó!','go2')+'</div></div>'+
+      '<div class="box"><h3>Water temperature<span class="vi inline"> · Nhiệt độ của nước</span></h3><canvas id="zGraph" width="480" height="260"></canvas></div>';
+  }else{
+    const pr=Z.pred?ZPRED[Z.pred]:['(no choice)','(chưa chọn)'];
+    h=Z.out?'<div class="box"><div class="zh">'+bi('Out of the freezer. What happens now?','Lấy ra khỏi tủ đông. Bây giờ điều gì xảy ra?')+'</div><div class="row" style="margin-top:.45rem">'+B('zRun',Z.run?'⏸ Pause':'▶ Start',Z.run?'Tạm dừng':'Bắt đầu')+B('zFast','⏩ Faster','Nhanh hơn',Z.fast?'on':'')+'</div></div><div class="box"><h3>Water temperature<span class="vi inline"> · Nhiệt độ của nước</span></h3><canvas id="zGraph" width="480" height="260"></canvas></div>'+B('zAgain','↺ Start again','Làm lại','wide')
+    :'<div class="box"><div class="zh">'+bi('Later… what do you see?','Sau đó… em thấy gì?')+'</div><div class="cmp"><figure>'+(Z.img?'<img src="'+Z.img+'" alt="">':'<div class="noimg">✏️</div>')+'<figcaption>'+bi('My prediction','Dự đoán của em')+'<b>'+pr[0]+'</b></figcaption></figure><figure><canvas id="zRes" width="300" height="262"></canvas><figcaption>'+bi('What happened','Kết quả')+'<b>🧊 ice</b></figcaption></figure></div></div>'+
+      '<div class="box"><div class="zsub">'+bi('Was your prediction right?','Dự đoán của em có đúng không?')+'</div><div class="row">'+B('zYes','✓ Yes','Đúng',Z.self==='y'?'on':'')+B('zNo','✗ Not quite','Chưa đúng',Z.self==='n'?'on':'')+'</div>'+
+      (Z.self?'<div class="zsay">'+(Z.self==='y'?bi('Great! You predicted it well. ⭐','Tuyệt! Em đã dự đoán tốt.'):bi('That\'s OK! Scientists test their ideas to learn.','Không sao! Nhà khoa học kiểm tra ý tưởng để học hỏi.'))+'<p>“The water froze. It turned into ice!”<span class="vi">“Nước đã đông đặc. Nó biến thành nước đá!”</span></p></div>':'')+'</div>'+
+      '<div class="row">'+B('zOut','🖐 Take it out','Lấy ra')+B('zAgain','↺ Start again','Làm lại')+'</div>';
+  }
+  $('#zBox').innerHTML=h;
+  if(Z.step===2)zPadInit();
+  if($('#zRes')){const c=$('#zRes').getContext('2d');c.fillStyle='#5d7385';c.fillRect(0,0,300,262);c.save();c.translate(150,0);c.scale(1.1,1.1);zBeaker(c,0,212,{water:1,fz:1,out:false,frost:Z.frost,wet:0});c.restore()}
+  zGraph();zLastCap='';hudZ();
+}
+function hudZ(){
+  $('#zT b').textContent=Math.round(Z.T)+'°C';$('#zT').classList.toggle('hot',Z.T>0);$('#zTi').textContent=zTime(Z.t);$('#zI').textContent=Math.round(Z.fz*100)+'%';
+  const L=$('#zLater');if(L){const ok=Z.fz>=1&&Z.T<=-10;L.disabled=!ok;L.classList.toggle('ready',ok)}
+  const R=$('#zRun');if(R){const want=Z.run?['⏸ Pause','Tạm dừng']:['▶ Start','Bắt đầu'];if(R.dataset.s!==want[0]){R.dataset.s=want[0];R.innerHTML=bi(want[0],want[1])}}
+  if(Z.run||Z.out)zGraph();
+  let c;
+  if(Z.step===1)c=Z.water<.5?['Pour water into the beaker.','Rót nước vào cốc.']:Z.door<.8?['Open the freezer door.','Mở cửa tủ đông.']:['Put the beaker into the freezer.','Đặt cốc vào tủ đông.'];
+  else if(Z.step===2)c=['Draw what you think you will see later.','Vẽ những gì em nghĩ em sẽ thấy sau đó.'];
+  else if(Z.step===3){
+    if(Z.door>.05)c=['Close the door to keep the freezer cold.','Đóng cửa để giữ lạnh cho tủ đông.'];
+    else if(!Z.run&&Z.t===0)c=['Tap “Start” to let time pass.','Bấm “Bắt đầu” để thời gian trôi.'];
+    else if(Z.T>0)c=['The water is getting colder.','Nước đang lạnh dần.'];
+    else if(Z.fz<1)c=['The water is at 0 °C. It is freezing into ice.','Nước ở 0 °C. Nước đang đông đặc thành nước đá.'];
+    else c=['All the water is frozen. Tap “Later!” to look.','Toàn bộ nước đã đông đặc. Bấm “Sau đó!” để xem.'];
+  }else if(!Z.out)c=['The water froze. It turned into ice. Ice is a solid.','Nước đã đông đặc. Nó biến thành nước đá. Nước đá là chất rắn.'];
+  else if(Z.wet>.3&&Z.T<10&&!Z.run)c=['Water drops form on the cold glass.','Những giọt nước hình thành trên thành cốc lạnh.'];
+  else if(Z.fz>0&&Z.T>=0&&Z.t>0)c=['The ice is melting. It turns back into water.','Nước đá đang nóng chảy. Nó biến trở lại thành nước.'];
+  else if(Z.fz>0)c=['The ice is warming up. Look at the drops on the cold glass.','Nước đá đang ấm lên. Hãy nhìn những giọt nước trên thành cốc lạnh.'];
+  else c=['All the ice melted. It is water again.','Toàn bộ nước đá đã nóng chảy. Nó lại là nước.'];
+  if(c[0]!==zLastCap){zLastCap=c[0];$('#zCap').innerHTML=bi(c[0],c[1])}
+}
+function zPutIn(){if(Z.water<.9||Z.door<.8||Z.inF)return false;Z.inF=true;Z.step=2;renderZ();return true}
+const zP=e=>{const r=zc.getBoundingClientRect(),s=Math.min(r.width/W,r.height/H);return{x:(e.clientX-r.left-(r.width-W*s)/2)/s,y:(e.clientY-r.top-(r.height-H*s)/2)/s}};
+zc.addEventListener('pointerdown',e=>{
+  const p=zP(e);
+  if(Z.step===1&&Z.water>.9&&!Z.inF&&Math.abs(p.x-Z.bx)<70&&p.y>Z.by-170&&p.y<Z.by+10){zDrag={dx:p.x-Z.bx,dy:p.y-Z.by};try{zc.setPointerCapture(e.pointerId)}catch(_){}return}
+  if(p.x>ZF.x&&p.x<ZF.x+ZF.w+(Z.door>.5?140:0)&&p.y>ZF.y+70&&p.y<ZF.y+ZF.h&&(Z.step===1||Z.step===3)){Z.doorT=Z.doorT?0:1;renderZ()}
+});
+zc.addEventListener('pointermove',e=>{if(!zDrag)return;const p=zP(e);Z.bx=Math.max(70,Math.min(W-70,p.x-zDrag.dx));Z.by=Math.max(170,Math.min(700,p.y-zDrag.dy))});
+const zEnd=()=>{if(!zDrag)return;zDrag=null;if(Z.bx>ZO.x&&Z.bx<ZO.x+ZO.w&&Z.by>ZO.y+100&&Z.by<ZO.y+ZO.h+40){if(!zPutIn()){zLastCap='';$('#zCap').innerHTML=bi('Open the door first.','Hãy mở cửa trước.')}}};
+zc.addEventListener('pointerup',zEnd);zc.addEventListener('pointercancel',zEnd);
+$('#zBox').addEventListener('click',e=>{
+  const t=e.target,b=t.closest('button');if(!b)return;
+  if(b.dataset.col){zColor=b.dataset.col;$$('#zBox .sw').forEach(s=>s.classList.toggle('on',s===b));return}
+  if(b.dataset.pred){Z.pred=b.dataset.pred;$$('#zBox [data-pred]').forEach(s=>s.classList.toggle('on',s===b));return}
+  switch(b.id){
+    case 'zPour':Z.waterT=1;Z.T=25;break;
+    case 'zDoorB':Z.doorT=Z.doorT?0:1;if(Z.step===1)renderZ();break;
+    case 'zPut':if(Z.water<.9){Z.waterT=1}if(Z.doorT<1){Z.doorT=1}setTimeout(()=>{Z.water=1;Z.door=1;zPutIn()},450);break;
+    case 'zClear':$('#zPad').getContext('2d').clearRect(0,0,480,420);break;
+    case 'zDone':Z.img=Z.drew?zSnap():null;Z.step=3;Z.doorT=0;renderZ();break;
+    case 'zRun':if(Z.step===3&&Z.doorT){Z.doorT=0}Z.run=!Z.run;if(Z.fz>=1&&Z.T<=-17.5&&!Z.out)Z.run=false;break;
+    case 'zFast':Z.fast=!Z.fast;b.classList.toggle('on',Z.fast);break;
+    case 'zLater':if(Z.fz>=1&&Z.T<=-10){Z.step=4;Z.run=false;Z.doorT=1;renderZ()}break;
+    case 'zYes':Z.self='y';renderZ();break;
+    case 'zNo':Z.self='n';renderZ();break;
+    case 'zOut':Z.out=true;Z.inF=false;Z.doorT=0;Z.t=0;Z.lastH=0;Z.hist=[[0,Z.T]];Z.run=true;renderZ();break;
+    case 'zAgain':Z=freshZ();renderZ();break;
+  }
+});
+renderZ();
+
 /* ---------- main loop ---------- */
 let last=performance.now();
 function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;
+  if($('#freezer').classList.contains('on')){updateZ(dt);drawZ();hudZ()}
   if($('#lab').classList.contains('on')){if(cur==='skel'){updateK(dt);drawK()}else if(cur==='freeze'){updateF(dt);drawF()}else{update(dt);draw()}hud()}
   requestAnimationFrame(frame);
 }
