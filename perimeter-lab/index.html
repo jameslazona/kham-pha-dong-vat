@@ -408,6 +408,11 @@ const GEN={
  'Count the squares':()=>{const w=rnd(3,10),h=rnd(2,6),u=pick(['cm','m']);return{title:`Each square is 1 ${u} long. What is the perimeter of the shape?`,hint:'Count the squares along each side.',fig:rectSVG({w,h,grid:true}),lines:[`Length = [[${w}]] ${u}   Width = [[${h}]] ${u}`,`Perimeter = [[${2*(w+h)}]] ${u}`],explain:`${w} + ${h} + ${w} + ${h} = ${2*(w+h)} ${u}.`}},
  'Add the sides':()=>{const l=rnd(4,12),w=rnd(2,Math.min(8,l)),u=pick(['m','cm']);return{title:'Find the perimeter of the shape on the grid.',hint:`Each square is 1 ${u} long.`,fig:rectSVG({w:l,h:w,grid:true,labels:{top:l+' '+u,left:w+' '+u},fill:'#c9ecc0'}),lines:[`Two lots of ${l} ${u} = [[${2*l}]] ${u}`,`Two lots of ${w} ${u} = [[${2*w}]] ${u}`,`Perimeter = [[${2*(l+w)}]] ${u}`],explain:`${2*l} + ${2*w} = ${2*(l+w)} ${u}.`}},
  'Missing side':()=>{const l=rnd(5,12),w=rnd(2,Math.min(8,l-1)),p=2*(l+w);return{title:`The perimeter of this shape is ${p} cm. Its length is ${l} cm. What is the width?`,hint:'Each square is 1 cm long. Work it out, then count to check.',fig:rectSVG({w:l,h:w,grid:true,labels:{top:l+' cm',left:'?'},fill:'#ffe0b8'}),lines:[`Two lengths = [[${2*l}]] cm`,`Two widths = ${p} − ${2*l} = [[${2*w}]] cm`,`Width = [[${w}]] cm`],explain:`${p} − ${2*l} = ${2*w}. Half of ${2*w} is ${w} cm.`}},
+ 'L-shapes':()=>{const u=pick(['m','cm']),W=rnd(8,18),H=rnd(6,14),cw=rnd(2,W-3),ch=rnd(2,H-2);
+   return{title:'Find the missing sides. Then find the perimeter.',hint:'Use the sides you already know.',fig:lshapeSVG(W,H,cw,ch,{top:'A',iv:ch,ih:cw,right:'B',bottom:W,left:H},u),lines:[`Side A = [[${W-cw}]] ${u}`,`Side B = [[${H-ch}]] ${u}`,`Perimeter = [[${2*(W+H)}]] ${u}`],explain:`A = ${W} − ${cw} = ${W-cw} ${u}. B = ${H} − ${ch} = ${H-ch} ${u}. ${H} + ${W-cw} + ${ch} + ${cw} + ${H-ch} + ${W} = ${2*(W+H)} ${u}.`}},
+ 'Polygons':()=>{const n=pick([3,4,5,6,8]),sd=rnd(3,12),u=pick(['cm','mm','m']),nm=PNAME[n];return Math.random()<.6?
+   {title:`This is a regular ${nm}. What is its perimeter?`,hint:'All the sides are the same length.',fig:polySVG(n,sd+' '+u),lines:[`Number of sides: [[${n}]]`,`${n} × ${sd} = [[${n*sd}]] ${u}`],explain:`A ${nm} has ${n} sides. ${n} × ${sd} = ${n*sd} ${u}.`}:
+   {title:`A regular ${nm} has a perimeter of ${n*sd} ${u}. How long is each side?`,fig:polySVG(n,'? '+u),lines:[`Each side is [[${sd}]] ${u}`],explain:`A ${nm} has ${n} equal sides. ${n*sd} ÷ ${n} = ${sd} ${u}.`}},
  'Word problems':()=>pick([
    ()=>{const l=rnd(5,12),w=rnd(2,Math.min(8,l-1));return{title:`A garden is drawn on a grid. It is ${l} m long and ${w} m wide. How much fence is needed to go all the way around it?`,hint:'Each square is 1 m long.',fig:rectSVG({w:l,h:w,grid:true,labels:{top:l+' m',left:w+' m'},fill:'#bfe6a8'}),lines:[`${l} + ${w} + ${l} + ${w} = [[${2*(l+w)}]]`,`The fence is [[${2*(l+w)}]] m long.`],explain:`Two lengths (${2*l} m) plus two widths (${2*w} m) = ${2*(l+w)} m.`}},
    ()=>{const [l,w]=pick([[300,200],[350,150],[400,100]]),n=rnd(2,4);return{title:`A park is drawn on a grid. It is ${l} m long and ${w} m wide. Minh walks around it ${n} times. How far does he walk?`,hint:'Each square is 50 m long.',fig:rectSVG({w:l/50,h:w/50,grid:true,labels:{top:l+' m',left:w+' m'},fill:'#bfe6a8'}),lines:[`Once around = [[1000]] m`,`${n} times around = [[${n*1000}]] m = [[${n}]] km`],explain:`${l} + ${w} + ${l} + ${w} = 1,000 m. ${n} × 1,000 m = ${fmt(n*1000)} m = ${n} km.`}},
@@ -463,6 +468,52 @@ const GEN3={
 
 /* ---------- state ---------- */
 
+
+/* ---------- 4G1 extra lessons ---------- */
+function lshapeSVG(W,H,cw,ch,L,u){
+  const k=Math.min(380/W,250/H),w=W*k,h=H*k,x=(560-w)/2,y=(360-h)/2,a=(W-cw)*k,b=ch*k;
+  const tx=(X,Y,t,an='middle',c='#1c2340')=>t?`<text x="${X}" y="${Y}" text-anchor="${an}" dominant-baseline="middle" font-family="Fredoka" font-size="26" font-weight="600" fill="${c}">${t}</text>`:'';
+  const lab=v=>typeof v==='string'?v:v+' '+u, col=v=>typeof v==='string'?'#d81b72':'#1c2340';
+  let g=`<path d="M${x} ${y} H${x+a} V${y+b} H${x+w} V${y+h} H${x} Z" fill="#bfe6a8" stroke="#1c2340" stroke-width="4" stroke-linejoin="round"/>`;
+  if(L.top!=null)g+=tx(x+a/2,y-20,lab(L.top),'middle',col(L.top));
+  if(L.iv!=null)g+=tx(x+a+12,y+b/2,lab(L.iv),'start',col(L.iv));
+  if(L.ih!=null)g+=tx(x+a+(w-a)/2,y+b-20,lab(L.ih),'middle',col(L.ih));
+  if(L.right!=null)g+=tx(x+w+12,y+b+(h-b)/2,lab(L.right),'start',col(L.right));
+  if(L.bottom!=null)g+=tx(x+w/2,y+h+24,lab(L.bottom),'middle',col(L.bottom));
+  if(L.left!=null)g+=tx(x-12,y+h/2,lab(L.left),'end',col(L.left));
+  return `<svg viewBox="0 0 560 360" width="560" height="360">${g}</svg>`}
+const PNAME={3:'triangle',4:'square',5:'pentagon',6:'hexagon',8:'octagon'};
+function polySVG(n,lab){
+  const r=n===3?150:125,cx=280,cy=n===3?200:180,pts=[];
+  for(let i=0;i<n;i++){const t=Math.PI/2+Math.PI/n+2*Math.PI*i/n;pts.push([cx+r*Math.cos(t),cy+r*Math.sin(t)])}
+  const yb=Math.max(...pts.map(p=>p[1]));
+  return `<svg viewBox="0 0 560 360" width="560" height="360"><polygon points="${pts.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' ')}" fill="#cfc4f5" stroke="#4b2a86" stroke-width="5" stroke-linejoin="round"/><text x="${cx}" y="${yb+30}" text-anchor="middle" dominant-baseline="middle" font-family="Fredoka" font-size="28" font-weight="600" fill="#1c2340">${lab}</text></svg>`}
+const M5=[
+ {tag:'Discover',unit:'Lesson 5 · Missing lengths in rectilinear shapes',img:'p5_discover',title:'a) How long is side A?',hint:'Use the side lengths you already know.',lines:['Side A = [[9]] m'],share:'p5_share',explain:'Side A is as long as the 6 m side and the 3 m side together. 6 + 3 = 9 m.'},
+ {tag:'Discover',unit:'Lesson 5 · Missing lengths in rectilinear shapes',img:'p5_discover',title:'b) What is the perimeter of the penguin pond?',hint:'First find the length of the bottom side.',lines:['Bottom side = 5 m + 2 m = [[7]] m','3 + 5 + 6 + 2 + 9 + 7 = [[32]]','The perimeter of the pond is [[32]] m.'],share:'p5_share',explain:'The bottom side is 5 + 2 = 7 m. Add all six sides: 3 + 5 + 6 + 2 + 9 + 7 = 32 m.'},
+ {tag:'Think together',unit:'Lesson 5 · Question 1a and 1b',img:'p5_tt1',title:'What are the lengths of side A and side B?',lines:['Side A = [[6]] m','Side B = [[4]] m'],explain:'A = 9 − 3 = 6 m, because the top and A together are as long as the bottom. B = 12 − 8 = 4 m.'},
+ {tag:'Think together',unit:'Lesson 5 · Question 1c',img:'p5_tt1',title:'What is the perimeter of the fence?',lines:['12 + 9 + 8 + [[6]] + [[4]] + 3 = [[42]]','The perimeter of the fence is [[42]] m.'],explain:'12 + 9 + 8 + 6 + 4 + 3 = 42 m. Check: the up-and-down sides make 12 + 12 = 24, and the across sides make 9 + 9 = 18. 24 + 18 = 42.'},
+ {tag:'Think together',unit:'Lesson 5 · Question 2',img:'p5_tt2',title:'What is the perimeter of the meerkat pen?',hint:'Find side A first.',lines:['Side A = [[17]] m','20 + 17 + 10 + 8 + 10 + 9 = [[74]]','The perimeter is [[74]] m.'],explain:'Side A = 9 + 8 = 17 m. Then 20 + 17 + 10 + 8 + 10 + 9 = 74 m.'},
+ {tag:'Challenge',unit:'Lesson 5 · Question 3',img:'p5_ch3',title:'What is the perimeter of this rectilinear shape?',hint:'Do you need to find every side on its own?',lines:['The perimeter is [[72]] cm.'],explain:'The up-and-down sides still add up to 20 + 20, and the across sides to 12 + 12. The notch adds two more 4 cm sides. 40 + 24 + 8 = 72 cm.'}
+];
+const M6=[
+ {tag:'Discover',unit:'Lesson 6 · Perimeter of polygons',img:'p6_discover',title:'a) What is the same and what is different about each shape?',hint:'Talk with your partner. Press “Show answer” when the class is ready.',talk:true,share:'p6_share',explain:'Same: every side is 6 cm long. Different: the triangle has 3 sides, the square has 4 and the pentagon has 5. Shapes with equal sides and equal angles are called regular polygons.'},
+ {tag:'Discover',unit:'Lesson 6 · Perimeter of polygons',img:'p6_discover',title:'b) Calculate the perimeter of each shape.',lines:['Triangle: 3 × 6 = [[18]] cm','Square: 4 × 6 = [[24]] cm','Pentagon: 5 × 6 = [[30]] cm'],share:'p6_share',explain:'All the sides are the same length, so multiply the number of sides by 6 cm.'},
+ {tag:'Think together',unit:'Lesson 6 · Question 1',img:'p6_tt1',title:'Calculate the perimeter of each shape.',lines:['<span class="lab">a)</span> [[15]] cm','<span class="lab">b)</span> [[14]] cm','<span class="lab">c)</span> [[23]] cm'],explain:'a) 3 × 5 = 15 cm. b) 4 + 4 + 6 = 14 cm. c) 3 + 5 + 8 + 7 = 23 cm.'},
+ {tag:'Think together',unit:'Lesson 6 · Question 2',img:'p6_tt2',title:'Each polygon has a perimeter of 48 mm. Calculate the missing length.',lines:['<span class="lab">a)</span> [[18]] mm','<span class="lab">b)</span> [[13]] mm'],explain:'a) 17 + 13 = 30, and 48 − 30 = 18 mm. b) 12 + 8 + 15 = 35, and 48 − 35 = 13 mm.'},
+ {tag:'Challenge',unit:'Lesson 6 · Question 3',img:'p6_ch3',title:'Find side lengths for these perimeters.',hint:'Any side lengths that add up to the perimeter are correct!',lines:['Triangle, 21 cm: [[+a:21:7]] + [[+a:21:7]] + [[+a:21:7]] cm','Triangle, 45 m: [[+b:45:15]] + [[+b:45:15]] + [[+b:45:15]] m','Square, 100 cm: each side is [[25]] cm'],explain:'There are many answers, such as 7, 7 and 7 cm, or 15, 15 and 15 m. Tip: the longest side of a triangle must be shorter than the other two sides put together.'}
+];
+const EU=[
+ {tag:'Practice',unit:'End of unit check · 1',img:'eu1',title:'What is 2½ km in metres?',opts:['A: 2½ m','B: 2,000½ m','C: 2,500 m','D: 250 m'],answer:'C: 2,500 m',explain:'2 km = 2,000 m and ½ km = 500 m. 2,000 + 500 = 2,500 m.'},
+ {tag:'Practice',unit:'End of unit check · 2',img:'eu2',title:'What is the perimeter of this rectangle?',opts:['A: 48 cm','B: 19 cm','C: 84 cm','D: 38 cm'],answer:'D: 38 cm',explain:'12 + 7 + 12 + 7 = 38 cm.'},
+ {tag:'Practice',unit:'End of unit check · 3',img:'eu3',title:'Which of these shapes has a perimeter of 20 cm?',opts:['A: Square, length 5 cm','B: Rectangle, 10 cm by 2 cm','C: Square, length 10 cm','D: Rectangle, 12 cm by 8 cm'],answer:'A: Square, length 5 cm',explain:'4 × 5 = 20 cm. The others are 24 cm, 40 cm and 40 cm.'},
+ {tag:'Practice',unit:'End of unit check · 4',img:'eu4',title:'Calculate the perimeter of this shape.',opts:['A: 185 cm','B: 290 cm','C: No perimeter, it is not a square or rectangle','D: 280 cm'],answer:'B: 290 cm',explain:'20 + 45 + 60 + 20 + 80 + 65 = 290 cm. Every closed shape has a perimeter.'},
+ {tag:'Practice',unit:'End of unit check · 5',img:'eu5',title:'What is the perimeter of this regular hexagon?',opts:['A: 30 cm','B: 36 cm','C: 12 cm','D: 60 cm'],answer:'A: 30 cm',explain:'A hexagon has 6 sides. 6 × 5 = 30 cm.'},
+ {tag:'Practice',unit:'End of unit check · 6',img:'eu6',title:'What length of fence does a farmer need to go around this field?',opts:['A: 45 m','B: 90 m','C: 65 m','D: He needs three more measurements'],answer:'B: 90 m',explain:'The field is 9 + 16 = 25 m across and 20 m tall. The up-and-down sides make 20 + 20 and the across sides make 25 + 25. 40 + 50 = 90 m.'},
+ {tag:'Practice',unit:'End of unit check · 7',img:'eu7',title:'Sam uses 10 cm pencils to make the perimeter of a shape. Which shape is not possible?',opts:['A: Perimeter 60 cm','B: Perimeter 40 cm','C: Perimeter 20 cm','D: Perimeter 100 cm'],answer:'C: Perimeter 20 cm',explain:'A shape needs at least 4 pencils, which is 40 cm. So a perimeter of 20 cm is not possible.'},
+ {tag:'Practice',unit:'End of unit check · 8',img:'eu8',title:'Jessica puts 7 tiles (5 cm by 1 cm) together to make a large rectangle. What is the perimeter?',lines:['The large rectangle is [[7]] cm wide and [[5]] cm tall.','The perimeter is [[24]] cm.'],explain:'7 tiles side by side make 7 cm across. Each tile is 5 cm tall. 7 + 5 + 7 + 5 = 24 cm.'}
+];
+
 /* ---------- Grade 1 pictures ---------- */
 function ctr(x,y,fill,r=20){return `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="#1c2340" stroke-width="2.5"/><path d="M${x-r*.55} ${y-r*.2} a${r*.6} ${r*.6} 0 0 1 ${r*.5} -${r*.45}" stroke="#fff" stroke-opacity=".75" stroke-width="3" fill="none" stroke-linecap="round"/>`}
 function slots(m,cx,cy,sp){const cols=m<=4?2:m<=9?3:4,rows=Math.ceil(m/cols);return Array.from({length:m},(_,j)=>{const r=Math.floor(j/cols),c=j%cols,n=r===rows-1?m-cols*(rows-1):cols;return[cx+(c-(n-1)/2)*sp,cy+(r-(rows-1)/2)*sp]})}
@@ -508,11 +559,11 @@ const GEN1={
  'Fact family':()=>{let w,a,b;do{[w,a,b]=two()}while(a===b);return{title:'Write the number sentence in two ways.',fig:ringsSVG(a,b),lines:[`[[a:${a}]] + [[a:${b}]] = [[${w}]]`,`[[b:${b}]] + [[b:${a}]] = [[${w}]]`,`[[${w}]] = [[c:${a}]] + [[c:${b}]]`],distinct:[['a','b']],explain:`${a} + ${b} = ${w} and ${b} + ${a} = ${w}. You can put the parts in any order.`}}
 };
 
-const S={cls:'g4',sec:'intro',i:{l1:0,l2:0,l6:0,l7:0,l8:0,a3:0,a4:0,ip:0},vals:{},done:new Set(),stars:0,topic:{g4:'Mixed',g3:'Mixed',g1:'Mixed'},pq:{g4:null,g3:null,g1:null},pn:0,act:null,team:[0,0],snd:true};
-const LES={l1:L1,l2:L2,l6:L6,l7:L7,l8:L8,a3:K3,a4:K4,ip:KP};
+const S={cls:'g4',sec:'intro',i:{l1:0,l2:0,m5:0,m6:0,eu:0,l6:0,l7:0,l8:0,a3:0,a4:0,ip:0},vals:{},done:new Set(),stars:0,topic:{g4:'Mixed',g3:'Mixed',g1:'Mixed'},pq:{g4:null,g3:null,g1:null},pn:0,act:null,team:[0,0],snd:true};
+const LES={l1:L1,l2:L2,m5:M5,m6:M6,eu:EU,l6:L6,l7:L7,l8:L8,a3:K3,a4:K4,ip:KP};
 let CLS={};
 const C=()=>CLS[S.cls];
-const hashOf=(c,x)=>(c==='g4'?'':c+'-')+(x==='intro'||x==='practice'||x==='play'||x==='pw'?x:x==='ip'?'individual':'lesson-'+x.slice(1));
+const hashOf=(c,x)=>(c==='g4'?'':c+'-')+(x==='intro'||x==='practice'||x==='play'||x==='pw'?x:x==='ip'?'individual':x==='eu'?'unit-check':'lesson-'+x.slice(1));
 $('#nav').onclick=e=>{const b=e.target.closest('button');if(b)go(b.dataset.s)};
 $('#topics').onclick=e=>{const b=e.target.closest('button');if(b){S.topic[S.cls]=b.dataset.t;newPractice()}};
 $('#cls').onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.c!==S.cls)setClass(b.dataset.c,'intro')};
@@ -910,7 +961,7 @@ $('#iGo').onclick=()=>go(C().secs[1][0]);
 /* start */
 CLS={
  g1:{label:'Grade 1',start:'Lesson 3',teacher:'Teacher Jennifer',gen:GEN1,script:SCRIPT1,env:ENV1,secs:[['intro','Intro'],['a3','Lesson 3'],['a4','Lesson 4'],['pw','Play'],['ip','Individual Practice'],['practice','Extra practice']]},
- g4:{label:'4G1',start:'Lesson 1',teacher:'Teacher Jennifer',gen:GEN,script:SCRIPT,env:ENV,secs:[['intro','Intro'],['l1','Lesson 1: km and m'],['l2','Lesson 2: Perimeter on a grid'],['practice','Extra practice']]},
+ g4:{label:'4G1',start:'Lesson 1',teacher:'Teacher Jennifer',gen:GEN,script:SCRIPT,env:ENV,secs:[['intro','Intro'],['l1','L1: km and m'],['l2','L2: Grid'],['m5','L5: Missing lengths'],['m6','L6: Polygons'],['eu','Unit check'],['practice','Extra practice']]},
  g3:{label:'3G1',start:'Lesson 6',teacher:'Teacher James',gen:GEN3,script:SCRIPT3,env:ENV3,secs:[['intro','Intro'],['l6','L6: Compare'],['l7','L7: Add'],['l8','L8: Subtract'],['play','Length Play'],['practice','Extra practice']]}
 };
 $('#cls').innerHTML=Object.keys(CLS).map(k=>`<button data-c="${k}">${CLS[k].label}</button>`).join('');
