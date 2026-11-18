@@ -171,7 +171,11 @@ select{font:inherit;font-weight:700;padding:8px;border-radius:10px;border:2px so
 .pad button{font-family:Fredoka;font-size:clamp(17px,1.7vw,28px);padding:5px 0;border-radius:12px;background:var(--soft);border:2px solid var(--line);box-shadow:0 3px 0 var(--line)}
 .pad button:active{transform:translateY(2px);box-shadow:none}
 .pad .wide{grid-column:span 2;font-size:clamp(14px,1.3vw,20px);font-weight:800;font-family:Nunito}
-.topics{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.topics{display:flex;gap:8px 12px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.tgrp{display:flex;align-items:center;gap:6px;padding:4px 5px 4px 10px;border:2px solid var(--line);border-radius:16px;background:#fff}
+.tgrp>b{font-family:Fredoka;font-weight:600;font-size:clamp(12px,1.05vw,16px);color:var(--purple);white-space:nowrap}
+.tgrp.on{border-color:var(--teal);background:#e6f4f5}
+.tgrp .chip{padding:5px 12px}
 .chip{padding:6px 14px;border-radius:999px;border:2px solid var(--line);background:#fff;font-weight:800;font-size:clamp(12px,1.1vw,17px)}
 .chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
 .pwrap{display:flex;flex-direction:column;height:100%;min-height:0}
@@ -459,8 +463,11 @@ const GEN3={
    return{title:`Add ${m1} m ${c1} cm and ${b} cm.`,fig:`<div class="bigfact">${m1} m ${c1} cm<span class="or">+</span>${b} cm</div>`,lines:[`${b} cm = [[${m2}]] m [[${c2}]] cm`,`Metres: ${m1} m + ${m2} m = [[${m1+m2}]] m`,`Centimetres: ${c1} cm + ${c2} cm = [[${c1+c2}]] cm`,`Total = [[${m1+m2}]] m [[${c1+c2}]] cm`],explain:`${m1+m2} m + ${c1+c2} cm = ${m1+m2} m ${c1+c2} cm.`}},
  'Subtract lengths':()=>{const m=rnd(2,6),c=rnd(1,9)*10,cut=rnd(2,9)*10+pick([0,5]),t=m*100+c,l=t-cut;
    return{title:`A plank is ${m} m ${c} cm long. A piece ${cut} cm long is cut off. How much is left?`,fig:`<div class="bigfact">${m} m ${c} cm<span class="or">−</span>${cut} cm</div>`,lines:[`${m} m ${c} cm = [[${t}]] cm`,`${t} cm − ${cut} cm = [[${l}]] cm`,`[[${Math.floor(l/100)}]] m [[${l%100}]] cm is left.`],explain:`${t} − ${cut} = ${l} cm, which is ${Math.floor(l/100)} m ${l%100} cm.`}},
- 'Word problems':()=>pick([
+ 'Adding stories':()=>pick([
    ()=>{const a=rnd(11,18)*10,b=rnd(5,9)*10+5,t=a+b;return{title:`Mai has a ribbon 1 m ${a-100} cm long and another ribbon ${b} cm long. She joins them together. How long is the new ribbon?`,fig:`<div class="bigfact">1 m ${a-100} cm<span class="or">+</span>${b} cm</div>`,lines:[`1 m ${a-100} cm = [[${a}]] cm`,`${a} cm + ${b} cm = [[${t}]] cm`,`The new ribbon is [[${Math.floor(t/100)}]] m [[${t%100}]] cm long.`],explain:`${a} + ${b} = ${t} cm, which is ${Math.floor(t/100)} m ${t%100} cm.`}},
+   ()=>{const a=rnd(1,3),ac=rnd(1,9)*5,b=rnd(1,2),bc=rnd(1,9)*5;return{title:`Kate has a piece of bunting ${a} m ${ac} cm long. Ebo has a piece ${b} m ${bc} cm long. They join them together. How long is the bunting now?`,fig:`<div class="bigfact">${a} m ${ac} cm<span class="or">+</span>${b} m ${bc} cm</div>`,lines:[`Metres: ${a} m + ${b} m = [[${a+b}]] m`,`Centimetres: ${ac} cm + ${bc} cm = [[${ac+bc}]] cm`,`The bunting is [[${a+b}]] m [[${ac+bc}]] cm long.`],explain:`Add the metres, then add the centimetres. The bunting is ${a+b} m ${ac+bc} cm long.`}}
+ ])(),
+ 'Subtracting stories':()=>pick([
    ()=>{const a=rnd(120,139),b=rnd(101,a-4);return{title:`Nam is 1 m ${a-100} cm tall. His sister is ${b} cm tall. How much taller is Nam?`,fig:`<div class="bigfact">1 m ${a-100} cm<span class="or">and</span>${b} cm</div>`,lines:[`1 m ${a-100} cm = [[${a}]] cm`,`${a} cm − ${b} cm = [[${a-b}]] cm`],explain:`Nam is ${a} cm tall. ${a} − ${b} = ${a-b} cm.`}},
    ()=>{const c=rnd(6,12),m=rnd(1,9),t=c*10+m,cut=rnd(15,45);return{title:`A string is ${c} cm ${m} mm long. Lan cuts off ${cut} mm. How long is the string now?`,fig:`<div class="bigfact">${c} cm ${m} mm<span class="or">−</span>${cut} mm</div>`,lines:[`${c} cm ${m} mm = [[${t}]] mm`,`${t} mm − ${cut} mm = [[${t-cut}]] mm`],explain:`${t} − ${cut} = ${t-cut} mm.`}}
  ])()
@@ -559,7 +566,7 @@ const GEN1={
  'Fact family':()=>{let w,a,b;do{[w,a,b]=two()}while(a===b);return{title:'Write the number sentence in two ways.',fig:ringsSVG(a,b),lines:[`[[a:${a}]] + [[a:${b}]] = [[${w}]]`,`[[b:${b}]] + [[b:${a}]] = [[${w}]]`,`[[${w}]] = [[c:${a}]] + [[c:${b}]]`],distinct:[['a','b']],explain:`${a} + ${b} = ${w} and ${b} + ${a} = ${w}. You can put the parts in any order.`}}
 };
 
-const S={cls:'g4',sec:'intro',i:{l1:0,l2:0,m5:0,m6:0,eu:0,l6:0,l7:0,l8:0,a3:0,a4:0,ip:0},vals:{},done:new Set(),stars:0,topic:{g4:'Mixed',g3:'Mixed',g1:'Mixed'},pq:{g4:null,g3:null,g1:null},pn:0,act:null,team:[0,0],snd:true};
+const S={cls:'g4',sec:'intro',i:{l1:0,l2:0,m5:0,m6:0,eu:0,l6:0,l7:0,l8:0,a3:0,a4:0,ip:0},vals:{},done:new Set(),stars:0,topic:{g4:null,g3:null,g1:null},pq:{g4:null,g3:null,g1:null},pn:0,act:null,team:[0,0],snd:true};
 const LES={l1:L1,l2:L2,m5:M5,m6:M6,eu:EU,l6:L6,l7:L7,l8:L8,a3:K3,a4:K4,ip:KP};
 let CLS={};
 const C=()=>CLS[S.cls];
@@ -572,7 +579,7 @@ function setClass(c,sec){
   stopTalk();S.cls=c;T.i=0;
   document.querySelectorAll('#cls button').forEach(b=>b.classList.toggle('on',b.dataset.c===c));
   $('#nav').innerHTML=C().secs.map(([k,n])=>`<button data-s="${k}">${n}</button>`).join('');
-  $('#topics').innerHTML=['Mixed',...Object.keys(C().gen)].map(t=>`<button class="chip" data-t="${t}">${t}</button>`).join('');
+  $('#topics').innerHTML=C().groups.map(([k,l,ts])=>`<div class="tgrp" data-g="${k}"><b>${l}</b>${ts.map(t=>`<button class="chip" data-t="${t}">${t}</button>`).join('')}</div>`).join('');
   document.body.dataset.c=c;voStop();$('#avJen').style.display=c!=='g3'?'':'none';$('#avJames').style.display=c==='g3'?'':'none';
   $('#tName').textContent=C().teacher;
   $('#iGo').textContent='Start '+C().start+' ▶';
@@ -585,7 +592,8 @@ function cur(){return S.sec==='practice'?S.pq[S.cls]:LES[S.sec]?LES[S.sec][S.i[S
 function key(){return S.sec==='practice'?'p'+S.cls+S.pn:S.sec+S.i[S.sec]}
 
 function go(sec){
-  stopTalk();S.sec=sec;
+  const prev=S.sec;stopTalk();S.sec=sec;
+  if(sec==='practice'){const gp=C().groups.find(g=>g[0]===prev);if(gp&&!gp[2].includes(S.topic[S.cls])){S.topic[S.cls]=gp[2][0];S.pq[S.cls]=null}if(!S.topic[S.cls])S.topic[S.cls]=C().groups[0][2][0]}
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.s===sec));
   voStop();S.pw.tok++;
   $('#v-intro').classList.toggle('on',sec==='intro');$('#v-play').classList.toggle('on',sec==='play');$('#v-pw').classList.toggle('on',sec==='pw');$('#v-q').classList.toggle('on',sec!=='intro'&&sec!=='play'&&sec!=='pw');
@@ -596,8 +604,8 @@ function go(sec){
   render();
 }
 function newPractice(){
-  const g=C().gen,tp=S.topic[S.cls],t=tp==='Mixed'?pick(Object.keys(g)):tp;
-  S.pq[S.cls]=Object.assign({tag:'Practice',unit:t},g[t]());S.pn++;render();
+  const g=C().gen,t=g[S.topic[S.cls]]?S.topic[S.cls]:(S.topic[S.cls]=C().groups[0][2][0]),gp=C().groups.find(x=>x[2].includes(t));
+  S.pq[S.cls]=Object.assign({tag:'Practice',unit:gp[1]+' · '+t},g[t]());S.pn++;render();
 }
 function lineHTML(s){
   return s.replace(/\[\[(.+?)\]\]/g,(m,a)=>{
@@ -618,6 +626,7 @@ function save(){S.vals[key()]=boxes().map(b=>b.textContent)}
 
 function render(){
   document.querySelectorAll('#topics .chip').forEach(c=>c.classList.toggle('on',c.dataset.t===S.topic[S.cls]));
+  document.querySelectorAll('#topics .tgrp').forEach(g=>g.classList.toggle('on',!!g.querySelector('.chip.on')));
   const q=cur(),isQ=!!q;
   ['tCheck','tShow','tClear'].forEach(id=>$('#'+id).style.display=isQ?'':'none');
   $('#tShare').style.display=q&&q.share?'':'none';
@@ -960,9 +969,9 @@ $('#iGo').onclick=()=>go(C().secs[1][0]);
 
 /* start */
 CLS={
- g1:{label:'Grade 1',start:'Lesson 3',teacher:'Teacher Jennifer',gen:GEN1,script:SCRIPT1,env:ENV1,secs:[['intro','Intro'],['a3','Lesson 3'],['a4','Lesson 4'],['pw','Play'],['ip','Individual Practice'],['practice','Extra practice']]},
- g4:{label:'4G1',start:'Lesson 1',teacher:'Teacher Jennifer',gen:GEN,script:SCRIPT,env:ENV,secs:[['intro','Intro'],['l1','L1: km and m'],['l2','L2: Grid'],['m5','L5: Missing lengths'],['m6','L6: Polygons'],['eu','Unit check'],['practice','Extra practice']]},
- g3:{label:'3G1',start:'Lesson 6',teacher:'Teacher James',gen:GEN3,script:SCRIPT3,env:ENV3,secs:[['intro','Intro'],['l6','L6: Compare'],['l7','L7: Add'],['l8','L8: Subtract'],['play','Length Play'],['practice','Extra practice']]}
+ g1:{label:'Grade 1',start:'Lesson 3',teacher:'Teacher Jennifer',gen:GEN1,script:SCRIPT1,env:ENV1,groups:[['a3','Lesson 3',['Part-whole model','Number sentence']],['a4','Lesson 4',['Missing part','Fact family']]],secs:[['intro','Intro'],['a3','Lesson 3'],['a4','Lesson 4'],['pw','Play'],['ip','Individual Practice'],['practice','Extra practice']]},
+ g4:{label:'4G1',start:'Lesson 1',teacher:'Teacher Jennifer',gen:GEN,script:SCRIPT,env:ENV,groups:[['l1','L1: km and m',['km to m','m to km']],['l2','L2: Grid',['Count the squares','Add the sides','Missing side','Word problems']],['m5','L5: Missing lengths',['L-shapes']],['m6','L6: Polygons',['Polygons']]],secs:[['intro','Intro'],['l1','L1: km and m'],['l2','L2: Grid'],['m5','L5: Missing lengths'],['m6','L6: Polygons'],['eu','Unit check'],['practice','Extra practice']]},
+ g3:{label:'3G1',start:'Lesson 6',teacher:'Teacher James',gen:GEN3,script:SCRIPT3,env:ENV3,groups:[['l6','L6: Compare',['cm and m','mm and cm','Compare']],['l7','L7: Add',['Add lengths','Adding stories']],['l8','L8: Subtract',['Subtract lengths','Subtracting stories']]],secs:[['intro','Intro'],['l6','L6: Compare'],['l7','L7: Add'],['l8','L8: Subtract'],['play','Length Play'],['practice','Extra practice']]}
 };
 $('#cls').innerHTML=Object.keys(CLS).map(k=>`<button data-c="${k}">${CLS[k].label}</button>`).join('');
 function fromHash(){const h=(location.hash||'').slice(1),c=['g3','g1'].find(k=>h.startsWith(k+'-'))||'g4',x=CLS[c].secs.map(v=>v[0]).find(v=>hashOf(c,v)===h)||'intro';return[c,x]}
