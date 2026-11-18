@@ -80,6 +80,15 @@ nav button.on{background:#ffd166;color:var(--ink)}
 #v-q{position:relative}
 .cnum{font-family:Fredoka;font-weight:700;font-size:26px;fill:#fff;paint-order:stroke;stroke:#1c2340;stroke-width:6px;pointer-events:none}
 #wSvg{touch-action:none;user-select:none;-webkit-user-select:none}
+#ink{position:fixed;left:0;top:0;z-index:8;pointer-events:none;touch-action:none}
+body.inking #ink{pointer-events:auto;cursor:crosshair}
+.inkbar{position:fixed;right:12px;z-index:9;display:none;flex-direction:column;gap:6px;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:8px;box-shadow:0 6px 18px rgba(0,0,0,.22)}
+body.inking .inkbar{display:flex}
+.inkbar button{width:52px;height:44px;border-radius:12px;border:3px solid transparent;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;background:var(--soft)}
+.inkbar button.on{border-color:var(--ink);background:#fff}
+.inkbar .sw{width:26px;height:26px;border-radius:50%;border:2px solid rgba(0,0,0,.25)}
+.inkbar hr{border:0;border-top:2px solid var(--line);margin:2px 0}
+#pen.on{background:#ffd166;color:var(--ink)}
 .hbtn{padding:7px 12px;border-radius:10px;background:#2b3460;color:#fff;font-weight:800;font-size:14px}
 .stars{font-weight:800;font-size:clamp(13px,1.2vw,18px);white-space:nowrap}
 
@@ -215,6 +224,7 @@ footer .btn{padding:8px 11px;font-size:clamp(12px,1.05vw,17px)}
   <div class="cls" id="cls"></div>
   <nav id="nav"></nav>
   <span class="stars" id="stars">★ 0</span>
+  <button class="hbtn" id="pen">Pen</button>
   <button class="hbtn" id="snd">Sound on</button>
   <button class="hbtn" id="fs">Full screen</button>
 </header>
@@ -366,6 +376,22 @@ footer .btn{padding:8px 11px;font-size:clamp(12px,1.05vw,17px)}
   <div class="team"><span contenteditable="true" spellcheck="false">Team B</span><button data-t="1" data-d="-1">−</button><b id="s1">0</b><button data-t="1" data-d="1">+</button></div>
 </footer>
 
+<canvas id="ink"></canvas>
+<div class="inkbar" id="inkbar" aria-label="Pen tools">
+  <button data-c="#e0262f" title="Red pen"><span class="sw" style="background:#e0262f"></span></button>
+  <button data-c="#1f5fd1" title="Blue pen"><span class="sw" style="background:#1f5fd1"></span></button>
+  <button data-c="#1f8a4c" title="Green pen"><span class="sw" style="background:#1f8a4c"></span></button>
+  <button data-c="#1c2340" title="Black pen"><span class="sw" style="background:#1c2340"></span></button>
+  <button data-t="hl" title="Highlighter"><span style="width:30px;height:14px;border-radius:4px;background:rgba(255,214,0,.75)"></span></button>
+  <button data-t="er" title="Eraser"><svg width="28" height="24" viewBox="0 0 28 24"><path d="M3 16 L13 4 L25 14 L18 22 H8 Z" fill="#f29bb0" stroke="#1c2340" stroke-width="2" stroke-linejoin="round"/><path d="M8 22 L3 16 L9 9 L19 17 L14 22" fill="#fff" stroke="#1c2340" stroke-width="2" stroke-linejoin="round"/></svg></button>
+  <hr>
+  <button data-w="4" title="Thin line"><span style="width:6px;height:6px;border-radius:50%;background:#1c2340"></span></button>
+  <button data-w="9" title="Thick line"><span style="width:14px;height:14px;border-radius:50%;background:#1c2340"></span></button>
+  <hr>
+  <button id="inkUndo" title="Undo the last line">Undo</button>
+  <button id="inkClear" title="Clear all writing">Clear</button>
+  <button id="inkDone" title="Put the pen away" style="background:var(--ink);color:#fff">Done</button>
+</div>
 <div class="ov" id="ov"><img id="ovImg" alt="Share page from the textbook"><button class="btn pri" id="ovClose">Close</button></div>
 
 <script>
@@ -625,6 +651,7 @@ function setAct(b){boxes().forEach(x=>x.classList.remove('act'));S.act=b;if(b)b.
 function save(){S.vals[key()]=boxes().map(b=>b.textContent)}
 
 function render(){
+  if(typeof inkPage==='function')inkPage();
   document.querySelectorAll('#topics .chip').forEach(c=>c.classList.toggle('on',c.dataset.t===S.topic[S.cls]));
   document.querySelectorAll('#topics .tgrp').forEach(g=>g.classList.toggle('on',!!g.querySelector('.chip.on')));
   const q=cur(),isQ=!!q;
@@ -778,6 +805,45 @@ function pDrop(){if(!DR)return;const P=S.play,w=DR.w,cy=(DR.home?(w==='a'?38:102
   if(!P.pl.a&&P.op==='−')P.pl.b=false;
   const was=P.show,ok=P.pl.a&&P.pl.b&&!(P.op==='−'&&P.b>P.a);P.show=P.pl.a&&P.pl.b;playRender();if(ok&&!was)party($('#v-play .pstage'))}
 psvg.addEventListener('pointerup',pDrop);psvg.addEventListener('pointercancel',pDrop);
+
+/* ---------- pen and annotation layer ---------- */
+const INK={on:false,c:'#e0262f',t:'pen',w:4,strokes:[],cur:null,key:''};
+const ink=$('#ink'),ictx=ink.getContext('2d');
+function inkBox(){const m=$('main').getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+  ink.style.top=m.top+'px';ink.style.left=m.left+'px';ink.style.width=m.width+'px';ink.style.height=m.height+'px';
+  ink.width=Math.round(m.width*dpr);ink.height=Math.round(m.height*dpr);ictx.setTransform(dpr,0,0,dpr,0,0);
+  const bar=$('#inkbar');bar.style.top=(m.top+8)+'px';bar.style.maxHeight=(m.height-16)+'px';inkDraw()}
+function inkStroke(st){if(st.p.length<1)return;ictx.save();ictx.lineCap='round';ictx.lineJoin='round';
+  if(st.t==='er'){ictx.globalCompositeOperation='destination-out';ictx.strokeStyle='#000';ictx.lineWidth=st.w*4}
+  else if(st.t==='hl'){ictx.globalAlpha=.38;ictx.strokeStyle='#ffd600';ictx.lineWidth=st.w*5}
+  else{ictx.strokeStyle=st.c;ictx.lineWidth=st.w}
+  ictx.beginPath();ictx.moveTo(st.p[0][0],st.p[0][1]);
+  if(st.p.length===1)ictx.lineTo(st.p[0][0]+.1,st.p[0][1]+.1);
+  for(let i=1;i<st.p.length-1;i++){const a=st.p[i],b=st.p[i+1];ictx.quadraticCurveTo(a[0],a[1],(a[0]+b[0])/2,(a[1]+b[1])/2)}
+  if(st.p.length>1){const l=st.p[st.p.length-1];ictx.lineTo(l[0],l[1])}
+  ictx.stroke();ictx.restore()}
+function inkDraw(){ictx.clearRect(0,0,ink.width,ink.height);INK.strokes.forEach(inkStroke);if(INK.cur)inkStroke(INK.cur)}
+function inkClearAll(){INK.strokes=[];INK.cur=null;inkDraw()}
+function inkTools(){document.querySelectorAll('#inkbar [data-c]').forEach(b=>b.classList.toggle('on',INK.t==='pen'&&b.dataset.c===INK.c));
+  document.querySelectorAll('#inkbar [data-t]').forEach(b=>b.classList.toggle('on',INK.t===b.dataset.t));
+  document.querySelectorAll('#inkbar [data-w]').forEach(b=>b.classList.toggle('on',+b.dataset.w===INK.w))}
+function inkSet(on){INK.on=on;document.body.classList.toggle('inking',on);$('#pen').classList.toggle('on',on);$('#pen').textContent=on?'Pen on':'Pen';if(on){inkBox();inkTools()}}
+$('#pen').onclick=()=>inkSet(!INK.on);
+$('#inkDone').onclick=()=>inkSet(false);
+$('#inkClear').onclick=inkClearAll;
+$('#inkUndo').onclick=()=>{INK.strokes.pop();inkDraw()};
+$('#inkbar').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.c){INK.c=b.dataset.c;INK.t='pen'}else if(b.dataset.t)INK.t=b.dataset.t;else if(b.dataset.w)INK.w=+b.dataset.w;inkTools()});
+const ipt=e=>{const r=ink.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
+ink.addEventListener('pointerdown',e=>{if(!INK.on)return;e.preventDefault();INK.cur={c:INK.c,t:INK.t,w:INK.w,p:[ipt(e)]};try{ink.setPointerCapture(e.pointerId)}catch(_){}inkDraw()});
+ink.addEventListener('pointermove',e=>{if(!INK.cur)return;const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];(evs.length?evs:[e]).forEach(v=>INK.cur.p.push(ipt(v)));inkDraw()});
+const inkEnd=()=>{if(!INK.cur)return;INK.strokes.push(INK.cur);INK.cur=null;inkDraw()};
+ink.addEventListener('pointerup',inkEnd);ink.addEventListener('pointercancel',inkEnd);
+window.addEventListener('resize',()=>{inkBox()});
+document.addEventListener('fullscreenchange',()=>setTimeout(inkBox,150));
+function inkPage(){const k=S.cls+'|'+S.sec+'|'+(S.sec==='practice'?S.pn:(S.i[S.sec]??''));if(k!==INK.key){INK.key=k;inkClearAll()}}
+inkBox();
+
 function party(st){for(let i=0;i<30;i++){const c=document.createElement('i');c.className='cf';c.style.cssText=`left:${rnd(4,96)}%;background:${pick(['#e23d5b','#f5a623','#1f8a4c','#4b2a86','#17a2b8'])};animation-delay:${Math.random()*.35}s`;st.appendChild(c);setTimeout(()=>c.remove(),1900)}}
 function playDraw(res){
   const P=S.play,u=UN[P.unit],t=TH[P.theme],a=P.a||0,b=P.b||0,X0=150,SP=830,H=40;
