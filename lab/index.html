@@ -32,7 +32,7 @@ body.vi-on .vi.inline{display:inline}
 #home h1{font-size:3rem;font-weight:900}
 #home p{font-size:1.2rem;opacity:.75}
 .cards{display:flex;gap:1.5rem}
-.card{width:19rem;border-radius:1.4rem;background:#fff;box-shadow:0 .5rem 1.6rem rgba(18,38,58,.14);padding:1.4rem;text-align:left;display:flex;flex-direction:column;gap:.7rem}
+.card{width:17rem;border-radius:1.4rem;background:#fff;box-shadow:0 .5rem 1.6rem rgba(18,38,58,.14);padding:1.4rem;text-align:left;display:flex;flex-direction:column;gap:.7rem}
 .card canvas{width:100%;border-radius:1rem;background:#6f8799}
 .card h2{font-size:1.5rem;font-weight:900}
 .card .go{align-self:flex-start;background:var(--green);color:#fff;font-weight:900;padding:.8rem 1.6rem;border-radius:999px;font-size:1.1rem}
@@ -42,7 +42,9 @@ body.vi-on .vi.inline{display:inline}
 #stageCol{flex:1;min-width:0;display:flex;flex-direction:column;gap:.6rem}
 .strip{display:none;align-items:center;justify-content:center;gap:.4rem;flex:none}
 body[data-lab=evap] #stripE,body[data-lab=freeze] #stripF{display:flex}
-.only-evap,.only-freeze,.only-skel,#skinBtn{display:none}
+.only-evap,.only-freeze,.only-skel,.only-matter,#skinBtn{display:none}
+body[data-lab=matter] .only-matter{display:contents}
+body[data-lab=matter] #stripM{display:flex}
 body[data-lab=evap] .only-evap,body[data-lab=freeze] .only-freeze,body[data-lab=skel] .only-skel{display:contents}
 body[data-lab=skel] #stripK{display:flex}
 body[data-lab=skel] #skinBtn{display:block}
@@ -206,6 +208,18 @@ body[data-lab=freeze] .tabs button[data-go=freezer]{display:inline-block}
 .cmp figcaption b{display:block;color:var(--ink);font-size:1.1rem}
 .zsay{margin-top:.5rem;background:#fff8d6;border:.2rem solid #f2b400;border-radius:1rem;padding:.6rem;text-align:center;font-weight:900;font-size:1.05rem}
 .zsay p{font-size:1.25rem;margin-top:.2rem}
+
+/* solids, liquids and gases */
+.st.yes{background:#d9f5e1;color:#1f7a3a;box-shadow:0 0 0 .15rem #7fd19a}.st.no{background:#fde3df;color:#a52c1c}
+#stripM .st b{margin-right:.3rem}
+.seg4{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+.seg4 .big{min-height:3.4rem;font-size:.95rem}
+.ms{display:none}
+body[data-mst=squash] .ms-squash,body[data-mst=pour] .ms-pour,body[data-mst=dens] .ms-dens,body[data-mst=sort] .ms-sort{display:block}
+#smForce{width:100%;height:2.6rem;accent-color:var(--red)}
+.mlab{display:flex;justify-content:space-between;font-weight:800;margin-top:.4rem}
+.ms .seg .big{font-size:.92rem;padding:.5rem .2rem;min-height:3.2rem}
+.ms p{font-weight:700;line-height:1.25}
 </style>
 </head>
 <body data-lab="evap">
@@ -245,7 +259,11 @@ body[data-lab=freeze] .tabs button[data-go=freezer]{display:inline-block}
         <h2>Skeleton and muscles<span class="vi">Bộ xương và cơ</span></h2>
         <button class="go" data-lab="skel" data-go="warm">Start the lab ➜</button>
       </div>
-      <div class="card empty">Your next lab<br>goes here</div>
+      <div class="card">
+        <canvas id="thumb4" width="600" height="340"></canvas>
+        <h2>Solids, liquids and gases<span class="vi">Chất rắn, lỏng và khí</span></h2>
+        <button class="go" data-lab="matter" data-go="warm">Start the lab ➜</button>
+      </div>
     </div>
   </section>
 
@@ -267,6 +285,13 @@ body[data-lab=freeze] .tabs button[data-go=freezer]{display:inline-block}
         <div class="st" id="sVap">WATER VAPOUR<span class="vi">hơi nước</span></div>
         <div class="ar" id="aCond">condensing<span class="vi">ngưng tụ</span></div>
         <div class="st" id="sBack">WATER<span class="vi">nước</span></div>
+      </div>
+      <div class="strip" id="stripM">
+        <div class="st" id="mpS">TEST IT</div>
+        <div class="st" id="mp0"><b>?</b>keeps its shape<span class="vi">giữ hình dạng</span></div>
+        <div class="st" id="mp1"><b>?</b>keeps its volume<span class="vi">giữ thể tích</span></div>
+        <div class="st" id="mp2"><b>?</b>able to flow<span class="vi">có thể chảy</span></div>
+        <div class="st" id="mp3"><b>?</b>able to be compressed<span class="vi">có thể bị nén</span></div>
       </div>
       <div class="strip" id="stripK">
         <div class="st" id="kB">BRAIN<span class="vi">não</span></div>
@@ -315,6 +340,66 @@ body[data-lab=freeze] .tabs button[data-go=freezer]{display:inline-block}
           <button class="big" data-p="1">Low<span class="vi">Lửa nhỏ</span></button>
           <button class="big" data-p="2">High<span class="vi">Lửa to</span></button>
         </div>
+      </div>
+      </div>
+      <div class="only-matter">
+      <div class="box">
+        <h3>Station<span class="vi inline"> · Trạm</span></h3>
+        <div class="seg4" id="smSt">
+          <button class="big" data-st="squash">💉 Squash test<span class="vi">Thử nén</span></button>
+          <button class="big" data-st="pour">🫗 Shape and flow<span class="vi">Hình dạng, sự chảy</span></button>
+          <button class="big" data-st="dens">⚖️ Density<span class="vi">Khối lượng riêng</span></button>
+          <button class="big" data-st="sort">♻️ Sort the rubbish<span class="vi">Phân loại rác</span></button>
+        </div>
+      </div>
+      <div class="box ms ms-squash">
+        <h3>Push which syringe?<span class="vi inline"> · Đẩy xi lanh nào?</span></h3>
+        <div class="seg4" id="smSy">
+          <button class="big" data-sy="air">Air<span class="vi">Không khí</span></button>
+          <button class="big" data-sy="water">Water<span class="vi">Nước</span></button>
+          <button class="big" data-sy="wood">Wood<span class="vi">Gỗ</span></button>
+          <button class="big" data-sy="all">All three<span class="vi">Cả ba</span></button>
+        </div>
+        <div class="mlab"><span>PUSH<span class="vi inline"> · Đẩy</span></span><span>👉</span></div>
+        <input type="range" id="smForce" min="0" max="100" value="0">
+      </div>
+      <div class="box ms ms-pour">
+        <h3>Substance in A<span class="vi inline"> · Chất trong A</span></h3>
+        <div class="seg" id="smSub">
+          <button class="big" data-sub="solid">🪵 Solid<span class="vi">Rắn</span></button>
+          <button class="big" data-sub="liquid">💧 Liquid<span class="vi">Lỏng</span></button>
+          <button class="big" data-sub="gas">💨 Gas<span class="vi">Khí</span></button>
+        </div>
+        <div id="smBbox"><h3 style="margin-top:.5rem">Container B<span class="vi inline"> · Vật chứa B</span></h3>
+        <div class="seg" id="smB">
+          <button class="big" data-b="flask">Flask<span class="vi">Bình</span></button>
+          <button class="big" data-b="cylinder">Cylinder<span class="vi">Ống đong</span></button>
+          <button class="big" data-b="tray">Tray<span class="vi">Khay</span></button>
+        </div></div>
+        <div style="height:.45rem"></div>
+        <button class="big go2 wide" id="smAct">Pour it into B</button>
+      </div>
+      <div class="box ms ms-dens">
+        <h3>Choose an object<span class="vi inline"> · Chọn một vật</span></h3>
+        <div class="seg" id="smOb">
+          <button class="big" data-ob="iron">Iron<span class="vi">Sắt</span></button>
+          <button class="big" data-ob="gold">Gold<span class="vi">Vàng</span></button>
+          <button class="big" data-ob="plastic">Plastic<span class="vi">Nhựa</span></button>
+          <button class="big" data-ob="wood">Wood<span class="vi">Gỗ</span></button>
+          <button class="big" data-ob="water">Water<span class="vi">Nước</span></button>
+        </div>
+        <div style="height:.45rem"></div>
+        <div class="seg">
+          <button class="big" id="smVol">📏 Volume<span class="vi">Thể tích</span></button>
+          <button class="big" id="smDen">➗ Density<span class="vi">KL riêng</span></button>
+          <button class="big" id="smTank">🌊 In water<span class="vi">Thả vào nước</span></button>
+        </div>
+      </div>
+      <div class="box ms ms-sort">
+        <h3>Sort the rubbish<span class="vi inline"> · Phân loại rác</span></h3>
+        <p>Drag each card into the right bin: solid, liquid or gas.<span class="vi">Kéo mỗi thẻ vào đúng thùng: rắn, lỏng hoặc khí.</span></p>
+        <div style="height:.45rem"></div>
+        <button class="big wide" id="smMix">🔀 Mix the cards<span class="vi">Trộn thẻ</span></button>
       </div>
       </div>
       <div class="only-skel">
@@ -662,6 +747,7 @@ function drawZoom(){
 /* pointer input (touch + mouse) */
 function pt(e){const r=cv.getBoundingClientRect(),s=Math.min(r.width/W,r.height/H);return{x:(e.clientX-r.left-(r.width-W*s)/2)/s,y:(e.clientY-r.top-(r.height-H*s)/2)/s}}
 cv.addEventListener('pointerdown',e=>{
+  if(cur==='matter')return smDown(e,pt(e));
   if(cur==='skel')return kDown(pt(e));
   if(cur==='freeze')return fDown(e,pt(e));
   const p=pt(e),pl=S.plate;
@@ -669,9 +755,9 @@ cv.addEventListener('pointerdown',e=>{
   else if(Math.abs(p.x-BX)<90&&p.y>540&&p.y<690)setPower((S.power+1)%3);
   else if(Math.abs(p.x-BX)<BW/2&&p.y>BT&&p.y<BY)addIce();
 });
-cv.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e);if(cur==='freeze')return fMove(p);S.plate.x=Math.max(165,Math.min(W-165,p.x-drag.dx));S.plate.y=Math.max(60,Math.min(BENCH-20,p.y-drag.dy));
+cv.addEventListener('pointermove',e=>{if(cur==='matter')return smMove(pt(e));if(!drag)return;const p=pt(e);if(cur==='freeze')return fMove(p);S.plate.x=Math.max(165,Math.min(W-165,p.x-drag.dx));S.plate.y=Math.max(60,Math.min(BENCH-20,p.y-drag.dy));
   if(Math.abs(S.plate.x-BX)<170&&S.plate.y>BT-30&&S.plate.y<520)S.plate.y=BT-30});
-const endDrag=()=>{if(drag&&cur==='freeze')fUp();drag=null};cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
+const endDrag=e=>{if(cur==='matter'&&e&&e.clientX!==undefined)smUp(pt(e));if(drag&&cur==='freeze')fUp();drag=null};cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
 
 /* controls */
 function addIce(){if(S.cubes.length>=4||S.water+S.ice>330)return;const slots=[-84,-28,28,84];S.cubes.push({x:slots[S.cubes.length],rot:(Math.random()-.5)*.5});
@@ -682,12 +768,12 @@ $('#addWater').onclick=()=>{if(S.water+S.ice>330)return;if(!S.ice)S.T=(S.T*S.wat
 $$('.only-evap .seg .big').forEach(b=>b.onclick=()=>setPower(+b.dataset.p));
 $('#zoomBtn').onclick=e=>{zoom=!zoom;e.currentTarget.classList.toggle('on',zoom)};
 $('#lblBtn').onclick=e=>{labels=!labels;e.currentTarget.classList.toggle('on',labels)};
-$('#reset').onclick=()=>{if(cur==='skel'){K=freshK();kBtns()}else if(cur==='freeze')F=freshF();else{S=fresh();setPower(0)}lastCap=''};
+$('#reset').onclick=()=>{if(cur==='matter')smReset();else if(cur==='skel'){K=freshK();kBtns()}else if(cur==='freeze')F=freshF();else{S=fresh();setPower(0)}lastCap=''};
 $('#winClose').onclick=()=>$('#win').classList.remove('on');
 
 let mLi=[];
 let lastCap='';
-function hud(){cur==='skel'?hudK():cur==='freeze'?hudF():hudE()}
+function hud(){cur==='matter'?hudM():cur==='skel'?hudK():cur==='freeze'?hudF():hudE()}
 function hudE(){
   $('#rT b').textContent=Math.round(S.T)+'°C';$('#rT').classList.toggle('hot',S.T>=60);
   $('#rW').textContent=Math.round(S.water);$('#rD').textContent=S.drops;
@@ -707,6 +793,7 @@ function hudE(){
 /* ---------- warm-up ---------- */
 const wc=$('#warmC'),wx=wc.getContext('2d');
 function drawWarm(){
+  if(cur==='matter')return smWarm();
   if(cur==='skel')return warmK();
   const fr=cur==='freeze',v=$('#heatR').value/100,h=fr?1-v:v;
   let g=wx.createLinearGradient(0,0,0,300);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');wx.fillStyle=g;wx.fillRect(0,0,900,300);
@@ -1188,6 +1275,434 @@ function warmK(){
 {const t=$('#thumb3').getContext('2d');let g=t.createLinearGradient(0,0,0,340);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');t.fillStyle=g;t.fillRect(0,0,600,340);
  t.save();t.translate(20,-125);t.scale(.6,.6);drawArm(t,110,{bAct:true,tAct:false,load:2});t.restore()}
 
+/* ---------- solids, liquids and gases lab ---------- */
+const PROPS={solid:[1,1,0,0],liquid:[0,1,1,0],gas:[0,0,1,1]};
+const SMN={solid:['solid','chất rắn'],liquid:['liquid','chất lỏng'],gas:['gas','chất khí']};
+const SY=[{k:'air',y:205,st:'gas',en:'air (a gas)',vi:'không khí (chất khí)'},{k:'water',y:385,st:'liquid',en:'water (a liquid)',vi:'nước (chất lỏng)'},{k:'wood',y:565,st:'solid',en:'wood (a solid)',vi:'gỗ (chất rắn)'}];
+const SX0=300,SPX=10,SR=32;
+const SORTI=[['carbon dioxide','khí cacbonic','gas','💨'],['cardboard','bìa các-tông','solid','📦'],['clothing','quần áo','solid','👕'],['cooking oil','dầu ăn','liquid','🫒'],['copper scrap','đồng phế liệu','solid','🔩'],['food scraps','thức ăn thừa','solid','🍌'],['glass bottles','chai thủy tinh','solid','🍾'],['heated air','không khí nóng','gas','♨️'],['methane','khí mêtan','gas','🔥'],['milk','sữa','liquid','🥛'],['paint','sơn','liquid','🎨'],['petrol','xăng','liquid','⛽'],['plastic containers','hộp nhựa','solid','🧴'],['scrap wood','gỗ vụn','solid','🪵']];
+const OBJS={
+ iron:{en:'iron cube',vi:'khối sắt',d:[2,2,2],m:63.2,st:'solid',home:600},
+ gold:{en:'gold cube',vi:'khối vàng',d:[2,2,2],m:154.4,st:'solid',home:665},
+ plastic:{en:'plastic block',vi:'khối nhựa',d:[3,3,3],m:24.3,st:'solid',home:745},
+ wood:{en:'wood block',vi:'khối gỗ',d:[10,4,5],m:120,st:'solid',home:880},
+ water:{en:'water',vi:'nước',d:null,v:50,m:50,st:'liquid',home:530}};
+const PRO={beaker:{H:190,hw:()=>70},flask:{H:210,hw:h=>h<115?86-65*(h/115):21},cylinder:{H:300,hw:()=>26},tray:{H:42,hw:()=>180}};
+const VOLA=9800;
+function smParts(){const P={air:[],water:[],wood:[]};
+  for(let i=0;i<16;i++){const a=Math.random()*6.28;P.air.push({x:SX0+20+Math.random()*460,y:(Math.random()-.5)*44,vx:Math.cos(a)*170,vy:Math.sin(a)*170})}
+  for(let r=0;r<4;r++)for(let i=0;i<33;i++){P.water.push({gx:SX0+10+i*15+(r%2)*5,gy:-22.5+r*15,ph:Math.random()*6});P.wood.push({gx:SX0+10+i*15,gy:-22.5+r*15,ph:Math.random()*6})}
+  return P}
+const freshSM=()=>({st:'squash',
+ sq:{sel:'air',F:{air:0,water:0,wood:0},V:{air:50,water:50,wood:50},P:smParts(),last:null,tw:0,ts:0},
+ pr:{sub:'liquid',B:'flask',anim:-1,aA:VOLA,aB:0,blk:{x:360,y:610,stage:'A'},slide:0,g:0,lift:0,esc:0,phase:'ready',puffs:[],msg:null},
+ dn:{obj:null,pos:{},loc:{},shown:0,showV:false,showD:false,tankN:0,tankIx:{}},
+ so:{cards:SORTI.map((c,i)=>({i,x:0,y:0,hx:0,hy:0,done:false,shake:0,anim:0})),n:0,wrong:0,msg:null,drag:null,cnt:[0,0,0]},
+ last:null,done:[0,0,0,0,0,0],won:false});
+let SM=freshSM(),smDrag=null,smMsg=null,smMsgT=0;
+function smLayoutCards(){SM.so.cards.forEach((c,k)=>{const i=k%7,r=Math.floor(k/7);c.hx=60+i*160;c.hy=36+r*92;if(!c.done){c.x=c.hx;c.y=c.hy}})}
+smLayoutCards();
+Object.keys(OBJS).forEach(k=>{SM.dn.pos[k]={x:OBJS[k].home,y:640};SM.dn.loc[k]='home'});
+function smReset(){const st=SM.st,done=SM.done,won=SM.won;
+  if(st==='squash')SM.sq=freshSM().sq;
+  if(st==='pour'){const b=SM.pr.B,s=SM.pr.sub;SM.pr=freshSM().pr;SM.pr.B=b;SM.pr.sub=s}
+  if(st==='dens'){SM.dn=freshSM().dn;Object.keys(OBJS).forEach(k=>{SM.dn.pos[k]={x:OBJS[k].home,y:640};SM.dn.loc[k]='home'})}
+  if(st==='sort'){SM.so=freshSM().so;smLayoutCards()}
+  SM.done=done;SM.won=won;smMsg=null;smBtns()}
+function smSay(en,vi,t){smMsg=[en,vi];smMsgT=t||5}
+/* shared scenery */
+function smRoom(c,benchY){
+  let g=c.createLinearGradient(0,0,0,benchY);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');c.fillStyle=g;c.fillRect(0,0,W,benchY);
+  c.strokeStyle='rgba(255,255,255,.06)';c.lineWidth=2;for(let x=0;x<=W;x+=150){c.beginPath();c.moveTo(x,0);c.lineTo(x,benchY);c.stroke()}for(let y=40;y<benchY;y+=150){c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke()}
+  g=c.createLinearGradient(0,benchY,0,H);g.addColorStop(0,'#3d4856');g.addColorStop(.12,'#2f3843');g.addColorStop(1,'#1f262e');c.fillStyle=g;c.fillRect(0,benchY,W,H-benchY);
+  c.fillStyle='rgba(255,255,255,.18)';c.fillRect(0,benchY,W,3);
+}
+/* ----- station 1: squash test (syringes) ----- */
+function smSyringe(c,y,kind,V,F,parts,showP){
+  const xs=SX0+V*SPX;
+  // nozzle + rubber cap
+  let g=c.createLinearGradient(0,y-14,0,y+14);g.addColorStop(0,'rgba(255,255,255,.75)');g.addColorStop(.5,'rgba(205,222,234,.45)');g.addColorStop(1,'rgba(255,255,255,.65)');
+  c.beginPath();c.moveTo(SX0+2,y-15);c.lineTo(258,y-7);c.lineTo(258,y+7);c.lineTo(SX0+2,y+15);c.closePath();c.fillStyle=g;c.fill();c.strokeStyle='rgba(160,182,198,.95)';c.lineWidth=2;c.stroke();
+  g=c.createLinearGradient(0,y-12,0,y+12);g.addColorStop(0,'#b5453f');g.addColorStop(.5,'#7d1f1c');g.addColorStop(1,'#5b1412');rr(c,226,y-12,36,24,6);c.fillStyle=g;c.fill();
+  c.fillStyle='rgba(255,255,255,.3)';rr(c,230,y-9,26,4,2);c.fill();
+  // contents
+  c.save();rr(c,SX0+3,y-SR+3,Math.max(0,xs-SX0-3),SR*2-6,6);c.clip();
+  if(kind==='water'){g=c.createLinearGradient(0,y-SR,0,y+SR);g.addColorStop(0,'rgba(120,195,240,.8)');g.addColorStop(1,'rgba(30,115,200,.88)');c.fillStyle=g;c.fillRect(SX0,y-SR,xs-SX0,SR*2)}
+  if(kind==='wood'){g=c.createLinearGradient(0,y-SR,0,y+SR);g.addColorStop(0,'#d9a46a');g.addColorStop(.5,'#b9783d');g.addColorStop(1,'#8c5526');c.fillStyle=g;c.fillRect(SX0,y-SR,xs-SX0,SR*2);
+    c.strokeStyle='rgba(90,50,20,.35)';c.lineWidth=1.5;for(let i=0;i<6;i++){c.beginPath();c.moveTo(SX0,y-24+i*9);for(let x=SX0;x<xs;x+=30)c.quadraticCurveTo(x+15,y-24+i*9+(i%2?3:-3),x+30,y-24+i*9);c.stroke()}}
+  if(kind==='air'){c.fillStyle='rgba(255,255,255,.06)';c.fillRect(SX0,y-SR,xs-SX0,SR*2)}
+  if(showP){
+    if(kind!=='air'){c.fillStyle=kind==='water'?'rgba(225,240,250,.75)':'rgba(240,226,205,.8)';c.fillRect(SX0,y-SR,xs-SX0,SR*2)}
+    const col=kind==='air'?['#ffd1bd','#e8663d']:kind==='water'?['#bfe0ff','#1f6fc0']:['#f0c99a','#8d5a2b'];
+    const dot=(x,yy)=>{const gg=c.createRadialGradient(x-2.5,yy-2.5,1,x,yy,7.5);gg.addColorStop(0,col[0]);gg.addColorStop(1,col[1]);c.fillStyle=gg;c.beginPath();c.arc(x,yy,7,0,7);c.fill()};
+    if(kind==='air')parts.forEach(p=>dot(p.x,y+p.y));
+    else parts.forEach(p=>{const j=kind==='water'?3:1.1;dot(p.gx+Math.sin(time*(kind==='water'?5:13)+p.ph)*j,y+p.gy+Math.cos(time*(kind==='water'?4:11)+p.ph*1.3)*j)});
+  }
+  c.restore();
+  // barrel
+  g=c.createLinearGradient(0,y-SR,0,y+SR);g.addColorStop(0,'rgba(255,255,255,.6)');g.addColorStop(.18,'rgba(230,240,247,.18)');g.addColorStop(.8,'rgba(200,218,230,.15)');g.addColorStop(1,'rgba(255,255,255,.45)');
+  rr(c,SX0,y-SR,505,SR*2,8);c.fillStyle=g;c.fill();c.strokeStyle='rgba(170,192,208,.95)';c.lineWidth=2.5;c.stroke();
+  c.fillStyle='rgba(255,255,255,.55)';c.fillRect(SX0+6,y-SR+6,495,4);
+  g=c.createLinearGradient(SX0+505,0,SX0+517,0);g.addColorStop(0,'rgba(215,228,238,.85)');g.addColorStop(1,'rgba(160,182,198,.95)');rr(c,SX0+504,y-58,13,116,5);c.fillStyle=g;c.fill();
+  c.strokeStyle='rgba(30,45,60,.8)';c.fillStyle='rgba(30,45,60,.85)';c.font='700 13px system-ui';c.textAlign='center';c.textBaseline='bottom';
+  for(let v=0;v<=50;v++){const x=SX0+v*SPX,L=v%10===0?16:v%5===0?11:6;c.lineWidth=v%5?1:1.6;c.beginPath();c.moveTo(x,y-SR+1);c.lineTo(x,y-SR+1+L);c.stroke();if(v%10===0&&v)c.fillText(v,v===50?x-8:x,y-SR-3)}
+  c.textAlign='left';c.fillText('cm³',SX0+522,y-SR-3);
+  // plunger seal, rod and thumb plate
+  g=c.createLinearGradient(0,y-SR,0,y+SR);g.addColorStop(0,'#3a3f45');g.addColorStop(.5,'#16191c');g.addColorStop(1,'#2c3035');rr(c,xs,y-SR+2,20,SR*2-4,4);c.fillStyle=g;c.fill();
+  c.strokeStyle='rgba(255,255,255,.18)';c.lineWidth=2;[5,14].forEach(o=>{c.beginPath();c.moveTo(xs+o,y-SR+4);c.lineTo(xs+o,y+SR-4);c.stroke()});
+  g=c.createLinearGradient(0,y-9,0,y+9);g.addColorStop(0,'#f4f7f9');g.addColorStop(.5,'#c7d0d7');g.addColorStop(1,'#eef2f5');c.fillStyle=g;c.fillRect(xs+20,y-9,470,18);
+  c.fillStyle='rgba(120,135,150,.5)';c.fillRect(xs+20,y-2,470,4);
+  g=c.createLinearGradient(xs+490,0,xs+506,0);g.addColorStop(0,'#e9eef2');g.addColorStop(1,'#aab6c0');rr(c,xs+490,y-42,16,84,7);c.fillStyle=g;c.fill();c.strokeStyle='#8f9ca7';c.lineWidth=1.5;c.stroke();
+  if(F>1){const x1=xs+512,len=26+F*.9;c.strokeStyle='#e5432d';c.fillStyle='#e5432d';c.lineWidth=8;c.beginPath();c.moveTo(x1+len,y);c.lineTo(x1+16,y);c.stroke();c.beginPath();c.moveTo(x1,y);c.lineTo(x1+20,y-14);c.lineTo(x1+20,y+14);c.closePath();c.fill();
+    c.font='800 20px system-ui';c.textAlign='left';c.textBaseline='middle';c.fillStyle='#fff';c.fillText(Math.round(F)+' N',x1+len+8,y)}
+  return xs;
+}
+function smDrawSquash(c){
+  smRoom(c,690);
+  // retort stand with clamps
+  c.fillStyle='#2c3238';rr(c,120,676,170,16,4);c.fill();
+  let g=c.createLinearGradient(170,0,182,0);g.addColorStop(0,'#6e7882');g.addColorStop(.5,'#e3e8ec');g.addColorStop(1,'#59636d');c.fillStyle=g;c.fillRect(170,110,12,568);
+  SY.forEach(s=>{c.fillStyle='#4a525b';rr(c,164,s.y-14,24,28,4);c.fill();g=c.createLinearGradient(0,s.y-5,0,s.y+5);g.addColorStop(0,'#c9d0d6');g.addColorStop(1,'#6e7882');c.fillStyle=g;c.fillRect(186,s.y-5,140,10);
+    c.strokeStyle='#3d454d';c.lineWidth=8;c.beginPath();c.arc(330,s.y,SR+5,Math.PI*.62,Math.PI*1.38);c.stroke();c.strokeStyle='#8b6d4c';c.lineWidth=4;c.beginPath();c.arc(330,s.y,SR+1,Math.PI*.64,Math.PI*1.36);c.stroke()});
+  const q=SM.sq;
+  SY.forEach(s=>{smSyringe(c,s.y,s.k,q.V[s.k],q.F[s.k],q.P[s.k],zoom)});
+  if(labels){SY.forEach(s=>pill(560,s.y-SR-40,s.en,s.vi));pill(240,140,'rubber cap','nắp cao su',244,SY[0].y-12);pill(1000,130,'plunger','pít-tông',SX0+q.V.air*SPX+300,SY[0].y-9);pill(820,118,'syringe','xi lanh',720,SY[0].y-SR)}
+  if(!zoom&&!q.last)pill(820,735,'Drag a plunger to the left, or use the PUSH slider','Kéo pít-tông sang trái hoặc dùng thanh ĐẨY');
+}
+function smUpdSquash(dt){
+  const q=SM.sq;
+  SY.slice().reverse().forEach(s=>{const F=q.F[s.k],Vt=s.k==='air'?50/(1+F/35):s.k==='water'?50-F*.003:50;q.V[s.k]+=(Vt-q.V[s.k])*Math.min(1,dt*6);
+    if(F>1){q.last=s.k;SM.last=s.st}});
+  if(zoom){const xs=SX0+q.V.air*SPX;q.P.air.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.x<SX0+10){p.x=SX0+10;p.vx=Math.abs(p.vx)}if(p.x>xs-9){p.x=xs-9;p.vx=-Math.abs(p.vx)}if(Math.abs(p.y)>SR-10){p.y=Math.sign(p.y)*(SR-10);p.vy=-p.vy}})}
+  if(q.V.air<25)SM.done[0]=1;
+  if(q.F.water>=50)q.tw=1;if(q.F.wood>=50)q.ts=1;if(q.tw&&q.ts)SM.done[1]=1;
+}
+/* ----- station 2: pour (shape and flow) ----- */
+function smProPath(c,P,x,yb,inset){const pts=[];for(let h=P.H;h>=0;h-=5)pts.push([x-P.hw(h)+inset,yb-h]);for(let h=0;h<=P.H;h+=5)pts.push([x+P.hw(h)-inset,yb-h]);
+  c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]))}
+function smArea(P,h){let a=0;for(let y=0;y<h;y+=1)a+=2*(P.hw(y)-3);return a}
+function smLevel(P,a){let h=0,s=0;while(h<P.H&&s<a){s+=2*(P.hw(h)-3);h+=1}return h}
+function smGlass(c,P,x,yb,kind){
+  smProPath(c,P,x,yb,0);c.fillStyle='rgba(215,238,255,.14)';c.fill();
+  smProPath(c,P,x,yb,0);c.strokeStyle='rgba(120,160,185,.6)';c.lineWidth=6;c.stroke();smProPath(c,P,x,yb,0);c.strokeStyle='rgba(240,250,255,.95)';c.lineWidth=2.5;c.stroke();
+  c.beginPath();c.moveTo(x-P.hw(0),yb);c.lineTo(x+P.hw(0),yb);c.strokeStyle='rgba(240,250,255,.95)';c.lineWidth=3;c.stroke();
+  c.beginPath();c.ellipse(x,yb-P.H,P.hw(P.H)+3,Math.min(7,P.hw(P.H)*.2+2),0,0,7);c.strokeStyle='rgba(240,250,255,.95)';c.lineWidth=3;c.stroke();
+  if(kind!=='flask'){c.fillStyle='rgba(255,255,255,.3)';c.fillRect(x-P.hw(0)+8,yb-P.H+16,Math.min(10,P.hw(0)*.2),P.H-30)}
+  if(kind==='cylinder'){c.fillStyle='rgba(215,238,255,.4)';c.beginPath();c.moveTo(x-48,yb+2);c.lineTo(x+48,yb+2);c.lineTo(x+40,yb-8);c.lineTo(x-40,yb-8);c.closePath();c.fill();c.strokeStyle='rgba(240,250,255,.9)';c.lineWidth=2;c.stroke();
+    c.strokeStyle='rgba(255,255,255,.85)';c.lineWidth=1.4;for(let i=1;10+i*22<P.H-10;i++){const y=yb-10-i*22;c.beginPath();c.moveTo(x+P.hw(0)-4,y);c.lineTo(x+P.hw(0)-(i%2?16:10),y);c.stroke()}}
+  if(kind==='beaker'){c.strokeStyle='rgba(255,255,255,.85)';c.lineWidth=1.6;c.fillStyle='rgba(255,255,255,.9)';c.font='700 12px system-ui';c.textAlign='right';
+    for(let i=1;i<=4;i++){const y=yb-6-i*35;c.beginPath();c.moveTo(x+P.hw(0)-6,y);c.lineTo(x+P.hw(0)-22,y);c.stroke()}}
+}
+function smLiquid(c,P,x,yb,a){if(a<20)return;const h=smLevel(P,a);c.save();smProPath(c,P,x,yb,3);c.clip();
+  const g=c.createLinearGradient(0,yb-h,0,yb);g.addColorStop(0,'rgba(125,200,240,.78)');g.addColorStop(1,'rgba(35,120,205,.86)');c.fillStyle=g;c.fillRect(x-200,yb-h,400,h);c.restore();
+  c.fillStyle='rgba(215,240,255,.65)';c.beginPath();c.ellipse(x,yb-h+1,Math.max(2,P.hw(h)-4),Math.min(5,P.hw(h)*.12+1),0,0,7);c.fill();return h}
+function smBlock(c,x,yb,w,h,d){
+  const dx=d*.45,dy=d*.32;
+  let g=c.createLinearGradient(0,yb-h,0,yb);g.addColorStop(0,'#d9a46a');g.addColorStop(1,'#a8692f');c.fillStyle=g;c.fillRect(x-w/2,yb-h,w,h);
+  c.strokeStyle='rgba(90,50,20,.35)';c.lineWidth=1.4;for(let i=1;i<5;i++){c.beginPath();c.moveTo(x-w/2,yb-h+i*h/5);c.bezierCurveTo(x-w/6,yb-h+i*h/5-4,x+w/6,yb-h+i*h/5+4,x+w/2,yb-h+i*h/5);c.stroke()}
+  c.fillStyle='#e8bd86';c.beginPath();c.moveTo(x-w/2,yb-h);c.lineTo(x-w/2+dx,yb-h-dy);c.lineTo(x+w/2+dx,yb-h-dy);c.lineTo(x+w/2,yb-h);c.closePath();c.fill();
+  c.fillStyle='#8f5a27';c.beginPath();c.moveTo(x+w/2,yb-h);c.lineTo(x+w/2+dx,yb-h-dy);c.lineTo(x+w/2+dx,yb-dy);c.lineTo(x+w/2,yb);c.closePath();c.fill();
+  c.strokeStyle='rgba(70,40,15,.6)';c.lineWidth=1.2;c.strokeRect(x-w/2,yb-h,w,h);
+}
+const puffB=document.createElement('canvas');puffB.width=puffB.height=64;
+{const p=puffB.getContext('2d'),g=p.createRadialGradient(32,32,2,32,32,32);g.addColorStop(0,'rgba(170,85,25,.85)');g.addColorStop(.5,'rgba(170,85,25,.35)');g.addColorStop(1,'rgba(170,85,25,0)');p.fillStyle=g;p.fillRect(0,0,64,64)}
+const ease=t=>t<0?0:t>1?1:t*t*(3-2*t);
+function smJar(c,x,top,bot,up,gasTop,gasBot,alpha){
+  const hw=62;c.save();c.globalAlpha=alpha;
+  if(gasTop+gasBot>0.01){const g=c.createLinearGradient(0,top,0,bot);
+    if(up){g.addColorStop(0,'rgba(165,80,20,'+gasTop+')');g.addColorStop(1,'rgba(165,80,20,'+gasBot+')')}else{g.addColorStop(0,'rgba(165,80,20,'+gasTop+')');g.addColorStop(1,'rgba(165,80,20,'+gasBot+')')}
+    c.fillStyle=g;rr(c,x-hw+4,top+3,hw*2-8,bot-top-6,14);c.fill()}
+  c.fillStyle='rgba(215,238,255,.12)';rr(c,x-hw,top,hw*2,bot-top,16);c.fill();
+  rr(c,x-hw,top,hw*2,bot-top,16);c.strokeStyle='rgba(120,160,185,.6)';c.lineWidth=6;c.stroke();rr(c,x-hw,top,hw*2,bot-top,16);c.strokeStyle='rgba(240,250,255,.95)';c.lineWidth=2.5;c.stroke();
+  const ry=up?bot:top;c.fillStyle='rgba(235,240,245,.85)';rr(c,x-hw-6,up?ry-7:ry,hw*2+12,7,3);c.fill();
+  c.fillStyle='rgba(255,255,255,.3)';c.fillRect(x-hw+10,top+18,10,bot-top-36);
+  c.restore();
+}
+function smDrawPour(c){
+  smRoom(c,640);const p=SM.pr;
+  if(p.sub==='gas'){
+    const x=600,gT=p.g,lift=ease(p.lift),esc=p.esc;
+    const bA=Math.max(0,(1-.5*gT))*(1-esc),tA=.5*gT*(1-esc);
+    c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse(x,644,90,8,0,0,7);c.fill();
+    smJar(c,x,440,640,true,bA*.85,bA,1);
+    if(p.slide<1){const sx=x-80+ease(p.slide)*260;c.fillStyle='rgba(225,240,250,.65)';rr(c,sx,433,160,7,2);c.fill();c.strokeStyle='rgba(255,255,255,.95)';c.lineWidth=1.5;c.stroke()}
+    const ox=-lift*320,oy=-lift*170;smJar(c,x+ox,236+oy,434+oy,false,tA*(1-lift)*.95,tA*(1-lift),1);
+    for(const f of p.puffs){c.globalAlpha=Math.max(0,(1-f.life/f.max)*.55);c.drawImage(puffB,f.x-f.r,f.y-f.r,f.r*2,f.r*2)}c.globalAlpha=1;
+    if(labels){pill(860,520,'gas jar','lọ khí',x+64,540);if(p.slide<1)pill(880,437,'glass slide','tấm kính',x+90,437);pill(330,560,'coloured gas','chất khí có màu',x-60,580)}
+    return}
+  const P=PRO[p.B],Bx=820,yb=640,A=PRO.beaker,home={x:360+70,y:yb-190};
+  // B container
+  c.fillStyle='rgba(0,0,0,.22)';c.beginPath();c.ellipse(Bx,yb+4,P.hw(0)+16,8,0,0,7);c.fill();
+  c.fillStyle='rgba(0,0,0,.22)';c.beginPath();c.ellipse(360,yb+4,86,8,0,0,7);c.fill();
+  const hB=smLiquid(c,P,Bx,yb,p.aB);
+  let t=p.anim<0?0:p.anim,piv={...home},ang=0;
+  const tgt={x:Bx-P.hw(P.H)-10,y:yb-P.H-60};
+  if(p.sub==='liquid'&&p.anim>=0){const m=ease(t/.25)-ease((t-.82)/.18);piv={x:home.x+(tgt.x-home.x)*m,y:home.y+(tgt.y-home.y)*m};ang=(ease((t-.2)/.18)-ease((t-.8)/.12))*1.85}
+  // solid block
+  if(p.sub==='solid'){
+    const b=p.blk;if(b.stage==='A'||b.stage==='move'){smBlock(c,b.x,b.y,110,62,40)}
+  }
+  // beaker A (and its water)
+  c.save();c.translate(piv.x,piv.y);c.rotate(ang);c.translate(-70,190);
+  if(p.sub==='liquid'&&p.aA>20){
+    if(ang<.05)smLiquid(c,A,0,0,p.aA);
+    else{smProPath(c,A,0,0,3);c.save();c.clip();c.setTransform(1.5,0,0,1.5,0,0);
+      const corners=[[-70,0],[70,0],[-70,-190],[70,-190]].map(([u,v])=>{const cs=Math.cos(ang),sn=Math.sin(ang),lx=u-70,ly=v+190;return[piv.x+lx*cs-ly*sn,piv.y+lx*sn+ly*cs]});
+      const low=Math.max(...corners.map(q=>q[1])),high=Math.min(...corners.map(q=>q[1])),r=p.aA/VOLA;
+      const yl=low-(low-high)*Math.max(.04,.37*Math.pow(r,.8)*(1-.45*Math.min(1,ang/1.85)));
+      const g=c.createLinearGradient(0,yl,0,low);g.addColorStop(0,'rgba(125,200,240,.78)');g.addColorStop(1,'rgba(35,120,205,.86)');c.fillStyle=g;c.fillRect(0,yl,W,low-yl+4);c.restore();
+      c.translate(piv.x,piv.y);c.setTransform(1.5,0,0,1.5,0,0);c.translate(piv.x,piv.y);c.rotate(ang);c.translate(-70,190)}
+  }
+  smGlass(c,A,0,0,'beaker');c.restore();
+  // stream
+  if(p.sub==='liquid'&&t>.38&&t<.84&&p.aA>30){const sy=yb-(hB||0),w=6+4*Math.min(1,p.aA/3000);
+    const g=c.createLinearGradient(piv.x,0,Bx,0);g.addColorStop(0,'rgba(90,170,230,.9)');g.addColorStop(1,'rgba(60,150,220,.8)');
+    c.strokeStyle=g;c.lineWidth=w;c.lineCap='round';c.beginPath();c.moveTo(piv.x+2,piv.y+4);c.quadraticCurveTo(piv.x+22,piv.y+20,Bx-P.hw(P.H)*.2+Math.sin(time*30)*1.5,sy);c.stroke();
+    c.strokeStyle='rgba(255,255,255,.5)';c.lineWidth=2;c.stroke();
+    c.strokeStyle='rgba(255,255,255,.7)';c.lineWidth=2;for(let i=0;i<3;i++){const r=((time*2+i/3)%1)*30;c.globalAlpha=1-r/30;c.beginPath();c.ellipse(Bx-P.hw(P.H)*.2,sy,r,r*.25,0,0,7);c.stroke()}c.globalAlpha=1}
+  if(p.sub==='solid'&&(p.blk.stage==='B'||p.blk.stage==='stuck'))smBlock(c,p.blk.x,p.blk.y,110,62,40);
+  smGlass(c,P,Bx,yb,p.B);
+  if(p.sub==='solid'&&p.blk.stage==='stuck')smBlock(c,p.blk.x,p.blk.y,110,62,40);
+  // volume tags
+  const tag=(x,y,txt)=>{c.font='800 19px system-ui';const w=c.measureText(txt).width+24;rr(c,x-w/2,y-16,w,32,16);c.fillStyle='rgba(18,38,58,.85)';c.fill();c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.fillText(txt,x,y+1)};
+  if(p.sub==='liquid'){tag(360,yb+40,'A: '+Math.round(p.aA/VOLA*100)+' cm³');tag(Bx,yb+40,'B: '+Math.round(p.aB/VOLA*100)+' cm³')}
+  if(labels){if(p.anim<0)pill(200,420,'beaker','cốc thủy tinh',290,500);const nm={flask:['conical flask','bình tam giác'],cylinder:['measuring cylinder','ống đong'],tray:['glass tray','khay thủy tinh']}[p.B];pill(1070,yb-P.H-40,nm[0],nm[1],Bx+P.hw(P.H),yb-P.H+4);
+    if(p.sub==='solid')pill(p.blk.x-150,p.blk.y-110,'wood block','khối gỗ',p.blk.x-40,p.blk.y-62)}
+}
+function smUpdPour(dt){
+  const p=SM.pr;SM.last=p.sub;
+  if(p.sub==='gas'){
+    if(p.phase==='spread'){p.slide=Math.min(1,p.slide+dt*.9);if(p.slide>.5)p.g=Math.min(1,p.g+dt*.16);if(p.g>=1){p.phase='spread-done';smBtns()}if(p.g>.9)SM.done[3]=1}
+    if(p.phase==='lift'){p.lift=Math.min(1,p.lift+dt*.7);p.esc=Math.min(1,p.esc+dt*.22);
+      if(Math.random()<dt*30*(1-p.esc)){const fromTop=Math.random()<.5;const x=fromTop?600-p.lift*320+(Math.random()-.5)*110:600+(Math.random()-.5)*110,y=fromTop?434-p.lift*170:440;const a=Math.random()*6.28,s=25+Math.random()*45;p.puffs.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,r:24+Math.random()*16,life:0,max:4})}
+      if(p.esc>=1){p.phase='gone';smBtns()}}
+    for(let i=p.puffs.length-1;i>=0;i--){const f=p.puffs[i];f.life+=dt;f.x+=f.vx*dt;f.y+=f.vy*dt;f.r+=20*dt;if(f.life>f.max)p.puffs.splice(i,1)}
+    return}
+  if(p.anim>=0){
+    p.anim+=dt/(p.sub==='liquid'?4.2:3);const t=p.anim;
+    if(p.sub==='liquid'){const f=ease((t-.4)/.4);const tot=VOLA;p.aB=tot*f;p.aA=tot-p.aB}
+    else{const b=p.blk,P=PRO[p.B],Bx=820,yb=640,fits=110<2*P.hw(P.H)-10;
+      const endY=fits?yb-4:yb-P.H-3;b.stage='move';
+      if(t<.35){const k=ease(t/.35);b.x=360;b.y=610-k*(610-(yb-P.H-140))}
+      else if(t<.7){const k=ease((t-.35)/.35);b.x=360+(Bx-360)*k;b.y=yb-P.H-140}
+      else{const k=ease((t-.7)/.3);b.x=Bx;b.y=yb-P.H-140+(endY-(yb-P.H-140))*k}
+      if(t>=1){b.stage=fits?'B':'stuck';smSay(fits?'The block keeps its shape and size in the tray.':'It does not fit! A solid keeps its shape.',fits?'Khối gỗ vẫn giữ nguyên hình dạng và kích thước trong khay.':'Không vừa! Chất rắn giữ nguyên hình dạng.',8)}}
+    if(p.anim>=1){p.anim=-1;p.phase='done';smBtns();if(p.sub==='liquid'&&p.B==='flask')SM.done[2]=1}
+  }
+}
+/* ----- station 3: density ----- */
+const DS=15;
+function smCube(c,k,x,yb){
+  const o=OBJS[k];
+  if(k==='water'){const P={H:150,hw:()=>20};c.save();smProPath(c,P,x,yb,3);c.clip();const g=c.createLinearGradient(0,yb-100,0,yb);g.addColorStop(0,'rgba(125,200,240,.78)');g.addColorStop(1,'rgba(35,120,205,.86)');c.fillStyle=g;c.fillRect(x-30,yb-100,60,100);c.restore();
+    smGlass(c,P,x,yb,'cylinder');c.fillStyle='rgba(255,255,255,.9)';c.font='700 11px system-ui';c.textAlign='left';c.fillText('50',x+24,yb-100);return}
+  const [L,Hh,D]=o.d,w=L*DS,h=Hh*DS,dx=D*DS*.45,dy=D*DS*.32;
+  const mat={iron:['#c3c9cf','#7b848c','#dfe3e7','#5f676e'],gold:['#ffe48a','#c8961c','#fff1b8','#9c7210'],plastic:['#eef6fb','#b9d3e2','#ffffff','#9fbccd'],wood:['#d9a46a','#a8692f','#e8bd86','#8f5a27']}[k];
+  let g=c.createLinearGradient(x-w/2,yb-h,x+w/2,yb);g.addColorStop(0,mat[0]);g.addColorStop(1,mat[1]);c.fillStyle=g;c.fillRect(x-w/2,yb-h,w,h);
+  if(k==='wood'){c.strokeStyle='rgba(90,50,20,.35)';c.lineWidth=1.3;for(let i=1;i<4;i++){c.beginPath();c.moveTo(x-w/2,yb-h+i*h/4);c.bezierCurveTo(x-w/6,yb-h+i*h/4-3,x+w/6,yb-h+i*h/4+3,x+w/2,yb-h+i*h/4);c.stroke()}}
+  if(k==='iron'){c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=1;for(let i=2;i<h;i+=3){c.beginPath();c.moveTo(x-w/2,yb-h+i);c.lineTo(x+w/2,yb-h+i);c.stroke()}}
+  if(k==='gold'){c.fillStyle='rgba(255,255,255,.55)';c.beginPath();c.moveTo(x-w/2+3,yb-h+3);c.lineTo(x-w/2+12,yb-h+3);c.lineTo(x-w/2+3,yb-h+14);c.fill()}
+  if(k==='plastic'){c.strokeStyle='rgba(60,90,110,.6)';c.lineWidth=1.4;c.beginPath();c.moveTo(x,yb-h/2-9);c.lineTo(x+9,yb-h/2+7);c.lineTo(x-9,yb-h/2+7);c.closePath();c.stroke();c.fillStyle='rgba(60,90,110,.8)';c.font='700 9px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText('5',x,yb-h/2+2)}
+  c.fillStyle=mat[2];c.beginPath();c.moveTo(x-w/2,yb-h);c.lineTo(x-w/2+dx,yb-h-dy);c.lineTo(x+w/2+dx,yb-h-dy);c.lineTo(x+w/2,yb-h);c.closePath();c.fill();
+  c.fillStyle=mat[3];c.beginPath();c.moveTo(x+w/2,yb-h);c.lineTo(x+w/2+dx,yb-h-dy);c.lineTo(x+w/2+dx,yb-dy);c.lineTo(x+w/2,yb);c.closePath();c.fill();
+  c.strokeStyle='rgba(0,0,0,.35)';c.lineWidth=1;c.strokeRect(x-w/2,yb-h,w,h);
+}
+function smObjBox(k,p){const o=OBJS[k];if(k==='water')return{x0:p.x-26,x1:p.x+26,y0:p.y-150,y1:p.y};const [L,Hh,D]=o.d;return{x0:p.x-L*DS/2-6,x1:p.x+L*DS/2+D*DS*.45+6,y0:p.y-Hh*DS-D*DS*.32-8,y1:p.y+4}}
+const TANK={x0:975,x1:1175,top:420,wy:470,bot:636};
+function smDrawDens(c){
+  smRoom(c,640);const d=SM.dn;
+  // tank (back)
+  c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse((TANK.x0+TANK.x1)/2,644,115,8,0,0,7);c.fill();
+  c.fillStyle='rgba(215,238,255,.12)';c.fillRect(TANK.x0,TANK.top,TANK.x1-TANK.x0,TANK.bot-TANK.top);
+  let g=c.createLinearGradient(0,TANK.wy,0,TANK.bot);g.addColorStop(0,'rgba(110,190,235,.35)');g.addColorStop(1,'rgba(35,120,205,.5)');c.fillStyle=g;c.fillRect(TANK.x0+4,TANK.wy,TANK.x1-TANK.x0-8,TANK.bot-TANK.wy);
+  // balance
+  c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse(360,644,140,9,0,0,7);c.fill();
+  g=c.createLinearGradient(0,566,0,640);g.addColorStop(0,'#eef1f4');g.addColorStop(1,'#99a3ac');rr(c,230,566,260,74,14);c.fillStyle=g;c.fill();c.strokeStyle='#7c8791';c.lineWidth=1.5;c.stroke();
+  rr(c,262,588,156,38,7);c.fillStyle='#16221b';c.fill();
+  const k=d.obj&&d.loc[d.obj]==='pan'?d.obj:null;c.fillStyle='#9ff0a5';c.font='700 27px ui-monospace,Menlo,Consolas,monospace';c.textAlign='right';c.textBaseline='middle';c.fillText(d.shown.toFixed(1)+' g',408,608);
+  [[440,'TARE'],[468,'ON']].forEach(([x,t])=>{c.fillStyle='#4a545e';c.beginPath();c.arc(x,600,9,0,7);c.fill();c.fillStyle='#4a545e';c.font='700 9px system-ui';c.textAlign='center';c.fillText(t,x,622)});
+  g=c.createLinearGradient(352,0,368,0);g.addColorStop(0,'#7c8791');g.addColorStop(.5,'#e4e8ec');g.addColorStop(1,'#6e7882');c.fillStyle=g;c.fillRect(352,548,16,20);
+  g=c.createLinearGradient(255,0,465,0);g.addColorStop(0,'#8e98a1');g.addColorStop(.45,'#f5f7f9');g.addColorStop(1,'#7d8790');c.beginPath();c.ellipse(360,546,105,11,0,0,7);c.fillStyle=g;c.fill();c.strokeStyle='#6e7882';c.lineWidth=1.2;c.stroke();
+  // objects
+  const order=Object.keys(OBJS).filter(o=>d.loc[o]!=='tank');
+  order.forEach(o=>{const p=d.pos[o];c.fillStyle='rgba(0,0,0,.2)';if(d.loc[o]==='home'){c.beginPath();c.ellipse(p.x+8,p.y+3,(o==='wood'?90:o==='water'?26:30),5,0,0,7);c.fill()}smCube(c,o,p.x,p.y)});
+  Object.keys(OBJS).filter(o=>d.loc[o]==='tank').forEach(o=>smCube(c,o,d.pos[o].x,d.pos[o].y));
+  // tank water front + glass
+  g=c.createLinearGradient(0,TANK.wy,0,TANK.bot);g.addColorStop(0,'rgba(110,190,235,.28)');g.addColorStop(1,'rgba(35,120,205,.38)');c.fillStyle=g;c.fillRect(TANK.x0+4,TANK.wy,TANK.x1-TANK.x0-8,TANK.bot-TANK.wy);
+  c.strokeStyle='rgba(225,245,255,.9)';c.lineWidth=2;c.beginPath();for(let x=TANK.x0+4;x<=TANK.x1-4;x+=6)c.lineTo(x,TANK.wy+Math.sin(x*.08+time*3)*1.6);c.stroke();
+  c.strokeStyle='rgba(120,160,185,.6)';c.lineWidth=6;c.strokeRect(TANK.x0,TANK.top,TANK.x1-TANK.x0,TANK.bot-TANK.top);c.strokeStyle='rgba(240,250,255,.95)';c.lineWidth=2.5;c.strokeRect(TANK.x0,TANK.top,TANK.x1-TANK.x0,TANK.bot-TANK.top);
+  c.fillStyle='rgba(255,255,255,.25)';c.fillRect(TANK.x0+10,TANK.top+12,10,TANK.bot-TANK.top-30);
+  // dimension lines
+  if(k&&d.showV&&k!=='water'){const o=OBJS[k],p=d.pos[k],[L,Hh,D]=o.d,w=L*DS,h=Hh*DS,dx=D*DS*.45,dy=D*DS*.32;
+    c.strokeStyle='#ffd23f';c.fillStyle='#ffd23f';c.lineWidth=2.5;c.font='800 17px system-ui';c.textBaseline='middle';
+    const dim=(x1,y1,x2,y2,txt,tx,ty)=>{c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();[[x1,y1],[x2,y2]].forEach(([a,b])=>{c.beginPath();c.arc(a,b,3,0,7);c.fill()});c.textAlign='center';rr(c,tx-30,ty-13,60,26,13);c.fillStyle='rgba(18,38,58,.9)';c.fill();c.fillStyle='#ffd23f';c.fillText(txt,tx,ty+1)};
+    dim(p.x-w/2,p.y-h-dy-30,p.x+w/2,p.y-h-dy-30,L+' cm',p.x,p.y-h-dy-56);
+    dim(p.x-w/2-22,p.y,p.x-w/2-22,p.y-h,Hh+' cm',p.x-w/2-62,p.y-h/2);
+    dim(p.x+w/2+12,p.y+2,p.x+w/2+dx+12,p.y-dy+2,D+' cm',p.x+w/2+dx+52,p.y-dy/2+6)}
+  if(labels){pill(360,700,'digital balance','cân điện tử');pill(1075,385,'tank of water','bể nước');
+    Object.keys(OBJS).forEach(o=>{if(d.loc[o]==='home'&&!(o==='plastic'&&d.loc.wood==='home'&&false)){}});
+    if(!d.obj)pill(740,470,'Tap an object to put it on the balance','Chạm vào một vật để đặt lên cân')}
+}
+function smDensT(k){const o=OBJS[k];return k==='water'?o.v:o.d[0]*o.d[1]*o.d[2]}
+function smUpdDens(dt){
+  const d=SM.dn;
+  Object.keys(OBJS).forEach(k=>{let t;
+    if(d.loc[k]==='home')t={x:OBJS[k].home,y:640};
+    else if(d.loc[k]==='pan')t={x:360-(k==='wood'?18:0),y:541};
+    else{const o=OBJS[k],den=o.m/smDensT(k),h=o.d[1]*DS,i=d.tankIx[k];t={x:1008+i*48+(k==='wood'?40:0),y:den<1?TANK.wy+h*den:TANK.bot-2};if(k==='wood')t.x=1062}
+    const p=d.pos[k];p.x+=(t.x-p.x)*Math.min(1,dt*5);p.y+=(t.y-p.y)*Math.min(1,dt*(d.loc[k]==='tank'?2.2:5))});
+  const k=d.obj&&d.loc[d.obj]==='pan'?d.obj:null,m=k?OBJS[k].m:0,near=k?Math.hypot(d.pos[k].x-(360-(k==='wood'?18:0)),d.pos[k].y-541)<4:true;
+  d.shown+=((near?m:0)+(near&&k?Math.sin(time*12)*Math.max(0,(m-d.shown))*.0:0)-d.shown)*Math.min(1,dt*4);if(Math.abs(d.shown-m)<.05&&near)d.shown=m;
+  if(d.showD&&d.obj==='iron')SM.done[4]=1;
+}
+/* ----- station 4: sort the rubbish ----- */
+const BINS=[{st:'solid',x:230,ic:'🧱'},{st:'liquid',x:600,ic:'💧'},{st:'gas',x:970,ic:'💨'}];
+function smCard(c,cd){
+  const it=SORTI[cd.i],x=cd.x+(cd.shake>0?Math.sin(cd.shake*40)*8:0),y=cd.y;
+  c.fillStyle='rgba(0,0,0,.22)';rr(c,x+3,y+5,150,78,12);c.fill();
+  rr(c,x,y,150,78,12);c.fillStyle='#fff';c.fill();c.strokeStyle=smDrag===cd?'#ffd23f':'#d5dde6';c.lineWidth=smDrag===cd?4:2;c.stroke();
+  c.font='30px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle='#000';c.fillText(it[3],x+28,y+36);
+  c.fillStyle='#12263a';c.font='800 16px system-ui';c.textAlign='left';
+  const words=it[0].split(' ');let lines=[],cur2='';words.forEach(wd=>{const t=cur2?cur2+' '+wd:wd;if(c.measureText(t).width>90&&cur2){lines.push(cur2);cur2=wd}else cur2=t});lines.push(cur2);
+  const y0=y+(viOn?24:39)-(lines.length-1)*9;lines.forEach((l,i)=>c.fillText(l,x+52,y0+i*18));
+  if(viOn){c.font='600 12px system-ui';c.fillStyle='#4b5f73';c.fillText(it[1],x+52,y+62)}
+}
+function smBin(c,b,i){
+  const x=b.x,top=380,bot=690,tw=118,bw=106;
+  c.fillStyle='rgba(0,0,0,.28)';c.beginPath();c.ellipse(x,bot+6,125,10,0,0,7);c.fill();
+  [-1,1].forEach(s=>{c.fillStyle='#1b1f24';c.beginPath();c.arc(x+s*78,bot-4,14,0,7);c.fill();c.fillStyle='#6e7882';c.beginPath();c.arc(x+s*78,bot-4,5,0,7);c.fill()});
+  let g=c.createLinearGradient(x-tw,0,x+tw,0);g.addColorStop(0,'#4f9a15');g.addColorStop(.25,'#8fd83b');g.addColorStop(.6,'#7cc72c');g.addColorStop(1,'#3e7d10');
+  c.beginPath();c.moveTo(x-tw,top);c.lineTo(x+tw,top);c.lineTo(x+bw,bot-14);c.quadraticCurveTo(x+bw,bot,x+bw-14,bot);c.lineTo(x-bw+14,bot);c.quadraticCurveTo(x-bw,bot,x-bw,bot-14);c.closePath();c.fillStyle=g;c.fill();c.strokeStyle='#2f6a0c';c.lineWidth=2;c.stroke();
+  c.strokeStyle='rgba(0,0,0,.12)';c.lineWidth=3;[-60,0,60].forEach(o=>{c.beginPath();c.moveTo(x+o*1.05,top+150);c.lineTo(x+o,bot-20);c.stroke()});
+  g=c.createLinearGradient(0,top-36,0,top+4);g.addColorStop(0,'#9be04a');g.addColorStop(1,'#4c9414');rr(c,x-tw-8,top-36,tw*2+16,40,14);c.fillStyle=g;c.fill();c.strokeStyle='#2f6a0c';c.stroke();
+  c.fillStyle='#1d2a12';c.beginPath();c.ellipse(x,top-16,48,9,0,0,7);c.fill();
+  rr(c,x-82,top+28,164,104,12);c.fillStyle='#fdfdf8';c.fill();
+  rr(c,x-72,top+36,52,52,8);c.fillStyle='#2b3138';c.fill();
+  c.font='30px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle='#fff';c.fillText(b.ic,x-46,top+63);
+  c.fillStyle='#12263a';c.font='900 24px system-ui';c.textAlign='left';c.fillText(SMN[b.st][0].toUpperCase(),x-12,top+56);
+  c.font='700 12px system-ui';c.fillStyle='#4b5f73';c.fillText(viOn?SMN[b.st][1]:(b.st==='solid'?'keeps its shape':b.st==='liquid'?'flows':'spreads out'),x-12,top+80);
+  c.fillStyle='#2e9e4f';rr(c,x-72,top+96,144,28,14);c.fill();c.fillStyle='#fff';c.font='800 16px system-ui';c.textAlign='center';c.fillText(SM.so.cnt[i]+(SM.so.cnt[i]===1?' item':' items'),x,top+111);
+}
+function smDrawSort(c){
+  smRoom(c,690);
+  BINS.forEach((b,i)=>smBin(c,b,i));
+  SM.so.cards.forEach(cd=>{if(!cd.done&&cd!==smDrag)smCard(c,cd)});
+  SM.so.cards.forEach(cd=>{if(cd.anim>0){c.save();const s=cd.anim;c.globalAlpha=s;c.translate(cd.x+75,cd.y+39);c.scale(s,s);c.translate(-cd.x-75,-cd.y-39);smCard(c,cd);c.restore()}});
+  if(smDrag)smCard(c,smDrag);
+  if(labels)pill(600,770,'Drag each card into the right recycling bin','Kéo mỗi thẻ vào đúng thùng tái chế');
+}
+function smUpdSort(dt){
+  const s=SM.so;s.cards.forEach(cd=>{if(cd.shake>0)cd.shake=Math.max(0,cd.shake-dt);
+    if(cd.done&&cd.anim>0){const b=BINS.find(b=>b.st===SORTI[cd.i][2]);cd.x+=(b.x-75-cd.x)*Math.min(1,dt*7);cd.y+=(330-cd.y)*Math.min(1,dt*7);cd.anim=Math.max(0,cd.anim-dt*1.6)}
+    if(!cd.done&&smDrag!==cd){cd.x+=(cd.hx-cd.x)*Math.min(1,dt*8);cd.y+=(cd.hy-cd.y)*Math.min(1,dt*8)}});
+  if(s.n>=14)SM.done[5]=1;
+}
+/* ----- dispatch ----- */
+function smDraw(){const c=ctx;c.setTransform(1.5,0,0,1.5,0,0);c.lineCap='round';c.lineJoin='round';
+  ({squash:smDrawSquash,pour:smDrawPour,dens:smDrawDens,sort:smDrawSort})[SM.st](c)}
+function smUpdate(dt){smMsgT=Math.max(0,smMsgT-dt);
+  ({squash:smUpdSquash,pour:smUpdPour,dens:smUpdDens,sort:smUpdSort})[SM.st](dt);
+  if(!SM.won&&SM.done.every(Boolean)){SM.won=true;setTimeout(()=>$('#win').classList.add('on'),900)}}
+function smDown(e,p){
+  if(SM.st==='squash'){for(const s of SY){const xs=SX0+SM.sq.V[s.k]*SPX;if(Math.abs(p.y-s.y)<48&&p.x>xs+300&&p.x<xs+540){smDrag={k:s.k,x0:p.x,F0:SM.sq.F[s.k]};SM.sq.sel=s.k;smBtns();try{cv.setPointerCapture(e.pointerId)}catch(_){}return}}}
+  if(SM.st==='dens'){for(const k of Object.keys(OBJS)){const b=smObjBox(k,SM.dn.pos[k]);if(p.x>b.x0&&p.x<b.x1&&p.y>b.y0&&p.y<b.y1){smPick(k);return}}}
+  if(SM.st==='sort'){const cs=SM.so.cards.filter(c=>!c.done);for(let i=cs.length-1;i>=0;i--){const cd=cs[i];if(p.x>cd.x&&p.x<cd.x+150&&p.y>cd.y&&p.y<cd.y+78){smDrag=cd;cd.ox=p.x-cd.x;cd.oy=p.y-cd.y;try{cv.setPointerCapture(e.pointerId)}catch(_){}return}}}
+  if(SM.st==='pour'&&SM.pr.sub!=='gas'&&SM.pr.anim<0&&p.x>280&&p.x<440&&p.y>440&&p.y<640)smAct();
+}
+function smMove(p){
+  if(!smDrag)return;
+  if(SM.st==='squash'){const F=Math.max(0,Math.min(100,smDrag.F0+(smDrag.x0-p.x)*.45));SM.sq.F[smDrag.k]=F;$('#smForce').value=F}
+  if(SM.st==='sort'){smDrag.x=p.x-smDrag.ox;smDrag.y=p.y-smDrag.oy}
+}
+function smUp(p){
+  if(!smDrag)return;const d=smDrag;smDrag=null;
+  if(SM.st==='squash'){SM.sq.F[d.k]=0;$('#smForce').value=0}
+  if(SM.st==='sort'){const cx=d.x+75,cy=d.y+39,b=BINS.find(b=>Math.abs(cx-b.x)<135&&cy>300);if(!b)return;const it=SORTI[d.i],ok=it[2]===b.st;
+    const why={solid:['It keeps its shape.','Nó giữ nguyên hình dạng.'],liquid:['It flows and takes the shape of its container.','Nó chảy và có hình dạng của vật chứa.'],gas:['It spreads out in all directions.','Nó lan ra mọi hướng.']}[it[2]];
+    if(ok){d.done=true;d.anim=1;SM.so.n++;SM.so.cnt[BINS.indexOf(b)]++;SM.last=it[2];smSay('Yes! '+cap(it[0])+' is a '+it[2]+'. '+why[0],'Đúng rồi! '+cap(it[1])+' là '+SMN[it[2]][1]+'. '+why[1],4)}
+    else{d.shake=.5;SM.so.wrong++;smSay('Not quite. '+cap(it[0])+' is a '+it[2]+'. '+why[0],'Chưa đúng. '+cap(it[1])+' là '+SMN[it[2]][1]+'. '+why[1],5)}}
+}
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+function smPick(k){const d=SM.dn;if(d.loc[k]==='tank')return;Object.keys(OBJS).forEach(o=>{if(d.loc[o]==='pan')d.loc[o]='home'});d.loc[k]='pan';d.obj=k;d.showV=false;d.showD=false;SM.last=OBJS[k].st;smBtns()}
+function smAct(){
+  const p=SM.pr;
+  if(SM.st!=='pour')return;
+  if(p.sub==='gas'){if(p.phase==='ready')p.phase='spread';else if(p.phase==='spread-done')p.phase='lift';smBtns();return}
+  if(p.anim>=0||p.phase==='done')return;p.anim=0;smBtns();
+}
+const SMST=[['squash','Squash test','Thử nén','💉'],['pour','Shape and flow','Hình dạng và sự chảy','🫗'],['dens','Density','Khối lượng riêng','⚖️'],['sort','Sort the rubbish','Phân loại rác','♻️']];
+const SMLBL={squash:[['air cm³','khí cm³'],['force N','lực N'],['squashed %','bị nén %']],pour:[['in A cm³','trong A cm³'],['in B cm³','trong B cm³'],['state','thể']],dens:[['mass g','khối lượng g'],['volume cm³','thể tích cm³'],['density g/cm³','KLR g/cm³']],sort:[['sorted','đã phân loại'],['solids','chất rắn'],['mistakes','lần sai']]};
+function smBtns(){
+  document.body.dataset.mst=SM.st;
+  $$('#smSt .big').forEach(b=>b.classList.toggle('on',b.dataset.st===SM.st));
+  $$('#smSy .big').forEach(b=>b.classList.toggle('on',b.dataset.sy===SM.sq.sel));
+  $$('#smSub .big').forEach(b=>b.classList.toggle('on',b.dataset.sub===SM.pr.sub));
+  $$('#smB .big').forEach(b=>b.classList.toggle('on',b.dataset.b===SM.pr.B));
+  $$('#smOb .big').forEach(b=>b.classList.toggle('on',b.dataset.ob===SM.dn.obj));
+  $('#smBbox').style.display=SM.pr.sub==='gas'?'none':'';
+  const p=SM.pr,A=$('#smAct');let t;
+  if(p.sub==='gas')t=p.phase==='ready'?['Remove the glass slide','Rút tấm kính ra']:p.phase==='spread'?['The gas is spreading…','Chất khí đang lan ra…']:p.phase==='spread-done'?['Lift the top jar','Nhấc lọ phía trên lên']:['The gas escaped','Chất khí đã thoát ra'];
+  else t=p.phase==='done'?['Done. Tap Start again','Xong. Bấm Làm lại']:p.sub==='liquid'?['Pour it into B','Rót vào B']:['Move it into B','Chuyển vào B'];
+  A.innerHTML=bi(t[0],t[1]);A.disabled=(p.anim>=0)||p.phase==='spread'||p.phase==='lift'||p.phase==='gone'||p.phase==='done';
+  const d=SM.dn;$('#smVol').disabled=!d.obj;$('#smDen').disabled=!d.obj||!d.showV;$('#smTank').disabled=!d.obj||d.obj==='water'||d.loc[d.obj]!=='pan';
+  const L=SM.st==='pour'&&SM.pr.sub==='gas'?[['bottom jar','lọ dưới'],['top jar','lọ trên'],['state','thể']]:SMLBL[SM.st];$('#rTl').innerHTML=bi(L[0][0],L[0][1]);$('#rWl').innerHTML=bi(L[1][0],L[1][1]);$('#rDl').innerHTML=bi(L[2][0],L[2][1]);
+  lastCap='';
+}
+function hudM(){
+  const s=SM;let a='',b='',cc='';
+  if(s.st==='squash'){const k=s.sq.sel==='all'?'air':s.sq.sel;a=s.sq.V.air.toFixed(0);b=Math.round(Math.max(s.sq.F.air,s.sq.F.water,s.sq.F.wood));cc=Math.round((50-s.sq.V[k])/50*100)+'%'}
+  if(s.st==='pour'){const p=s.pr;if(p.sub==='liquid'){a=Math.round(p.aA/VOLA*100);b=Math.round(p.aB/VOLA*100)}else if(p.sub==='solid'){a=p.blk.stage==='A'?'200':p.blk.stage==='B'?'0':'—';b=p.blk.stage==='B'?'200':'0'}else{a=Math.round((1-.5*p.g)*(1-p.esc)*100)+'%';b=Math.round(.5*p.g*(1-p.esc)*100)+'%'}cc=SMN[p.sub][0]}
+  if(s.st==='dens'){const d=s.dn,k=d.obj;a=d.shown.toFixed(1);b=k&&d.showV?smDensT(k):'?';cc=k&&d.showD?(OBJS[k].m/smDensT(k)).toFixed(1):'?'}
+  if(s.st==='sort'){a=s.so.n+'/14';b=s.so.cnt[0];cc=s.so.wrong}
+  $('#rT b').textContent=a;$('#rT').classList.remove('hot');$('#rW').textContent=b;$('#rD').textContent=cc;
+  mLi.forEach((li,i)=>li.classList.toggle('done',!!s.done[i]));
+  const st=s.last,pr=st?PROPS[st]:null;
+  $('#mpS').innerHTML=st?bi(SMN[st][0].toUpperCase(),SMN[st][1]):bi('TEST IT','KIỂM TRA');$('#mpS').classList.toggle('on',!!st);
+  for(let i=0;i<4;i++){const el=$('#mp'+i);el.classList.toggle('yes',!!(pr&&pr[i]));el.classList.toggle('no',!!(pr&&!pr[i]));el.querySelector('b').textContent=pr?(pr[i]?'✓':'✗'):'?'}
+  let c;
+  if(smMsgT>0&&smMsg)c=smMsg;
+  else if(s.st==='squash'){const q=s.sq,k=['air','water','wood'].find(k=>q.F[k]>3);
+    if(!k)c=q.V.air<49?['The air springs back. The gas particles push the plunger out.','Không khí bật trở lại. Các hạt khí đẩy pít-tông ra.']:['Push a plunger. Which one can you squash?','Đẩy một pít-tông. Em có thể nén cái nào?'];
+    else if(k==='air')c=zoom?['The gas particles are far apart. They can move closer together.','Các hạt khí ở xa nhau. Chúng có thể dịch lại gần nhau hơn.']:['The air squashes into a smaller volume. Gases can be compressed.','Không khí bị nén lại, thể tích nhỏ hơn. Chất khí có thể bị nén.'];
+    else if(k==='water')c=zoom?['The water particles are already touching. There is no space to squash them.','Các hạt nước đã chạm vào nhau. Không còn chỗ để nén chúng.']:['The water does not squash. Liquids cannot easily be compressed.','Nước không bị nén. Chất lỏng khó bị nén.'];
+    else c=zoom?['The solid particles are packed tightly in rows. They cannot move closer.','Các hạt chất rắn xếp sát nhau thành hàng. Chúng không thể lại gần hơn.']:['The wood does not squash. Solids cannot easily be compressed.','Gỗ không bị nén. Chất rắn khó bị nén.']}
+  else if(s.st==='pour'){const p=s.pr;
+    if(p.sub==='gas')c=p.phase==='ready'?['The coloured gas is in the bottom jar. Remove the glass slide.','Chất khí có màu ở trong lọ dưới. Hãy rút tấm kính ra.']:p.phase==='spread'||p.phase==='spread-done'?['The gas spreads out. It fills both jars.','Chất khí lan ra. Nó lấp đầy cả hai lọ.']:['The gas spreads out in all directions. Gases do not keep their shape or volume.','Chất khí lan ra mọi hướng. Chất khí không giữ hình dạng và thể tích.'];
+    else if(p.sub==='liquid')c=p.anim>=0?['The water flows into B.','Nước chảy vào B.']:p.phase==='done'?['The water takes the shape of B. Its volume is still 100 cm³.','Nước có hình dạng của B. Thể tích vẫn là 100 cm³.']:['Choose a container B. Then pour the water into it.','Chọn vật chứa B. Sau đó rót nước vào.'];
+    else c=p.anim>=0?['Moving the wood block…','Đang chuyển khối gỗ…']:['A solid keeps its shape. Try each container B.','Chất rắn giữ nguyên hình dạng. Hãy thử từng vật chứa B.']}
+  else if(s.st==='dens'){const d=s.dn,k=d.obj;
+    if(!k)c=['Tap an object to put it on the balance.','Chạm vào một vật để đặt lên cân.'];
+    else{const o=OBJS[k],v=smDensT(k),den=(o.m/v).toFixed(1);
+      if(d.loc[k]==='tank')c=o.m/v<1?['The '+o.en+' floats. It is less dense than water.',cap(o.vi)+' nổi. Nó có khối lượng riêng nhỏ hơn nước.']:['The '+o.en+' sinks. It is denser than water.',cap(o.vi)+' chìm. Nó có khối lượng riêng lớn hơn nước.'];
+      else if(d.showD)c=['Density = mass ÷ volume = '+o.m+' g ÷ '+v+' cm³ = '+den+' g/cm³','Khối lượng riêng = khối lượng ÷ thể tích = '+o.m+' ÷ '+v+' = '+den+' g/cm³'];
+      else if(d.showV)c=k==='water'?['Read the cylinder: volume = 50 cm³','Đọc ống đong: thể tích = 50 cm³']:['Volume = '+o.d.join(' × ')+' = '+v+' cm³','Thể tích = '+o.d.join(' × ')+' = '+v+' cm³'];
+      else c=['The mass of the '+o.en+' is '+o.m+' g. Now measure its volume.','Khối lượng của '+o.vi+' là '+o.m+' g. Bây giờ đo thể tích.']}}
+  else c=s.so.n>=14?['All the rubbish is sorted! Sorting makes recycling easier.','Đã phân loại hết rác! Phân loại giúp tái chế dễ hơn.']:['Sort the rubbish into solids, liquids and gases.','Phân loại rác thành chất rắn, chất lỏng và chất khí.'];
+  if(c[0]!==lastCap){lastCap=c[0];$('#caption').innerHTML=bi(c[0],c[1])}
+}
+$('#smSt').addEventListener('click',e=>{const b=e.target.closest('[data-st]');if(!b)return;SM.st=b.dataset.st;smDrag=null;smMsg=null;smBtns()});
+$('#smSy').addEventListener('click',e=>{const b=e.target.closest('[data-sy]');if(!b)return;SM.sq.sel=b.dataset.sy;$('#smForce').value=0;SM.sq.F={air:0,water:0,wood:0};smBtns()});
+$('#smForce').addEventListener('input',e=>{const v=+e.target.value,q=SM.sq;['air','water','wood'].forEach(k=>q.F[k]=(q.sel==='all'||q.sel===k)?v:0)});
+const smRel=()=>{$('#smForce').value=0;SM.sq.F={air:0,water:0,wood:0}};$('#smForce').addEventListener('change',smRel);
+$('#smSub').addEventListener('click',e=>{const b=e.target.closest('[data-sub]');if(!b||SM.pr.anim>=0)return;const B=SM.pr.B;SM.pr=freshSM().pr;SM.pr.B=B;SM.pr.sub=b.dataset.sub;smMsg=null;smBtns()});
+$('#smB').addEventListener('click',e=>{const b=e.target.closest('[data-b]');if(!b||SM.pr.anim>=0)return;const s=SM.pr.sub;SM.pr=freshSM().pr;SM.pr.sub=s;SM.pr.B=b.dataset.b;smMsg=null;smBtns()});
+$('#smAct').onclick=smAct;
+$('#smOb').addEventListener('click',e=>{const b=e.target.closest('[data-ob]');if(b)smPick(b.dataset.ob)});
+$('#smVol').onclick=()=>{if(SM.dn.obj){SM.dn.showV=true;smBtns()}};
+$('#smDen').onclick=()=>{if(SM.dn.obj&&SM.dn.showV){SM.dn.showD=true;smBtns()}};
+$('#smTank').onclick=()=>{const d=SM.dn,k=d.obj;if(!k||k==='water'||d.loc[k]!=='pan')return;d.tankIx=d.tankIx||{};d.tankIx[k]=d.tankN++;d.loc[k]='tank';smBtns()};
+$('#smMix').onclick=()=>{const s=SM.so,idx=s.cards.filter(c=>!c.done);const pos=idx.map(c=>[c.hx,c.hy]).sort(()=>Math.random()-.5);idx.forEach((c,i)=>{c.hx=pos[i][0];c.hy=pos[i][1]})};
+function smWarm(){
+  const v=$('#heatR').value/100,F=v*100;
+  let g=wx.createLinearGradient(0,0,0,380);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');wx.fillStyle=g;wx.fillRect(0,0,900,380);
+  wx.save();wx.translate(-60,0);wx.scale(.62,.62);wx.lineCap='round';
+  smSyringe(wx,150,'air',50/(1+F/35),F,null,false);smSyringe(wx,390,'water',50,F,null,false);
+  wx.restore();
+  wx.font='800 24px system-ui';wx.textAlign='left';wx.textBaseline='middle';wx.fillStyle='#fff';wx.fillText('air',70,52);wx.fillText('water',70,200);
+}
+{const t=$('#thumb4').getContext('2d');let g=t.createLinearGradient(0,0,0,340);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');t.fillStyle=g;t.fillRect(0,0,600,340);
+ t.save();t.translate(-90,-20);t.scale(.62,.62);t.lineCap='round';smSyringe(t,130,'air',22,70,null,false);smSyringe(t,300,'water',50,0,null,false);smSyringe(t,470,'wood',50,0,null,false);t.restore()}
+smBtns();
 /* ---------- lab list ---------- */
 const LABS={
  evap:{t:['Evaporating and condensing','Bay hơi và ngưng tụ'],r1:['Temperature','Nhiệt độ'],r2:['mL water','mL nước'],r3:['drops','giọt'],
@@ -1236,6 +1751,24 @@ const LABS={
    {q:['Muscle force is measured in…','Lực của cơ được đo bằng…'],o:[['newtons (N)','niutơn (N)'],['grams (g)','gam (g)'],['metres (m)','mét (m)']]},
    {q:['Which bones protect the brain?','Xương nào bảo vệ não?'],o:[['Skull','Hộp sọ'],['Ribcage','Lồng ngực'],['Vertebrae','Các đốt sống']]},
    {q:['The skeleton has 3 jobs: support, protection and…','Bộ xương có 3 nhiệm vụ: nâng đỡ, bảo vệ và…'],o:[['movement','vận động'],['digestion','tiêu hóa'],['breathing','hô hấp']]}
+  ]},
+ matter:{t:['Solids, liquids and gases','Chất rắn, chất lỏng và chất khí'],r1:['air cm³','khí cm³'],r2:['force N','lực N'],r3:['squashed %','bị nén %'],
+  win:['You tested solids, liquids and gases, measured density and sorted the rubbish.','Em đã kiểm tra chất rắn, lỏng, khí, đo khối lượng riêng và phân loại rác.'],
+  w:{h:['Look! Push both plungers. What happens to the air?','Nhìn này! Đẩy cả hai pít-tông. Điều gì xảy ra với không khí?'],bar:['PUSH','Đẩy'],ico:'👉',
+   a:['It squashes into a smaller volume.','Nó bị nén lại, thể tích nhỏ hơn.'],b:['It stays the same.','Nó không thay đổi.'],
+   yes:['Yes! Gases can be compressed. The water does not squash.','Đúng rồi! Chất khí có thể bị nén. Nước thì không bị nén.'],
+   no:['Slide the PUSH bar and look at the air again.','Kéo thanh ĐẨY và quan sát lại không khí.']},
+  M:[['Squash the air to less than 25 cm³','Nén không khí xuống dưới 25 cm³'],['Try to squash the water and the wood','Thử nén nước và gỗ'],['Pour water into the flask','Rót nước vào bình tam giác'],['Let a gas spread out','Để chất khí lan ra'],['Find the density of iron','Tìm khối lượng riêng của sắt'],['Sort all 14 rubbish cards','Phân loại cả 14 thẻ rác']],
+  Q:[
+   {q:['What are the three states of matter?','Ba thể của chất là gì?'],o:[['solid, liquid and gas','rắn, lỏng và khí'],['hot, warm and cold','nóng, ấm và lạnh'],['metal, wood and plastic','kim loại, gỗ và nhựa']]},
+   {q:['Which state can easily be compressed?','Thể nào dễ bị nén?'],o:[['gas','chất khí'],['liquid','chất lỏng'],['solid','chất rắn']]},
+   {q:['Which state keeps its shape?','Thể nào giữ nguyên hình dạng?'],o:[['solid','chất rắn'],['liquid','chất lỏng'],['gas','chất khí']]},
+   {q:['A liquid takes the shape of…','Chất lỏng có hình dạng của…'],o:[['its container','vật chứa nó'],['a cube','một khối lập phương'],['the air','không khí']]},
+   {q:['Why can solid waste be left in piles at landfill sites?','Tại sao rác rắn có thể để thành đống ở bãi chôn lấp?'],o:[['It stays in one place.','Nó nằm yên một chỗ.'],['It flows away.','Nó chảy đi.'],['It spreads into the air.','Nó lan vào không khí.']]},
+   {q:['A wood block is 4 cm × 5 cm × 10 cm. What is its volume?','Khối gỗ 4 cm × 5 cm × 10 cm. Thể tích là bao nhiêu?'],o:[['200 cm³','200 cm³'],['19 cm³','19 cm³'],['50 cm³','50 cm³']]},
+   {q:['Density is measured in…','Khối lượng riêng được đo bằng…'],o:[['g/cm³','g/cm³'],['cm³','cm³'],['newtons (N)','niutơn (N)']]},
+   {q:['Iron has a density of 7.9 g/cm³. What is the mass of 5 cm³ of iron?','Sắt có khối lượng riêng 7,9 g/cm³. Khối lượng của 5 cm³ sắt là bao nhiêu?'],o:[['39.5 g','39,5 g'],['7.9 g','7,9 g'],['12.9 g','12,9 g']]},
+   {q:['Which list goes from least dense to most dense?','Dãy nào xếp từ khối lượng riêng nhỏ nhất đến lớn nhất?'],o:[['carbon dioxide, water, gold','khí cacbonic, nước, vàng'],['gold, water, carbon dioxide','vàng, nước, khí cacbonic'],['water, gold, carbon dioxide','nước, vàng, khí cacbonic']]}
   ]}
 };
 function setLab(id){
@@ -1245,7 +1778,8 @@ function setLab(id){
   $('#winP').innerHTML=bi(L.win[0],L.win[1]);$('#rTl').innerHTML=bi(L.r1[0],L.r1[1]);$('#rWl').innerHTML=bi(L.r2[0],L.r2[1]);$('#rDl').innerHTML=bi(L.r3[0],L.r3[1]);
   $('#warmH').innerHTML=bi(L.w.h[0],L.w.h[1]);$('#heatLbl').innerHTML=bi(L.w.bar[0],L.w.bar[1]);$('#heatIco').textContent=L.w.ico;
   $('#heatR').value=0;buildWarm();drawWarm();
-  Q=L.Q;qi=-1;$('#qNext').textContent='Next ➜';$('#win').classList.remove('on');lastCap='';hud();
+  Q=L.Q;qi=-1;$('#qNext').textContent='Next ➜';$('#win').classList.remove('on');lastCap='';
+  if(id==='matter')smBtns();hud();
 }
 {const t=$('#thumb2').getContext('2d');let g=t.createLinearGradient(0,0,0,340);g.addColorStop(0,'#4e6577');g.addColorStop(1,'#8399aa');t.fillStyle=g;t.fillRect(0,0,600,340);
  t.fillStyle='#2f3843';t.fillRect(0,270,600,70);
@@ -1627,7 +2161,7 @@ let last=performance.now();
 function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;
   if($('#freezer').classList.contains('on')){updateZ(dt);drawZ();hudZ()}
-  if($('#lab').classList.contains('on')){if(cur==='skel'){updateK(dt);drawK()}else if(cur==='freeze'){updateF(dt);drawF()}else{update(dt);draw()}hud()}
+  if($('#lab').classList.contains('on')){if(cur==='matter'){smUpdate(dt);smDraw()}else if(cur==='skel'){updateK(dt);drawK()}else if(cur==='freeze'){updateF(dt);drawF()}else{update(dt);draw()}hud()}
   requestAnimationFrame(frame);
 }
 setLab('evap');requestAnimationFrame(frame);
