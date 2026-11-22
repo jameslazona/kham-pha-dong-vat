@@ -244,8 +244,8 @@ body[data-xst=grip] .xs-grip,body[data-xst=leg] .xs-leg,body[data-xst=react] .xs
 .tabs button[data-go=race]{display:none}
 body[data-lab=matter] .tabs button[data-go=race]{display:inline-block}
 #drum{position:relative}
-#drumHost{flex:1;min-width:0;display:flex}
-body[data-lab=drum] #bar .tabs{display:none}
+#drumHost,#soundHost{flex:1;min-width:0;display:flex}
+body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs{display:none}
 #race{gap:.8rem;padding:.8rem;position:relative;overflow:hidden;background:linear-gradient(160deg,#e8f1f8,#f7fafc)}
 #rcMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:.55rem;min-height:0}
 #rcSide{width:21rem;flex:none;background:#fff;border-radius:1.1rem;padding:.8rem;box-shadow:0 .15rem .5rem rgba(18,38,58,.08);display:flex;flex-direction:column;gap:.45rem;overflow:auto}
@@ -425,6 +425,11 @@ body[data-lab=drum] #bar .tabs{display:none}
         <img class="thumb" src="race-img/drum-thumb.webp" alt="">
         <h2>Sound: drum and rice<span class="vi">Âm thanh: trống và gạo</span></h2>
         <button class="go" data-go="drum">Start the lab ➜</button>
+      </div>
+      <div class="card">
+        <img class="thumb" src="race-img/sound-thumb.webp" alt="">
+        <h2>How do we measure sound?<span class="vi">Chúng ta đo âm thanh thế nào?</span></h2>
+        <button class="go" data-go="sound">Start the lab ➜</button>
       </div>
     </div>
   </section>
@@ -701,6 +706,84 @@ body[data-lab=drum] #bar .tabs{display:none}
     </aside>
   </section>
 
+  <section class="screen" id="sound"><div id="soundHost"></div></section>
+<template id="soundTpl"><style>
+:host{--navy:#12306f;--ink:#12263a;--yel:#ffd23f;--red:#d7261e;--blue:#1d5fd6;--green:#24963f;--pur:#7b3fb8}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:host{flex:1;min-width:0;height:100%;font-family:"Nunito","Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:#e9f1f8;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation;display:flex;flex-direction:column}
+button{font:inherit;color:inherit;border:0;cursor:pointer;background:none}button:disabled{opacity:.4;cursor:default}
+img{pointer-events:none;-webkit-user-drag:none}
+.vi{display:block;font-weight:600;opacity:.72;font-size:.8em}
+#hd{flex:none;display:flex;align-items:center;gap:.6rem;background:#1c3f8f;color:#fff;padding:.35rem .8rem;min-height:3rem}
+.brand{font-weight:900;font-size:1.2rem;white-space:nowrap}.brand em{font-style:normal;color:var(--yel)}
+.tabs{flex:1;display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap}
+.tab{padding:.35rem .85rem;border-radius:999px;font-weight:900;background:rgba(255,255,255,.1);color:#c9d6f2;line-height:1.05;font-size:.95rem}
+.tab b{display:inline-grid;place-items:center;width:1.4rem;height:1.4rem;border-radius:50%;background:rgba(255,255,255,.18);margin-right:.3rem;font-size:.8rem}
+.tab.on{background:var(--yel);color:var(--navy)}.tab.on b{background:var(--navy);color:#fff}.tab.done b{background:var(--green);color:#fff}
+.hbtn{background:rgba(255,255,255,.14);color:#fff;font-weight:800;padding:.4rem .8rem;border-radius:999px;white-space:nowrap}.hbtn.on{background:#fff;color:var(--navy)}
+#main{flex:1;min-height:0;display:grid;grid-template-columns:1fr 31rem;gap:.7rem;padding:.7rem}
+#stageW{min-height:0;display:flex;flex-direction:column;gap:.5rem}
+#cv{flex:1;min-height:0;width:100%;border-radius:1.2rem;touch-action:none;box-shadow:0 .4rem 1.2rem rgba(18,38,58,.18)}
+.srcs{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap}
+.src{width:5.15rem;background:#fff;border-radius:1rem;padding:.3rem .2rem;display:flex;flex-direction:column;align-items:center;font-weight:900;font-size:.82rem;line-height:1.05;text-align:center;box-shadow:0 .2rem 0 #c5d6e6;border:.2rem solid transparent;position:relative}
+.src img{width:2.6rem}.src.on{border-color:var(--yel);background:#fff8d6}.src.done::after{content:"✓";position:absolute;top:.1rem;right:.3rem;color:var(--green);font-size:1rem}
+.src.live{background:#1c3f8f;color:#fff}.src.live.on{background:#d7261e;border-color:#fff}
+#side{min-height:0;overflow:auto;display:flex;flex-direction:column;gap:.6rem}
+.card{background:#fff;border-radius:1.1rem;padding:.8rem 1rem;box-shadow:0 .3rem .9rem rgba(18,38,58,.1)}
+.step h2{font-weight:900;font-size:1.4rem;line-height:1.1;margin-bottom:.35rem}.step h2 small{display:block;font-size:.8rem;color:var(--red);letter-spacing:.06em}
+.step p{font-weight:700;font-size:1.05rem;line-height:1.3}
+.btn{background:#fff;border-radius:1rem;padding:.55rem 1.1rem;font-weight:900;font-size:1.05rem;box-shadow:0 .22rem 0 #c5d6e6;line-height:1.1}
+.btn.go{background:var(--blue);color:#fff;box-shadow:0 .22rem 0 #123f94}
+.btn:active:not(:disabled){transform:translateY(.15rem);box-shadow:none}
+.nx{margin-top:.6rem;text-align:right}
+.chk{display:flex;flex-direction:column;gap:.3rem;margin-top:.5rem}.chk div{font-weight:800;display:flex;gap:.5rem;align-items:center}.chk i{font-style:normal;width:1.5rem;height:1.5rem;border-radius:50%;background:#e3eaf1;display:grid;place-items:center;font-size:.85rem}.chk i.y{background:var(--green);color:#fff}
+.mcq{display:flex;flex-direction:column;gap:.35rem;margin-top:.4rem}
+.mcq button{background:#f4f8fc;border:.2rem solid #dbe6f0;border-radius:.9rem;padding:.45rem .7rem;font-weight:800;text-align:left;display:flex;gap:.5rem;align-items:center;line-height:1.15}
+.mcq button i{font-style:normal;width:1.8rem;height:1.8rem;border-radius:50%;background:var(--pur);color:#fff;display:grid;place-items:center;flex:none;font-weight:900}
+.mcq button.ok{border-color:var(--green);background:#e6f7eb}.mcq button.no{border-color:var(--red);background:#fde3df;opacity:.55}
+.dq{font-weight:900;margin-top:.6rem;display:flex;gap:.4rem;align-items:center}.dq b{background:var(--pur);color:#fff;border-radius:50%;width:1.7rem;height:1.7rem;display:grid;place-items:center;flex:none}
+table.res{width:100%;border-collapse:separate;border-spacing:0 .22rem;font-weight:800;font-size:.95rem}
+table.res th{font-size:.78rem;color:#5c6e80;text-align:left}table.res td{background:#f2f6fa;padding:.2rem .4rem}
+table.res td:first-child{border-radius:.5rem 0 0 .5rem}table.res td:last-child{border-radius:0 .5rem .5rem 0;text-align:right}
+table.res img{width:1.7rem;vertical-align:middle;margin-right:.3rem}
+.lvl{display:inline-block;height:.8rem;border-radius:.4rem;vertical-align:middle}
+.band{display:inline-block;border-radius:999px;padding:.05rem .5rem;font-size:.75rem;color:#fff}
+.lbl{font-weight:900;font-size:.95rem;margin-bottom:.3rem;display:flex;justify-content:space-between;gap:.5rem}
+.pair{display:flex;gap:.6rem;margin-top:.4rem;align-items:center}
+.pair button{flex:1;background:#f4f8fc;border:.22rem solid #dbe6f0;border-radius:1rem;padding:.4rem;display:flex;flex-direction:column;align-items:center;font-weight:900;font-size:.9rem;line-height:1.1}
+.pair button img{width:3.2rem}.pair button.ok{border-color:var(--green);background:#e6f7eb}.pair button.no{border-color:var(--red);background:#fde3df}
+.pair .vs{font-weight:900;color:var(--red)}
+.order{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.4rem}
+.order button{background:#f4f8fc;border:.2rem solid #dbe6f0;border-radius:.8rem;padding:.25rem .4rem;display:flex;flex-direction:column;align-items:center;font-weight:900;font-size:.78rem;width:5.4rem;line-height:1.05}.order button img{width:2.4rem}
+.order button.used{opacity:.25}
+.line{display:flex;gap:.3rem;margin-top:.4rem;align-items:flex-end;min-height:4.6rem;background:linear-gradient(90deg,#dff5e5,#fff3c2,#ffd9d4);border-radius:.8rem;padding:.3rem}
+.line div{width:4.4rem;display:flex;flex-direction:column;align-items:center;font-weight:900;font-size:.75rem}.line div img{width:2.2rem}
+.tiles{display:flex;gap:.5rem;justify-content:center;margin-top:.5rem}
+.tiles button{width:3.6rem;height:3.6rem;border-radius:.8rem;background:#fff;border:.22rem solid #dbe6f0;font-size:2rem;font-weight:900;font-family:Georgia,serif;box-shadow:0 .2rem 0 #c5d6e6}
+.slots{display:flex;gap:.4rem;justify-content:center;margin-top:.4rem}
+.slots span{width:4.2rem;height:4.6rem;border-radius:.8rem;border:.22rem dashed #9fb3c6;display:grid;place-items:center;font-size:2.8rem;font-weight:900;color:var(--red);font-family:Georgia,serif;background:#fff}
+.slots span.full{border-style:solid;border-color:var(--green)}
+.words{width:100%;border-collapse:separate;border-spacing:.25rem;font-weight:800;font-size:.92rem}
+.words th{background:#d8f0b5;border-radius:.5rem;padding:.25rem;font-weight:900}
+.words td{background:#f6f9f2;border-radius:.5rem;padding:.25rem .35rem;vertical-align:middle}
+.words td:first-child{color:var(--green);font-weight:900}
+.words select{font:inherit;font-size:.82rem;font-weight:800;width:100%;border-radius:.5rem;border:.15rem solid #c9d7e3;padding:.2rem;background:#fff}
+.words select.ok{border-color:var(--green);background:#e6f7eb}.words select.no{border-color:var(--red);background:#fde3df}
+.big{background:linear-gradient(#fff4b0,#ffd23f);border-radius:1rem;padding:.5rem .8rem;font-weight:900;text-align:center;font-size:1.05rem;margin-top:.5rem}
+.cmpq{display:flex;gap:.5rem;margin:.4rem 0}.cmpq div{flex:1;border-radius:.8rem;padding:.35rem;text-align:center;font-weight:900;line-height:1.15}.cmpq .q1{background:#dff5e5;color:#156428}.cmpq .q2{background:#ffe1dd;color:#9c1c14}
+#toast{position:absolute;left:35%;bottom:6rem;transform:translateX(-50%) translateY(170%);background:var(--ink);color:#fff;font-weight:800;font-size:1.15rem;padding:.65rem 1.3rem;border-radius:1rem;max-width:60vw;text-align:center;transition:transform .25s;z-index:80;opacity:0}
+#toast.on{transform:translateX(-50%) translateY(0);opacity:1}#toast.bad{background:#a52c1c}#toast.ok{background:#1f7a3a}
+@media (max-width:1000px){#main{grid-template-columns:1fr}#side{overflow:visible}}
+
+.wrap{position:relative;display:flex;flex-direction:column;flex:1;min-height:0}</style><div class="wrap"><header id="hd"><div class="brand">🎧 HOW DO WE <em>MEASURE</em> SOUND?</div><div class="tabs" id="tabs"></div><button class="hbtn on" id="sndBtn">🔊</button></header>
+<div id="main">
+ <div id="stageW"><canvas id="cv"></canvas><div class="srcs" id="srcs"></div></div>
+ <aside id="side">
+  <div class="card step" id="stepC"></div>
+  <div class="card"><div class="lbl"><span id="lTable"></span><span id="lBands" style="font-size:.75rem"></span></div><table class="res" id="res"></table></div>
+ </aside>
+</div>
+<div id="toast"></div></div></template>
   <section class="screen" id="drum"><div id="drumHost"></div></section>
 <template id="drumTpl"><style>
 :host{--navy:#12306f;--ink:#12263a;--yel:#ffd23f;--red:#d7261e;--blue:#1d5fd6;--green:#24963f}
@@ -810,6 +893,7 @@ function go(id){
   if(id==='race'&&cur!=='matter')return go('home');
   if(id==='race')rcRender();
   if(id==='freezer'&&cur!=='freeze')return go('home');
+  if(id==='sound'){document.body.dataset.lab='sound';$('#topic').innerHTML='How do we measure sound?<span class="vi inline"> · Chúng ta đo âm thanh thế nào?</span>'}
   if(id==='drum'){document.body.dataset.lab='drum';$('#topic').innerHTML='Sound: drum and rice<span class="vi inline"> · Âm thanh: trống và gạo</span>'}
 }
 document.addEventListener('click',e=>{const l=e.target.closest('button[data-lab]');if(l)setLab(l.dataset.lab);const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)});
@@ -3382,6 +3466,180 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 setLab('evap');requestAnimationFrame(frame);
+/* ===== Measuring sound lab ===== */
+(()=>{
+const HOST=document.getElementById('soundHost'),ROOT=HOST.attachShadow({mode:'open'});ROOT.appendChild(document.getElementById('soundTpl').content.cloneNode(true));
+const $=s=>ROOT.querySelector(s),$$=s=>[...ROOT.querySelectorAll(s)];const SCR=document.getElementById('sound');
+let VI=document.body.classList.contains('vi-on');
+const L=(en,vi)=>VI?vi:en,bi=(en,vi)=>en+(VI?'<span class="vi">'+vi+'</span>':'');
+const IMG=k=>'race-img/'+k+'.webp',im=k=>'<img src="'+IMG(k)+'" alt="">';
+const pre={};function li(k){if(!pre[k]){pre[k]=new Image();pre[k].src=IMG(k)}return pre[k]}
+const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+function toast(m,k){const t=$('#toast');t.innerHTML=m;t.className='on '+(k||'');clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2800)}
+/* ---------- sound sources ---------- */
+const SRC=[
+ {k:'leaf',en:'Rustling leaves',vi:'Lá cây xào xạc',db:20},
+ {k:'shh',en:'Whisper',vi:'Thì thầm',db:30},
+ {k:'clock',en:'Ticking clock',vi:'Đồng hồ tích tắc',db:40},
+ {k:'talk',en:'Talking',vi:'Nói chuyện',db:60},
+ {k:'dog',en:'Dog barking',vi:'Chó sủa',db:80},
+ {k:'bell',en:'School bell',vi:'Chuông trường',db:85},
+ {k:'drumk',en:'Drum',vi:'Trống',db:95},
+ {k:'moto',en:'Motorbike',vi:'Xe máy',db:100},
+ {k:'plane',en:'Aeroplane taking off',vi:'Máy bay cất cánh',db:120}];
+function band(db){return db<50?['quiet','yên tĩnh','#24963f']:db<80?['moderate','vừa phải','#c99700']:db<100?['loud','to','#e06a00']:['can hurt ears','hại tai','#d7261e']}
+/* ---------- audio ---------- */
+let AC=null,OUT=null,AN=null,NOISE=null,SOUND=true,PLAY=null,MIC=null,MICAN=null;
+function audio(){if(AC)return AC;try{AC=new (window.AudioContext||window.webkitAudioContext)();const comp=AC.createDynamicsCompressor();OUT=AC.createGain();AN=AC.createAnalyser();AN.fftSize=1024;OUT.connect(AN);AN.connect(comp);comp.connect(AC.destination);
+ NOISE=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate);const d=NOISE.getChannelData(0);let b=0;for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}catch(_){AC=null}return AC}
+function nsrc(t,dur,dest,off){const n=AC.createBufferSource();n.buffer=NOISE;n.loop=true;n.connect(dest);n.start(t,off||Math.random());n.stop(t+dur);return n}
+function filt(type,f,q,dest){const b=AC.createBiquadFilter();b.type=type;b.frequency.value=f;b.Q.value=q||.7;b.connect(dest);return b}
+function env(t,peak,a,d,dest){const g=AC.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d);g.connect(dest);return g}
+const SY={
+ leaf(t,g){for(let i=0;i<14;i++){const tt=t+i*.18+Math.random()*.1;const e=env(tt,.6+Math.random()*.4,.05,.25,g);nsrc(tt,.4,filt('bandpass',2500+Math.random()*3000,.8,e))}return 2.6},
+ shh(t,g){const sy=[.35,.3,.45,.3,.5,.35,.4];let x=t;sy.forEach(d=>{const e=env(x,.9,.06,d,g);nsrc(x,d+.1,filt('bandpass',1800+Math.random()*1500,1.2,e));x+=d+.08});return x-t+.2},
+ clock(t,g){for(let i=0;i<6;i++){const tt=t+i*.5,e=env(tt,1,.001,.03,g);nsrc(tt,.05,filt('highpass',i%2?2500:3500,1,e));const o=AC.createOscillator();o.frequency.value=i%2?1800:2400;const e2=env(tt,.4,.001,.02,g);o.connect(e2);o.start(tt);o.stop(tt+.05)}return 3},
+ talk(t,g){const V=[[700,1200],[400,2000],[300,2300],[500,900],[600,1700]];let x=t;for(let i=0;i<10;i++){const d=.14+Math.random()*.16,v=V[Math.floor(Math.random()*5)],o=AC.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(140+Math.random()*60,x);o.frequency.linearRampToValueAtTime(120+Math.random()*60,x+d);const e=env(x,.9,.03,d,g);const f1=filt('bandpass',v[0],5,e),f2=filt('bandpass',v[1],7,e);o.connect(f1);o.connect(f2);o.start(x);o.stop(x+d+.1);x+=d+(i%3==2?.22:.04)}return x-t+.2},
+ dog(t,g){[0,.35,1.2,1.55].forEach(s=>{const x=t+s,o=AC.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(520,x);o.frequency.exponentialRampToValueAtTime(260,x+.16);const e=env(x,1,.01,.18,g);const f=filt('bandpass',1000,1.5,e);o.connect(f);o.start(x);o.stop(x+.25);nsrc(x,.12,filt('bandpass',1500,1,env(x,.4,.005,.08,g)))});return 2.2},
+ bell(t,g){for(let i=0;i<56;i++){const x=t+i*.05;[1180,2650,3900,5200].forEach((f,k)=>{const o=AC.createOscillator();o.frequency.value=f;const e=env(x,[.5,.3,.2,.12][k],.002,.09,g);o.connect(e);o.start(x);o.stop(x+.12)})}return 2.9},
+ drumk(t,g){[0,.5,1,1.25,1.5,2].forEach(s=>{const x=t+s,o=AC.createOscillator();o.type='triangle';o.frequency.setValueAtTime(200,x);o.frequency.exponentialRampToValueAtTime(130,x+.2);o.connect(env(x,1,.003,.3,g));o.start(x);o.stop(x+.4);nsrc(x,.25,filt('bandpass',2200,.6,env(x,.7,.002,.15,g)))});return 2.6},
+ moto(t,g){const d=3,o=AC.createOscillator(),o2=AC.createOscillator();o.type='sawtooth';o2.type='square';o.frequency.setValueAtTime(45,t);o.frequency.linearRampToValueAtTime(95,t+1.6);o.frequency.linearRampToValueAtTime(70,t+d);o2.frequency.setValueAtTime(90,t);o2.frequency.linearRampToValueAtTime(190,t+1.6);o2.frequency.linearRampToValueAtTime(140,t+d);
+  const trem=AC.createGain();const lfo=AC.createOscillator();lfo.frequency.value=22;const lg=AC.createGain();lg.gain.value=.35;lfo.connect(lg);lg.connect(trem.gain);trem.gain.value=.65;const e=AC.createGain();e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(1,t+.2);e.gain.setValueAtTime(1,t+d-.3);e.gain.linearRampToValueAtTime(0,t+d);e.connect(g);trem.connect(e);const f=filt('lowpass',700,1,trem);o.connect(f);o2.connect(f);[o,o2,lfo].forEach(x=>{x.start(t);x.stop(t+d)});nsrc(t,d,filt('lowpass',500,1,env(t,.4,.3,d,g)));return d+.1},
+ plane(t,g){const d=3.4,e=AC.createGain();e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(1,t+1.2);e.gain.setValueAtTime(1,t+d-.6);e.gain.linearRampToValueAtTime(0,t+d);e.connect(g);nsrc(t,d,filt('lowpass',900,.7,e));const h=AC.createGain();h.gain.value=.25;h.connect(e);nsrc(t,d,filt('bandpass',3000,2,h));const o=AC.createOscillator();o.frequency.setValueAtTime(2400,t);o.frequency.linearRampToValueAtTime(3400,t+d);const og=AC.createGain();og.gain.value=.05;o.connect(og);og.connect(e);o.start(t);o.stop(t+d);return d+.1}};
+function vol(db){return Math.min(.55,.55*Math.pow(10,(db-112)/42))}
+function play(i){if(!audio())return;if(AC.state==='suspended')AC.resume();stopMic();const s=SRC[i],g=AC.createGain();g.gain.value=SOUND?vol(s.db):0;g.connect(OUT);const t=AC.currentTime+.05,dur=SY[s.k](t,g);
+ PLAY={i,t0:performance.now(),dur:dur*1000,max:0,ref:-200,g};setTimeout(()=>{if(PLAY&&PLAY.g===g)finishPlay()},dur*1000+250);renderSrcs()}
+/* ---------- microphone (live) ---------- */
+async function startMic(){if(!audio())return;if(AC.state==='suspended')AC.resume();try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const s=AC.createMediaStreamSource(st);MICAN=AC.createAnalyser();MICAN.fftSize=1024;s.connect(MICAN);MIC={st,max:0};PLAY=null;toast(L('Live! Make some noise… then be very quiet.','Đang đo trực tiếp! Hãy tạo tiếng động… rồi thật yên lặng.'),'ok');renderSrcs()}catch(e){toast(L('The microphone is not available on this screen.','Màn hình này không dùng được micro.'),'bad')}}
+function stopMic(){if(MIC){MIC.st.getTracks().forEach(t=>t.stop());const m=MIC.max;MIC=null;MICAN=null;if(m>0){LS.live=Math.round(m);renderTable()}renderSrcs()}}
+/* ---------- meter model ---------- */
+const MT={on:false,disp:18,show:18,max:0,maxMode:false,phone:18,buf:new Float32Array(512),lastUpd:0};
+function rmsDb(an){const b=new Float32Array(an.fftSize);an.getFloatTimeDomainData(b);let s=0;for(let i=0;i<b.length;i++)s+=b[i]*b[i];return{db:10*Math.log10(s/b.length+1e-12),b}}
+function finishPlay(){const p=PLAY;PLAY=null;if(!p)return;const v=Math.round((SRC[p.i].db+(Math.random()-.5)*1.6)*10)/10;if(MT.on||LS.s>0){LS.meas[p.i]=v;onMeasured(p.i)}renderSrcs();renderTable()}
+function meterStep(dt){let target=18+Math.random()*1.2,raw=null;
+ if(PLAY&&AN){const r=rmsDb(AN);raw=r.b;if(r.db>PLAY.ref)PLAY.ref=r.db;else PLAY.ref-=dt*2;const rel=Math.max(-25,r.db-PLAY.ref);const s=SRC[PLAY.i];if(r.db>-90)target=Math.max(target,s.db+(rel>-4?0:rel*.5)+(Math.random()-.5)*1.4)}
+ if(MIC&&MICAN){const r=rmsDb(MICAN);raw=r.b;target=Math.max(25,Math.min(115,r.db+100));MIC.max=Math.max(MIC.max,MT.disp)}
+ MT.disp+=(target-MT.disp)*Math.min(1,dt*(target>MT.disp?30:7));MT.phone+=(target-1.4-MT.phone)*Math.min(1,dt*5);
+ if(MT.disp>MT.max)MT.max=MT.disp;
+ if(performance.now()-MT.lastUpd>220){MT.show=MT.disp;MT.lastUpd=performance.now()}
+ if(raw){for(let i=0;i<512;i++)MT.buf[i]=raw[i*2]||0}else for(let i=0;i<512;i++)MT.buf[i]*=.9}
+/* ---------- canvas ---------- */
+const cv=$('#cv'),X=cv.getContext('2d');const W=1100,H=680;let SC=1;
+function fit(){const r=cv.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1);cv.width=Math.max(1,Math.round(r.width*d));cv.height=Math.max(1,Math.round(r.height*d));SC=Math.min(cv.width/W,cv.height/H)}
+new ResizeObserver(()=>fit()).observe(cv);
+const foam=document.createElement('canvas');foam.width=foam.height=180;{const f=foam.getContext('2d');const g=f.createRadialGradient(70,60,10,90,90,90);g.addColorStop(0,'#4a4d52');g.addColorStop(.7,'#26282b');g.addColorStop(1,'#141516');f.fillStyle=g;f.beginPath();f.arc(90,90,88,0,7);f.fill();f.save();f.clip();for(let i=0;i<2600;i++){const x=Math.random()*180,y=Math.random()*180;f.fillStyle=Math.random()<.5?'rgba(0,0,0,.45)':'rgba(120,125,130,.25)';f.beginPath();f.arc(x,y,Math.random()*2.4,0,7);f.fill()}f.restore()}
+const MBOX={x:420,y:70,w:270,h:560},PBOX={x:780,y:150,w:240,h:470},PWR={x:0,y:0,r:22};
+const SEG={0:'abcdef',1:'bc',2:'abged',3:'abgcd',4:'fgbc',5:'afgcd',6:'afgedc',7:'abc',8:'abcdefg',9:'abcfgd','-':'g',' ':''};
+function seg7(x,y,w,h,ch,on,off){const t=w*.2,hh=h/2;const S={a:[t,0,w-2*t,t],b:[w-t,t,t,hh-t],c:[w-t,hh,t,hh-t],d:[t,h-t,w-2*t,t],e:[0,hh,t,hh-t],f:[0,t,t,hh-t],g:[t,hh-t/2,w-2*t,t]};
+ for(const k in S){const s=S[k];X.fillStyle=(SEG[ch]||'').includes(k)?on:off;X.save();X.translate(x+s[0]+s[3]*.12,y+s[1]);X.transform(1,0,-.12,1,0,0);X.beginPath();X.roundRect(0,0,s[2],s[3],t*.35);X.fill();X.restore()}}
+function lcdNum(x,y,dw,dh,val,on,off){const s=val.toFixed(1).padStart(5,' ');let cx=x;for(const ch of s){if(ch==='.'){X.fillStyle=on;X.beginPath();X.arc(cx-dw*.05,y+dh-dw*.1,dw*.1,0,7);X.fill();continue}seg7(cx,y,dw,dh,ch,on,off);cx+=dw*1.25}}
+function draw(t){X.setTransform(1,0,0,1,0,0);const ox=(cv.width/SC-W)/2,oy=(cv.height/SC-H)/2;X.setTransform(SC,0,0,SC,ox*SC,oy*SC);
+ let g=X.createLinearGradient(0,-300,0,560);g.addColorStop(0,'#c9d8e6');g.addColorStop(1,'#eef3f8');X.fillStyle=g;X.fillRect(-500,-300,W+1000,900);
+ g=X.createLinearGradient(0,560,0,H+200);g.addColorStop(0,'#c48a54');g.addColorStop(.3,'#a8703e');g.addColorStop(1,'#7a4f2a');X.fillStyle=g;X.fillRect(-500,560,W+1000,500);
+ X.strokeStyle='rgba(70,40,15,.16)';X.lineWidth=2;for(let i=0;i<10;i++){X.beginPath();X.moveTo(-500,580+i*14);X.bezierCurveTo(200,570+i*15,600,595+i*13,W+500,577+i*14);X.stroke()}
+ drawSource(t);drawMeter(t);drawPhone(t);
+ X.font='900 22px system-ui';X.textAlign='center';[[MBOX.x+MBOX.w/2,40,L('SOUND METER','MÁY ĐO ÂM THANH')],[PBOX.x+PBOX.w/2,120,L('PHONE APP','ỨNG DỤNG ĐIỆN THOẠI')]].forEach(([x,y,s])=>{X.fillStyle='#ffd23f';const w=X.measureText(s).width+34;X.beginPath();X.roundRect(x-w/2,y-24,w,34,17);X.fill();X.fillStyle='#12263a';X.fillText(s,x,y)})}
+function drawSource(t){const cx=200,cy=330;const s=PLAY?SRC[PLAY.i]:null;
+ X.fillStyle='rgba(255,255,255,.75)';X.beginPath();X.arc(cx,cy,120,0,7);X.fill();X.strokeStyle='#d5dde6';X.lineWidth=4;X.stroke();
+ if(s||MIC){const a=Math.max(0,(MT.disp-18)/100);for(let k=0;k<4;k++){const f=((t*.9+k/4)%1);X.strokeStyle='rgba(29,95,214,'+(a*(1-f))+')';X.lineWidth=3+a*8;X.beginPath();X.arc(cx,cy,125+f*(110+a*120),-.7,.7);X.stroke()}}
+ const k=MIC?'mic':s?s.k:'ear',img=li(k);if(img.complete&&img.naturalWidth){const sh=s?Math.sin(t*30)*Math.max(0,(MT.disp-60)/30):0;X.drawImage(img,cx-85+sh,cy-85,170,170)}
+ X.fillStyle='#12263a';X.font='900 22px system-ui';X.textAlign='center';X.fillText(MIC?L('Our classroom (live)','Lớp học của chúng ta (trực tiếp)'):s?L(s.en,s.vi):L('Choose a sound below','Chọn một âm thanh bên dưới'),cx,cy+160)}
+function drawMeter(t){const {x,y,w,h}=MBOX,cx=x+w/2;
+ X.save();X.filter='blur(10px)';X.fillStyle='rgba(30,20,10,.35)';X.beginPath();X.ellipse(cx+20,y+h+12,w*.55,16,0,0,7);X.fill();X.restore();
+ // neck
+ let g=X.createLinearGradient(cx-26,0,cx+26,0);g.addColorStop(0,'#1a1b1d');g.addColorStop(.45,'#5a5e63');g.addColorStop(1,'#111');X.fillStyle=g;X.beginPath();X.moveTo(cx-22,y+90);X.lineTo(cx+22,y+90);X.lineTo(cx+46,y+170);X.lineTo(cx-46,y+170);X.closePath();X.fill();
+ X.drawImage(foam,cx-75,y-30,150,150);
+ // body
+ const by=y+160,bh=h-160;g=X.createLinearGradient(x,0,x+w,0);g.addColorStop(0,'#c65a00');g.addColorStop(.15,'#ff9a1f');g.addColorStop(.45,'#ffb347');g.addColorStop(.8,'#f08200');g.addColorStop(1,'#a84a00');X.fillStyle=g;X.beginPath();X.roundRect(x,by,w,bh,[40,40,60,60]);X.fill();
+ X.fillStyle='rgba(255,255,255,.25)';X.beginPath();X.roundRect(x+18,by+10,14,bh-40,7);X.fill();
+ // black face plate
+ g=X.createLinearGradient(0,by,0,by+bh);g.addColorStop(0,'#2b2e33');g.addColorStop(1,'#151719');X.fillStyle=g;X.beginPath();X.roundRect(x+22,by+20,w-44,bh-60,24);X.fill();
+ // LCD
+ const lx=x+38,ly=by+42,lw=w-76,lh=170;g=X.createLinearGradient(0,ly,0,ly+lh);g.addColorStop(0,MT.on?'#c9d8c0':'#9aa39a');g.addColorStop(1,MT.on?'#aebfa5':'#868f86');X.fillStyle=g;X.beginPath();X.roundRect(lx,ly,lw,lh,10);X.fill();X.strokeStyle='#0a0a0a';X.lineWidth=4;X.stroke();
+ if(MT.on){const on='#1a2016',off='rgba(30,40,25,.08)';X.fillStyle=on;X.font='800 11px system-ui';X.textAlign='left';X.font='800 9px system-ui';X.fillText('SOUND LEVEL METER',lx+8,ly+15);X.textAlign='right';X.fillText('dBA · FAST',lx+lw-8,ly+15);X.textAlign='left';if(MT.maxMode){X.font='900 11px system-ui';X.fillText('MAX',lx+8,ly+31)}
+  const v=MT.maxMode?MT.max:MT.show;lcdNum(lx+8,ly+34,23,58,Math.min(199.9,v),on,off);X.font='900 18px system-ui';X.textAlign='right';X.fillText('dB',lx+lw-8,ly+90);X.textAlign='left';
+  // bar graph
+  const n=Math.round(Math.max(0,Math.min(1,(MT.disp-20)/100))*30);for(let i=0;i<30;i++){X.fillStyle=i<n?on:off;X.fillRect(lx+10+i*(lw-20)/30,ly+128,(lw-20)/30-2,14)}
+  X.font='700 9px system-ui';[20,40,60,80,100,120].forEach((d,i)=>X.fillText(d,lx+8+i*(lw-30)/5,ly+158))}
+ X.fillStyle='rgba(255,255,255,.18)';X.beginPath();X.moveTo(lx+4,ly+4);X.lineTo(lx+lw*.55,ly+4);X.lineTo(lx+lw*.3,ly+lh-4);X.lineTo(lx+4,ly+lh-4);X.fill();
+ // buttons
+ const bY=ly+lh+40;PWR.x=cx;PWR.y=bY;g=X.createRadialGradient(cx-6,bY-6,2,cx,bY,24);g.addColorStop(0,'#ff8a80');g.addColorStop(1,'#b71c1c');X.fillStyle=g;X.beginPath();X.arc(cx,bY,22,0,7);X.fill();X.strokeStyle='#fff';X.lineWidth=3;X.beginPath();X.arc(cx,bY,9,-1.1,4.25);X.stroke();X.beginPath();X.moveTo(cx,bY-13);X.lineTo(cx,bY-2);X.stroke();
+ [['MAX',cx-72,bY+50],['A/C',cx,bY+62],['LIGHT',cx+72,bY+50]].forEach(([s,bx,byy])=>{g=X.createLinearGradient(0,byy-16,0,byy+16);g.addColorStop(0,'#5d6168');g.addColorStop(1,'#2c2f33');X.fillStyle=g;X.beginPath();X.roundRect(bx-30,byy-15,60,30,12);X.fill();X.fillStyle=s==='MAX'&&MT.maxMode?'#ffd23f':'#e8eaed';X.font='800 12px system-ui';X.textAlign='center';X.fillText(s,bx,byy+4)});
+ if(!MT.on&&Math.sin(t*5)>0){X.strokeStyle='#ffd23f';X.lineWidth=5;X.beginPath();X.arc(cx,bY,32,0,7);X.stroke()}}
+const MAXB=()=>({x:MBOX.x+MBOX.w/2-72,y:PWR.y+50});
+function drawPhone(t){const {x,y,w,h}=PBOX,cx=x+w/2;
+ X.save();X.filter='blur(10px)';X.fillStyle='rgba(30,20,10,.3)';X.beginPath();X.ellipse(cx+16,y+h+10,w*.5,14,0,0,7);X.fill();X.restore();
+ let g=X.createLinearGradient(x,0,x+w,0);g.addColorStop(0,'#2b2d31');g.addColorStop(.5,'#5b5f66');g.addColorStop(1,'#202226');X.fillStyle=g;X.beginPath();X.roundRect(x,y,w,h,36);X.fill();
+ const sx=x+10,sy=y+10,sw=w-20,sh=h-20;g=X.createLinearGradient(0,sy,0,sy+sh);g.addColorStop(0,'#1d2330');g.addColorStop(1,'#0d1017');X.fillStyle=g;X.beginPath();X.roundRect(sx,sy,sw,sh,28);X.fill();
+ X.fillStyle='#000';X.beginPath();X.roundRect(cx-40,sy+8,80,20,10);X.fill();
+ X.fillStyle='#fff';X.font='700 11px system-ui';X.textAlign='left';X.fillText('9:41',sx+18,sy+22);X.textAlign='right';X.fillText('▮▮▮ 🔋',sx+sw-16,sy+22);
+ X.textAlign='center';X.font='800 17px system-ui';X.fillText('Sound Level Meter',cx,sy+60);
+ const gy=sy+190,R=82,a0=Math.PI*.85,a1=Math.PI*2.15;const N=40;for(let i=0;i<N;i++){const f=i/N,a=a0+(a1-a0)*f;X.strokeStyle='hsl('+(120-120*f)+',85%,52%)';X.lineWidth=16;X.beginPath();X.arc(cx,gy,R,a,a+(a1-a0)/N+.01);X.stroke()}
+ const v=Math.max(0,Math.min(1,(MT.phone-20)/100)),an=a0+(a1-a0)*v;X.strokeStyle='#fff';X.lineWidth=4;X.beginPath();X.moveTo(cx,gy);X.lineTo(cx+Math.cos(an)*(R-6),gy+Math.sin(an)*(R-6));X.stroke();X.fillStyle='#fff';X.beginPath();X.arc(cx,gy,7,0,7);X.fill();
+ X.font='900 40px system-ui';X.fillText(Math.round(MT.phone)+' dB',cx,gy+60);
+ const bd=band(MT.phone);X.font='800 14px system-ui';X.fillStyle=bd[2];X.fillText(L(bd[0],bd[1]).toUpperCase(),cx,gy+84);
+ X.fillStyle='#161b26';X.beginPath();X.roundRect(sx+14,sy+sh-120,sw-28,90,12);X.fill();X.strokeStyle='#ffffff';X.lineWidth=1.5;X.beginPath();for(let i=0;i<180;i++){const yy=sy+sh-75-Math.max(-40,Math.min(40,MT.buf[i*2]*140));const xx=sx+18+i*(sw-36)/180;i?X.lineTo(xx,yy):X.moveTo(xx,yy)}X.stroke();
+ X.fillStyle='rgba(255,255,255,.07)';X.beginPath();X.moveTo(sx,sy);X.lineTo(sx+sw*.6,sy);X.lineTo(sx,sy+sh*.5);X.fill()}
+/* ---------- input on canvas ---------- */
+function toLocal(e){const r=cv.getBoundingClientRect(),d=cv.width/r.width;const ox=(cv.width/SC-W)/2,oy=(cv.height/SC-H)/2;return{x:(e.clientX-r.left)*d/SC-ox,y:(e.clientY-r.top)*d/SC-oy}}
+cv.addEventListener('pointerdown',e=>{audio();const p=toLocal(e);
+ if(Math.hypot(p.x-PWR.x,p.y-PWR.y)<34){MT.on=!MT.on;MT.max=0;MT.maxMode=false;if(MT.on){LS.tool.m=1;toast(L('The sound meter is ON. It measures how loud a sound is.','Máy đo đã BẬT. Nó đo độ to của âm thanh.'),'ok')}renderStep();return}
+ const mb=MAXB();if(Math.abs(p.x-mb.x)<32&&Math.abs(p.y-mb.y)<18&&MT.on){MT.maxMode=!MT.maxMode;MT.max=MT.disp;return}
+ if(p.x>PBOX.x&&p.x<PBOX.x+PBOX.w&&p.y>PBOX.y&&p.y<PBOX.y+PBOX.h){LS.tool.p=1;toast(L('A phone app can measure sound too. It uses the phone’s microphone.','Ứng dụng điện thoại cũng đo được âm thanh. Nó dùng micro của điện thoại.'),'ok');renderStep()}});
+/* ---------- loop ---------- */
+let last=performance.now();
+function step(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(!SCR.classList.contains('on')){if(MIC)stopMic();requestAnimationFrame(step);return}if(cv.width<2)fit();meterStep(dt);draw(now/1000);requestAnimationFrame(step)}
+/* ---------- UI ---------- */
+function renderSrcs(){$('#srcs').innerHTML=SRC.map((s,i)=>'<button class="src'+(PLAY&&PLAY.i===i?' on':'')+(LS.meas[i]!==undefined?' done':'')+'" data-i="'+i+'">'+im(s.k)+L(s.en,s.vi)+'</button>').join('')+'<button class="src live'+(MIC?' on':'')+'" id="liveB">'+im('mic')+(MIC?L('Stop','Dừng'):L('Our classroom (live)','Lớp học (trực tiếp)'))+'</button>';
+ $$('[data-i]').forEach(b=>b.onclick=()=>{if(!MT.on&&LS.s===0)return toast(L('First turn ON the sound meter (red button).','Trước tiên hãy BẬT máy đo (nút đỏ).'),'bad');if(!MT.on){MT.on=true}play(+b.dataset.i)});
+ $('#liveB').onclick=()=>{if(MIC)stopMic();else{MT.on=true;startMic()}}}
+function renderTable(){const ks=Object.keys(LS.meas).map(Number).sort((a,b)=>LS.meas[a]-LS.meas[b]);
+ $('#res').innerHTML='<tr><th>'+L('Sound','Âm thanh')+'</th><th></th><th style="text-align:right">'+L('Reading','Số đo')+'</th></tr>'+(ks.length||LS.live?ks.map(i=>{const v=LS.meas[i],b=band(v);return '<tr><td>'+im(SRC[i].k)+L(SRC[i].en,SRC[i].vi)+'</td><td><span class="lvl" style="width:'+(v/120*7)+'rem;background:'+b[2]+'"></span></td><td>'+v.toFixed(1)+' dB</td></tr>'}).join('')+(LS.live?'<tr><td>'+im('mic')+L('Our classroom','Lớp học')+'</td><td><span class="lvl" style="width:'+(LS.live/120*7)+'rem;background:'+band(LS.live)[2]+'"></span></td><td>≈ '+LS.live+' dB</td></tr>':''):'<tr><td colspan="3" style="color:#8a99a8;text-align:center">'+L('Measure a sound to fill the table.','Đo một âm thanh để điền bảng.')+'</td></tr>');
+ $('#lBands').innerHTML=['quiet','moderate','loud','can hurt ears'].map((n,i)=>'<span class="band" style="background:'+['#24963f','#c99700','#e06a00','#d7261e'][i]+'">'+L(n,['yên tĩnh','vừa','to','hại tai'][i])+'</span>').join(' ')}
+const STEPS=[['Meet the tools','Làm quen dụng cụ'],['Measure','Đo'],['Look and compare','Quan sát và so sánh'],['The unit: dB','Đơn vị: dB'],['Science words','Từ khoa học']];
+const LS={s:0,done:[0,0,0,0,0],tool:{m:0,p:0},q1:[],meas:{},live:0,pairs:null,pi:0,ord:[],ordSet:null,uq:[[],[],[],[]],tiles:[],wd:{}};
+function labels(){$('#lTable').textContent='📋 '+L('Results: quietest to loudest','Kết quả: từ nhỏ nhất đến to nhất');
+ $('#tabs').innerHTML=STEPS.map((s,i)=>'<button class="tab'+(LS.s===i?' on':'')+(LS.done[i]?' done':'')+'" data-s="'+i+'"><b>'+(LS.done[i]?'✓':i+1)+'</b>'+L(s[0],s[1])+'</button>').join('');
+ $$('.tab').forEach(b=>b.onclick=()=>{LS.s=+b.dataset.s;labels();renderStep()})}
+function mcq(id,q,opts,ok,chosen,onOk){return '<div class="dq"><b>'+id+'</b>'+bi(q[0],q[1])+'</div><div class="mcq" data-m="'+id+'">'+opts.map((o,i)=>'<button data-o="'+i+'" class="'+(chosen.includes(i)?(i===ok?'ok':'no'):'')+'"><i>'+'ABCD'[i]+'</i>'+bi(o[0],o[1])+'</button>').join('')+'</div>'}
+function bindMcq(id,ok,chosen,onOk){$$('[data-m="'+id+'"] [data-o]').forEach(b=>b.onclick=()=>{const i=+b.dataset.o;if(chosen.includes(i))return;chosen.push(i);if(i===ok){toast(L('Correct!','Chính xác!'),'ok');onOk&&onOk()}else toast(L('Not quite. Try again.','Chưa đúng. Thử lại.'),'bad');renderStep()})}
+function onMeasured(i){const s=SRC[i];toast(im(s.k).replace('<img','<img style="width:1.6rem;vertical-align:middle"')+' '+L(s.en,s.vi)+': <b>'+LS.meas[i].toFixed(1)+' dB</b>'+(s.db>=100?' ⚠ '+L('Loud sounds like this can hurt your ears!','Âm thanh to như vậy có thể làm hại tai!'):''),s.db>=100?'bad':'ok');
+ if(Object.keys(LS.meas).length>=5&&!LS.done[1]){LS.done[1]=1;labels()}renderStep()}
+function nxt(ok){return '<div class="nx"><button class="btn go" id="nx" '+(ok?'':'disabled')+'>'+L('Next','Tiếp')+' ➜</button></div>'}
+function renderStep(){const C=$('#stepC'),s=LS.s,hd=(n,en,vi)=>'<h2><small>'+L('STEP','BƯỚC')+' '+n+'</small>'+L(en,vi)+'</h2>';
+ if(s===0){const okQ=LS.q1.includes(0);if(LS.tool.m&&LS.tool.p&&okQ)LS.done[0]=1;
+  C.innerHTML=hd(1,'Meet the tools','Làm quen dụng cụ')+'<p>'+bi('We measure sound using decibels (dB). Scientists use a <b>sound meter</b>. You can also use a <b>phone app</b>.','Chúng ta đo âm thanh bằng đề-xi-ben (dB). Nhà khoa học dùng <b>máy đo âm thanh</b>. Em cũng có thể dùng <b>ứng dụng điện thoại</b>.')+'</p><div class="chk"><div><i class="'+(LS.tool.m?'y':'')+'">✓</i>'+bi('Press the red button to turn ON the sound meter.','Nhấn nút đỏ để BẬT máy đo âm thanh.')+'</div><div><i class="'+(LS.tool.p?'y':'')+'">✓</i>'+bi('Tap the phone to look at the app.','Chạm vào điện thoại để xem ứng dụng.')+'</div></div>'+
+  mcq(1,['What does this tool measure?','Dụng cụ này đo gì?'],[['How loud a sound is','Độ to của âm thanh'],['How hot something is','Độ nóng của vật'],['How heavy something is','Độ nặng của vật'],['How fast something moves','Tốc độ của vật']],0,LS.q1)+nxt(LS.done[0]);bindMcq(1,0,LS.q1,()=>{})}
+ if(s===1){const n=Object.keys(LS.meas).length;C.innerHTML=hd(2,'Measure the sounds','Đo các âm thanh')+'<p>'+bi('Tap a sound below. Listen and watch the meter. The reading goes into the results table. Measure at least 5 sounds.','Chạm vào một âm thanh bên dưới. Lắng nghe và quan sát máy đo. Số đo được ghi vào bảng kết quả. Đo ít nhất 5 âm thanh.')+'</p><div class="cmpq"><div class="q1">🔈 '+bi('Quieter = lower dB','Nhỏ hơn = dB thấp hơn')+'</div><div class="q2">🔊 '+bi('Louder = higher dB','To hơn = dB cao hơn')+'</div></div><div class="chk"><div><i class="'+(n>=5?'y':'')+'">'+Math.min(n,5)+'</i>'+bi(n+' of 5 sounds measured','Đã đo '+n+'/5 âm thanh')+'</div></div><p style="font-size:.92rem;color:#5c6e80;margin-top:.4rem">🎤 '+bi('Try <b>Our classroom (live)</b> to measure your own class! (The reading is approximate.)','Thử <b>Lớp học (trực tiếp)</b> để đo lớp mình! (Số đo gần đúng.)')+'</p><p style="font-size:.92rem;color:#5c6e80">⭐ '+bi('Press <b>MAX</b> on the meter to keep the highest reading.','Nhấn <b>MAX</b> trên máy để giữ số đo cao nhất.')+'</p>'+nxt(LS.done[1])}
+ if(s===2){const ks=Object.keys(LS.meas).map(Number);
+  if(ks.length<3){C.innerHTML=hd(3,'Look and compare!','Quan sát và so sánh!')+'<p>'+bi('Measure at least 3 sounds first (Step 2).','Hãy đo ít nhất 3 âm thanh trước (Bước 2).')+'</p>';return}
+  if(!LS.pairs){const P=[];for(let k=0;k<3;k++){let a,b;do{[a,b]=shuf(ks)}while(Math.abs(LS.meas[a]-LS.meas[b])<3||P.some(p=>p[0]===a&&p[1]===b));P.push([a,b,null])}LS.pairs=P;LS.ordSet=shuf(ks).slice(0,Math.min(5,ks.length));LS.ord=[]}
+  let h=hd(3,'Look and compare!','Quan sát và so sánh!');
+  if(LS.pi<3){const [a,b,ch]=LS.pairs[LS.pi];h+='<p>'+bi('Question '+(LS.pi+1)+' of 3: Which sound is <b>louder</b>? Use the table!','Câu '+(LS.pi+1)+'/3: Âm thanh nào <b>to hơn</b>? Dùng bảng kết quả!')+'</p><div class="pair">'+[a,b].map((k,j)=>'<button data-k="'+k+'">'+im(SRC[k].k)+L(SRC[k].en,SRC[k].vi)+'</button>'+(j?'':'<span class="vs">VS</span>')).join('')+'</div>'}
+  else{const done=LS.ord.length===LS.ordSet.length;h+='<p>'+bi('Now put these sounds in order, from the <b>quietest</b> to the <b>loudest</b>. Tap them one by one.','Giờ sắp xếp các âm thanh từ <b>nhỏ nhất</b> đến <b>to nhất</b>. Chạm lần lượt từng cái.')+'</p><div class="line">'+LS.ord.map(k=>'<div>'+im(SRC[k].k)+LS.meas[k].toFixed(0)+' dB</div>').join('')+'</div><div class="order">'+LS.ordSet.map(k=>'<button data-o2="'+k+'" class="'+(LS.ord.includes(k)?'used':'')+'">'+im(SRC[k].k)+L(SRC[k].en,SRC[k].vi)+'</button>').join('')+'</div>'+(done?'<div class="big">'+bi('Quieter sounds have lower dB. Louder sounds have higher dB.','Âm thanh nhỏ hơn có dB thấp hơn. Âm thanh to hơn có dB cao hơn.')+'</div>':'')+nxt(done)}
+  C.innerHTML=h;
+  $$('.pair [data-k]').forEach(b=>b.onclick=()=>{const [a,bb]=LS.pairs[LS.pi],k=+b.dataset.k,o=k===a?bb:a;if(LS.meas[k]>LS.meas[o]){b.classList.add('ok');toast(L(SRC[k].en,SRC[k].vi)+': '+LS.meas[k].toFixed(1)+' dB &gt; '+LS.meas[o].toFixed(1)+' dB','ok');setTimeout(()=>{LS.pi++;renderStep()},900)}else{b.classList.add('no');toast(L('Look at the dB numbers. Higher dB = louder.','Nhìn số dB. dB cao hơn = to hơn.'),'bad')}});
+  $$('[data-o2]').forEach(b=>b.onclick=()=>{const k=+b.dataset.o2;if(LS.ord.includes(k))return;const rest=LS.ordSet.filter(x=>!LS.ord.includes(x));const min=rest.reduce((m,x)=>LS.meas[x]<LS.meas[m]?x:m,rest[0]);if(LS.meas[k]<=LS.meas[min]){LS.ord.push(k);if(LS.ord.length===LS.ordSet.length){LS.done[2]=1;labels()}renderStep()}else toast(L('There is a quieter sound. Check the dB numbers.','Còn âm thanh nhỏ hơn. Kiểm tra số dB.'),'bad')})}
+ if(s===3){const U=LS.uq,okAll=U[0].includes(0)&&LS.tiles.join('')==='dB'&&U[2].includes(0)&&U[3].includes(1);if(okAll)LS.done[3]=1;
+  let h=hd(4,'The unit: decibels','Đơn vị: đề-xi-ben')+'<p>'+bi('Answer the discussion questions.','Trả lời các câu hỏi thảo luận.')+'</p>'+mcq(2,['What do we call the unit?','Đơn vị gọi là gì?'],[['decibels','đề-xi-ben'],['degrees','độ'],['metres','mét'],['kilograms','ki-lô-gam']],0,U[0]);
+  if(U[0].includes(0)){h+='<div class="dq"><b>3</b>'+bi('How do we write it? Build the symbol.','Viết thế nào? Ghép ký hiệu.')+'</div><div class="slots"><span class="'+(LS.tiles[0]?'full':'')+'">'+(LS.tiles[0]||'')+'</span><span class="'+(LS.tiles[1]?'full':'')+'">'+(LS.tiles[1]||'')+'</span></div>'+(LS.tiles.length<2?'<div class="tiles">'+shufTiles().map(c=>'<button data-t="'+c+'">'+c+'</button>').join('')+'</div>':'')}
+  if(LS.tiles.length===2){h+=mcq(4,['Is the d small or big?','Chữ d nhỏ hay lớn?'],[['small (d)','nhỏ (d)'],['big (D)','lớn (D)']],0,U[2]);if(U[2].includes(0))h+=mcq(5,['Is the B small or big?','Chữ B nhỏ hay lớn?'],[['small (b)','nhỏ (b)'],['big (B)','lớn (B)']],1,U[3])}
+  if(okAll)h+='<div class="big">dB = '+bi('small d + capital B','d nhỏ + B lớn')+'</div>';
+  C.innerHTML=h+nxt(okAll);bindMcq(2,0,U[0]);bindMcq(4,0,U[2]);bindMcq(5,1,U[3]);
+  $$('[data-t]').forEach(b=>b.onclick=()=>{const c=b.dataset.t,need='dB'[LS.tiles.length];if(c===need){LS.tiles.push(c);renderStep()}else toast(c==='D'?L('Use a small d.','Dùng d nhỏ.'):c==='b'?L('Use a capital B.','Dùng B lớn.'):L('Which letter comes first?','Chữ nào đứng trước?'),'bad')})}
+ if(s===4){const W3=[['Decibels (dB)','Đề-xi-ben','A unit for measuring sound.'],['Sound meter','Máy đo âm thanh','A tool to measure sound volume.'],['App','Ứng dụng','A program on a phone.']];
+  const vOpts=shufOnce('v',W3.map(w=>w[1])),mOpts=shufOnce('m',W3.map(w=>w[2]));const allOk=W3.every((w,i)=>LS.wd['v'+i]===w[1]&&LS.wd['m'+i]===w[2]);if(allOk)LS.done[4]=1;
+  C.innerHTML=hd(5,'Science words','Từ khoa học')+'<p>'+bi('Match each word to its Vietnamese word and its easy meaning.','Nối mỗi từ với từ tiếng Việt và nghĩa đơn giản.')+'</p><table class="words"><tr><th>English</th><th>Vietnamese</th><th>Easy meaning</th></tr>'+W3.map((w,i)=>'<tr><td>'+w[0]+'</td><td><select data-w="v'+i+'" class="'+(LS.wd['v'+i]?(LS.wd['v'+i]===w[1]?'ok':'no'):'')+'"><option value="">…</option>'+vOpts.map(o=>'<option'+(LS.wd['v'+i]===o?' selected':'')+'>'+o+'</option>').join('')+'</select></td><td><select data-w="m'+i+'" class="'+(LS.wd['m'+i]?(LS.wd['m'+i]===w[2]?'ok':'no'):'')+'"><option value="">…</option>'+mOpts.map(o=>'<option'+(LS.wd['m'+i]===o?' selected':'')+'>'+o+'</option>').join('')+'</select></td></tr>').join('')+'</table>'+
+  (allOk?'<div class="big">✅ '+bi('Measuring helps everyone agree on how big or small something is.','Đo đạc giúp mọi người thống nhất về độ lớn hay nhỏ của một thứ.')+'</div><p style="margin-top:.4rem;font-size:.95rem">🗣 '+bi('Read the words aloud together: decibels, sound meter, app.','Cả lớp cùng đọc to: decibels, sound meter, app.')+'</p>':'');
+  $$('select[data-w]').forEach(sel=>sel.onchange=()=>{LS.wd[sel.dataset.w]=sel.value;const i=+sel.dataset.w.slice(1),w=W3[i],ok=sel.dataset.w[0]==='v'?sel.value===w[1]:sel.value===w[2];if(sel.value&&!ok)toast(L('Not a match. Try again.','Chưa khớp. Thử lại.'),'bad');renderStep()})}
+ const n=$('#nx');if(n)n.onclick=()=>{LS.s=Math.min(4,s+1);labels();renderStep()};labels()}
+const SH={};function shufOnce(k,a){if(!SH[k])SH[k]=shuf(a);return SH[k]}
+function shufTiles(){return shufOnce('t',['d','D','b','B'])}
+$('#sndBtn').onclick=()=>{SOUND=!SOUND;$('#sndBtn').textContent=SOUND?'🔊':'🔇';$('#sndBtn').classList.toggle('on',SOUND)};
+document.getElementById('viBtn').addEventListener('click',()=>setTimeout(()=>{VI=document.body.classList.contains('vi-on');labels();renderStep();renderTable();renderSrcs()},0));
+SRC.forEach(s=>li(s.k));['ear','mic'].forEach(li);
+fit();labels();renderStep();renderTable();renderSrcs();requestAnimationFrame(step);setTimeout(fit,100);
+})();
 /* ===== Sound: drum and rice lab ===== */
 (()=>{
 const HOST=document.getElementById('drumHost'),ROOT=HOST.attachShadow({mode:'open'});ROOT.appendChild(document.getElementById('drumTpl').content.cloneNode(true));
