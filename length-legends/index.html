@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Length Legends: Kingdom Conquest</title>
+<style>
+:root{--brown:#5a1d0e;--brown2:#7a2c14;--cream:#fbe9c4;--ink:#2b1a0e;--navy:#12306f;--yel:#ffd23f}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:clamp(11px,1.06vw,24px)}html,body{height:100%}
+body{font-family:"Nunito","Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:#0b1020;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+button{font:inherit;color:inherit;border:0;cursor:pointer;background:none}button:disabled{opacity:.4;cursor:default}
+img{-webkit-user-drag:none;pointer-events:none}
+.vi{display:none;font-weight:600;opacity:.8;font-size:.78em}
+body.vi-on .vi{display:block}
+.screen{position:absolute;inset:0;display:none;flex-direction:column}
+.screen.on{display:flex}
+.title-font{font-family:"Impact","Haettenschweiler","Arial Black",system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase}
+/* top-right tools */
+#tools{position:fixed;top:.6rem;right:.7rem;display:flex;gap:.4rem;z-index:60}
+#tools button{background:rgba(0,0,0,.45);color:#fff;font-weight:800;border-radius:999px;padding:.45rem .85rem;font-size:.95rem;border:.12rem solid rgba(255,255,255,.25)}
+#tools button.on{background:#fff;color:#111}
+/* starry */
+.stars{background:radial-gradient(ellipse at 50% 40%,#1b2b5a 0%,#0b1020 55%,#05070f 100%)}
+.stars::before{content:"";position:absolute;inset:0;background-image:var(--st);opacity:.9}
+.glow{position:absolute;width:40rem;height:40rem;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(110,160,255,.35),rgba(110,160,255,0) 65%)}
+#title{align-items:center;justify-content:center;gap:1.2rem;color:#fff;text-align:center}
+#title h1{font-size:6.5rem;line-height:.9;color:#fff;text-shadow:0 .3rem 0 #000,0 0 2rem rgba(120,170,255,.6);position:relative}
+#title h1 small{display:block;font-size:2.1rem;letter-spacing:.3em;background:#fff;color:#0b1020;padding:.1rem 1rem;margin:.8rem auto 0;width:max-content;text-shadow:none}
+.emb{display:flex;gap:2.5rem;justify-content:center;position:relative}
+.emb div{display:flex;flex-direction:column;align-items:center;font-weight:900;font-size:1.05rem}
+.emb img{width:7rem;filter:drop-shadow(0 0 1.2rem var(--c))}
+.bigbtn{position:relative;background:linear-gradient(#ffe066,#f2b400);color:#2b1a0e;font-weight:900;font-size:1.6rem;padding:.8rem 2.6rem;border-radius:999px;box-shadow:0 .35rem 0 #a87600,0 0 2rem rgba(255,210,63,.4)}
+.bigbtn:active{transform:translateY(.2rem);box-shadow:0 .1rem 0 #a87600}
+.ghost{position:relative;color:#fff;font-weight:800;border:.15rem solid rgba(255,255,255,.6);border-radius:999px;padding:.6rem 1.6rem;font-size:1.15rem}
+.credit{position:absolute;bottom:.6rem;font-size:.75rem;opacity:.55}
+/* rules */
+#rules{align-items:center;justify-content:center;color:#fff;text-align:center;gap:1.5rem}
+#ruleTxt{position:relative;font-size:2.9rem;font-weight:900;max-width:70rem;line-height:1.15;text-shadow:0 .2rem .6rem #000}
+#ruleTxt em{font-style:normal;color:#ffd23f}#ruleTxt b{color:#8fd3ff}
+#ruleArt{position:relative;height:22rem;width:70rem;display:flex;align-items:center;justify-content:center;gap:2rem}
+.rnav{position:relative;display:flex;gap:1rem;align-items:center}
+.dots{display:flex;gap:.4rem}.dots i{width:.7rem;height:.7rem;border-radius:50%;background:rgba(255,255,255,.3)}.dots i.on{background:#ffd23f}
+/* parchment */
+.parch{background:radial-gradient(ellipse at center,#f6e7c6 0%,#ecd3a0 60%,#c9a46a 100%);position:relative}
+.parch::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='4' seed='3'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .12  0 0 0 .55 0'/></filter><rect width='300' height='300' filter='url(%23n)'/></svg>");opacity:.35;pointer-events:none}
+.parch::after{content:"";position:absolute;inset:1rem;border:.25rem solid rgba(90,29,14,.55);border-radius:1rem;pointer-events:none;box-shadow:inset 0 0 0 .4rem rgba(90,29,14,.12)}
+.scroll{position:relative;z-index:2;background:linear-gradient(#6b2512,var(--brown));color:var(--cream);border-radius:0 0 1.6rem 1.6rem;padding:.8rem 2.5rem 1rem;box-shadow:0 .5rem 1rem rgba(0,0,0,.35);text-align:center}
+/* setup */
+#setup{align-items:center;justify-content:center;gap:1rem}
+#setup h2{position:relative;z-index:2;font-size:3rem;color:var(--brown);margin-top:1.5rem}
+.ngrid{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;width:88rem;max-width:94vw}
+.ncard{background:rgba(255,250,236,.85);border-radius:1.2rem;border:.3rem solid var(--c);padding:.8rem;display:flex;flex-direction:column;align-items:center;gap:.4rem}
+.ncard img{width:5.5rem}.ncard b{font-size:1.35rem;font-weight:900;color:var(--c)}
+.ncard input{font:inherit;font-weight:800;font-size:1.1rem;width:100%;border-radius:.7rem;border:.15rem solid #d9c49a;padding:.35rem .6rem;background:#fff}
+.ncard small{font-weight:800;color:#7a5a36}
+.opts{position:relative;z-index:2;display:flex;gap:1rem;align-items:center;font-weight:800;color:var(--brown)}
+.opts select{font:inherit;font-weight:800;border-radius:.6rem;padding:.3rem .6rem;border:.15rem solid #b08850;background:#fff8e6}
+/* map screen */
+#map{flex-direction:row;background:#0d2c4f}
+#mapW{flex:1;min-width:0;position:relative}
+#mapSvg{width:100%;height:100%;display:block}
+.land{cursor:pointer;transition:fill .5s}
+.land.tgt{stroke:#ffd23f;stroke-width:5;animation:pulse 1s infinite}
+@keyframes pulse{50%{stroke-width:9;stroke:#fff}}
+.land.dim{opacity:.55}
+.lbl{pointer-events:none}
+#side{width:25rem;flex:none;background:linear-gradient(#1a2236,#0d1424);color:#fff;display:flex;flex-direction:column;gap:.6rem;padding:3.4rem .8rem .8rem}
+#side h3{font-size:1.5rem;line-height:1}#side h3 small{display:block;font-size:.8rem;letter-spacing:.2em;color:#ffd23f}
+.nrow{display:grid;grid-template-columns:3.2rem 1fr auto;gap:.5rem;align-items:center;background:rgba(255,255,255,.06);border-radius:.9rem;padding:.4rem .6rem;border-left:.45rem solid var(--c)}
+.nrow img{width:3rem}.nrow b{font-weight:900;font-size:1.05rem;display:block;color:var(--c2)}.nrow small{opacity:.75;font-size:.78rem;font-weight:700;display:block;line-height:1.15}
+.nrow .cnt{font-weight:900;font-size:1.8rem;text-align:right;line-height:1}.nrow .cnt small{font-size:.65rem;opacity:.7}
+.nrow.att{box-shadow:0 0 0 .2rem #ffd23f}.nrow.safe{box-shadow:0 0 0 .2rem #8fd3ff}
+.tag{display:inline-block;font-size:.7rem;font-weight:900;border-radius:999px;padding:.05rem .45rem;margin-left:.3rem;vertical-align:middle}.tag.a{background:#ffd23f;color:#2b1a0e}.tag.s{background:#8fd3ff;color:#0b1020}
+#msg{background:#fff8e6;color:var(--ink);border-radius:1rem;padding:.7rem .9rem;font-weight:800;font-size:1.05rem;line-height:1.25;min-height:5rem}
+#msg b{color:var(--brown)}
+.sbtn{background:linear-gradient(#ffe066,#f2b400);color:#2b1a0e;font-weight:900;font-size:1.3rem;padding:.8rem;border-radius:1rem;box-shadow:0 .25rem 0 #a87600}
+.sbtn2{background:rgba(255,255,255,.1);color:#fff;font-weight:800;padding:.5rem;border-radius:.8rem;font-size:.95rem}
+.srow{display:flex;gap:.4rem}.srow button{flex:1}
+.round{font-weight:800;opacity:.75;text-align:center;font-size:.9rem}
+/* letters */
+#letters{align-items:center;justify-content:center;gap:1rem}
+.brush{position:relative;z-index:2;font-size:3.3rem;color:#f3d29b;background:var(--brown);padding:.3rem 3rem;transform:rotate(-1.5deg);clip-path:polygon(2% 10%,98% 0,100% 85%,4% 100%)}
+.lgrid{position:relative;z-index:2;display:grid;grid-template-columns:repeat(7,1fr);gap:.5rem 1.6rem}
+.lgrid button{font-size:5.2rem;font-weight:900;color:var(--brown);width:7rem;height:6.6rem;line-height:1;border-radius:1rem;transition:transform .15s}
+.lgrid button:hover:not(:disabled){transform:scale(1.12);background:rgba(90,29,14,.08)}
+.lgrid button.used{color:rgba(90,29,14,.22);text-decoration:line-through;text-decoration-thickness:.3rem}
+.back{position:absolute;left:1.8rem;bottom:1.6rem;z-index:3;background:var(--brown);color:var(--cream);font-weight:800;padding:.55rem 1.2rem;border-radius:999px}
+/* question */
+#question{align-items:stretch}
+#qHead{margin:0 13rem 0 4rem;font-size:2.1rem;font-weight:800;line-height:1.2}
+#qHead small{display:block;font-size:.95rem;opacity:.75;letter-spacing:.12em;font-weight:900}
+#qBody{position:relative;z-index:2;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:.5rem 3rem}
+#qBody svg{width:100%;height:100%;max-height:100%}
+#qFoot{position:relative;z-index:2;margin:0 4rem;background:linear-gradient(var(--brown),#3e1206);color:var(--cream);border-radius:1.6rem 1.6rem 0 0;padding:.7rem 1.5rem;display:flex;align-items:center;gap:1rem;min-height:5.6rem}
+#qAns{flex:1;font-size:2rem;font-weight:900;text-align:center}
+#qAns.hide{font-size:1.3rem;opacity:.6;font-weight:800}
+.qbtn{background:var(--cream);color:var(--brown);font-weight:900;font-size:1.15rem;padding:.6rem 1.2rem;border-radius:999px;white-space:nowrap}
+.qbtn.y{background:#ffd23f;color:#2b1a0e}
+#timer{width:4.6rem;height:4.6rem;flex:none;position:relative;cursor:pointer}
+#timer svg{width:100%;height:100%;transform:rotate(-90deg)}#timer b{position:absolute;inset:0;display:grid;place-items:center;font-size:1.4rem}
+/* picker overlay */
+#pick{position:absolute;inset:0;z-index:20;background:rgba(10,8,4,.72);display:none;align-items:center;justify-content:center}
+#pick.on{display:flex}
+.pbox{background:#fff8e6;border-radius:1.6rem;padding:1.4rem 1.8rem;width:min(80rem,94vw);display:flex;flex-direction:column;gap:1rem;align-items:center;border:.35rem solid var(--brown)}
+.pbox h3{font-size:2rem;color:var(--brown);text-align:center;line-height:1.15}
+.pbox h3 small{display:block;font-size:1.05rem;color:#7a5a36}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem;width:100%}
+.tgrid .col{display:flex;flex-direction:column;gap:.5rem;align-items:stretch;background:#fff;border-radius:1rem;padding:.6rem;border:.25rem solid var(--c)}
+.tgrid .col>div{display:flex;align-items:center;gap:.4rem;font-weight:900;color:var(--c);justify-content:center}.tgrid .col>div img{width:2.4rem}
+.tgrid button{background:var(--c);color:#fff;font-weight:900;font-size:1.2rem;padding:.6rem;border-radius:.8rem}
+.tgrid button:disabled{opacity:.25}
+.none{background:#ddd0b5;color:#4a3a2a;font-weight:900;padding:.6rem 1.6rem;border-radius:999px;font-size:1.1rem}
+/* battle */
+#battle{align-items:center;justify-content:center;color:#fff;gap:1rem}
+.bwrap{position:relative;display:flex;align-items:center;gap:3rem}
+.fighter{display:flex;flex-direction:column;align-items:center;gap:.6rem;width:24rem}
+.fighter .em{width:13rem;filter:drop-shadow(0 0 2rem var(--c))}
+.fighter b{font-size:2rem;color:var(--c2);text-shadow:0 .15rem 0 #000}
+.fighter small{font-weight:800;opacity:.8;font-size:1.1rem}
+.hand{width:9rem;height:9rem;transform-origin:50% 90%}
+.hand.l{transform:rotate(90deg) scaleX(-1)}.hand.r{transform:rotate(-90deg)}
+.shake .hand.l{animation:shL .5s ease-in-out infinite}.shake .hand.r{animation:shR .5s ease-in-out infinite}
+@keyframes shL{50%{transform:rotate(60deg) scaleX(-1)}}@keyframes shR{50%{transform:rotate(-60deg)}}
+.vs{font-size:6rem;color:#ffd23f;text-shadow:0 .3rem 0 #000;position:relative}
+#bCall{position:relative;font-size:5rem;color:#fff;min-height:6.5rem;text-shadow:0 .3rem 0 #000}
+#bTitle{position:relative;font-size:2.6rem;font-weight:900;text-align:center;line-height:1.15}#bTitle em{font-style:normal;color:#ffd23f}
+.brow{position:relative;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.wbtn{background:var(--c);color:#fff;font-weight:900;font-size:1.4rem;padding:.8rem 1.8rem;border-radius:1rem;box-shadow:0 .3rem 0 rgba(0,0,0,.4);display:flex;align-items:center;gap:.5rem}.wbtn img{width:2.6rem}
+/* end */
+#end{align-items:center;justify-content:center;color:#fff;gap:1rem}
+.pod{position:relative;display:flex;align-items:flex-end;gap:1.2rem}
+.pd{width:15rem;display:flex;flex-direction:column;align-items:center}
+.pd img{width:7rem;filter:drop-shadow(0 0 1.4rem var(--c))}.pd b{font-size:1.5rem;color:var(--c2);text-align:center}.pd small{font-weight:800}
+.pd .blk{width:100%;border-radius:1rem 1rem 0 0;display:grid;place-items:center;font-size:3.5rem;font-weight:900;color:#2b1a0e;margin-top:.4rem}
+#toast{position:fixed;left:50%;top:1rem;transform:translate(-50%,-180%);background:#fff8e6;color:var(--ink);font-weight:900;font-size:1.4rem;padding:.7rem 1.6rem;border-radius:1rem;z-index:90;transition:transform .3s;border:.25rem solid var(--brown);text-align:center;max-width:80vw}
+#toast.on{transform:translate(-50%,0)}
+.conf{position:fixed;top:-3rem;width:2.4rem;animation:fall 2.4s ease-in forwards;pointer-events:none;z-index:95}@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.2}}
+</style>
+</head>
+<body>
+<div id="tools"><button id="viBtn">Tiếng Việt</button><button id="sndBtn" class="on">🔊</button><button id="fsBtn">⛶</button></div>
+
+<section class="screen stars on" id="title"><div class="glow"></div>
+ <h1 class="title-font">Length Legends<small>Kingdom Conquest</small></h1>
+ <div class="emb" id="tEmb"></div>
+ <div style="position:relative;font-weight:800;font-size:1.2rem;opacity:.85">Unit 7 · Length · m, cm and mm — Review game<span class="vi">Bài 7 · Độ dài · m, cm và mm — Trò chơi ôn tập</span></div>
+ <div style="display:flex;gap:1rem;position:relative"><button class="bigbtn" id="goRules">▶ How to play<span class="vi">Cách chơi</span></button><button class="ghost" id="goResume" style="display:none">↩ Continue the game</button></div>
+</section>
+
+<section class="screen stars" id="rules"><div class="glow"></div>
+ <div id="ruleArt"></div><div id="ruleTxt"></div>
+ <div class="rnav"><button class="ghost" id="rPrev">◀</button><div class="dots" id="rDots"></div><button class="ghost" id="rNext">▶</button><button class="bigbtn" id="rSkip" style="font-size:1.1rem;padding:.6rem 1.6rem">Set up teams ➜</button></div>
+</section>
+
+<section class="screen parch" id="setup">
+ <h2 class="title-font">Choose your teams</h2>
+ <div class="ngrid" id="ngrid"></div>
+ <div class="opts">⏱ Timer per question: <select id="tSel"><option value="0">No timer</option><option value="30">30 s</option><option value="60" selected>60 s</option><option value="90">90 s</option><option value="120">2 min</option></select></div>
+ <div style="position:relative;z-index:2;display:flex;gap:1rem"><button class="back" style="position:static" id="sBack">◀ Rules</button><button class="bigbtn" id="sGo">⚔ Start the war!</button></div>
+</section>
+
+<section class="screen" id="map">
+ <div id="mapW"><svg id="mapSvg"></svg></div>
+ <aside id="side">
+  <h3 class="title-font"><small>LENGTH LEGENDS</small>Kingdom Conquest</h3>
+  <div id="nlist" style="display:flex;flex-direction:column;gap:.45rem"></div>
+  <div id="msg"></div>
+  <button class="sbtn" id="mLetter">🔤 Choose a letter<span class="vi">Chọn một chữ cái</span></button>
+  <div class="srow"><button class="sbtn2" id="mUndo">↩ Undo</button><button class="sbtn2" id="mSkip">⏭ Skip attack</button></div>
+  <div class="srow"><button class="sbtn2" id="mRules">📜 Rules</button><button class="sbtn2" id="mEnd">🏁 End game</button></div>
+  <div class="round" id="round"></div>
+ </aside>
+</section>
+
+<section class="screen parch" id="letters">
+ <div class="brush title-font">Choose a letter</div>
+ <div class="lgrid" id="lgrid"></div>
+ <button class="back" id="lBack">◀ Map</button>
+</section>
+
+<section class="screen parch" id="question">
+ <div class="scroll" id="qHead"></div>
+ <div id="qBody"></div>
+ <div id="qFoot"><div id="timer" title="Start / pause timer"></div><div id="qAns" class="hide"></div><button class="qbtn y" id="qShow">👁 Show answer</button><button class="qbtn" id="qDone" style="display:none">⚔ Who got it first?</button></div>
+ <div id="pick"><div class="pbox"><h3 id="pTitle"></h3><div class="tgrid" id="pGrid"></div><button class="none" id="pNone"></button></div></div>
+</section>
+
+<section class="screen stars" id="battle"><div class="glow"></div>
+ <div id="bTitle"></div>
+ <div class="bwrap" id="bWrap"></div>
+ <div id="bCall" class="title-font"></div>
+ <div class="brow" id="bRow"></div>
+</section>
+
+<section class="screen stars" id="end"><div class="glow"></div>
+ <h1 class="title-font" style="position:relative;font-size:4.5rem;color:#ffd23f;text-shadow:0 .3rem 0 #000">The war is over!</h1>
+ <div class="pod" id="pod"></div>
+ <div id="mvp" style="position:relative;font-weight:800;font-size:1.2rem;text-align:center"></div>
+ <div style="position:relative;display:flex;gap:1rem"><button class="ghost" id="eMap">🗺 Back to the map</button><button class="bigbtn" id="eNew">🔄 New game</button></div>
+</section>
+<div id="toast"></div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const IMG=k=>'img/'+k+'.webp',im=(k,st,cl)=>'<img src="'+IMG(k)+'" alt=""'+(st?' style="'+st+'"':'')+(cl?' class="'+cl+'"':'')+'>';
+let VI=false;const bi=(en,vi)=>en+'<span class="vi">'+vi+'</span>',L=(en,vi)=>VI?vi:en;
+const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+function toast(m){const t=$('#toast');t.innerHTML=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2600)}
+function confetti(n,list){for(let i=0;i<(n||30);i++){const s=document.createElement('img');s.src=IMG((list||['2b50','1f389','1f451','1f6a9'])[i%(list||[1,2,3,4]).length]);s.className='conf';s.style.left=(Math.random()*96)+'vw';s.style.animationDelay=(Math.random()*.6)+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),3200)}}
+/* stars background */
+{let sh=[];for(let i=0;i<160;i++){const x=Math.random()*100,y=Math.random()*100,r=Math.random()<.85?1:2;sh.push('radial-gradient('+r+'px '+r+'px at '+x+'% '+y+'%,rgba(255,255,255,'+(.4+Math.random()*.6)+'),transparent)')}document.documentElement.style.setProperty('--st',sh.join(','))}
+/* ---------- data ---------- */
+const NAT=[{n:['Ruby Dragons','Rồng Hồng Ngọc'],c:'#d7261e',c2:'#ff8a7a',e:'1f409',cap:['Metre Citadel','Thành Mét']},
+ {n:['Sapphire Dolphins','Cá Heo Lam Ngọc'],c:'#1d5fd6',c2:'#8fc2ff',e:'1f42c',cap:['Centimetre Harbour','Cảng Xăng-ti-mét']},
+ {n:['Emerald Turtles','Rùa Lục Bảo'],c:'#1f9d4c',c2:'#86e3a5',e:'1f422',cap:['Millimetre Grove','Rừng Mi-li-mét']},
+ {n:['Amber Lions','Sư Tử Hổ Phách'],c:'#e39b00',c2:'#ffd56b',e:'1f981',cap:['Ruler Keep','Pháo Đài Thước Kẻ']}];
+const MAP={"regs":[{"d":"M136,215 L110,211 L80,199 L71,190 L65,176 L65,168 L63,166 L63,142 L67,130 L94,105 L110,99 L128,99 L162,111 L175,124 L181,138 L183,172 L175,196 L168,205 L156,211 L138,213 L136,215Z","lx":122,"ly":156,"cx":123,"cy":157,"area":2789,"island":1,"n":["Snail Shell Isle","\u0110\u1ea3o V\u1ecf \u1ed0c","1f40c"],"own":-1,"num":1},{"d":"M498,483 L478,483 L455,476 L457,474 L461,450 L463,448 L467,424 L475,396 L520,395 L522,397 L560,397 L583,440 L587,444 L589,452 L570,469 L556,477 L542,479 L540,481 L500,481 L498,483Z","lx":510,"ly":438,"cx":519,"cy":439,"area":2308,"island":2,"n":["Millimetre Grove","R\u1eebng Mi-li-m\u00e9t","1f3f0"],"own":2,"num":19},{"d":"M578,251 L572,251 L535,212 L539,148 L542,141 L550,141 L552,143 L584,143 L608,159 L630,163 L639,170 L643,178 L648,181 L661,196 L663,216 L665,218 L664,223 L634,233 L628,233 L578,251Z","lx":586,"ly":198,"cx":592,"cy":195,"area":2480,"island":2,"n":["Tape Measure Tundra","L\u00e3nh Nguy\u00ean Th\u01b0\u1edbc D\u00e2y","2744"],"own":-1,"num":5},{"d":"M838,449 L806,449 L804,447 L784,445 L782,443 L758,443 L721,432 L766,359 L826,361 L865,436 L850,445 L838,449Z","lx":792,"ly":402,"cx":795,"cy":407,"area":2234,"island":2,"n":["Centimetre Harbour","C\u1ea3ng X\u0103ng-ti-m\u00e9t","1f3f0"],"own":1,"num":20},{"d":"M478,313 L473,312 L467,294 L445,248 L534,211 L573,252 L563,306 L536,307 L534,309 L508,309 L506,311 L480,311 L478,313Z","lx":522,"ly":264,"cx":513,"cy":266,"area":2230,"island":2,"n":["Inchworm Woods","R\u1eebng S\u00e2u \u0110o","1f332"],"own":-1,"num":11},{"d":"M454,477 L434,471 L398,465 L378,453 L368,451 L356,445 L343,436 L351,420 L351,416 L365,390 L365,386 L378,363 L454,363 L459,368 L475,398 L467,424 L467,432 L461,450 L457,474 L454,477Z","lx":414,"ly":414,"cx":414,"cy":415,"area":2720,"island":2,"n":["Plank Point","M\u0169i T\u1ea5m V\u00e1n","1fab5"],"own":-1,"num":18},{"d":"M454,363 L376,363 L357,328 L353,324 L347,310 L343,306 L351,282 L356,277 L360,277 L366,273 L444,247 L453,262 L459,280 L473,308 L473,316 L469,328 L454,363Z","lx":414,"ly":312,"cx":411,"cy":310,"area":2742,"island":2,"n":["Grasshopper Meadows","\u0110\u1ed3ng C\u1ecf Ch\u00e2u Ch\u1ea5u","1f33e"],"own":-1,"num":10},{"d":"M342,435 L318,419 L304,417 L302,415 L258,411 L237,400 L243,388 L243,384 L278,317 L312,311 L314,309 L322,309 L342,303 L361,338 L365,342 L371,356 L375,360 L377,364 L351,416 L351,420 L342,435Z","lx":314,"ly":364,"cx":311,"cy":367,"area":2856,"island":2,"n":["Playground Plateau","Cao Nguy\u00ean S\u00e2n Ch\u01a1i","1f6dd"],"own":-1,"num":9},{"d":"M450,247 L444,247 L441,242 L441,236 L437,228 L437,222 L433,214 L433,208 L427,194 L427,188 L423,180 L423,174 L417,156 L422,153 L444,155 L470,141 L508,141 L522,137 L538,139 L541,142 L541,146 L539,148 L539,170 L537,172 L535,210 L450,247Z","lx":480,"ly":186,"cx":481,"cy":185,"area":2360,"island":2,"n":["Ruler Keep","Ph\u00e1o \u0110\u00e0i Th\u01b0\u1edbc K\u1ebb","1f3f0"],"own":3,"num":4},{"d":"M236,401 L214,387 L186,359 L174,353 L161,340 L157,328 L159,316 L177,284 L179,270 L183,260 L206,239 L211,240 L277,318 L236,401Z","lx":214,"ly":320,"cx":215,"cy":319,"area":2720,"island":2,"n":["Metre Citadel","Th\u00e0nh M\u00e9t","1f3f0"],"own":0,"num":8},{"d":"M284,317 L276,317 L271,312 L209,238 L234,229 L248,217 L256,213 L284,205 L312,191 L319,202 L319,206 L343,254 L343,258 L353,276 L353,280 L345,296 L345,300 L340,305 L294,313 L284,317Z","lx":288,"ly":256,"cx":288,"cy":257,"area":2675,"island":2,"n":["Height Chart Hills","\u0110\u1ed3i Th\u01b0\u1edbc \u0110o Chi\u1ec1u Cao","26f0"],"own":-1,"num":2},{"d":"M720,433 L706,433 L681,426 L653,336 L686,295 L696,291 L708,281 L726,273 L749,320 L749,324 L767,358 L720,433Z","lx":710,"ly":354,"cx":708,"cy":355,"area":2827,"island":2,"n":["Shot Put Desert","Sa M\u1ea1c N\u00e9m T\u1ea1","1f3dc"],"own":-1,"num":15},{"d":"M354,279 L313,190 L352,169 L370,163 L404,161 L416,155 L419,160 L419,166 L423,174 L423,180 L427,188 L427,194 L433,208 L433,214 L437,222 L437,228 L443,246 L428,253 L400,261 L394,265 L366,273 L354,279Z","lx":380,"ly":214,"cx":380,"cy":215,"area":2552,"island":2,"n":["Yardstick Peaks","\u0110\u1ec9nh Th\u01b0\u1edbc G\u1ed7","1f3d4"],"own":-1,"num":3},{"d":"M652,337 L590,335 L588,333 L579,332 L563,308 L565,288 L569,276 L569,266 L574,251 L628,233 L634,233 L660,223 L665,224 L665,230 L659,244 L659,258 L675,274 L675,292 L678,295 L685,296 L652,337Z","lx":616,"ly":288,"cx":621,"cy":286,"area":2426,"island":2,"n":["Metre Stick Forest","R\u1eebng Th\u01b0\u1edbc M\u00e9t","1f333"],"own":-1,"num":14},{"d":"M826,361 L768,359 L727,278 L727,272 L738,267 L748,267 L772,277 L788,277 L790,279 L856,277 L868,283 L872,283 L873,286 L871,290 L826,361Z","lx":804,"ly":320,"cx":797,"cy":311,"area":2214,"island":2,"n":["Centipede Canyon","H\u1ebbm N\u00fai R\u1ebft","1f3de"],"own":-1,"num":16},{"d":"M558,397 L474,395 L455,364 L473,314 L480,311 L562,307 L581,334 L561,394 L558,397Z","lx":520,"ly":352,"cx":518,"cy":352,"area":2294,"island":2,"n":["Long Jump Plains","\u0110\u1ed3ng B\u1eb1ng Nh\u1ea3y Xa","1f33e"],"own":-1,"num":12},{"d":"M590,451 L559,396 L579,336 L582,333 L588,333 L590,335 L652,337 L681,424 L674,425 L668,423 L642,411 L628,411 L621,418 L619,426 L613,436 L590,451Z","lx":610,"ly":376,"cx":614,"cy":384,"area":2223,"island":2,"n":["Window Rock","\u0110\u00e1 C\u1eeda S\u1ed5","1faa8"],"own":-1,"num":13},{"d":"M866,437 L827,360 L871,288 L874,285 L882,285 L892,289 L901,298 L905,306 L919,320 L923,328 L923,334 L929,350 L929,368 L927,370 L929,400 L900,431 L894,433 L892,431 L874,431 L866,437Z","lx":882,"ly":362,"cx":882,"cy":363,"area":2604,"island":2,"n":["Roller Coaster Cliffs","V\u00e1ch \u0110\u00e1 T\u00e0u L\u01b0\u1ee3n","1f3a2"],"own":-1,"num":17},{"d":"M1026,281 L1021,280 L1021,272 L1013,244 L1013,236 L1011,234 L1011,226 L1003,198 L1001,180 L993,152 L996,147 L1024,149 L1048,159 L1070,165 L1080,171 L1097,188 L1101,198 L1101,218 L1099,224 L1077,260 L1068,267 L1054,269 L1026,281Z","lx":1054,"ly":210,"cx":1046,"cy":209,"area":2394,"island":3,"n":["Thread Island","\u0110\u1ea3o S\u1ee3i Ch\u1ec9","1f9f5"],"own":-1,"num":7},{"d":"M986,287 L956,285 L944,281 L939,276 L929,248 L917,226 L917,214 L929,192 L948,173 L974,159 L984,151 L992,149 L995,154 L997,170 L1001,180 L1001,188 L1003,190 L1009,224 L1011,226 L1013,244 L1021,272 L1021,280 L1014,283 L998,283 L986,287Z","lx":964,"ly":220,"cx":970,"cy":226,"area":2430,"island":3,"n":["Paper Plane Isle","\u0110\u1ea3o M\u00e1y Bay Gi\u1ea5y","2708"],"own":-1,"num":6},{"d":"M1040,623 L1008,623 L1005,620 L1006,503 L1028,501 L1066,515 L1085,532 L1099,552 L1101,572 L1091,592 L1072,609 L1050,621 L1042,621 L1040,623Z","lx":1052,"ly":566,"cx":1045,"cy":563,"area":2319,"island":4,"n":["Crocodile Cove","V\u1ecbnh C\u00e1 S\u1ea5u","1f40a"],"own":-1,"num":24},{"d":"M1004,621 L972,621 L970,619 L956,619 L944,615 L928,605 L919,596 L909,574 L909,562 L913,550 L930,527 L968,507 L974,507 L984,503 L996,503 L998,501 L1005,504 L1004,621Z","lx":958,"ly":568,"cx":964,"cy":564,"area":2281,"island":4,"n":["Ant Hill Atoll","\u0110\u1ea3o San H\u00f4 Ki\u1ebfn","1f41c"],"own":-1,"num":23},{"d":"M198,653 L160,651 L114,629 L105,618 L107,598 L114,589 L126,581 L152,569 L162,569 L174,565 L206,565 L208,567 L224,567 L242,573 L257,584 L267,598 L269,606 L267,608 L267,616 L263,628 L252,639 L236,647 L220,649 L218,651 L200,651 L198,653Z","lx":186,"ly":608,"cx":188,"cy":608,"area":2822,"island":5,"n":["Ladybird Isle","\u0110\u1ea3o B\u1ecd R\u00f9a","1f41e"],"own":-1,"num":21},{"d":"M692,665 L664,665 L632,655 L618,647 L607,636 L601,624 L601,610 L607,600 L618,591 L636,583 L674,581 L676,583 L700,585 L712,589 L736,603 L743,610 L745,620 L733,644 L720,655 L704,663 L694,663 L692,665Z","lx":674,"ly":624,"cx":671,"cy":622,"area":2326,"island":6,"n":["Ribbon Reef","R\u1ea1n San H\u00f4 Ruy B\u0103ng","1f380"],"own":-1,"num":22}],"adj":[[1,5],[1,15],[1,16],[2,4],[2,8],[2,13],[3,11],[3,14],[3,17],[4,6],[4,8],[4,13],[4,15],[5,6],[5,7],[5,15],[6,7],[6,10],[6,12],[6,15],[7,9],[7,10],[8,12],[9,10],[10,12],[11,13],[11,14],[11,16],[13,15],[13,16],[14,17],[15,16],[18,19],[20,21]],"sea":[[0,9],[0,10],[1,23],[7,22],[14,19],[17,19],[17,21]],"coast":["M136,215 L128,215 L126,213 L110,211 L80,199 L71,190 L65,176 L65,168 L63,166 L63,142 L65,140 L67,130 L94,105 L110,99 L128,99 L130,101 L136,101 L162,111 L175,124 L181,138 L181,148 L183,150 L183,172 L181,174 L175,196 L168,205 L156,211 L138,213 L136,215Z","M498,483 L478,483 L476,481 L454,477 L452,475 L444,475 L434,471 L426,471 L424,469 L416,469 L414,467 L398,465 L378,453 L368,451 L356,445 L338,431 L318,419 L304,417 L302,415 L288,415 L286,413 L258,411 L222,393 L186,359 L174,353 L159,336 L157,322 L165,304 L169,300 L177,284 L179,270 L183,260 L206,239 L234,229 L248,217 L256,213 L260,213 L262,211 L284,205 L294,199 L298,199 L302,195 L324,185 L328,181 L352,169 L356,169 L370,163 L392,163 L394,161 L404,161 L422,153 L428,153 L430,155 L444,155 L446,153 L450,153 L460,145 L470,141 L508,141 L510,139 L520,139 L522,137 L526,137 L528,139 L538,139 L540,141 L550,141 L552,143 L584,143 L608,159 L630,163 L639,170 L643,178 L648,181 L661,196 L663,216 L665,218 L665,230 L659,244 L659,258 L675,274 L675,292 L678,295 L688,295 L696,291 L708,281 L738,267 L748,267 L764,275 L770,275 L772,277 L788,277 L790,279 L836,279 L838,277 L856,277 L868,283 L882,285 L892,289 L901,298 L905,306 L919,320 L923,328 L923,334 L929,350 L929,368 L927,370 L929,400 L927,404 L920,411 L918,411 L900,431 L896,431 L894,433 L892,431 L874,431 L866,437 L838,449 L806,449 L804,447 L784,445 L782,443 L758,443 L756,441 L742,439 L726,433 L706,433 L704,431 L696,431 L688,427 L668,423 L654,415 L644,413 L642,411 L628,411 L621,418 L619,426 L612,437 L586,453 L564,473 L550,479 L542,479 L540,481 L500,481 L498,483Z","M986,287 L956,285 L954,283 L944,281 L939,276 L935,268 L933,258 L929,252 L929,248 L917,226 L917,214 L921,208 L921,204 L929,192 L948,173 L960,167 L964,163 L974,159 L984,151 L994,149 L996,147 L1014,147 L1016,149 L1032,151 L1048,159 L1070,165 L1080,171 L1097,188 L1099,192 L1099,196 L1101,198 L1101,218 L1097,228 L1093,232 L1091,238 L1087,242 L1077,260 L1068,267 L1054,269 L1026,281 L998,283 L996,285 L988,285 L986,287Z","M1040,623 L972,621 L970,619 L956,619 L936,611 L919,596 L913,586 L911,576 L909,574 L909,562 L911,560 L913,550 L917,546 L919,540 L925,534 L925,532 L936,523 L944,521 L968,507 L974,507 L984,503 L996,503 L998,501 L1002,503 L1018,503 L1020,501 L1028,501 L1030,503 L1036,503 L1038,505 L1048,507 L1054,511 L1058,511 L1066,515 L1085,532 L1085,534 L1097,548 L1099,558 L1101,560 L1101,572 L1091,592 L1078,605 L1050,621 L1042,621 L1040,623Z","M198,653 L160,651 L114,629 L105,618 L107,598 L114,589 L126,581 L132,579 L140,573 L144,573 L152,569 L162,569 L164,567 L172,567 L174,565 L206,565 L208,567 L224,567 L226,569 L232,569 L242,573 L257,584 L263,590 L267,598 L269,606 L267,608 L267,616 L263,624 L263,628 L252,639 L236,647 L232,647 L230,649 L220,649 L218,651 L200,651 L198,653Z","M692,665 L664,665 L662,663 L656,663 L642,657 L632,655 L618,647 L607,636 L601,624 L601,610 L607,600 L618,591 L636,583 L648,583 L650,581 L674,581 L676,583 L700,585 L708,589 L712,589 L730,601 L736,603 L743,610 L745,620 L733,644 L720,655 L704,663 L694,663 L692,665Z"]};
+const N=MAP.regs.length;
+const NB=Array.from({length:N},()=>new Set());MAP.adj.concat(MAP.sea).forEach(([a,b])=>{NB[a].add(b);NB[b].add(a)});
+/* ---------- sound ---------- */
+let AC=null,SOUND=true;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(_){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,t,d,type,v){if(!SOUND||!ac())return;const o=AC.createOscillator(),g=AC.createGain();o.type=type||'triangle';o.frequency.value=f;g.gain.setValueAtTime(0,AC.currentTime+t);g.gain.linearRampToValueAtTime(v||.2,AC.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+d);o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+d+.05)}
+function boom(t,v){if(!SOUND||!ac())return;const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(150,AC.currentTime+t);o.frequency.exponentialRampToValueAtTime(45,AC.currentTime+t+.3);g.gain.setValueAtTime(v||.5,AC.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+.4);o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+.45)}
+const SFX={click:()=>tone(660,0,.08,'sine',.12),ok:()=>{tone(523,0,.15);tone(659,.12,.15);tone(784,.24,.3)},fan:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,i*.12,.35,'sawtooth',.08));boom(0,.3)},drum:()=>boom(0,.5),tick:()=>tone(1200,0,.03,'square',.05)};
+/* ---------- game state ---------- */
+const store={get(){try{return JSON.parse(localStorage.getItem('length-legends')||'null')}catch(_){return null}},set(v){try{localStorage.setItem('length-legends',JSON.stringify(v))}catch(_){}}};
+let G=store.get();
+function newGame(){const own=MAP.regs.map(r=>r.own);const qs=shuf(Q.map((_,i)=>i));const lm={};'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach((l,i)=>lm[l]=qs[i%qs.length]);
+ G={own,used:[],lm,hist:[],att:null,safe:null,round:1,teams:NAT.map((n,i)=>[n.n[0].split(' ')[0]+' 1',n.n[0].split(' ')[0]+' 2']),score:NAT.map(()=>[0,0]),timer:60,log:[]};save()}
+function save(){store.set(G)}
+function counts(){const c=[0,0,0,0];G.own.forEach(o=>{if(o>=0)c[o]++});return c}
+/* ---------- navigation ---------- */
+function show(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));if(id==='map')drawMap();if(id==='letters')drawLetters()}
+$('#viBtn').onclick=()=>{VI=!VI;document.body.classList.toggle('vi-on',VI);$('#viBtn').classList.toggle('on',VI);if($('#map').classList.contains('on'))drawMap();if($('#rules').classList.contains('on'))drawRule()};
+$('#sndBtn').onclick=()=>{SOUND=!SOUND;$('#sndBtn').textContent=SOUND?'🔊':'🔇';$('#sndBtn').classList.toggle('on',SOUND)};
+$('#fsBtn').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(_){}};
+$('#tEmb').innerHTML=NAT.map(n=>'<div style="--c:'+n.c+'">'+im(n.e)+'<span style="color:'+n.c2+'">'+n.n[0]+'</span></div>').join('');
+if(G){$('#goResume').style.display='';}
+$('#goResume').onclick=()=>{ac();show('map')};
+$('#goRules').onclick=()=>{ac();RI=0;drawRule();show('rules')};
+/* ---------- rules ---------- */
+const miniMap=(a,b,arrow,battle)=>'<svg viewBox="0 0 520 300" style="height:100%"><path d="M40 160 C40 60 160 40 220 70 C260 30 330 40 360 80 C420 60 500 110 480 170 C470 240 380 270 320 240 C270 280 170 270 130 240 C60 250 40 210 40 160Z" fill="#f2ede0" stroke="#2b1a0e" stroke-width="4"/><path d="M40 160 C40 60 160 40 220 70 L230 160 L170 250 C120 250 40 220 40 160Z" fill="'+a+'" stroke="#2b1a0e" stroke-width="3"/><path d="M220 70 C260 30 330 40 360 80 L350 170 L230 160Z" fill="'+(b||'#f2ede0')+'" stroke="#2b1a0e" stroke-width="3"/>'+(arrow?'<path d="M170 140 L280 120" stroke="#fff" stroke-width="14" stroke-linecap="round"/><path d="M270 100 L305 118 L275 142Z" fill="#fff"/>':'')+(battle?'<g transform="translate(205,60)"><rect width="110" height="62" rx="10" fill="#fff"/><text x="55" y="45" font-size="38" text-anchor="middle">✊✋</text></g>':'')+'</svg>';
+const em=(i,s)=>im(NAT[i].e,'width:'+(s||8)+'rem;filter:drop-shadow(0 0 1.4rem '+NAT[i].c+')');
+const RULES=[
+ [()=>NAT.map((n,i)=>'<div style="display:flex;flex-direction:column;align-items:center;font-weight:900;color:'+n.c2+'">'+em(i)+n.n[0]+'</div>').join(''),'The <em>four nations</em> are at war.','Bốn quốc gia đang có chiến tranh.'],
+ [()=>NAT.map((n,i)=>'<div style="display:flex;flex-direction:column;align-items:center;font-weight:900;color:'+n.c2+'"><div>'+em(i,5)+em(i,5)+'</div>'+n.n[0]+'</div>').join(''),'Each nation has <b>2 teams</b>.','Mỗi quốc gia có 2 đội.'],
+ [()=>im('1f4dd','width:10rem')+im('1f58a','width:8rem')+im('1f9fd','width:8rem'),'Each team gets a <em>mini whiteboard</em>, a marker and an eraser.','Mỗi đội có một bảng con, một bút viết bảng và một khăn lau.'],
+ [()=>im('1f9d1-200d-1f3eb','width:11rem')+im('2753','width:9rem'),'I will ask a <em>question</em>.','Cô/thầy sẽ đặt một câu hỏi.'],
+ [()=>im('1f465','width:10rem')+im('1f4dd','width:10rem'),'With your team, <em>write your answer</em> on your board.','Cùng đội, viết câu trả lời lên bảng.'],
+ [()=>em(0)+'<div style="font-size:5rem">⚔</div>'+miniMap('#d7261e','#f2ede0',1),'The <em>first team</em> to show the correct answer: their nation gets to <b>attack</b>.','Đội đầu tiên giơ đáp án đúng: quốc gia của đội đó được tấn công.'],
+ [()=>em(1)+im('1f6e1','width:9rem'),'The <em>second team</em> to show the correct answer: their nation is <b>safe</b> from attack.','Đội thứ hai giơ đáp án đúng: quốc gia của đội đó được an toàn.'],
+ [()=>miniMap('#d7261e','#f2ede0',1),'The attacking nation chooses a piece of land <em>next to its own</em> to invade.','Quốc gia tấn công chọn một vùng đất bên cạnh đất của mình.'],
+ [()=>miniMap('#d7261e','#d7261e',0),'If no nation owns that land, they <em>take it</em> straight away.','Nếu vùng đất chưa có ai, họ chiếm ngay.'],
+ [()=>miniMap('#d7261e','#1f9d4c',0,1),'If another nation owns it, they <b>battle</b> that nation in <em>rock, paper, scissors</em>.','Nếu vùng đất thuộc quốc gia khác, hai bên đấu oẳn tù tì.'],
+ [()=>im('270a','width:8rem')+'<div style="font-size:4rem">➜</div>'+miniMap('#d7261e','#d7261e',0),'If the attackers win, the invasion succeeds and they <em>take the land</em>.','Nếu bên tấn công thắng, họ chiếm được vùng đất.'],
+ [()=>im('1f6e1','width:8rem')+miniMap('#d7261e','#1f9d4c',0),'If the attackers lose, the invasion fails and the defenders <em>keep their land</em>.','Nếu bên tấn công thua, bên phòng thủ giữ được đất.'],
+ [()=>im('1f3c6','width:11rem')+im('1f451','width:8rem'),'The nation with the <em>most land</em> at the end of the game wins!','Quốc gia có nhiều đất nhất khi kết thúc sẽ thắng!']];
+let RI=0;
+function drawRule(){const r=RULES[RI];$('#ruleArt').innerHTML=r[0]();$('#ruleTxt').innerHTML=r[1]+(VI?'<div style="font-size:1.6rem;color:#cfe3ff;margin-top:.6rem">'+r[2]+'</div>':'');$('#rDots').innerHTML=RULES.map((_,i)=>'<i class="'+(i===RI?'on':'')+'"></i>').join('');SFX.click()}
+$('#rPrev').onclick=()=>{RI=Math.max(0,RI-1);drawRule()};$('#rNext').onclick=()=>{if(RI<RULES.length-1){RI++;drawRule()}else goSetup()};$('#rSkip').onclick=()=>goSetup();
+function goSetup(){if(G&&G.round>1){show('map');return}if(!G)newGame();drawSetup();show('setup')}
+function drawSetup(){$('#ngrid').innerHTML=NAT.map((n,i)=>'<div class="ncard" style="--c:'+n.c+'">'+im(n.e)+'<b>'+n.n[0]+'</b><small>'+L('Capital','Thủ đô')+': '+n.cap[0]+'</small><input data-t="'+i+'-0" value="'+G.teams[i][0]+'" maxlength="16"><input data-t="'+i+'-1" value="'+G.teams[i][1]+'" maxlength="16"></div>').join('');$('#tSel').value=String(G.timer)}
+$('#sBack').onclick=()=>{drawRule();show('rules')};
+$('#sGo').onclick=()=>{$$('#ngrid input').forEach(inp=>{const [a,b]=inp.dataset.t.split('-').map(Number);G.teams[a][b]=inp.value.trim()||G.teams[a][b]});G.timer=+$('#tSel').value;save();SFX.fan();show('map')};
+/* ---------- map ---------- */
+const TERR={};
+function drawMap(){const svg=$('#mapSvg');const c=counts();
+ let s='<defs><radialGradient id="oc" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#2f78b8"/><stop offset="1" stop-color="#0f3b6c"/></radialGradient><pattern id="wv" width="60" height="30" patternUnits="userSpaceOnUse"><path d="M0 20 Q15 12 30 20 T60 20" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="2"/></pattern>'+
+ '<filter id="pap"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="4"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .22 0"/><feComposite in2="SourceGraphic" operator="in"/><feBlend in2="SourceGraphic" mode="multiply"/></filter>'+
+ '<filter id="sh" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#04182e" flood-opacity=".6"/></filter>'+NAT.map((n,i)=>'<linearGradient id="g'+i+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+n.c2+'"/><stop offset="1" stop-color="'+n.c+'"/></linearGradient>').join('')+'</defs>'+
+ '<rect x="-100" y="-100" width="1400" height="1000" fill="url(#oc)"/><rect x="-100" y="-100" width="1400" height="1000" fill="url(#wv)"/>'+
+ MAP.coast.map(d=>'<path d="'+d+'" fill="none" stroke="rgba(180,225,255,.35)" stroke-width="26" stroke-linejoin="round"/><path d="'+d+'" fill="none" stroke="rgba(220,245,255,.5)" stroke-width="10" stroke-linejoin="round"/>').join('')+
+ MAP.sea.map(([a,b])=>{const A=MAP.regs[a],B=MAP.regs[b];return '<path d="M'+A.cx+' '+A.cy+' Q'+((A.cx+B.cx)/2+25)+' '+((A.cy+B.cy)/2-25)+' '+B.cx+' '+B.cy+'" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="10 9" opacity=".75"/>'}).join('')+
+ '<g filter="url(#sh)">'+MAP.coast.map(d=>'<path d="'+d+'" fill="#e9e2cf"/>').join('')+'</g>';
+ const tg=targets();
+ s+='<g filter="url(#pap)">'+MAP.regs.map((r,i)=>{const o=G.own[i];return '<path class="land'+(tg&&tg.has(i)?' tgt':'')+(tg&&!tg.has(i)?' dim':'')+'" data-i="'+i+'" d="'+r.d+'" fill="'+(o>=0?'url(#g'+o+')':'#f4efe1')+'" stroke="#3a2a1a" stroke-width="2" stroke-linejoin="round"/>'}).join('')+'</g>';
+ MAP.coast.forEach(d=>s+='<path d="'+d+'" fill="none" stroke="#2b1a0e" stroke-width="3.5" stroke-linejoin="round" pointer-events="none"/>');
+ MAP.regs.forEach((r,i)=>{const o=G.own[i],nm=(VI?r.n[1]:r.n[0]).toUpperCase(),isCap=MAP.regs[i].own>=0;const tw=Math.max(60,nm.length*7.6+28);
+  s+='<g class="lbl" transform="translate('+r.lx+','+r.ly+')"><image href="'+IMG(isCap?'1f3f0':r.n[2].replace('-fe0f',''))+'" x="-20" y="-46" width="40" height="40"/>'+(isCap?'<image href="'+IMG(NAT[MAP.regs[i].own].e)+'" x="10" y="-52" width="26" height="26"/>':'')+
+  '<rect x="'+(-tw/2)+'" y="-4" width="'+tw+'" height="22" rx="5" fill="'+(o>=0?'rgba(20,14,8,.78)':'#12306f')+'" stroke="#fff" stroke-width="1.2"/><text x="0" y="12" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="system-ui">'+r.num+'. '+nm+'</text>'+
+  (G.safe!==null&&G.att!==null&&o===G.safe?'<image href="'+IMG('1f6e1')+'" x="-50" y="-44" width="30" height="30"/>':'')+'</g>'});
+ svg.setAttribute('viewBox','40 70 1120 640');svg.innerHTML=s;nudge(svg);
+ $$('.land').forEach(p=>p.onclick=()=>landClick(+p.dataset.i));
+ $('#nlist').innerHTML=NAT.map((n,i)=>'<div class="nrow'+(G.att===i?' att':'')+(G.safe===i?' safe':'')+'" style="--c:'+n.c+';--c2:'+n.c2+'">'+im(n.e)+'<div><b>'+L(n.n[0],n.n[1])+(G.att===i?'<span class="tag a">⚔ '+L('ATTACK','TẤN CÔNG')+'</span>':'')+(G.safe===i?'<span class="tag s">🛡 '+L('SAFE','AN TOÀN')+'</span>':'')+'</b><small>'+G.teams[i].join(' · ')+'</small></div><div class="cnt">'+c[i]+'<small><br>'+L('lands','vùng')+'</small></div></div>').join('');
+ const free=G.own.filter(o=>o<0).length;
+ $('#msg').innerHTML=G.att!==null?('⚔ <b>'+L(NAT[G.att].n[0],NAT[G.att].n[1])+'</b> '+L('attack! Tap a glowing land next to your nation.','tấn công! Chạm vào vùng đất sáng bên cạnh quốc gia của mình.')+(G.safe!==null?'<br>🛡 '+L(NAT[G.safe].n[0],NAT[G.safe].n[1])+' '+L('are safe this round.','được an toàn vòng này.'):'')):(L('Tap <b>Choose a letter</b> to get a question.','Chạm <b>Chọn một chữ cái</b> để nhận câu hỏi.')+'<br><small>'+free+' '+L('free lands','vùng đất trống')+' · '+(26-G.used.length)+' '+L('questions left','câu hỏi còn lại')+'</small>');
+ $('#mLetter').disabled=G.att!==null;$('#mSkip').style.display=G.att!==null?'':'none';$('#mUndo').disabled=!G.hist.length;
+ $('#round').textContent=L('Round ','Vòng ')+G.round}
+function nudge(svg){const gs=[...svg.querySelectorAll('g.lbl')],boxes=[];gs.forEach(g=>{const r=g.querySelector('rect');const tr=g.getAttribute('transform').match(/translate\(([-\d.]+),([-\d.]+)\)/);let x=+tr[1],y=+tr[2];const y0=y,w=+r.getAttribute('width');let k=0;const hit=()=>boxes.some(b=>Math.abs(b.x-x)<(b.w+w)/2+4&&Math.abs(b.y-y)<26);while(hit()&&k<8){k++;y=y0+(k%2?1:-1)*26*Math.ceil(k/2)}g.setAttribute('transform','translate('+x+','+y+')');boxes.push({x,y,w})})}
+function targets(){if(G.att===null)return null;const a=G.att,mine=G.own.map((o,i)=>o===a?i:-1).filter(i=>i>=0);const t=new Set();
+ if(!mine.length){G.own.forEach((o,i)=>{if(o<0)t.add(i)})}else mine.forEach(i=>NB[i].forEach(j=>{if(G.own[j]!==a)t.add(j)}));
+ [...t].forEach(j=>{if(G.safe!==null&&G.own[j]===G.safe)t.delete(j)});return t}
+function landClick(i){if(G.att===null){const r=MAP.regs[i],o=G.own[i];toast(r.num+'. '+L(r.n[0],r.n[1])+' — '+(o>=0?L(NAT[o].n[0],NAT[o].n[1]):L('free land','đất trống')));return}
+ const t=targets();if(!t.has(i)){const o=G.own[i];toast(o===G.att?L('That land is already yours!','Đất này đã là của bạn!'):(G.safe!==null&&o===G.safe?'🛡 '+L(NAT[o].n[0],NAT[o].n[1])+' '+L('are safe this round!','được an toàn vòng này!'):L('Choose a land NEXT TO your nation (glowing).','Hãy chọn vùng đất BÊN CẠNH quốc gia của mình (đang sáng).')));return}
+ if(G.own[i]<0){pushHist();capture(i,G.att);endTurn();toast('🚩 '+L(NAT[G.own[i]].n[0],NAT[G.own[i]].n[1])+' '+L('take','chiếm')+' '+L(MAP.regs[i].n[0],MAP.regs[i].n[1])+'!');return}
+ startBattle(i)}
+function capture(i,n){G.own[i]=n;SFX.fan();save()}
+function pushHist(){G.hist.push(JSON.stringify({own:G.own,att:G.att,safe:G.safe,round:G.round,used:G.used,score:G.score}));if(G.hist.length>30)G.hist.shift()}
+function endTurn(){G.att=null;G.safe=null;G.round++;save();drawMap();const c=counts();if(G.used.length>=26)setTimeout(()=>toast(L('All 26 questions used. Tap End game!','Đã dùng hết 26 câu hỏi. Chạm Kết thúc!')),1500)}
+$('#mUndo').onclick=()=>{const h=G.hist.pop();if(!h)return;Object.assign(G,JSON.parse(h));save();drawMap();toast('↩ '+L('Undone','Đã hoàn tác'))};
+$('#mSkip').onclick=()=>{G.att=null;G.safe=null;G.round++;save();drawMap()};
+$('#mRules').onclick=()=>{RI=0;drawRule();show('rules')};
+$('#mEnd').onclick=()=>{const b=$('#mEnd');if(!b.dataset.sure){b.dataset.sure=1;b.textContent=L('Tap again to end','Chạm lần nữa');setTimeout(()=>{delete b.dataset.sure;b.textContent='🏁 '+L('End game','Kết thúc')},3000);return}drawEnd();show('end')};
+$('#mLetter').onclick=()=>{SFX.click();show('letters')};
+/* ---------- letters ---------- */
+function drawLetters(){$('#lgrid').innerHTML='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>'<button class="title-font'+(G.used.includes(l)?' used':'')+'" data-l="'+l+'" '+(G.used.includes(l)?'disabled':'')+'>'+l+'</button>').join('');
+ $$('[data-l]').forEach(b=>b.onclick=()=>openQ(b.dataset.l))}
+$('#lBack').onclick=()=>show('map');
+/* ---------- question ---------- */
+let CUR=null,TM={left:0,run:false,iv:null};
+function openQ(l){SFX.click();const q=Q[G.lm[l]];CUR={l,q};
+ $('#qHead').innerHTML='<small>'+l+' · '+q.les+'</small>'+q.q[0]+'<span class="vi">'+q.q[1]+'</span>';
+ $('#qBody').innerHTML=q.v();$('#qAns').className='hide';$('#qAns').innerHTML=L('Answer will appear here','Đáp án sẽ hiện ở đây');$('#qShow').style.display='';$('#qDone').style.display='none';$('#pick').classList.remove('on');
+ TM.left=G.timer;TM.run=G.timer>0;drawTimer();clearInterval(TM.iv);if(G.timer>0)TM.iv=setInterval(()=>{if(!TM.run)return;TM.left--;if(TM.left<=5&&TM.left>0)SFX.tick();if(TM.left<=0){TM.run=false;boom(0,.4);toast('⏱ '+L('Time is up! Show your boards!','Hết giờ! Giơ bảng lên!'))}drawTimer()},1000);
+ show('question')}
+function drawTimer(){const t=$('#timer');if(!G.timer){t.style.visibility='hidden';return}t.style.visibility='visible';const f=Math.max(0,TM.left)/G.timer,C=2*Math.PI*40;
+ t.innerHTML='<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="rgba(0,0,0,.25)" stroke="rgba(255,255,255,.2)" stroke-width="10"/><circle cx="50" cy="50" r="40" fill="none" stroke="'+(TM.left<=10?'#ff6b5e':'#ffd23f')+'" stroke-width="10" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-f))+'"/></svg><b>'+(TM.run||TM.left<G.timer?Math.max(0,TM.left):'▶')+'</b>'}
+$('#timer').onclick=()=>{if(TM.left<=0)TM.left=G.timer;TM.run=!TM.run;drawTimer()};
+$('#qShow').onclick=()=>{TM.run=false;drawTimer();const q=CUR.q;$('#qAns').className='';$('#qAns').innerHTML='✅ '+q.a[0]+'<span class="vi" style="font-size:.7em">'+q.a[1]+'</span>';$('#qShow').style.display='none';$('#qDone').style.display='';SFX.ok();if(!G.used.includes(CUR.l)){G.used.push(CUR.l);save()}};
+$('#qDone').onclick=()=>pickTeam(0);
+function pickTeam(stage){const P=$('#pick');P.classList.add('on');
+ $('#pTitle').innerHTML=stage===0?bi('Which team showed the correct answer FIRST?','Đội nào giơ đáp án đúng ĐẦU TIÊN?')+'<small>'+L('Their nation gets to attack ⚔','Quốc gia của đội đó được tấn công ⚔')+'</small>':bi('Which team was SECOND?','Đội nào đúng THỨ HAI?')+'<small>'+L('Their nation is safe from attack 🛡','Quốc gia của đội đó được an toàn 🛡')+'</small>';
+ $('#pGrid').innerHTML=NAT.map((n,i)=>'<div class="col" style="--c:'+n.c+'"><div>'+im(n.e)+L(n.n[0],n.n[1])+'</div>'+[0,1].map(t=>'<button data-n="'+i+'" data-t="'+t+'" '+(stage===1&&G.pend===i?'disabled':'')+'>'+G.teams[i][t]+'</button>').join('')+'</div>').join('');
+ $('#pNone').textContent=stage===0?L('No team got it right','Không đội nào đúng'):L('No second team','Không có đội thứ hai');
+ $$('#pGrid button').forEach(b=>b.onclick=()=>{const n=+b.dataset.n,t=+b.dataset.t;SFX.click();if(stage===0){G.pend=n;G.score[n][t]+=2;pickTeam(1)}else{G.score[n][t]+=1;finishQ(G.pend,n)}});
+ $('#pNone').onclick=()=>{if(stage===0){P.classList.remove('on');G.round++;save();show('map');toast(L('No attack this round.','Vòng này không có tấn công.'))}else finishQ(G.pend,null)}}
+function finishQ(att,safe){$('#pick').classList.remove('on');pushHist();G.att=att;G.safe=safe;delete G.pend;save();show('map');const t=targets();if(!t||!t.size){toast(L('No land to attack. Next round!','Không có đất để tấn công. Vòng tiếp!'));endTurn()}else{SFX.fan();toast('⚔ '+L(NAT[att].n[0],NAT[att].n[1])+' '+L('attack!','tấn công!'))}}
+/* ---------- battle ---------- */
+let BT=null;
+function startBattle(i){const a=G.att,d=G.own[i];BT={i,a,d};SFX.drum();const r=MAP.regs[i];
+ $('#bTitle').innerHTML='⚔ '+L('Battle for','Trận chiến giành')+' <em>'+L(r.n[0],r.n[1])+'</em>!<div style="font-size:1.3rem;opacity:.85;font-weight:800">'+L('Rock, paper, scissors! One player from each nation comes to the front.','Oẳn tù tì! Mỗi quốc gia cử một bạn lên trước.')+'</div>';
+ $('#bWrap').innerHTML=fighter(a,L('ATTACKER','TẤN CÔNG'),'l')+'<div class="vs title-font">VS</div>'+fighter(d,L('DEFENDER','PHÒNG THỦ'),'r');
+ $('#bCall').textContent='';$('#bRow').innerHTML='<button class="bigbtn" id="bGo">✊ '+L('Rock, paper, scissors… go!','Oẳn tù tì… ra cái gì ra cái này!')+'</button><button class="ghost" id="bCancel">◀ '+L('Choose another land','Chọn đất khác')+'</button>';
+ $('#bGo').onclick=countdown;$('#bCancel').onclick=()=>show('map');show('battle')}
+function fighter(n,role,side){return '<div class="fighter" style="--c:'+NAT[n].c+';--c2:'+NAT[n].c2+'">'+im(NAT[n].e,'','em')+'<b>'+L(NAT[n].n[0],NAT[n].n[1])+'</b><small>'+role+'</small>'+im('270a','','hand '+side)+'</div>'}
+function countdown(){const w=$('#bWrap');w.classList.add('shake');$('#bRow').innerHTML='';const words=VI?['OẲN','TÙ','TÌ','RA!']:['ROCK','PAPER','SCISSORS','SHOOT!'];
+ words.forEach((wd,k)=>setTimeout(()=>{$('#bCall').textContent=wd;boom(0,k===3?.7:.4);if(k===3){w.classList.remove('shake');setTimeout(askWinner,600)}},k*650))}
+function askWinner(){const {a,d}=BT;$('#bCall').textContent=L('Who won?','Ai thắng?');
+ $('#bRow').innerHTML='<button class="wbtn" style="--c:'+NAT[a].c+'" id="wA">'+im(NAT[a].e)+L(NAT[a].n[0],NAT[a].n[1])+'</button><button class="wbtn" style="--c:#6b5a45" id="wD2">🤝 '+L('Draw – go again','Hòa – chơi lại')+'</button><button class="wbtn" style="--c:'+NAT[d].c+'" id="wD">'+im(NAT[d].e)+L(NAT[d].n[0],NAT[d].n[1])+'</button>';
+ $('#wD2').onclick=()=>{$('#bCall').textContent='';countdown()};
+ $('#wA').onclick=()=>{pushHist();capture(BT.i,BT.a);confetti(26,[NAT[BT.a].e,'2b50','1f6a9']);toast('🚩 '+L('Invasion success!','Xâm chiếm thành công!')+' '+L(NAT[BT.a].n[0],NAT[BT.a].n[1])+' '+L('take','chiếm')+' '+L(MAP.regs[BT.i].n[0],MAP.regs[BT.i].n[1]));show('map');endTurn()};
+ $('#wD').onclick=()=>{pushHist();SFX.ok();toast('🛡 '+L('Invasion failed!','Xâm chiếm thất bại!')+' '+L(NAT[BT.d].n[0],NAT[BT.d].n[1])+' '+L('keep their land.','giữ được đất.'));show('map');endTurn()}}
+/* ---------- end ---------- */
+function drawEnd(){const c=counts();const ord=[0,1,2,3].sort((x,y)=>c[y]-c[x]);const H=[16,11,8,5.5],col=['linear-gradient(#ffe066,#e3a800)','linear-gradient(#eef1f4,#aab4bd)','linear-gradient(#f0bf8a,#b97a3e)','linear-gradient(#cfd5db,#8a939c)'];
+ const rank=[];ord.forEach((n,k)=>{rank[k]=k>0&&c[n]===c[ord[k-1]]?rank[k-1]:k});
+ const show4=[ord[1],ord[0],ord[2],ord[3]],ri=[1,0,2,3];
+ $('#pod').innerHTML=show4.map((n,j)=>{const k=ri[j];return '<div class="pd" style="--c:'+NAT[n].c+';--c2:'+NAT[n].c2+'">'+(k===0?im('1f451','width:4rem;filter:none'):'')+im(NAT[n].e)+'<b>'+L(NAT[n].n[0],NAT[n].n[1])+'</b><small>'+c[n]+' '+(c[n]===1?L('land','vùng đất'):L('lands','vùng đất'))+'</small><div class="blk" style="height:'+H[k]+'rem;background:'+col[k]+'">'+(rank[k]+1)+'</div></div>'}).join('');
+ let best=null;G.score.forEach((t,n)=>t.forEach((s,j)=>{if(!best||s>best.s)best={s,n,j}}));
+ $('#mvp').innerHTML=best&&best.s>0?'⭐ '+L('Star team','Đội ngôi sao')+': <b style="color:'+NAT[best.n].c2+'">'+G.teams[best.n][best.j]+'</b> ('+NAT[best.n].n[0]+') — '+best.s+' '+L('points for quick correct answers','điểm trả lời nhanh và đúng'):'';
+ SFX.fan();confetti(50,['2b50','1f389','1f451','1f3c6'])}
+$('#eMap').onclick=()=>show('map');
+$('#eNew').onclick=()=>{const b=$('#eNew');if(!b.dataset.sure){b.dataset.sure=1;b.textContent=L('Tap again to start a new game','Chạm lần nữa để chơi mới');return}delete b.dataset.sure;b.textContent='🔄 New game';newGame();drawSetup();show('setup')};
+/* ======================================================================
+   QUESTIONS (Unit 7: Length and perimeter, Lessons 1–8)
+   ====================================================================== */
+/* --- svg helpers --- */
+const SV=(inner,vb)=>'<svg viewBox="'+(vb||'0 0 1000 400')+'" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,Segoe UI,sans-serif">'+inner+'</svg>';
+const I=(k,x,y,w,h,extra)=>'<image href="'+IMG(k)+'" x="'+x+'" y="'+y+'" width="'+w+'" height="'+(h||w)+'" '+(extra||'preserveAspectRatio="xMidYMid meet"')+'/>';
+const T=(x,y,s,txt,o)=>'<text x="'+x+'" y="'+y+'" font-size="'+s+'" text-anchor="'+((o&&o.a)||'middle')+'" font-weight="'+((o&&o.w)||800)+'" fill="'+((o&&o.f)||'#2b1a0e')+'">'+txt+'</text>';
+const dash=(x,y1,y2,c)=>'<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" stroke="'+(c||'#b3261e')+'" stroke-width="3" stroke-dasharray="8 6"/>';
+function metreStick(x,y,ppm,n,h,o){o=o||{};h=h||34;let s='<rect x="'+(x-6)+'" y="'+y+'" width="'+(ppm*n+12)+'" height="'+h+'" rx="6" fill="#ffd84a" stroke="#6b5000" stroke-width="2.5"/>';
+ for(let c=0;c<=n*10;c++){const xx=x+c*ppm/10,big=c%10===0,mid=c%5===0;s+='<line x1="'+xx+'" y1="'+(y+h)+'" x2="'+xx+'" y2="'+(y+h-(big?h*.75:mid?h*.5:h*.3))+'" stroke="#3b2c00" stroke-width="'+(big?3:1.6)+'"/>';if(big)s+=T(xx+(c?0:14),y+h*.42,o.fs||17,(c/10)+' m',{w:900,f:'#3b2c00'})}
+ return s}
+function vStick(x,y0,ppm,n,w){let s='<rect x="'+x+'" y="'+(y0-ppm*n-6)+'" width="'+(w||36)+'" height="'+(ppm*n+12)+'" rx="6" fill="#ffd84a" stroke="#6b5000" stroke-width="2.5"/>';for(let c=0;c<=n*10;c++){const yy=y0-c*ppm/10,big=c%10===0,mid=c%5===0;s+='<line x1="'+x+'" y1="'+yy+'" x2="'+(x+(big?26:mid?18:10))+'" y2="'+yy+'" stroke="#3b2c00" stroke-width="'+(big?3:1.6)+'"/>';if(big)s+=T(x-10,yy+6,18,(c/10)+' m',{a:'end',w:900})}return s}
+function mmRuler(x,y,ppmm,max,o){o=o||{};const h=o.h||70,w=ppmm*max;let s='<defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#bfe6fb"/><stop offset="1" stop-color="#e9f7ff"/></linearGradient></defs><rect x="'+(x-18)+'" y="'+y+'" width="'+(w+36)+'" height="'+h+'" rx="6" fill="url(#rg)" stroke="#4a6b80" stroke-width="2.5"/>';
+ for(let m=0;m<=max;m++){const xx=x+m*ppmm,big=m%10===0,mid=m%5===0;s+='<line x1="'+xx+'" y1="'+y+'" x2="'+xx+'" y2="'+(y+(big?h*.42:mid?h*.3:h*.18))+'" stroke="#1d2b36" stroke-width="'+(big?2.6:1.3)+'"/>';
+  if(big){if(o.cm!==false)s+=T(xx,y+h*.62,o.fs||17,m/10,{w:800});if(o.mm)s+=T(xx,y+h*.92,(o.fs||17)*.8,m,{w:700,f:'#33536a'})}}
+ s+=T(x-8,y+h*.62,13,o.cm!==false?'cm':'',{a:'end',w:800});if(o.mm)s+=T(x-8,y+h*.92,12,'mm',{a:'end',w:800,f:'#33536a'});return s}
+function bar(x,y,parts,h){h=h||52;let s='',xx=x;parts.forEach(p=>{s+='<rect x="'+xx+'" y="'+y+'" width="'+p[1]+'" height="'+h+'" rx="8" fill="'+(p[2]||'#fff')+'" stroke="#2b1a0e" stroke-width="2.5"/>'+T(xx+p[1]/2,y+h/2+9,26,p[0]);xx+=p[1]});return s}
+function bubble(x,y,w,h,txt,fs,tail){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="20" fill="#fff" stroke="#2b1a0e" stroke-width="3"/>'+(tail?'<path d="'+tail+'" fill="#fff" stroke="#2b1a0e" stroke-width="3"/><rect x="'+(x+3)+'" y="'+(y+h-14)+'" width="'+(w-6)+'" height="10" fill="#fff"/>':'')+txt.split('|').map((l,i,a)=>T(x+w/2,y+h/2+(i-(a.length-1)/2)*(fs+6)+fs*.35,fs,l)).join('')}
+const plane=(x,y,c)=>'<g transform="translate('+x+','+y+')"><path d="M0 0 L-64 -20 L-48 0 L-64 20Z" fill="'+c+'" stroke="#1d1d1d" stroke-width="2"/><path d="M0 0 L-48 0 L-56 10Z" fill="rgba(0,0,0,.25)"/></g>';
+function ball(x,y,r,c){return '<defs><radialGradient id="b'+c.slice(1)+'" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="'+c+'"/><stop offset="1" stop-color="#1d1d1d"/></radialGradient></defs><circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="url(#b'+c.slice(1)+')"/>'}
+function lanes(){const x0=130,ppm=160;let s='<rect x="0" y="0" width="1000" height="70" fill="#9fd8f5"/><rect x="0" y="70" width="1000" height="330" fill="#6cbf4f"/>'+metreStick(x0,30,ppm,5,36);
+ [['Bella',4.3,'#2f86d6'],['Zac',2.5,'#f2b400'],['Emma',1.2,'#9b59b6']].forEach(([n,d,c],k)=>{const y=110+k*100;s+='<rect x="'+(x0-6)+'" y="'+(y-38)+'" width="'+(ppm*5+12)+'" height="78" rx="8" fill="#7fd35e" stroke="#4e9a35" stroke-width="3"/>'+'<rect x="14" y="'+(y-20)+'" width="96" height="40" rx="20" fill="#fff" stroke="'+c+'" stroke-width="3"/>'+T(62,y+8,20,n)+dash(x0+d*ppm,70,y+30,'rgba(140,30,20,.7)')+plane(x0+d*ppm,y,c)});return s}
+/* --- the 26 questions --- */
+const Q=[
+ {les:'Lesson 1 · Measure in m and cm',q:["How far has Zac's paper aeroplane travelled?",'Máy bay giấy của Zac bay được bao xa?'],a:['2 m 50 cm','2 m 50 cm'],v:()=>SV(lanes())},
+ {les:'Lesson 1 · Measure in m and cm',q:["Whose paper aeroplane has travelled 4 m 30 cm?",'Máy bay giấy của ai bay được 4 m 30 cm?'],a:["Bella's aeroplane",'Máy bay của Bella'],v:()=>SV(lanes())},
+ {les:'Lesson 1 · Measure in m and cm',q:['How far has the BLUE ball rolled?','Quả bóng XANH đã lăn được bao xa?'],a:['2 m 10 cm  (orange 1 m 40 cm, purple 2 m 90 cm)','2 m 10 cm (cam 1 m 40 cm, tím 2 m 90 cm)'],v:()=>{const x0=110,ppm=270;let s=metreStick(x0,90,ppm,3,40,{fs:18})+'<path d="M40 230 Q40 330 110 330 L960 330 L960 344 L40 344Z" fill="#7a4f2a"/>';[[1.4,'#f08a24'],[2.1,'#2f86d6'],[2.9,'#8e44ad']].forEach(([d,c])=>{s+=dash(x0+d*ppm,130,300)+ball(x0+d*ppm,308,22,c)});return SV(s)}},
+ {les:'Lesson 1 · Measure in m and cm',q:['How tall is Max?','Max cao bao nhiêu?'],a:['1 m 30 cm','1 m 30 cm'],v:()=>{const y0=380,ppm=170;return SV(vStick(380,y0,ppm,2)+'<line x1="416" y1="'+(y0-1.3*ppm)+'" x2="620" y2="'+(y0-1.3*ppm)+'" stroke="#b3261e" stroke-width="3" stroke-dasharray="8 6"/>'+I('1f9cd-200d-2642',430,y0-1.3*ppm-6,170,1.3*ppm+8,'preserveAspectRatio="none"')+T(700,y0-1.3*ppm+8,26,'Max'))}},
+ {les:'Lesson 1 · Challenge',q:['Mila needs a piece of string 3 m 7 cm long. How many centimetres is that?','Mila cần một đoạn dây dài 3 m 7 cm. Đó là bao nhiêu xăng-ti-mét?'],a:['307 cm  (3 m = 300 cm, plus 7 cm). Not 370 cm!','307 cm (3 m = 300 cm, thêm 7 cm). Không phải 370 cm!'],v:()=>SV(I('1f9f5',40,120,150)+bar(230,90,[['1 m',220],['1 m',220],['1 m',220],['7 cm',60,'#fff3c2']])+bar(230,170,[['100 cm',220],['100 cm',220],['100 cm',220],['7 cm',60,'#fff3c2']])+T(605,290,40,'? cm',{f:'#b3261e',w:900}))},
+ {les:'Lesson 2 · Measure in cm and mm',q:['How long is the caterpillar?','Con sâu dài bao nhiêu?'],a:['5 cm  (= 50 mm)','5 cm (= 50 mm)'],v:()=>{const x0=100,p=8;return SV(dash(x0,40,220)+dash(x0+50*p,40,220)+I('1f41b',x0-4,60,50*p+8,150,'preserveAspectRatio="none"')+mmRuler(x0,220,p,100,{mm:true,h:90,fs:20})+T(500,385,20,'Larger than actual size',{f:'#7a5a36'}))}},
+ {les:'Lesson 2 · Measure in cm and mm',q:['How long is the ant?','Con kiến dài bao nhiêu?'],a:['7 mm','7 mm'],v:()=>{const x0=120,p=25;return SV(dash(x0,40,200)+dash(x0+7*p,40,200)+I('1f41c',x0-4,200-7*p-4,7*p+8,7*p+8)+mmRuler(x0,200,p,30,{mm:true,h:110,fs:24})+T(500,385,20,'Larger than actual size',{f:'#7a5a36'}))}},
+ {les:'Lesson 2 · Think together',q:['How long is the snail in mm?','Con ốc sên dài bao nhiêu mi-li-mét?'],a:['13 mm','13 mm'],v:()=>{const x0=170,p=20;return SV(dash(x0,20,300)+dash(x0+13*p,20,300)+I('1f40c',x0-10,300-13*p-14,13*p+20,13*p+20)+mmRuler(x0,300,p,30,{mm:true,cm:false,h:90,fs:24}))}},
+ {les:'Lesson 2 · Think together',q:['Max says this line is 27 mm long. Do you agree?','Max nói đường kẻ này dài 27 mm. Em có đồng ý không?'],a:['No! The line starts at 3 mm, so it is 28 − 3 = 25 mm long.','Không! Đường kẻ bắt đầu từ 3 mm nên dài 28 − 3 = 25 mm.'],v:()=>{const x0=100,p=16;return SV('<line x1="'+(x0+3*p)+'" y1="150" x2="'+(x0+28*p)+'" y2="150" stroke="#9b1c14" stroke-width="10" stroke-linecap="butt"/>'+mmRuler(x0,175,p,50,{mm:true,cm:false,h:100,fs:22})+I('1f466',860,40,120)+bubble(680,30,170,90,'27 mm!',30,'M820 110 L870 130 L800 118'))}},
+ {les:'Lesson 3 · m, cm and mm',q:['Ebo measured the playground. "It was 20 wide and 35 long." Did he measure in mm, cm or m?','Ebo đo sân chơi: "Rộng 20, dài 35." Bạn ấy đo bằng mm, cm hay m?'],a:['Metres: 20 m wide and 35 m long','Mét: rộng 20 m, dài 35 m'],v:()=>SV('<rect x="60" y="60" width="520" height="300" rx="24" fill="#a6d36c" stroke="#5b8a2e" stroke-width="4"/>'+I('1f6dd',120,90,230)+I('1f3a2',330,150,200)+I('1f467',700,170,200)+bubble(620,30,340,120,'I measured it.|20 wide and 35 long!',26,'M760 150 L790 185 L800 150'))},
+ {les:'Lesson 3 · Think together',q:['Write mm, cm or m to complete each measurement.','Viết mm, cm hoặc m để hoàn thành mỗi số đo.'],a:['Book 25 cm · coin 20 mm · boat 12 m','Sách 25 cm · đồng xu 20 mm · thuyền 12 m'],v:()=>SV([['1f4d5',90,'25'],['1fa99',420,'20'],['1f6a4',720,'12']].map(([k,x,n])=>I(k,x,50,200)+'<line x1="'+(x+20)+'" y1="280" x2="'+(x+180)+'" y2="280" stroke="#2b1a0e" stroke-width="4" marker-end="url(#ar)" marker-start="url(#ar)"/>'+T(x+70,345,40,n,{w:900})+'<rect x="'+(x+105)+'" y="310" width="80" height="48" rx="10" fill="#fff3c2" stroke="#c99700" stroke-width="3"/>'+T(x+145,345,32,'?',{f:'#c99700'})).join('')+'<defs><marker id="ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#2b1a0e"/></marker></defs>')},
+ {les:'Lesson 3 · Think together',q:['How many centimetres are there in 3 m?','Có bao nhiêu xăng-ti-mét trong 3 m?'],a:['300 cm','300 cm'],v:()=>SV(bar(140,110,[['1 m',240],['1 m',240],['1 m',240]])+bar(140,190,[['? cm',240,'#fff3c2'],['? cm',240,'#fff3c2'],['? cm',240,'#fff3c2']]))},
+ {les:'Lesson 3 · Challenge',q:['How many millimetres are there in 1 metre?','Có bao nhiêu mi-li-mét trong 1 mét?'],a:['1,000 mm  (1 m = 100 cm, and each cm = 10 mm)','1 000 mm (1 m = 100 cm, mỗi cm = 10 mm)'],v:()=>SV(I('1f466',40,150,150)+bubble(30,20,300,120,'It must be millions!|Millimetres are tiny.',22,'M120 140 L110 170 L160 140')+I('1f467',800,150,150)+bubble(560,20,420,120,'1 cm is 10 mm, 2 cm is 20 mm…|I will keep going to 100 cm.',22,'M880 140 L880 170 L840 140')+metreStick(260,330,480,1,40))},
+ {les:'Lesson 4 · Equivalent lengths (m and cm)',q:['The window needs to be 2 m 13 cm long. Which window will fit?','Cửa sổ cần dài 2 m 13 cm. Cửa sổ nào vừa?'],a:['The 213 cm window','Cửa sổ 213 cm'],v:()=>{let s='<rect x="0" y="0" width="1000" height="400" fill="#bfe3f7"/>';for(let r=0;r<5;r++)for(let c=0;c<9;c++)s+='<rect x="'+(300+c*44+(r%2)*22)+'" y="'+(20+r*26)+'" width="42" height="24" fill="#d9733c" stroke="#8a3f18"/>';s+='<rect x="420" y="40" width="180" height="90" fill="#4a2a14" stroke="#fff" stroke-width="3"/>'+T(510,94,22,'2 m 13 cm',{f:'#fff'});
+  [['230 cm',30,230],['213 cm',290,213],['223 cm',545,223],['123 cm',800,123]].forEach(([l,x,w])=>{const ww=w*.95;s+='<rect x="'+x+'" y="200" width="'+ww+'" height="120" rx="6" fill="#e8f6ff" stroke="#5a6b78" stroke-width="5"/><line x1="'+(x+ww/2)+'" y1="200" x2="'+(x+ww/2)+'" y2="320" stroke="#5a6b78" stroke-width="4"/><line x1="'+x+'" y1="260" x2="'+(x+ww)+'" y2="260" stroke="#5a6b78" stroke-width="4"/>'+T(x+ww/2,360,26,l)});return SV(s)}},
+ {les:'Lesson 4 · Equivalent lengths (m and cm)',q:['The window needs to be 1 m 21 cm high. What is this in centimetres?','Cửa sổ cần cao 1 m 21 cm. Đổi ra xăng-ti-mét là bao nhiêu?'],a:['121 cm','121 cm'],v:()=>SV(I('1fa9f',60,100,200)+bar(320,110,[['1 m',380],['21 cm',120,'#fff3c2']])+bar(320,190,[['100 cm',380],['21 cm',120,'#fff3c2']])+T(570,300,36,'? cm',{f:'#b3261e',w:900}))},
+ {les:'Lesson 4 · Think together',q:['463 cm = ? m ? cm','463 cm = ? m ? cm'],a:['4 m 63 cm','4 m 63 cm'],v:()=>SV(bar(110,110,[['100 cm',170],['100 cm',170],['100 cm',170],['100 cm',170],['63 cm',110,'#fff3c2']])+bar(110,190,[['? m',170,'#fff3c2'],['',170,'#fff3c2'],['',170,'#fff3c2'],['',170,'#fff3c2'],['? cm',110,'#fff3c2']])+T(500,320,40,'463 cm',{w:900}))},
+ {les:'Lesson 4 · Challenge',q:["Which egg shows the crocodile's length in centimetres?",'Quả trứng nào ghi đúng chiều dài con cá sấu bằng xăng-ti-mét?'],a:['444 cm','444 cm'],v:()=>{let s=I('1f40a',50,40,460,240,'preserveAspectRatio="none"')+'<line x1="70" y1="300" x2="490" y2="300" stroke="#2b1a0e" stroke-width="4" marker-end="url(#a2)" marker-start="url(#a2)"/><defs><marker id="a2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#2b1a0e"/></marker></defs>'+T(280,345,32,'4 m 44 cm',{w:900});
+  [['440 cm',650,90],['444 cm',840,90],['400 cm',650,270],['404 cm',840,270]].forEach(([l,x,y])=>s+='<ellipse cx="'+x+'" cy="'+y+'" rx="80" ry="66" fill="#f6d9a8" stroke="#9a6b2e" stroke-width="3"/>'+T(x,y+10,28,l));return SV(s)}},
+ {les:'Lesson 5 · Equivalent lengths (mm and cm)',q:['How long is the piece of thread? Write it in mm, then in cm and mm.','Sợi chỉ dài bao nhiêu? Viết bằng mm, rồi bằng cm và mm.'],a:['24 mm = 2 cm 4 mm','24 mm = 2 cm 4 mm'],v:()=>{const x0=120,p=15;return SV(I('1f9f5',40,30,120)+'<line x1="'+x0+'" y1="210" x2="'+(x0+24*p)+'" y2="210" stroke="#1d1d1d" stroke-width="7" stroke-linecap="round"/>'+dash(x0+24*p,180,240)+mmRuler(x0,240,p,50,{mm:true,h:100,fs:22}))}},
+ {les:'Lesson 5 · Think together',q:['8 cm 4 mm = ? mm','8 cm 4 mm = ? mm'],a:['84 mm','84 mm'],v:()=>SV(bar(120,110,[['1 cm',80],['1 cm',80],['1 cm',80],['1 cm',80],['1 cm',80],['1 cm',80],['1 cm',80],['1 cm',80],['4 mm',100,'#fff3c2']])+bar(120,190,[['10',80],['10',80],['10',80],['10',80],['10',80],['10',80],['10',80],['10',80],['4',100,'#fff3c2']])+T(500,310,36,'= ? mm',{f:'#b3261e',w:900}))},
+ {les:'Lesson 8 · Challenge',q:['There are 10 m of ribbon on a reel. Danny cuts off 1 m 50 cm and Bella cuts off 77 cm. How much ribbon is left?','Cuộn ruy băng dài 10 m. Danny cắt 1 m 50 cm, Bella cắt 77 cm. Còn lại bao nhiêu?'],a:['7 m 73 cm  (1000 − 150 − 77 = 773 cm)','7 m 73 cm (1000 − 150 − 77 = 773 cm)'],v:()=>SV(I('1f380',60,40,200)+'<path d="M300 140 C420 60 520 220 640 140 S880 80 960 150" fill="none" stroke="#d7261e" stroke-width="22" stroke-linecap="round"/>'+T(630,70,30,'10 m',{w:900})+bar(290,230,[['1 m 50 cm',220,'#ffd9d4'],['77 cm',140,'#ffd9d4'],['?',300,'#fff3c2']])+T(440,340,22,'Danny',{f:'#7a5a36'})+T(650,340,22,'Bella',{f:'#7a5a36'}))},
+ {les:'Lesson 6 · Compare lengths',q:['You must be at least 1 m 30 cm tall to go on the ride. Who is tall enough?','Phải cao ít nhất 1 m 30 cm mới được chơi. Ai đủ cao?'],a:['Olivia (1 m 39 cm) and Lee (1 m 33 cm). Ambika (1 m 25 cm) is too short.','Olivia (1 m 39 cm) và Lee (1 m 33 cm). Ambika (1 m 25 cm) chưa đủ cao.'],v:()=>SV(I('1f3a2',0,10,260)+'<rect x="40" y="250" width="200" height="110" rx="10" fill="#fff" stroke="#2b1a0e" stroke-width="3"/>'+T(140,290,22,'Minimum height')+T(140,330,30,'1 m 30 cm',{w:900})+[['Ambika','I am 125 cm.','1f9cd-200d-2640',300],['Olivia','I am 39 cm more|than a metre.','1f467',530],['Lee','I am 1 m 33 cm.','1f466',770]].map(([n,t,k,x])=>bubble(x,20,210,96,t,22)+I(k,x+40,140,140)+T(x+110,385,24,n)).join(''))},
+ {les:'Lesson 6 · Think together',q:['Shot put competition: who is in 1st, 2nd and 3rd place?','Thi ném tạ: ai nhất, nhì, ba?'],a:['1st Lexi (363 cm) · 2nd Mo (3 m 59 cm) · 3rd Danny (2 m 99 cm)','Nhất Lexi (363 cm) · Nhì Mo (3 m 59 cm) · Ba Danny (2 m 99 cm)'],v:()=>SV('<rect x="320" y="40" width="440" height="280" rx="16" fill="#fff" stroke="#2b1a0e" stroke-width="4"/>'+T(540,90,28,'Shot put competition',{f:'#1d5fd6',w:900})+[['Mo','3 m 59 cm'],['Lexi','363 cm'],['Danny','2 m 99 cm']].map(([n,d],k)=>T(380,160+k*55,30,n,{a:'start'})+T(700,160+k*55,30,d,{a:'end',w:900})).join('')+ball(160,250,60,'#333333')+I('1f3c6',820,120,140))},
+ {les:'Lesson 6 · Challenge',q:['Which is longer: 294 mm or 30 cm?','Cái nào dài hơn: 294 mm hay 30 cm?'],a:['30 cm  (30 cm = 300 mm, and 300 mm > 294 mm)','30 cm (30 cm = 300 mm, mà 300 mm > 294 mm)'],v:()=>SV('<rect x="150" y="100" width="300" height="180" rx="20" fill="#fff" stroke="#2b1a0e" stroke-width="4"/>'+T(300,215,70,'294 mm',{w:900})+'<rect x="550" y="100" width="300" height="180" rx="20" fill="#fff" stroke="#2b1a0e" stroke-width="4"/>'+T(700,215,70,'30 cm',{w:900})+T(500,210,50,'?',{f:'#b3261e'})+T(500,360,24,'Convert them to the same unit!',{f:'#7a5a36'}))},
+ {les:'Lesson 7 · Add lengths',q:['Kate and Ebo join three pieces of bunting together. How long is the new piece?','Kate và Ebo nối ba đoạn cờ dây. Đoạn mới dài bao nhiêu?'],a:['7 m 75 cm  (25 cm + 4 m 50 cm + 3 m)','7 m 75 cm (25 cm + 4 m 50 cm + 3 m)'],v:()=>{const flags=(x,y,w,n)=>{let s='<path d="M'+x+' '+y+' Q'+(x+w/2)+' '+(y+30)+' '+(x+w)+' '+y+'" fill="none" stroke="#2b1a0e" stroke-width="3"/>';const cs=['#e5432d','#ffd23f','#2f86d6','#2e9e4f'];for(let i=0;i<n;i++){const fx=x+(i+.5)*w/n,fy=y+Math.sin(Math.PI*(i+.5)/n)*22;s+='<path d="M'+(fx-14)+' '+fy+' L'+(fx+14)+' '+fy+' L'+fx+' '+(fy+34)+'Z" fill="'+cs[i%4]+'" stroke="#2b1a0e" stroke-width="1.5"/>'}return s};
+  return SV(flags(60,120,120,2)+flags(240,120,330,9)+flags(630,120,300,8)+[['25 cm',120],['450 cm',405],['3 m',780]].map(([l,x])=>'<rect x="'+(x-80)+'" y="250" width="160" height="56" rx="28" fill="#fff" stroke="#2b1a0e" stroke-width="3"/>'+T(x,288,28,l)).join(''))}},
+ {les:'Lesson 7 · Think together',q:['4 cm + 60 mm = ? cm','4 cm + 60 mm = ? cm'],a:['10 cm  (40 mm + 60 mm = 100 mm = 10 cm)','10 cm (40 mm + 60 mm = 100 mm = 10 cm)'],v:()=>{const x0=150,p=7;return SV('<rect x="'+x0+'" y="120" width="'+(40*p)+'" height="50" fill="#ffd9d4" stroke="#2b1a0e" stroke-width="2.5"/>'+T(x0+20*p,154,24,'4 cm')+'<rect x="'+(x0+40*p)+'" y="120" width="'+(60*p)+'" height="50" fill="#d9f0ff" stroke="#2b1a0e" stroke-width="2.5"/>'+T(x0+70*p,154,24,'60 mm')+mmRuler(x0,190,p,100,{mm:true,h:90,fs:18}))}},
+ {les:'Lesson 8 · Subtract lengths',q:['Holly cuts a 1 m piece from a board that is 2 m 50 cm long. How much is left? Is it enough for another 1 m piece?','Holly cắt 1 m từ tấm ván dài 2 m 50 cm. Còn lại bao nhiêu? Có đủ cắt thêm 1 m không?'],a:['1 m 50 cm is left. Yes, 150 cm is more than 100 cm.','Còn 1 m 50 cm. Có, vì 150 cm nhiều hơn 100 cm.'],v:()=>{const x0=80,ppm=300;let s='<defs><linearGradient id="wd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b07a45"/><stop offset="1" stop-color="#6e4422"/></linearGradient></defs><rect x="'+x0+'" y="110" width="'+(2.5*ppm)+'" height="140" rx="6" fill="url(#wd)" stroke="#3e2410" stroke-width="3"/>';for(let i=0;i<8;i++)s+='<path d="M'+x0+' '+(125+i*16)+' C300 '+(115+i*17)+' 600 '+(135+i*15)+' '+(x0+2.5*ppm)+' '+(122+i*16)+'" fill="none" stroke="rgba(60,30,10,.25)" stroke-width="2"/>';
+  return SV(s+dash(x0+ppm,90,270,'#fff')+metreStick(x0,255,ppm,1,34)+I('1fa9a',x0+ppm-60,20,140)+T(x0+1.25*ppm+ppm,300,30,'2 m 50 cm board',{f:'#2b1a0e'}))}}];
+/* fit 26 slots */
+while(Q.length<26)Q.push(Q[Q.length%Q.length]);
+</script>
+</body>
+</html>
