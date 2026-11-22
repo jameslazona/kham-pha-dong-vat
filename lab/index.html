@@ -780,7 +780,7 @@ table.res img{width:1.7rem;vertical-align:middle;margin-right:.3rem}
  <div id="stageW"><canvas id="cv"></canvas><div class="srcs" id="srcs"></div></div>
  <aside id="side">
   <div class="card step" id="stepC"></div>
-  <div class="card"><div class="lbl"><span id="lTable"></span><span id="lBands" style="font-size:.75rem"></span></div><table class="res" id="res"></table></div>
+  <div class="card"><div class="lbl"><span id="lTable"></span><span id="lBands" style="font-size:.75rem"></span></div><table class="res" id="res"></table><p id="credits" style="font-size:.68rem;color:#8a99a8;margin-top:.4rem;line-height:1.25"></p></div>
  </aside>
 </div>
 <div id="toast"></div></div></template>
@@ -3478,24 +3478,26 @@ const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floo
 function toast(m,k){const t=$('#toast');t.innerHTML=m;t.className='on '+(k||'');clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2800)}
 /* ---------- sound sources ---------- */
 const SRC=[
- {k:'leaf',en:'Rustling leaves',vi:'Lá cây xào xạc',db:20},
- {k:'shh',en:'Whisper',vi:'Thì thầm',db:30},
- {k:'clock',en:'Ticking clock',vi:'Đồng hồ tích tắc',db:40},
- {k:'talk',en:'Talking',vi:'Nói chuyện',db:60},
- {k:'dog',en:'Dog barking',vi:'Chó sủa',db:80},
- {k:'bell',en:'School bell',vi:'Chuông trường',db:85},
- {k:'drumk',en:'Drum',vi:'Trống',db:95},
- {k:'moto',en:'Motorbike',vi:'Xe máy',db:100},
- {k:'plane',en:'Aeroplane taking off',vi:'Máy bay cất cánh',db:120}];
+ {k:'breath',en:'Breathing',vi:'Hơi thở',db:15,f:'breath'},
+ {k:'shh',en:'Whisper',vi:'Thì thầm',db:30,f:'whisper'},
+ {k:'clock',en:'Ticking clock',vi:'Đồng hồ tích tắc',db:40,f:'clock'},
+ {k:'talk',en:'Talking',vi:'Nói chuyện',db:60,f:'talk'},
+ {k:'dog',en:'Dog barking',vi:'Chó sủa',db:80,f:'dog'},
+ {k:'bell',en:'School bell',vi:'Chuông trường',db:85,f:'bell'},
+ {k:'moto',en:'Motorbike engine',vi:'Động cơ xe máy',db:95,f:'moto'},
+ {k:'drumk',en:'Drum kit',vi:'Bộ trống',db:100,f:'drum'},
+ {k:'plane',en:'Aeroplane taking off',vi:'Máy bay cất cánh',db:120,f:'plane'}];
+const BUF={};function loadBuf(s){if(BUF[s.f]!==undefined||!AC)return BUF[s.f];BUF[s.f]=null;fetch('sounds/'+s.f+'.mp3').then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(a=>AC.decodeAudioData(a)).then(b=>{BUF[s.f]=b}).catch(()=>{BUF[s.f]=false});return null}
 function band(db){return db<50?['quiet','yên tĩnh','#24963f']:db<80?['moderate','vừa phải','#c99700']:db<100?['loud','to','#e06a00']:['can hurt ears','hại tai','#d7261e']}
 /* ---------- audio ---------- */
 let AC=null,OUT=null,AN=null,NOISE=null,SOUND=true,PLAY=null,MIC=null,MICAN=null;
 function audio(){if(AC)return AC;try{AC=new (window.AudioContext||window.webkitAudioContext)();const comp=AC.createDynamicsCompressor();OUT=AC.createGain();AN=AC.createAnalyser();AN.fftSize=1024;OUT.connect(AN);AN.connect(comp);comp.connect(AC.destination);
- NOISE=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate);const d=NOISE.getChannelData(0);let b=0;for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}catch(_){AC=null}return AC}
+ SRC.forEach(s=>setTimeout(()=>loadBuf(s),0));NOISE=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate);const d=NOISE.getChannelData(0);let b=0;for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}catch(_){AC=null}return AC}
 function nsrc(t,dur,dest,off){const n=AC.createBufferSource();n.buffer=NOISE;n.loop=true;n.connect(dest);n.start(t,off||Math.random());n.stop(t+dur);return n}
 function filt(type,f,q,dest){const b=AC.createBiquadFilter();b.type=type;b.frequency.value=f;b.Q.value=q||.7;b.connect(dest);return b}
 function env(t,peak,a,d,dest){const g=AC.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d);g.connect(dest);return g}
 const SY={
+ breath(t,g){return SY.leaf(t,g)},
  leaf(t,g){for(let i=0;i<14;i++){const tt=t+i*.18+Math.random()*.1;const e=env(tt,.6+Math.random()*.4,.05,.25,g);nsrc(tt,.4,filt('bandpass',2500+Math.random()*3000,.8,e))}return 2.6},
  shh(t,g){const sy=[.35,.3,.45,.3,.5,.35,.4];let x=t;sy.forEach(d=>{const e=env(x,.9,.06,d,g);nsrc(x,d+.1,filt('bandpass',1800+Math.random()*1500,1.2,e));x+=d+.08});return x-t+.2},
  clock(t,g){for(let i=0;i<6;i++){const tt=t+i*.5,e=env(tt,1,.001,.03,g);nsrc(tt,.05,filt('highpass',i%2?2500:3500,1,e));const o=AC.createOscillator();o.frequency.value=i%2?1800:2400;const e2=env(tt,.4,.001,.02,g);o.connect(e2);o.start(tt);o.stop(tt+.05)}return 3},
@@ -3506,19 +3508,19 @@ const SY={
  moto(t,g){const d=3,o=AC.createOscillator(),o2=AC.createOscillator();o.type='sawtooth';o2.type='square';o.frequency.setValueAtTime(45,t);o.frequency.linearRampToValueAtTime(95,t+1.6);o.frequency.linearRampToValueAtTime(70,t+d);o2.frequency.setValueAtTime(90,t);o2.frequency.linearRampToValueAtTime(190,t+1.6);o2.frequency.linearRampToValueAtTime(140,t+d);
   const trem=AC.createGain();const lfo=AC.createOscillator();lfo.frequency.value=22;const lg=AC.createGain();lg.gain.value=.35;lfo.connect(lg);lg.connect(trem.gain);trem.gain.value=.65;const e=AC.createGain();e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(1,t+.2);e.gain.setValueAtTime(1,t+d-.3);e.gain.linearRampToValueAtTime(0,t+d);e.connect(g);trem.connect(e);const f=filt('lowpass',700,1,trem);o.connect(f);o2.connect(f);[o,o2,lfo].forEach(x=>{x.start(t);x.stop(t+d)});nsrc(t,d,filt('lowpass',500,1,env(t,.4,.3,d,g)));return d+.1},
  plane(t,g){const d=3.4,e=AC.createGain();e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(1,t+1.2);e.gain.setValueAtTime(1,t+d-.6);e.gain.linearRampToValueAtTime(0,t+d);e.connect(g);nsrc(t,d,filt('lowpass',900,.7,e));const h=AC.createGain();h.gain.value=.25;h.connect(e);nsrc(t,d,filt('bandpass',3000,2,h));const o=AC.createOscillator();o.frequency.setValueAtTime(2400,t);o.frequency.linearRampToValueAtTime(3400,t+d);const og=AC.createGain();og.gain.value=.05;o.connect(og);og.connect(e);o.start(t);o.stop(t+d);return d+.1}};
-function vol(db){return Math.min(.55,.55*Math.pow(10,(db-112)/42))}
-function play(i){if(!audio())return;if(AC.state==='suspended')AC.resume();stopMic();const s=SRC[i],g=AC.createGain();g.gain.value=SOUND?vol(s.db):0;g.connect(OUT);const t=AC.currentTime+.05,dur=SY[s.k](t,g);
+function vol(db){return Math.min(.6,.5*Math.pow(10,(db-115)/55))}
+function play(i){if(!audio())return;if(AC.state==='suspended')AC.resume();stopMic();const s=SRC[i],g=AC.createGain();g.gain.value=SOUND?vol(s.db):0;g.connect(OUT);const t=AC.currentTime+.05,b=loadBuf(s);let dur;if(b){const n=AC.createBufferSource();n.buffer=b;n.connect(g);n.start(t);dur=b.duration}else dur=(SY[s.k]||SY.leaf)(t,g);
  PLAY={i,t0:performance.now(),dur:dur*1000,max:0,ref:-200,g};setTimeout(()=>{if(PLAY&&PLAY.g===g)finishPlay()},dur*1000+250);renderSrcs()}
 /* ---------- microphone (live) ---------- */
 async function startMic(){if(!audio())return;if(AC.state==='suspended')AC.resume();try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const s=AC.createMediaStreamSource(st);MICAN=AC.createAnalyser();MICAN.fftSize=1024;s.connect(MICAN);MIC={st,max:0};PLAY=null;toast(L('Live! Make some noise… then be very quiet.','Đang đo trực tiếp! Hãy tạo tiếng động… rồi thật yên lặng.'),'ok');renderSrcs()}catch(e){toast(L('The microphone is not available on this screen.','Màn hình này không dùng được micro.'),'bad')}}
 function stopMic(){if(MIC){MIC.st.getTracks().forEach(t=>t.stop());const m=MIC.max;MIC=null;MICAN=null;if(m>0){LS.live=Math.round(m);renderTable()}renderSrcs()}}
 /* ---------- meter model ---------- */
-const MT={on:false,disp:18,show:18,max:0,maxMode:false,phone:18,buf:new Float32Array(512),lastUpd:0};
+const MT={on:false,disp:11,show:11,max:0,maxMode:false,phone:11,buf:new Float32Array(512),lastUpd:0};
 function rmsDb(an){const b=new Float32Array(an.fftSize);an.getFloatTimeDomainData(b);let s=0;for(let i=0;i<b.length;i++)s+=b[i]*b[i];return{db:10*Math.log10(s/b.length+1e-12),b}}
 function finishPlay(){const p=PLAY;PLAY=null;if(!p)return;const v=Math.round((SRC[p.i].db+(Math.random()-.5)*1.6)*10)/10;if(MT.on||LS.s>0){LS.meas[p.i]=v;onMeasured(p.i)}renderSrcs();renderTable()}
-function meterStep(dt){let target=18+Math.random()*1.2,raw=null;
+function meterStep(dt){let target=11+Math.random()*1.2,raw=null;
  if(PLAY&&AN){const r=rmsDb(AN);raw=r.b;if(r.db>PLAY.ref)PLAY.ref=r.db;else PLAY.ref-=dt*2;const rel=Math.max(-25,r.db-PLAY.ref);const s=SRC[PLAY.i];if(r.db>-90)target=Math.max(target,s.db+(rel>-4?0:rel*.5)+(Math.random()-.5)*1.4)}
- if(MIC&&MICAN){const r=rmsDb(MICAN);raw=r.b;target=Math.max(25,Math.min(115,r.db+100));MIC.max=Math.max(MIC.max,MT.disp)}
+ if(MIC&&MICAN){const r=rmsDb(MICAN);raw=r.b;target=Math.max(20,Math.min(115,r.db+100));MIC.max=Math.max(MIC.max,MT.disp)}
  MT.disp+=(target-MT.disp)*Math.min(1,dt*(target>MT.disp?30:7));MT.phone+=(target-1.4-MT.phone)*Math.min(1,dt*5);
  if(MT.disp>MT.max)MT.max=MT.disp;
  if(performance.now()-MT.lastUpd>220){MT.show=MT.disp;MT.lastUpd=performance.now()}
@@ -3638,6 +3640,7 @@ function shufTiles(){return shufOnce('t',['d','D','b','B'])}
 $('#sndBtn').onclick=()=>{SOUND=!SOUND;$('#sndBtn').textContent=SOUND?'🔊':'🔇';$('#sndBtn').classList.toggle('on',SOUND)};
 document.getElementById('viBtn').addEventListener('click',()=>setTimeout(()=>{VI=document.body.classList.contains('vi-on');labels();renderStep();renderTable();renderSrcs()},0));
 SRC.forEach(s=>li(s.k));['ear','mic'].forEach(li);
+$('#credits').innerHTML='🎵 '+bi('Real recordings: ESC-50 dataset (K. J. Piczak, clips from Freesound.org, CC BY-NC 3.0) · JFK speech, 1961 (public domain) · drum samples from Tone.js / cwilso web-audio-samples. The whisper was made from the speech recording.','Bản ghi thật: bộ dữ liệu ESC-50 (K. J. Piczak, từ Freesound.org, CC BY-NC 3.0) · bài phát biểu của JFK, 1961 (phạm vi công cộng) · mẫu trống từ Tone.js / cwilso. Tiếng thì thầm được tạo từ bản ghi giọng nói.');
 fit();labels();renderStep();renderTable();renderSrcs();requestAnimationFrame(step);setTimeout(fit,100);
 })();
 /* ===== Sound: drum and rice lab ===== */
