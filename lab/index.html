@@ -239,6 +239,127 @@ body[data-xst=grip] .xs-grip,body[data-xst=leg] .xs-leg,body[data-xst=react] .xs
 .card h2{font-size:1.2rem;line-height:1.15}
 .card .go{justify-self:start;font-size:.95rem;padding:.55rem 1.1rem}
 #home{gap:1.4rem}
+/* waste sorting race */
+.tabs button[data-go=race]{display:none}
+body[data-lab=matter] .tabs button[data-go=race]{display:inline-block}
+#race{gap:.8rem;padding:.8rem;position:relative;overflow:hidden;background:linear-gradient(160deg,#e8f1f8,#f7fafc)}
+#rcMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:.55rem;min-height:0}
+#rcSide{width:21rem;flex:none;background:#fff;border-radius:1.1rem;padding:.8rem;box-shadow:0 .15rem .5rem rgba(18,38,58,.08);display:flex;flex-direction:column;gap:.45rem;overflow:auto}
+#rcSide h3{font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:#6b7c8d}
+.rc-lb{display:grid;grid-template-columns:2rem 1fr auto;align-items:center;gap:.5rem;border-radius:.9rem;padding:.4rem .55rem;background:#f2f6fa;border-left:.55rem solid var(--c)}
+.rc-lb.on{background:#fff;box-shadow:0 0 0 .2rem var(--c)}
+.rc-lb .rk{font-weight:900;font-size:1.3rem;text-align:center}
+.rc-lb b{font-weight:900;font-size:1.05rem}
+.rc-lb .tm{font-weight:900;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.arts{display:flex;gap:.2rem;margin-top:.15rem}.arts i{font-style:normal;font-size:1.15rem;filter:grayscale(1);opacity:.25}.arts i.got{filter:none;opacity:1}
+.rc-sbt{margin-top:auto}.rc-sbt .mb{width:100%}
+.rc-banner{font-weight:900;font-size:2.6rem;color:#fff;background:linear-gradient(#1c3f8f,#12306f);border-radius:999px;padding:.4rem 2.2rem;text-align:center;box-shadow:0 .3rem 0 #0b1e48;letter-spacing:.02em;align-self:center}
+.rc-banner em{font-style:normal;color:#ffd23f}
+.rc-setup{display:flex;flex-direction:column;gap:.9rem;align-items:stretch;overflow:auto}
+.rc-sub{font-size:1.2rem;font-weight:700;text-align:center;max-width:60rem;align-self:center;line-height:1.35}
+.rc-sgrid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.rc-sgrid .box h3{font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:#6b7c8d;margin-bottom:.5rem}
+.rc-tn{display:flex;align-items:center;gap:.5rem;margin-top:.4rem}.rc-tn span{width:1.6rem;height:1.6rem;border-radius:50%;background:var(--c);flex:none}
+.rc-tn input{flex:1;font:inherit;font-weight:800;font-size:1.1rem;padding:.45rem .7rem;border-radius:.7rem;border:.15rem solid var(--line)}
+.rc-rules{padding-left:1.2rem;font-weight:700;line-height:1.5}
+.rc-setup>.mb.big2{align-self:center}
+.mb.big2{font-size:1.35rem;padding:.7rem 2rem;min-height:3.6rem}
+.rc-ltce{display:flex;align-items:center;justify-content:center;gap:.45rem;flex:none}
+.rc-ltce span{padding:.35rem 1.1rem;border-radius:999px;font-weight:900;background:#e3eaf1;color:#8493a3;line-height:1.1;text-align:center}
+.rc-ltce i{font-style:normal;color:#e5432d;font-weight:900}
+.rc-ltce .p-look.on,.rc-ltce .p-look.past{background:#cfe6ff;color:#0d3a6b}
+.rc-ltce .p-think.on,.rc-ltce .p-think.past{background:#ffe680;color:#5a4300}
+.rc-ltce .p-choose.on,.rc-ltce .p-choose.past{background:#bff0d4;color:#0e5130}
+.rc-ltce .p-explain.on,.rc-ltce .p-explain.past{background:#ffc9d6;color:#6b1230}
+.rc-ltce span.on{box-shadow:0 0 0 .22rem #12263a;transform:scale(1.08)}
+.rc-ltce.static span{background:#cfe6ff}
+.rc-top{display:flex;align-items:center;gap:1rem;flex:none}
+.rc-chip{background:var(--c);color:#fff;font-weight:900;padding:.45rem 1.2rem;border-radius:999px;font-size:1.2rem}
+.rc-title{flex:1;line-height:1.1}.rc-title small{display:block;font-weight:900;color:#e5432d;letter-spacing:.06em}.rc-title b{font-size:1.8rem;font-weight:900}
+.rc-timer{font-weight:900;font-size:2.4rem;background:#12263a;color:#ffd23f;border-radius:1rem;padding:.2rem 1.1rem;font-variant-numeric:tabular-nums;min-width:8rem;text-align:center}
+.rc-timer.low{background:#e5432d;color:#fff;animation:popin 1s infinite}
+.rc-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:.7rem;justify-content:center;align-items:center;overflow:auto}
+.rc-foot{flex:none;display:flex;align-items:center;gap:.8rem;min-height:3.4rem}
+#rcMsg{flex:1;font-size:1.25rem;font-weight:800;line-height:1.2}#rcMsg.ok{color:#1f7a3a}#rcMsg.bad{color:#a52c1c}
+.rc-btns{display:flex;gap:.5rem}.rc-btns.c{justify-content:center}
+.rc-clue{background:#fff;border-radius:1.4rem;box-shadow:0 .5rem 1.5rem rgba(18,38,58,.15);padding:1.4rem 2rem;max-width:56rem;display:flex;flex-direction:column;gap:.9rem;align-items:center;text-align:center;border-top:1.2rem solid #ffd23f}
+.rc-ri{font-weight:900;font-size:1.6rem;letter-spacing:.15em;color:#12263a}.rc-ri span{display:block;font-size:.9rem;letter-spacing:.05em;color:#e5432d}
+.rc-clue h3{font-size:1.7rem;font-weight:900;line-height:1.25}
+.rc-lt{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;width:100%}.rc-lt div{background:#f2f6fa;border-radius:1rem;padding:.7rem;font-weight:700;font-size:1.1rem}.rc-lt b{display:block;font-weight:900;margin-bottom:.2rem}
+.rc-prize{font-weight:700;font-size:1.1rem}.rc-prize b{font-weight:900}
+.rc-items{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;max-width:70rem}
+.rc-it{background:#fff;border-radius:1rem;padding:.45rem .8rem;display:flex;align-items:center;gap:.5rem;box-shadow:0 .25rem .6rem rgba(18,38,58,.15);border:.2rem solid transparent;font-weight:800;font-size:1.05rem;touch-action:none;cursor:grab;text-align:left}
+.rc-it i{font-style:normal;font-size:1.8rem}.rc-it .vi{font-size:.8rem}
+.rc-it.sel{border-color:#ffd23f;box-shadow:0 0 0 .25rem #ffd23f;transform:translateY(-.2rem)}
+.rc-it.art{flex-direction:column;padding:.6rem 1rem;text-align:center}.rc-it.art i{font-size:2.4rem}
+.ghost{position:fixed;z-index:60;pointer-events:none;transform:rotate(-3deg) scale(1.05);box-shadow:0 1.2rem 2rem rgba(18,38,58,.35)}
+.rc-bins{display:flex;gap:2.4rem;justify-content:center;align-items:flex-end}
+.rc-bin{width:13rem;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.rc-bin .lid{width:100%;height:1.5rem;border-radius:.6rem .6rem .3rem .3rem;background:var(--bc2)}
+.rc-bin .bd{width:90%;min-height:12rem;background:linear-gradient(90deg,var(--bc2),var(--bc) 30%,var(--bc) 70%,var(--bc2));clip-path:polygon(0 0,100% 0,94% 100%,6% 100%);display:flex;flex-direction:column;align-items:center;padding:.8rem .5rem;gap:.4rem}
+.rc-bin .lab{background:#fff;border-radius:.8rem;padding:.4rem .9rem;text-align:center;line-height:1}.rc-bin .lab i{font-style:normal;font-size:2.2rem;display:block}.rc-bin .lab b{font-weight:900;font-size:1.5rem}
+.rc-bin .cnt{font-size:1.4rem;line-height:1.1;text-align:center;word-break:break-word}
+.rc-bin .wh{display:flex;justify-content:space-between;width:70%;margin-top:-.4rem}.rc-bin .wh span{width:1.3rem;height:1.3rem;border-radius:50%;background:#1d2126}
+.b-solid{--bc:#2f7fe0;--bc2:#1a56a6}.b-liquid{--bc:#ffc61a;--bc2:#d99a00}.b-gas{--bc:#53c52a;--bc2:#2f8c14}
+.rc-table{border-collapse:separate;border-spacing:.35rem;background:#fff;border-radius:1.2rem;padding:.6rem;box-shadow:0 .4rem 1rem rgba(18,38,58,.12)}
+.rc-table th{font-weight:900;font-size:1.05rem;padding:.3rem .6rem;text-align:center}.rc-table tr th:first-child{text-align:left;white-space:nowrap}
+.rc-cell{width:6.5rem;height:3.6rem;border-radius:.8rem;font-size:1.9rem;font-weight:900;background:#eef3f8;color:#9fb3c6}
+.rc-cell.y{background:#d9f5e1;color:#1f7a3a}.rc-cell.n{background:#fde3df;color:#a52c1c}.rc-cell.bad{box-shadow:0 0 0 .25rem #e5432d;animation:shake .35s}
+.rc-scene{font-size:3rem;letter-spacing:.3rem;background:linear-gradient(#bfe3ff,#e9f6ff);border-radius:1.2rem;padding:.3rem 1.6rem}
+.rc-slots{display:flex;align-items:stretch;gap:.35rem;justify-content:center}.rc-slots>em{font-style:normal;align-self:center;color:#e5432d;font-weight:900;font-size:1.4rem}
+.rc-slot{width:11rem;min-height:7.5rem;border:.2rem dashed #9fb3c6;border-radius:1rem;background:rgba(255,255,255,.6);padding:.5rem;position:relative;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-align:center;font-weight:700;font-size:.92rem;line-height:1.2}
+.rc-slot.sm{width:9rem;min-height:6.5rem}
+.rc-slot b{position:absolute;top:-.7rem;left:-.5rem;width:1.8rem;height:1.8rem;border-radius:50%;background:#12263a;color:#fff;display:grid;place-items:center;font-size:.95rem}
+.rc-slot.full{border-style:solid;border-color:#2e9e4f;background:#e6f7eb}.rc-slot i{font-style:normal;font-size:1.8rem}.rc-slot em{display:block;font-style:normal;color:#1f7a3a;font-weight:900}
+.rc-cards{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;max-width:66rem}
+.rc-step{background:#fff;border-radius:1rem;padding:.6rem .9rem;box-shadow:0 .25rem .6rem rgba(18,38,58,.15);display:flex;align-items:center;gap:.6rem;max-width:20rem;font-weight:800;font-size:1.02rem;text-align:left;line-height:1.2}
+.rc-step i{font-style:normal;font-size:2rem}.rc-step.mat{max-width:none}
+.rc-dlab{display:flex;justify-content:space-between;width:min(100%,56rem);font-weight:900;color:#5c6e80}
+.rc-mc{background:#fff;border-radius:1.2rem;padding:1rem 1.4rem;box-shadow:0 .4rem 1rem rgba(18,38,58,.12);text-align:center}.rc-mc p{font-size:1.35rem;font-weight:900;margin-bottom:.6rem}
+.rc-mc>div{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+.rc-opt{background:#e8f1fa;border-radius:1rem;padding:.6rem 1.4rem;font-weight:900;font-size:1.4rem;min-width:8rem;box-shadow:0 .2rem 0 #c5d6e6}.rc-opt.sym{font-size:2.6rem;min-width:6rem}.rc-opt.no{opacity:.35;text-decoration:line-through}
+.rc-veh{width:14rem;min-height:12rem;background:#fff;border-radius:1.2rem;border:.25rem dashed #9fb3c6;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.6rem;cursor:pointer;text-align:center}
+.rc-veh .vi2{font-size:4.5rem;line-height:1}.rc-veh b{font-weight:900;font-size:1.2rem}.rc-veh .cnt{font-size:1.5rem;min-height:2rem}
+.rc-bins.done .rc-veh{border-style:solid;border-color:#2e9e4f;min-height:9rem}
+.rc-explain{background:#fff8d6;border:.25rem solid #f2b400;border-radius:1.4rem;padding:1.2rem 1.8rem;max-width:58rem;text-align:center;display:flex;flex-direction:column;gap:.6rem}
+.rc-eh{font-weight:900;color:#a36b00;font-size:1.2rem}.rc-explain .q{font-size:1.5rem;font-weight:900}.rc-explain .f{font-size:1.7rem;font-weight:800;line-height:1.35}.rc-explain .f u{text-decoration:none;border-bottom:.2rem solid #12263a;color:transparent}
+.rc-ans{display:none;font-size:1.4rem;font-weight:900;color:#1f7a3a}.rc-ans.on{display:block}
+.rc-eb{display:flex;gap:.6rem;justify-content:center}
+.rc-art{display:flex;flex-direction:column;align-items:center;gap:.6rem;text-align:center}
+.rc-art .glow{font-size:6rem;width:11rem;height:11rem;border-radius:50%;display:grid;place-items:center;background:radial-gradient(#fff8c4,#ffd23f 60%,#f2b400);box-shadow:0 0 3rem #ffd23f;animation:popin .7s}
+.rc-art h3{font-size:2rem;font-weight:900}.rc-art p{font-size:1.2rem;font-weight:700}.rc-art .bigt{font-size:1.6rem}
+.rc-mapw{flex:1;min-height:0;display:flex;flex-direction:column;gap:.6rem}
+.rc-map{flex:1;min-height:0;width:100%;border-radius:1.2rem}
+.rc-map .ml{font:900 22px system-ui;fill:#12263a}.rc-map .ms2{font:800 15px system-ui;fill:#fff}.rc-map .tn{font:900 17px system-ui;fill:#fff}
+.rc-who{flex:none;background:#fff;border-radius:1.1rem;padding:.7rem;display:flex;flex-direction:column;gap:.5rem;align-items:center}
+.rc-who>div{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
+.rc-tbtn{background:var(--c);color:#fff;border-radius:1rem;padding:.5rem 1.1rem;text-align:center;line-height:1.15;box-shadow:0 .25rem 0 rgba(0,0,0,.25)}.rc-tbtn b{display:block;font-weight:900;font-size:1.2rem}.rc-tbtn span{font-weight:700;font-size:.9rem}
+.rc-tbtn:disabled{opacity:.5}
+.rc-build{flex:1;width:100%;display:flex;flex-direction:column;gap:.6rem;align-items:center;min-height:0}
+.rc-machine{position:relative;width:min(100%,62rem);height:24rem;border-radius:1.4rem;background:linear-gradient(#cfd8df,#9aa7b2);border:.3rem solid #6e7c88;box-shadow:inset 0 0 0 .5rem rgba(255,255,255,.35)}
+.rc-mt{position:absolute;left:50%;top:.5rem;transform:translateX(-50%);background:#12263a;color:#ffd23f;font-weight:900;padding:.3rem 1.2rem;border-radius:999px;white-space:nowrap}
+.rc-mt .gear{display:inline-block;margin-left:.4rem}.rc-machine.on .gear{animation:spin 1.4s linear infinite}.rc-machine.on .g2{animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rc-mslot{position:absolute;width:11rem;height:8.5rem;border:.22rem dashed #4b5966;border-radius:1rem;background:rgba(255,255,255,.75);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:.35rem;cursor:pointer;line-height:1.15}
+.rc-mslot small{font-weight:900;color:#5c6e80}.rc-mslot span{font-size:.82rem;font-weight:700;color:#12263a}.rc-mslot i{font-style:normal;font-size:2rem}.rc-mslot b{font-weight:900;font-size:.95rem}
+.rc-mslot.full{border-style:solid;border-color:#2e9e4f;background:#e6f7eb}
+.rc-mslot.s0{left:calc(50% - 5.5rem);top:3rem}.rc-mslot.s1{left:1rem;top:5rem}.rc-mslot.s2{right:1rem;top:5rem}.rc-mslot.s3{left:calc(50% - 5.5rem);top:12.4rem}.rc-mslot.s4{right:1rem;bottom:1.2rem}
+.rc-machine.on .rc-mslot{box-shadow:0 0 1rem #9ff0a5}
+.rc-belt{position:absolute;left:1rem;bottom:1rem;width:24rem;height:1.6rem;border-radius:999px;background:repeating-linear-gradient(90deg,#2b3035 0 1.2rem,#4b535b 1.2rem 2.4rem)}
+.rc-machine.on .rc-belt{animation:belt .6s linear infinite}@keyframes belt{to{background-position:2.4rem 0}}
+.rc-hopper{position:absolute;left:1rem;top:14.6rem;width:24rem;display:flex;justify-content:center}
+.rc-hopper .drop{background:#fff;border-radius:1rem;padding:.4rem .9rem;display:flex;align-items:center;gap:.5rem;font-weight:900;font-size:1.2rem;box-shadow:0 .4rem 1rem rgba(0,0,0,.3);animation:popin .5s}
+.rc-hopper .drop i{font-style:normal;font-size:2.4rem}
+.rc-inv{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;justify-content:center}.rc-inv>b{width:100%;text-align:center;font-weight:900;font-size:1.15rem}.rc-inv.c{flex-direction:column}
+.rc-sbtn{display:flex;gap:1rem}.rc-sb{background:linear-gradient(var(--bc),var(--bc2));color:#fff;border-radius:1rem;padding:.6rem 1.6rem;font-weight:900;font-size:1.4rem;min-width:11rem;box-shadow:0 .3rem 0 rgba(0,0,0,.25)}.rc-sb i{font-style:normal;display:block;font-size:2rem}
+.rc-shake{animation:shake .35s}
+.rc-pod{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem}
+.rc-steps{display:flex;align-items:flex-end;gap:1rem}
+.rc-pd{display:flex;flex-direction:column;align-items:center;width:14rem}.rc-pd .who{background:var(--c);color:#fff;font-weight:900;font-size:1.4rem;padding:.5rem 1rem;border-radius:1rem;text-align:center;margin-bottom:.5rem}.rc-pd .who small{display:block;font-size:1rem}
+.rc-pd .blk{width:100%;background:linear-gradient(#ffd23f,#e3a800);color:#12263a;font-weight:900;font-size:3rem;display:grid;place-items:center;border-radius:1rem 1rem 0 0}
+.rc-pd.p1 .blk{height:14rem}.rc-pd.p2 .blk{height:10rem;background:linear-gradient(#e3e8ec,#aab4bd)}.rc-pd.p3 .blk{height:7rem;background:linear-gradient(#e7b27c,#b97a3e)}
+.rc-rest{font-weight:800;font-size:1.2rem}
+#race .conf{position:absolute;top:-2rem;font-size:2rem;animation:fall 1.8s ease-in forwards;pointer-events:none;z-index:40}
 </style>
 </head>
 <body data-lab="evap">
@@ -251,6 +372,7 @@ body[data-xst=grip] .xs-grip,body[data-xst=leg] .xs-leg,body[data-xst=react] .xs
       <button data-go="lab">2 Lab</button>
       <button data-go="quiz">3 Quiz</button>
       <button data-go="groups">4 Missions</button>
+      <button data-go="race">4 Race</button>
       <button data-go="freezer">4 Freezer</button>
     </div>
     <button class="chip" id="viBtn">Tiếng Việt</button>
@@ -282,6 +404,7 @@ body[data-xst=grip] .xs-grip,body[data-xst=leg] .xs-leg,body[data-xst=react] .xs
         <canvas id="thumb4" width="600" height="340"></canvas>
         <h2>Solids, liquids and gases<span class="vi">Chất rắn, lỏng và khí</span></h2>
         <button class="go" data-lab="matter" data-go="warm">Start the lab ➜</button>
+        <button class="go" data-lab="matter" data-go="race" style="background:#e5432d">🏁 Waste Sorting Race ➜</button>
       </div>
       <div class="card">
         <canvas id="thumb5" width="600" height="340"></canvas>
@@ -568,6 +691,11 @@ body[data-xst=grip] .xs-grip,body[data-xst=leg] .xs-leg,body[data-xst=react] .xs
     </aside>
   </section>
 
+  <section class="screen" id="race">
+    <div id="rcMain"></div>
+    <aside id="rcSide"></aside>
+  </section>
+
   <section class="screen center" id="quiz">
     <div class="qn" id="qNum"></div>
     <h1 id="qText"></h1>
@@ -589,6 +717,8 @@ function go(id){
   $$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
   if(id==='quiz'&&qi<0)startQuiz();
   if(id==='groups'&&cur!=='evap')return go('home');
+  if(id==='race'&&cur!=='matter')return go('home');
+  if(id==='race')rcRender();
   if(id==='freezer'&&cur!=='freeze')return go('home');
 }
 document.addEventListener('click',e=>{const l=e.target.closest('button[data-lab]');if(l)setLab(l.dataset.lab);const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)});
@@ -2943,6 +3073,213 @@ $('#zBox').addEventListener('click',e=>{
   }
 });
 renderZ();
+
+/* ===== WASTE SORTING RACE (amazing race for Solids, liquids and gases) ===== */
+const RCOL=['#e5432d','#2f86d6','#2e9e4f','#e39b00','#8e44ad','#139c9c'];
+const RCST=[
+ {name:['Sorting Race','Cuộc đua phân loại'],ic:'♻️',art:{en:'Sorting Funnel',vi:'Phễu phân loại',ic:'🔻'},
+  clue:['Sort each piece of waste into the right bin: solid, liquid or gas.','Phân loại mỗi loại rác vào đúng thùng: rắn, lỏng hoặc khí.'],
+  look:['Look at each material.','Quan sát từng vật liệu.'],think:['Does it keep its shape? Can it flow? Does it spread out?','Nó có giữ hình dạng không? Có chảy không? Có lan ra không?']},
+ {name:['Squash or Flow?','Nén hay chảy?'],ic:'💉',art:{en:'Squash Piston',vi:'Pít-tông nén',ic:'🔩'},
+  clue:['Complete the table. Tap a box to show ✓ (yes) or ✗ (no) for each state of matter.','Hoàn thành bảng. Chạm vào ô để chọn ✓ (có) hoặc ✗ (không) cho mỗi thể.'],
+  look:['Look at the four headings.','Đọc bốn tiêu đề.'],think:['Remember the syringe test and the pouring test.','Nhớ lại thí nghiệm xi lanh và thí nghiệm rót.']},
+ {name:['Landfill Detective','Thám tử bãi rác'],ic:'🕵️',art:{en:'Leak-proof Tank',vi:'Bể chống rò rỉ',ic:'🛢️'},
+  clue:['A soluble fertiliser was dumped in a landfill site. Put the steps in order to show how it gets into our water supply.','Phân bón tan được bị đổ ở bãi rác. Sắp xếp các bước để cho thấy nó đi vào nguồn nước như thế nào.'],
+  look:['Read every step card.','Đọc tất cả các thẻ.'],think:['What happens when it rains on the landfill?','Điều gì xảy ra khi trời mưa trên bãi rác?']},
+ {name:['Density Dash','Đua khối lượng riêng'],ic:'⚖️',art:{en:'Density Scale',vi:'Cân khối lượng riêng',ic:'⚖️'},
+  clue:['Put the materials in order from least dense to most dense. Then solve the problem.','Sắp xếp các chất từ khối lượng riêng nhỏ nhất đến lớn nhất. Sau đó giải bài toán.'],
+  look:['Look at the five materials.','Quan sát năm chất.'],think:['Which ones float on water? Which ones sink?','Chất nào nổi trên nước? Chất nào chìm?']},
+ {name:['Hazard Highway','Xa lộ nguy hiểm'],ic:'🚛',art:{en:'Safe Truck',vi:'Xe chở an toàn',ic:'🚚'},
+  clue:['Load each kind of waste onto the right vehicle. Then find the hazard symbol.','Xếp mỗi loại rác lên đúng xe. Sau đó tìm biểu tượng nguy hiểm.'],
+  look:['Look at the three vehicles.','Quan sát ba chiếc xe.'],think:['Solids, liquids and gases must be moved in different ways.','Chất rắn, lỏng và khí phải được chở theo cách khác nhau.']}];
+const RCEX=[null,
+ {q:['Why can a gas be squashed, but a liquid cannot?','Tại sao chất khí nén được, còn chất lỏng thì không?'],f:['A gas can be compressed because its particles are ____. A liquid cannot be compressed because its particles are ____.','Chất khí nén được vì các hạt của nó ____. Chất lỏng không nén được vì các hạt của nó ____.'],a:['far apart · already touching','ở xa nhau · đã chạm vào nhau']},
+ {q:['Why are liquids harder to dispose of in a landfill site than solids?','Tại sao chất lỏng khó xử lý ở bãi rác hơn chất rắn?'],f:['Solids stay in ____. Liquids are harder because they can ____ and leak away.','Chất rắn nằm yên ____. Chất lỏng khó hơn vì chúng có thể ____ và rò rỉ đi.'],a:['one place · flow','một chỗ · chảy']},
+ {q:['Why does wood float on water, but iron sinks?','Tại sao gỗ nổi trên nước còn sắt thì chìm?'],f:['Wood floats because it is ____ dense than water. Iron sinks because it is ____ dense than water.','Gỗ nổi vì khối lượng riêng của nó ____ nước. Sắt chìm vì khối lượng riêng của nó ____ nước.'],a:['less · more','nhỏ hơn · lớn hơn']},
+ {q:['Why does liquid waste need a tanker, not an open lorry?','Tại sao rác lỏng cần xe bồn, không dùng xe tải thùng hở?'],f:['Liquids can ____ and change their shape. In an open lorry they would ____ about and spill.','Chất lỏng có thể ____ và thay đổi hình dạng. Trong xe thùng hở chúng sẽ ____ và tràn ra.'],a:['flow · slosh','chảy · sóng sánh']}];
+const RCFINEX={q:['Why do we sort rubbish before we recycle it?','Tại sao chúng ta phân loại rác trước khi tái chế?'],f:['Sorting rubbish makes it easier to ____. Recycling saves ____ and energy.','Phân loại rác giúp ____ dễ hơn. Tái chế giúp tiết kiệm ____ và năng lượng.'],a:['recycle · resources','tái chế · tài nguyên']};
+const RCWHY={solid:['keeps its shape and does not flow','giữ nguyên hình dạng và không chảy'],liquid:['flows and takes the shape of its container','chảy và có hình dạng của vật chứa'],gas:['spreads out in all directions and can be compressed','lan ra mọi hướng và có thể bị nén']};
+const RCSTEPS=[['A soluble fertiliser is dumped in the landfill site.','Phân bón tan được bị đổ ở bãi rác.','🗑️'],['Rain falls on the landfill site.','Mưa rơi xuống bãi rác.','🌧️'],['The fertiliser dissolves in the rainwater.','Phân bón hòa tan trong nước mưa.','🫧'],['The water soaks down through the ground.','Nước thấm xuống đất.','⬇️'],['It flows into rivers and our water supply.','Nó chảy vào sông và nguồn nước của chúng ta.','🚰']];
+const RCMAT=[['carbon dioxide','khí cacbonic','💨','0.002'],['wood','gỗ','🪵','0.6'],['water','nước','💧','1.0'],['iron','sắt','🔩','7.9'],['gold','vàng','🥇','19.3']];
+const RCCALC=[{q:['A block of wood is 4 cm × 5 cm × 10 cm. What is its volume?','Khối gỗ 4 cm × 5 cm × 10 cm. Thể tích của nó là bao nhiêu?'],o:['200 cm³','19 cm³','50 cm³','400 cm³']},
+ {q:['Iron has a density of 7.9 g/cm³. What is the mass of 5 cm³ of iron?','Sắt có khối lượng riêng 7,9 g/cm³. Khối lượng của 5 cm³ sắt là bao nhiêu?'],o:['39.5 g','7.9 g','12.9 g','1.58 g']},
+ {q:['Water has a density of 1 g/cm³. What is the mass of 5 cm³ of water?','Nước có khối lượng riêng 1 g/cm³. Khối lượng của 5 cm³ nước là bao nhiêu?'],o:['5 g','1 g','50 g','0.5 g']}];
+const RCLOAD=[['scrap metal','sắt vụn','🔩','lorry'],['cardboard','bìa các-tông','📦','lorry'],['waste cooking oil','dầu ăn thải','🫒','tanker'],['petrol','xăng','⛽','tanker'],['methane','khí mêtan','🔥','cyl'],['carbon dioxide','khí cacbonic','💨','cyl']];
+const RCVEH={lorry:['open lorry','xe tải thùng hở','🚛','for solids','cho chất rắn'],tanker:['tanker','xe bồn','🛢️','for liquids','cho chất lỏng'],cyl:['gas cylinders','bình khí','🧯','for gases','cho chất khí']};
+const RCHAZ=[{q:['Which symbol warns that a substance can catch fire (flammable)?','Biểu tượng nào cảnh báo chất dễ cháy?'],o:['🔥','☠️','♻️','💧']},{q:['Which symbol warns that a substance is toxic (poisonous)?','Biểu tượng nào cảnh báo chất độc?'],o:['☠️','🔥','♻️','💧']}];
+const RCSLOT=[['Takes in the mixed waste and sorts it.','Nhận rác lẫn lộn và phân loại.'],['Squashes gases into small cylinders.','Nén chất khí vào bình nhỏ.'],['Stores liquids so they cannot leak away.','Chứa chất lỏng để không bị rò rỉ.'],['Separates materials that float from materials that sink.','Tách chất nổi và chất chìm.'],['Carries the sorted waste safely to recycling.','Chở rác đã phân loại an toàn đến nơi tái chế.']];
+const RCBIN={solid:['SOLID','chất rắn','🧱'],liquid:['LIQUID','chất lỏng','💧'],gas:['GAS','chất khí','☁️']};
+const rcShuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+const rcT=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+const rcNewTeam=i=>({name:'Team '+(i+1),col:RCOL[i],done:[0,0,0,0,0],time:0,finished:false,order:0});
+let RC={teams:[0,1,2,3].map(rcNewTeam),limit:420,view:'setup',cur:-1,st:-1,ph:'look',el:0,pen:0,tu:false,paused:false,ch:null,msg:null,finN:0};
+try{const v=JSON.parse(localStorage.getItem('scilab-race')||'null');if(v&&Array.isArray(v.teams)&&v.teams.length>=2){RC.teams=v.teams;RC.limit=v.limit||420;RC.view=v.view==='setup'?'setup':'map';RC.finN=v.finN||0}}catch(_){}
+const rcSave=()=>{try{localStorage.setItem('scilab-race',JSON.stringify({teams:RC.teams,limit:RC.limit,view:RC.view==='setup'?'setup':'map',finN:RC.finN}))}catch(_){}};
+const rcE=id=>document.getElementById(id);
+let rcSel=null,rcDg=null;
+function rcTeam(){return RC.teams[RC.cur]}
+function rcTotal(t,live){return t.time+(live?RC.el+RC.pen:0)}
+function rcNext(t){const i=t.done.indexOf(0);return i<0?(t.finished?6:5):i}
+/* ---- challenge setup ---- */
+function rcInit(si){
+ if(si===0)return{items:rcShuf(SORTI.map((_,i)=>i)).slice(0,10),placed:{}};
+ if(si===1)return{cells:Array(12).fill(null),bad:[]};
+ if(si===2)return{order:rcShuf([0,1,2,3,4]),got:[]};
+ if(si===3){const q=RCCALC[Math.floor(Math.random()*RCCALC.length)];return{order:rcShuf([0,1,2,3,4]),got:[],q,opts:rcShuf(q.o.map((o,i)=>i)),part:1,wrong:[]}}
+ if(si===4){const q=RCHAZ[Math.floor(Math.random()*RCHAZ.length)];return{loads:rcShuf(RCLOAD.map((_,i)=>i)),placed:{},q,opts:rcShuf(q.o.map((o,i)=>i)),part:1,wrong:[]}}
+ return{slots:Array(5).fill(null),part:1,items:rcShuf(SORTI.map((_,i)=>i)).slice(0,8),k:0,on:false}}
+/* ---- actions ---- */
+function rcGo(view){RC.view=view;rcSel=null;rcSave();rcRender()}
+function rcStart(ti){const t=RC.teams[ti];if(t.finished)return;RC.cur=ti;const n=rcNext(t);RC.st=n;RC.ph='look';RC.el=0;RC.pen=0;RC.tu=false;RC.paused=false;RC.msg=null;RC.ch=rcInit(n);RC.view=n===5?'build':'station';rcRender()}
+function rcBegin(){RC.ph='think';rcRender()}
+function rcTouch(){if(RC.ph==='think')RC.ph='choose';rcStrip()}
+function rcMsg(en,vi,ok){RC.msg=[en,vi,ok];const m=rcE('rcMsg');if(m){m.innerHTML=bi(en,vi);m.className=ok?'ok':'bad'}}
+function rcPenalty(en,vi,el){RC.pen+=15;rcMsg(en+' +15 s penalty.',vi+' Phạt +15 giây.',false);if(el){el.classList.remove('rc-shake');void el.offsetWidth;el.classList.add('rc-shake')}rcTick(true)}
+function rcExplain(){RC.ph='explain';RC.msg=null;rcRender()}
+function rcCollect(){const t=rcTeam();t.time+=RC.el+RC.pen;t.done[RC.st]=1;RC.ph='art';rcSave();rcRender();rcBurst()}
+function rcLeave(){const t=rcTeam();if(t&&(RC.view==='station'||RC.view==='build')&&RC.ph!=='art'&&RC.ph!=='done'){t.time+=RC.el+RC.pen;rcSave()}RC.cur=-1;rcGo(RC.teams.every(t=>t.finished)?'podium':'map')}
+function rcDrop(id,drop){
+ const ch=RC.ch,si=RC.st;rcTouch();
+ const tgt=document.querySelector('[data-drop="'+drop+'"]'),src=document.querySelector('[data-pick="'+id+'"]');
+ if(RC.view==='station'&&si===0){const k=+id.slice(1),it=SORTI[k];
+  if(it[2]===drop){ch.placed[k]=drop;rcMsg('Yes! '+cap(it[0])+' is a '+it[2]+'.','Đúng rồi! '+cap(it[1])+' là '+RCBIN[drop][1]+'.',true);rcSel=null;if(Object.keys(ch.placed).length===ch.items.length){rcExplain();return}rcBody()}
+  else{rcPenalty('Think again! Does '+it[0]+' keep its shape, flow or spread out?','Suy nghĩ lại! '+cap(it[1])+' giữ hình dạng, chảy hay lan ra?',src);rcSel=null;rcSelMark()}return}
+ if(RC.view==='station'&&si===4){const k=+id.slice(1),it=RCLOAD[k];
+  if(it[3]===drop){ch.placed[k]=drop;rcMsg('Good! '+cap(it[0])+' goes in the '+RCVEH[drop][0]+'.','Tốt! '+cap(it[1])+' đi trong '+RCVEH[drop][1]+'.',true);rcSel=null;if(Object.keys(ch.placed).length===RCLOAD.length){ch.part=2;RC.msg=null}rcBody()}
+  else{rcPenalty('Not that vehicle. How does '+it[0]+' behave?','Không phải xe đó. '+cap(it[1])+' có đặc điểm gì?',src);rcSel=null;rcSelMark()}return}
+ if(RC.view==='build'&&ch.part===1){const k=+id.slice(1),s=+drop.slice(4);
+  if(k===s){ch.slots[s]=k;rcMsg('That part fits! The '+RCST[k].art.en+' does this job.','Bộ phận này vừa! '+RCST[k].art.vi+' làm nhiệm vụ này.',true);rcSel=null;if(ch.slots.every(v=>v!==null)){ch.part=2;RC.msg=null}rcBody()}
+  else{rcPenalty('That part does not do this job. Read the job again.','Bộ phận đó không làm nhiệm vụ này. Đọc lại nhiệm vụ.',tgt);rcSel=null;rcSelMark()}}
+}
+function rcClick(e){
+ const b=e.target.closest('button,[data-drop],[data-cell],[data-step],[data-opt],[data-team],[data-sprint]');if(!b)return;
+ const ch=RC.ch;
+ if(b.dataset.drop!==undefined&&rcSel){rcDrop(rcSel,b.dataset.drop);return}
+ if(b.dataset.team!==undefined){rcStart(+b.dataset.team);return}
+ if(b.dataset.cell!==undefined){rcTouch();const i=+b.dataset.cell,v=ch.cells[i];ch.cells[i]=v===null?1:v===1?0:null;ch.bad=ch.bad.filter(x=>x!==i);rcBody();return}
+ if(b.dataset.step!==undefined){rcTouch();const s=+b.dataset.step;
+  if(RC.st===2){if(s===ch.got.length){ch.got.push(s);rcMsg('Yes! That is step '+(s+1)+'.','Đúng rồi! Đó là bước '+(s+1)+'.',true);if(ch.got.length===5){rcExplain();return}rcBody()}else rcPenalty('Not this step yet. What happens first?','Chưa phải bước này. Điều gì xảy ra trước?',b)}
+  else if(RC.st===3){if(s===ch.got.length){ch.got.push(s);rcMsg('Correct! Density of '+RCMAT[s][0]+' = '+RCMAT[s][3]+' g/cm³.','Đúng! Khối lượng riêng của '+RCMAT[s][1]+' = '+RCMAT[s][3].replace('.',',')+' g/cm³.',true);if(ch.got.length===5){ch.part=2;RC.msg=null}rcBody()}else rcPenalty('Not yet. Find the least dense material that is left.','Chưa đúng. Tìm chất có khối lượng riêng nhỏ nhất còn lại.',b)}
+  return}
+ if(b.dataset.opt!==undefined){rcTouch();const o=+b.dataset.opt;if(o===0){rcExplain()}else{ch.wrong.push(o);rcPenalty('Not that one. Try again!','Chưa đúng. Thử lại nhé!',b);rcBody()}return}
+ if(b.dataset.sprint!==undefined){const it=SORTI[ch.items[ch.k]];if(it[2]===b.dataset.sprint){ch.k++;rcMsg('Sorted! '+cap(it[0])+' → '+RCBIN[it[2]][0].toLowerCase()+'.','Đã phân loại! '+cap(it[1])+' → '+RCBIN[it[2]][1]+'.',true);if(ch.k>=ch.items.length){RC.ph='explain';RC.msg=null;rcRender();return}rcBody()}else rcPenalty('Wrong bin! The machine jammed.','Sai thùng! Máy bị kẹt.',b);return}
+ const id=b.id;
+ if(id==='rcBegin')return rcBegin();
+ if(id==='rcCheck'){rcTouch();if(ch.cells.includes(null)){rcMsg('Fill every box first.','Hãy điền tất cả các ô trước.',false);return}
+  const ks=['solid','liquid','gas'];ch.bad=[];ch.cells.forEach((v,i)=>{if(v!==PROPS[ks[Math.floor(i/4)]][i%4])ch.bad.push(i)});
+  if(!ch.bad.length)return rcExplain();rcBody();rcPenalty(ch.bad.length+' box'+(ch.bad.length>1?'es are':' is')+' wrong.',ch.bad.length+' ô chưa đúng.',rcE('rcTable'));return}
+ if(id==='rcShow'){const a=rcE('rcAns');if(a)a.classList.add('on');return}
+ if(id==='rcGot'){if(RC.view==='build')return rcFinish();return rcCollect()}
+ if(id==='rcMap'||id==='rcToMap')return rcLeave();
+ if(id==='rcPause'){RC.paused=!RC.paused;b.innerHTML=RC.paused?bi('▶ Resume','Tiếp tục'):bi('⏸ Pause','Tạm dừng');return}
+ if(id==='rcOn'){ch.on=true;ch.part=3;RC.msg=null;rcRender();return}
+ if(id==='rcPodium')return rcGo('podium');
+ if(id==='rcStartRace'){RC.teams.forEach((t,i)=>{const inp=rcE('rcName'+i);if(inp&&inp.value.trim())t.name=inp.value.trim().slice(0,18)});return rcGo('map')}
+ if(id==='rcSetup')return rcGo('setup');
+ if(id==='rcNew'){RC.teams=RC.teams.map((t,i)=>{const n=rcNewTeam(i);n.name=t.name;return n});RC.finN=0;return rcGo('setup')}
+ if(b.dataset.tc){const n=RC.teams.length+ +b.dataset.tc;if(n>=2&&n<=6){RC.teams.forEach((t,i)=>{const inp=rcE('rcName'+i);if(inp&&inp.value.trim())t.name=inp.value.trim().slice(0,18)});if(n>RC.teams.length)RC.teams.push(rcNewTeam(n-1));else RC.teams.pop();rcSave();rcRender()}return}
+ if(b.dataset.lim){RC.limit=+b.dataset.lim;rcSave();rcRender();return}
+}
+function rcFinish(){const t=rcTeam();t.time+=RC.el+RC.pen;t.finished=true;RC.finN++;t.order=RC.finN;RC.ph='done';rcSave();rcRender();rcBurst()}
+/* ---- rendering ---- */
+const rcStripH=()=>'<div class="rc-ltce" id="rcStrip">'+[['look','LOOK','Quan sát'],['think','THINK','Suy nghĩ'],['choose','CHOOSE','Lựa chọn'],['explain','EXPLAIN','Giải thích']].map((s,i)=>(i?'<i>➜</i>':'')+'<span class="p-'+s[0]+'" data-p="'+s[0]+'">'+s[1]+'<span class="vi">'+s[2]+'</span></span>').join('')+'</div>';
+function rcStrip(){const order=['look','think','choose','explain','art','done'],k=order.indexOf(RC.ph);document.querySelectorAll('#rcStrip [data-p]').forEach((el,i)=>{el.classList.toggle('on',i===Math.min(k,3));el.classList.toggle('past',i<Math.min(k,3)||k>3)})}
+function rcHead(){const t=rcTeam(),bld=RC.view==='build',s=bld?{name:['Pit Stop: Build the Recycling Machine','Trạm dừng: Lắp máy tái chế'],ic:'🏁'}:RCST[RC.st];
+ return '<div class="rc-top"><span class="rc-chip" style="--c:'+t.col+'">'+t.name+'</span><div class="rc-title"><small>'+(bld?bi('FINAL','CHẶNG CUỐI'):bi('STATION '+(RC.st+1),'TRẠM '+(RC.st+1)))+'</small><b>'+s.ic+' '+s.name[0]+'</b><span class="vi">'+s.name[1]+'</span></div><div class="rc-timer" id="rcTimer">'+rcT(RC.limit-RC.el)+'</div></div>'+rcStripH()}
+function rcFoot(extra){return '<div class="rc-foot"><div id="rcMsg"'+(RC.msg?' class="'+(RC.msg[2]?'ok':'bad')+'"':'')+'>'+(RC.msg?bi(RC.msg[0],RC.msg[1]):'')+'</div><div class="rc-btns">'+(extra||'')+'<button class="mb" id="rcPause">'+bi(RC.paused?'▶ Resume':'⏸ Pause',RC.paused?'Tiếp tục':'Tạm dừng')+'</button><button class="mb" id="rcMap">🗺 '+bi('Map','Bản đồ')+'</button></div></div>'}
+function rcBin(k,extra){const b=RCBIN[k];return '<div class="rc-bin b-'+k+'" data-drop="'+k+'"><div class="lid"></div><div class="bd"><div class="lab"><i>'+b[2]+'</i><b>'+b[0]+'</b><span class="vi">'+b[1]+'</span></div>'+(extra||'')+'</div><div class="wh"><span></span><span></span></div></div>'}
+function rcExplainH(ex){return '<div class="rc-explain"><div class="rc-eh">🗣 '+bi('EXPLAIN! Say it together.','GIẢI THÍCH! Cả nhóm cùng nói.')+'</div><p class="q">'+bi(ex.q[0],ex.q[1])+'</p><p class="f">“'+ex.f[0].replace(/____/g,'<u>______</u>')+'”<span class="vi">“'+ex.f[1].replace(/____/g,'<u>______</u>')+'”</span></p><div class="rc-ans" id="rcAns">✅ '+bi(ex.a[0],ex.a[1])+'</div><div class="rc-eb"><button class="mb" id="rcShow">👀 '+bi('Show answer','Xem đáp án')+'</button><button class="mb go2" id="rcGot">✓ '+bi(RC.view==='build'?'We explained it! Finish the race':'We explained it! Collect the artefact',RC.view==='build'?'Đã giải thích! Về đích':'Đã giải thích! Nhận cổ vật')+'</button></div></div>'}
+function rcBody(){
+ const B=rcE('rcBody');if(!B)return;const ch=RC.ch,si=RC.st;let h='';
+ if(RC.view==='build'&&RC.ph==='look'){
+  h='<div class="rc-clue"><div class="rc-ri">PIT STOP<span>'+bi('Final challenge','Thử thách cuối')+'</span></div><h3>🏁 '+bi('Use your 5 artefacts to build the Recycling Machine. Put each part where it does the right job. Then switch it on and sort the waste!','Dùng 5 cổ vật để lắp máy tái chế. Đặt mỗi bộ phận vào đúng chỗ làm đúng nhiệm vụ. Sau đó bật máy và phân loại rác!')+'</h3><div class="rc-lt"><div><b>👀 LOOK</b>'+bi('Read the job of each part of the machine.','Đọc nhiệm vụ của từng bộ phận máy.')+'</div><div><b>🤔 THINK</b>'+bi('Which artefact can do that job?','Cổ vật nào làm được nhiệm vụ đó?')+'</div></div><div class="rc-prize">'+[0,1,2,3,4].map(k=>RCST[k].art.ic).join(' ')+'</div><button class="mb go2 big2" id="rcBegin">⏱ '+bi('We are ready! Start the clock','Sẵn sàng! Bắt đầu tính giờ')+'</button></div>'}
+ else if(RC.view==='station'&&RC.ph==='look'){const s=RCST[si];
+  h='<div class="rc-clue"><div class="rc-ri">ROUTE INFO<span>'+bi('Station '+(si+1),'Trạm '+(si+1))+'</span></div><h3>'+s.ic+' '+bi(s.clue[0],s.clue[1])+'</h3><div class="rc-lt"><div><b>👀 LOOK</b>'+bi(s.look[0],s.look[1])+'</div><div><b>🤔 THINK</b>'+bi(s.think[0],s.think[1])+'</div></div><div class="rc-prize">'+bi('Artefact to win:','Cổ vật sẽ nhận:')+' <b>'+s.art.ic+' '+s.art.en+'</b><span class="vi">'+s.art.vi+'</span></div><button class="mb go2 big2" id="rcBegin">⏱ '+bi('We are ready! Start the clock','Sẵn sàng! Bắt đầu tính giờ')+'</button></div>'}
+ else if(RC.ph==='explain'){let ex=RCEX[si];if(RC.view==='build')ex=RCFINEX;
+  if(RC.view==='station'&&si===0){const k=+Object.keys(ch.placed)[Math.floor(Math.random()*ch.items.length)],it=SORTI[k],st=it[2];ex={q:['Why is '+it[0]+' a '+st+'?','Tại sao '+it[1]+' là '+RCBIN[st][1]+'?'],f:[cap(it[0])+' is a '+st+' because it ____.',cap(it[1])+' là '+RCBIN[st][1]+' vì nó ____.'],a:RCWHY[st]}}
+  h=rcExplainH(ex)}
+ else if(RC.ph==='art'){const a=RCST[si].art,t=rcTeam(),left=t.done.filter(v=>!v).length;
+  h='<div class="rc-art"><div class="glow">'+a.ic+'</div><h3>'+bi('Artefact collected: '+a.en+'!','Đã nhận cổ vật: '+a.vi+'!')+'</h3><p>'+bi('Station time: '+rcT(RC.el)+(RC.pen?' + '+RC.pen+' s penalty':''),'Thời gian: '+rcT(RC.el)+(RC.pen?' + phạt '+RC.pen+' giây':''))+'</p><p>'+(left?bi(left+' more station'+(left>1?'s':'')+' to go. Then build the Recycling Machine!','Còn '+left+' trạm nữa. Sau đó lắp máy tái chế!'):bi('You have all 5 artefacts! Go to the Pit Stop and build the Recycling Machine.','Nhóm đã có đủ 5 cổ vật! Hãy đến Trạm dừng để lắp máy tái chế.'))+'</p><button class="mb go2 big2" id="rcToMap">🗺 '+bi('Back to the race map','Về bản đồ cuộc đua')+'</button></div>'}
+ else if(RC.view==='build'&&RC.ph==='done'){const t=rcTeam(),fin=RC.teams.filter(x=>x.finished).sort((a,b)=>a.time-b.time),rank=fin.indexOf(t)+1;
+  h='<div class="rc-art"><div class="glow">🏁</div><h3>'+bi('Pit Stop! '+t.name+' has finished the race!',t.name+' đã về đích!')+'</h3><p class="bigt">'+bi('Total time: ','Tổng thời gian: ')+'<b>'+rcT(t.time)+'</b></p><p>'+bi('Arrived: team number '+t.order+' · Fastest time so far: #'+rank,'Về đích thứ '+t.order+' · Xếp hạng thời gian hiện tại: #'+rank)+'</p><button class="mb go2 big2" id="rcToMap">🗺 '+bi('Back to the race map','Về bản đồ cuộc đua')+'</button></div>'}
+ else if(RC.view==='station'&&si===0){const left=ch.items.filter(k=>!ch.placed[k]);
+  h='<div class="rc-items">'+left.map(k=>'<button class="rc-it'+(rcSel==='i'+k?' sel':'')+'" data-pick="i'+k+'"><i>'+SORTI[k][3]+'</i><b>'+SORTI[k][0]+'</b><span class="vi">'+SORTI[k][1]+'</span></button>').join('')+'</div><div class="rc-bins">'+['solid','liquid','gas'].map(s=>rcBin(s,'<div class="cnt">'+ch.items.filter(k=>ch.placed[k]===s).map(k=>SORTI[k][3]).join(' ')+'</div>')).join('')+'</div>'}
+ else if(RC.view==='station'&&si===1){const hd=[['keeps its shape','giữ hình dạng'],['keeps its volume','giữ thể tích'],['able to flow','có thể chảy'],['able to be compressed','có thể bị nén']],rows=[['solid','chất rắn','🧱'],['liquid','chất lỏng','💧'],['gas','chất khí','☁️']];
+  h='<table class="rc-table" id="rcTable"><tr><th></th>'+hd.map(x=>'<th>'+bi(x[0],x[1])+'</th>').join('')+'</tr>'+rows.map((r,ri)=>'<tr><th>'+r[2]+' '+bi(r[0],r[1])+'</th>'+[0,1,2,3].map(c=>{const i=ri*4+c,v=ch.cells[i];return '<td><button class="rc-cell'+(v===1?' y':v===0?' n':'')+(ch.bad.includes(i)?' bad':'')+'" data-cell="'+i+'">'+(v===1?'✓':v===0?'✗':'?')+'</button></td>'}).join('')+'</tr>').join('')+'</table><div class="rc-cbtn"><button class="mb go2 big2" id="rcCheck">✓ '+bi('Check the table','Kiểm tra bảng')+'</button></div>'}
+ else if(RC.view==='station'&&si===2){
+  h='<div class="rc-scene">🏭 🗑️🗑️🗑️ 🌧️ ⛰️ 🏞️ 🚰</div><div class="rc-slots">'+[0,1,2,3,4].map(i=>{const s=ch.got[i];return '<div class="rc-slot'+(s!==undefined?' full':'')+'"><b>'+(i+1)+'</b>'+(s!==undefined?'<i>'+RCSTEPS[s][2]+'</i><span>'+bi(RCSTEPS[s][0],RCSTEPS[s][1])+'</span>':'')+'</div>'}).join('<em>➜</em>')+'</div><div class="rc-cards">'+ch.order.filter(s=>!ch.got.includes(s)).map(s=>'<button class="rc-step" data-step="'+s+'"><i>'+RCSTEPS[s][2]+'</i><span>'+bi(RCSTEPS[s][0],RCSTEPS[s][1])+'</span></button>').join('')+'</div>'}
+ else if(RC.view==='station'&&si===3){
+  h='<div class="rc-dlab"><span>⬅ '+bi('least dense','nhỏ nhất')+'</span><span>'+bi('most dense','lớn nhất')+' ➡</span></div><div class="rc-slots">'+[0,1,2,3,4].map(i=>{const s=ch.got[i];return '<div class="rc-slot sm'+(s!==undefined?' full':'')+'"><b>'+(i+1)+'</b>'+(s!==undefined?'<i>'+RCMAT[s][2]+'</i><span>'+bi(RCMAT[s][0],RCMAT[s][1])+'<em>'+RCMAT[s][3]+' g/cm³</em></span>':'')+'</div>'}).join('<em>➜</em>')+'</div>';
+  if(ch.part===1)h+='<div class="rc-cards">'+ch.order.filter(s=>!ch.got.includes(s)).map(s=>'<button class="rc-step mat" data-step="'+s+'"><i>'+RCMAT[s][2]+'</i><span>'+bi(RCMAT[s][0],RCMAT[s][1])+'</span></button>').join('')+'</div>';
+  else h+='<div class="rc-mc"><p>🧮 '+bi(ch.q.q[0],ch.q.q[1])+'</p><div>'+ch.opts.map(o=>'<button class="rc-opt'+(ch.wrong.includes(o)?' no':'')+'" data-opt="'+o+'">'+ch.q.o[o]+'</button>').join('')+'</div></div>'}
+ else if(RC.view==='station'&&si===4){
+  if(ch.part===1)h='<div class="rc-items">'+ch.loads.filter(k=>!ch.placed[k]).map(k=>'<button class="rc-it'+(rcSel==='l'+k?' sel':'')+'" data-pick="l'+k+'"><i>'+RCLOAD[k][2]+'</i><b>'+RCLOAD[k][0]+'</b><span class="vi">'+RCLOAD[k][1]+'</span></button>').join('')+'</div><div class="rc-bins">'+Object.keys(RCVEH).map(v=>'<div class="rc-veh v-'+v+'" data-drop="'+v+'"><div class="vi2">'+RCVEH[v][2]+'</div><b>'+RCVEH[v][0]+'</b><span class="vi">'+RCVEH[v][1]+'</span><div class="cnt">'+ch.loads.filter(k=>ch.placed[k]===v).map(k=>RCLOAD[k][2]).join(' ')+'</div></div>').join('')+'</div>';
+  else h='<div class="rc-bins done">'+Object.keys(RCVEH).map(v=>'<div class="rc-veh v-'+v+'"><div class="vi2">'+RCVEH[v][2]+'</div><b>'+RCVEH[v][0]+'</b><div class="cnt">'+ch.loads.filter(k=>ch.placed[k]===v).map(k=>RCLOAD[k][2]).join(' ')+'</div></div>').join('')+'</div><div class="rc-mc"><p>⚠️ '+bi(ch.q.q[0],ch.q.q[1])+'</p><div>'+ch.opts.map(o=>'<button class="rc-opt sym'+(ch.wrong.includes(o)?' no':'')+'" data-opt="'+o+'">'+ch.q.o[o]+'</button>').join('')+'</div></div>'}
+ else if(RC.view==='build'){
+  const t=rcTeam(),on=ch.on;
+  h='<div class="rc-build"><div class="rc-machine'+(on?' on':'')+'"><div class="rc-mt">♻️ '+bi('RECYCLING MACHINE','MÁY TÁI CHẾ')+'<span class="gear">⚙️</span><span class="gear g2">⚙️</span></div>'+RCSLOT.map((j,i)=>{const k=ch.slots[i];return '<div class="rc-mslot s'+i+(k!==null?' full':'')+'" data-drop="slot'+i+'">'+(k!==null?'<i>'+RCST[k].art.ic+'</i><b>'+RCST[k].art.en+'</b>':'<small>'+bi('Part '+(i+1),'Bộ phận '+(i+1))+'</small>')+'<span>'+bi(j[0],j[1])+'</span></div>'}).join('');
+  if(ch.part===3){const it=SORTI[ch.items[Math.min(ch.k,ch.items.length-1)]];h+='<div class="rc-hopper"><div class="drop" key="'+ch.k+'"><i>'+it[3]+'</i><b>'+it[0]+'</b><span class="vi">'+it[1]+'</span></div></div>'}
+  h+='<div class="rc-belt"></div></div>';
+  if(ch.part===1)h+='<div class="rc-inv"><b>'+bi('Your artefacts','Cổ vật của nhóm')+'</b>'+[0,1,2,3,4].filter(k=>!ch.slots.includes(k)).map(k=>'<button class="rc-it art'+(rcSel==='a'+k?' sel':'')+'" data-pick="a'+k+'"><i>'+RCST[k].art.ic+'</i><b>'+RCST[k].art.en+'</b><span class="vi">'+RCST[k].art.vi+'</span></button>').join('')+'</div>';
+  if(ch.part===2)h+='<div class="rc-inv c"><button class="mb go2 big2" id="rcOn">⚡ '+bi('Switch on the machine!','Bật máy!')+'</button></div>';
+  if(ch.part===3)h+='<div class="rc-inv c"><b>'+bi('Final sprint '+(ch.k+1)+' of '+ch.items.length+': which bin?','Chặng nước rút '+(ch.k+1)+'/'+ch.items.length+': thùng nào?')+'</b><div class="rc-sbtn">'+['solid','liquid','gas'].map(s=>'<button class="rc-sb b-'+s+'" data-sprint="'+s+'"><i>'+RCBIN[s][2]+'</i>'+RCBIN[s][0]+'<span class="vi">'+RCBIN[s][1]+'</span></button>').join('')+'</div></div>';
+  h+='</div>'}
+ B.innerHTML=h;rcStrip();
+}
+function rcSelMark(){document.querySelectorAll('#race [data-pick]').forEach(el=>el.classList.toggle('sel',el.dataset.pick===rcSel))}
+function rcRender(){
+ const M=rcE('rcMain');if(!M)return;
+ if(RC.view==='setup'){
+  M.innerHTML='<div class="rc-setup"><div class="rc-banner">🏁 WASTE <em>SORTING</em> RACE! 🏁</div><p class="rc-sub">'+bi('Work in groups or pairs. Finish the challenge at each station to win an artefact. Collect all 5 artefacts, then use them to build the Recycling Machine at the Pit Stop. The fastest team wins!','Làm việc theo nhóm hoặc theo cặp. Hoàn thành thử thách ở mỗi trạm để nhận một cổ vật. Thu đủ 5 cổ vật rồi dùng chúng để lắp máy tái chế ở Trạm dừng. Nhóm nhanh nhất chiến thắng!')+'</p>'+
+  '<div class="rc-ltce static"><span class="p-look on">LOOK</span><i>➜</i><span class="p-think on">THINK</span><i>➜</i><span class="p-choose on">CHOOSE</span><i>➜</i><span class="p-explain on">EXPLAIN</span></div>'+
+  '<div class="rc-sgrid"><div class="box"><h3>'+bi('Teams','Các nhóm')+'</h3><div class="tc"><span>'+bi('Number of teams','Số nhóm')+'</span><button data-tc="-1">−</button><b>'+RC.teams.length+'</b><button data-tc="1">+</button></div>'+RC.teams.map((t,i)=>'<label class="rc-tn" style="--c:'+t.col+'"><span></span><input id="rcName'+i+'" value="'+t.name.replace(/"/g,'&quot;')+'" maxlength="18"></label>').join('')+'</div>'+
+  '<div class="box"><h3>'+bi('Time at each station','Thời gian mỗi trạm')+'</h3><div class="seg">'+[300,420,600].map(l=>'<button class="big'+(RC.limit===l?' on':'')+'" data-lim="'+l+'">'+l/60+' min</button>').join('')+'</div><h3 style="margin-top:.8rem">'+bi('Rules','Luật chơi')+'</h3><ul class="rc-rules"><li>'+bi('Each mistake adds a 15-second penalty.','Mỗi lỗi sai bị phạt 15 giây.')+'</li><li>'+bi('If time runs out, the team gets a 1-minute penalty and keeps going.','Nếu hết giờ, nhóm bị phạt 1 phút và tiếp tục.')+'</li><li>'+bi('The teacher checks each EXPLAIN step.','Giáo viên kiểm tra bước GIẢI THÍCH.')+'</li><li>'+bi('Lowest total time wins.','Tổng thời gian thấp nhất chiến thắng.')+'</li></ul></div></div>'+
+  '<button class="mb go2 big2" id="rcStartRace">🏁 '+bi('Start the race!','Bắt đầu cuộc đua!')+'</button></div>'}
+ else if(RC.view==='map'){
+  const P=[[80,470],[240,385],[430,455],[585,320],[790,400],[905,225],[690,105]];
+  let road='M'+P[0].join(' ');for(let i=1;i<P.length;i++){const a=P[i-1],b=P[i];road+=' Q'+((a[0]+b[0])/2+(i%2?40:-40))+' '+((a[1]+b[1])/2+(i%2?-40:40))+' '+b.join(' ')}
+  let svg='<svg viewBox="0 0 1000 560" class="rc-map"><defs><pattern id="chk" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#111"/><rect x="8" y="8" width="8" height="8" fill="#111"/><rect x="8" width="8" height="8" fill="#fff"/><rect y="8" width="8" height="8" fill="#fff"/></pattern></defs>'+
+   '<rect width="1000" height="560" rx="24" fill="#8fd16a"/><circle cx="140" cy="120" r="60" fill="#7cc35a"/><circle cx="880" cy="490" r="80" fill="#7cc35a"/><circle cx="420" cy="150" r="40" fill="#7cc35a"/>'+
+   '<path d="'+road+'" fill="none" stroke="#5b6470" stroke-width="46" stroke-linecap="round"/><path d="'+road+'" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="18 16" stroke-linecap="round"/>';
+  svg+='<g><rect x="40" y="440" width="80" height="22" fill="url(#chk)"/><text x="80" y="512" text-anchor="middle" class="ml">START</text></g>';
+  RCST.forEach((s,i)=>{const [x,y]=P[i+1];svg+='<g><circle cx="'+x+'" cy="'+y+'" r="40" fill="#fff" stroke="#ffd23f" stroke-width="7"/><text x="'+x+'" y="'+(y+13)+'" text-anchor="middle" font-size="36">'+s.ic+'</text><rect x="'+(x-80)+'" y="'+(y+46)+'" width="160" height="30" rx="15" fill="#12263a"/><text x="'+x+'" y="'+(y+67)+'" text-anchor="middle" class="ms2">'+(i+1)+'. '+(viOn?s.name[1]:s.name[0])+'</text></g>'});
+  const [fx,fy]=P[6];svg+='<g><rect x="'+(fx-60)+'" y="'+(fy-46)+'" width="120" height="70" rx="12" fill="url(#chk)" stroke="#ffd23f" stroke-width="6"/><rect x="'+(fx-90)+'" y="'+(fy+30)+'" width="180" height="30" rx="15" fill="#e5432d"/><text x="'+fx+'" y="'+(fy+51)+'" text-anchor="middle" class="ms2">🏁 '+(viOn?'TRẠM DỪNG':'PIT STOP')+'</text></g>';
+  RC.teams.forEach((t,i)=>{const pos=P[t.finished?6:t.done.filter(Boolean).length];const ang=i/RC.teams.length*Math.PI*2,ox=Math.cos(ang)*34,oy=Math.sin(ang)*24;
+   svg+='<g class="tok"><circle cx="'+(pos[0]+ox)+'" cy="'+(pos[1]+oy-6)+'" r="17" fill="'+t.col+'" stroke="#fff" stroke-width="4"/><text x="'+(pos[0]+ox)+'" y="'+(pos[1]+oy)+'" text-anchor="middle" class="tn">'+(i+1)+'</text></g>'});
+  svg+='</svg>';
+  const all=RC.teams.every(t=>t.finished);
+  M.innerHTML='<div class="rc-mapw">'+svg+'<div class="rc-who"><b>'+bi('Which team is at the screen? Tap your team:','Nhóm nào đang ở màn hình? Chạm vào tên nhóm:')+'</b><div>'+RC.teams.map((t,i)=>{const n=rcNext(t);return '<button class="rc-tbtn" data-team="'+i+'" style="--c:'+t.col+'"'+(t.finished?' disabled':'')+'><b>'+t.name+'</b><span>'+(t.finished?bi('Finished 🏁','Về đích 🏁'):n===5?bi('Next: 🏁 Pit Stop','Tiếp: 🏁 Trạm dừng'):bi('Next: '+RCST[n].ic+' Station '+(n+1),'Tiếp: '+RCST[n].ic+' Trạm '+(n+1)))+'</span></button>'}).join('')+'</div>'+(all?'<button class="mb go2 big2" id="rcPodium">🏆 '+bi('See the winners','Xem kết quả')+'</button>':'')+'</div></div>'}
+ else if(RC.view==='podium'){
+  const fin=RC.teams.slice().sort((a,b)=>(b.finished-a.finished)||(a.time-b.time)),top=fin.slice(0,3),pl=[1,0,2].filter(i=>top[i]);
+  M.innerHTML='<div class="rc-pod"><div class="rc-banner">🏆 '+bi('THE WINNERS!','NHÓM CHIẾN THẮNG!')+'</div><div class="rc-steps">'+pl.map(i=>'<div class="rc-pd p'+(i+1)+'"><div class="who" style="--c:'+top[i].col+'">'+top[i].name+'<small>'+rcT(top[i].time)+'</small></div><div class="blk">'+(i+1)+'</div></div>').join('')+'</div>'+(fin.length>3?'<p class="rc-rest">'+fin.slice(3).map((t,i)=>(i+4)+'. '+t.name+' · '+rcT(t.time)).join(' &nbsp; ')+'</p>':'')+'<div class="rc-btns c"><button class="mb" id="rcSetup">⚙ '+bi('Teams','Các nhóm')+'</button><button class="mb go2" id="rcNew">🔁 '+bi('New race','Cuộc đua mới')+'</button></div></div>';rcBurst()}
+ else{M.innerHTML=rcHead()+'<div class="rc-body" id="rcBody"></div>'+rcFoot();rcBody()}
+ rcSide();
+}
+function rcSide(){
+ const S=rcE('rcSide');if(!S)return;
+ const ord=RC.teams.map((t,i)=>({t,i})).sort((a,b)=>(b.t.finished-a.t.finished)||(b.t.done.filter(Boolean).length-a.t.done.filter(Boolean).length)||(a.t.time-b.t.time));
+ S.innerHTML='<h3>'+bi('Leaderboard','Bảng xếp hạng')+'</h3>'+ord.map(({t,i},r)=>{const live=i===RC.cur&&(RC.view==='station'||RC.view==='build')&&RC.ph!=='art'&&RC.ph!=='done';return '<div class="rc-lb'+(i===RC.cur?' on':'')+'" style="--c:'+t.col+'"><span class="rk">'+(r+1)+'</span><div><b>'+t.name+(t.finished?' 🏁':'')+'</b><div class="arts">'+RCST.map((s,k)=>'<i class="'+(t.done[k]?'got':'')+'" title="'+s.art.en+'">'+s.art.ic+'</i>').join('')+'</div></div><span class="tm" '+(live?'id="rcLive"':'')+'>'+rcT(rcTotal(t,live))+'</span></div>'}).join('')+
+ '<div class="rc-sbt"><button class="mb" id="rcSetup">⚙ '+bi('Teams and settings','Nhóm và cài đặt')+'</button></div>';
+}
+function rcTick(force){
+ if(!force){if(!rcE('race')||!rcE('race').classList.contains('on'))return;if(!(RC.view==='station'||RC.view==='build')||RC.paused||RC.ph==='look'||RC.ph==='art'||RC.ph==='done')return;RC.el++}
+ if(RC.el>=RC.limit&&!RC.tu){RC.tu=true;RC.pen+=60;rcMsg("Time's up! +1 minute penalty. Keep going!",'Hết giờ! Phạt +1 phút. Tiếp tục nào!',false)}
+ const T=rcE('rcTimer');if(T){T.textContent=RC.el>=RC.limit?'+'+rcT(RC.el-RC.limit):rcT(RC.limit-RC.el);T.classList.toggle('low',RC.limit-RC.el<=60)}
+ const L=rcE('rcLive');if(L)L.textContent=rcT(rcTotal(rcTeam(),true));
+}
+setInterval(()=>rcTick(false),1000);
+function rcBurst(){const w=rcE('race');if(!w)return;for(let i=0;i<30;i++){const s=document.createElement('span');s.className='conf';s.textContent=['⭐','✨','♻️','🏁'][i%4];s.style.left=(5+Math.random()*70)+'%';s.style.animationDelay=(Math.random()*.4)+'s';w.appendChild(s);setTimeout(()=>s.remove(),2200)}}
+/* ---- input ---- */
+const RCW=rcE('race');
+RCW.addEventListener('click',e=>{if(e.target.closest('[data-pick]'))return;rcClick(e)});
+RCW.addEventListener('pointerdown',e=>{const c=e.target.closest('[data-pick]');if(!c)return;e.preventDefault();rcDg={el:c,id:c.dataset.pick,x:e.clientX,y:e.clientY,g:null};try{c.setPointerCapture(e.pointerId)}catch(_){}});
+document.addEventListener('pointermove',e=>{if(!rcDg)return;if(!rcDg.g&&Math.hypot(e.clientX-rcDg.x,e.clientY-rcDg.y)>12){const r=rcDg.el.getBoundingClientRect(),g=rcDg.el.cloneNode(true);g.classList.add('ghost');g.style.width=r.width+'px';g.style.height=r.height+'px';rcDg.ox=rcDg.x-r.left;rcDg.oy=rcDg.y-r.top;document.body.appendChild(g);rcDg.g=g;rcDg.el.style.opacity='.3'}
+ if(rcDg.g){rcDg.g.style.left=(e.clientX-rcDg.ox)+'px';rcDg.g.style.top=(e.clientY-rcDg.oy)+'px'}});
+document.addEventListener('pointerup',e=>{if(!rcDg)return;const d=rcDg;rcDg=null;
+ if(!d.g){rcTouch();rcSel=rcSel===d.id?null:d.id;rcSelMark();return}
+ d.g.remove();d.el.style.opacity='';const t=document.elementFromPoint(e.clientX,e.clientY),dz=t&&t.closest('[data-drop]');if(dz)rcDrop(d.id,dz.dataset.drop)});
+document.addEventListener('pointercancel',()=>{if(rcDg){if(rcDg.g)rcDg.g.remove();rcDg.el.style.opacity='';rcDg=null}});
+rcRender();
 
 /* ---------- main loop ---------- */
 let last=performance.now();
