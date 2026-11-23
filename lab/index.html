@@ -244,8 +244,8 @@ body[data-xst=grip] .xs-grip,body[data-xst=leg] .xs-leg,body[data-xst=react] .xs
 .tabs button[data-go=race]{display:none}
 body[data-lab=matter] .tabs button[data-go=race]{display:inline-block}
 #drum{position:relative}
-#drumHost,#soundHost,#sdetHost{flex:1;min-width:0;display:flex}
-body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sdet] #bar .tabs{display:none}
+#drumHost,#soundHost,#sdetHost,#etHost{flex:1;min-width:0;display:flex}
+body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sdet] #bar .tabs,body[data-lab=exit] #bar .tabs{display:none}
 #race{gap:.8rem;padding:.8rem;position:relative;overflow:hidden;background:linear-gradient(160deg,#e8f1f8,#f7fafc)}
 #rcMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:.55rem;min-height:0}
 #rcSide{width:21rem;flex:none;background:#fff;border-radius:1.1rem;padding:.8rem;box-shadow:0 .15rem .5rem rgba(18,38,58,.08);display:flex;flex-direction:column;gap:.45rem;overflow:auto}
@@ -426,11 +426,13 @@ body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sde
         <h2>Sound: drum and rice<span class="vi">Âm thanh: trống và gạo</span></h2>
         <button class="go" data-go="drum">Start the lab ➜</button>
         <button class="go" data-go="sdet" style="background:#1d5fd6">🔍 Sound Detective (teams) ➜</button>
+        <button class="go" data-go="exit" style="background:#d7261e">📝 Exit Ticket ➜</button>
       </div>
       <div class="card">
         <img class="thumb" src="race-img/sound-thumb.webp" alt="">
         <h2>How do we measure sound?<span class="vi">Chúng ta đo âm thanh thế nào?</span></h2>
         <button class="go" data-go="sound">Start the lab ➜</button>
+        <button class="go" data-go="exit" style="background:#d7261e">📝 Exit Ticket ➜</button>
       </div>
     </div>
   </section>
@@ -707,6 +709,52 @@ body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sde
     </aside>
   </section>
 
+  <section class="screen" id="exit"><div id="etHost"></div></section>
+<template id="etTpl"><style>:host{flex:1;min-width:0;height:100%;display:flex;font-family:"Nunito","Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;color:#1d2733;background:radial-gradient(ellipse at 50% 30%,#a8784a,#6e4422);-webkit-user-select:none;user-select:none}
+*{box-sizing:border-box;margin:0;padding:0}button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.vi{display:block;font-weight:600;opacity:.7;font-size:.8em}
+.wrap{flex:1;min-height:0;overflow:auto;padding:1.2rem;display:flex;justify-content:center;position:relative}
+.paper{width:min(70rem,100%);background:#fffdf7;border-radius:.4rem;box-shadow:0 1.2rem 2.4rem rgba(40,20,5,.45),0 0 0 1px rgba(0,0,0,.05);padding:2rem 2.6rem 2.4rem;position:relative;align-self:flex-start;background-image:linear-gradient(transparent 0,transparent 2.35rem,rgba(80,140,200,.08) 2.35rem,rgba(80,140,200,.08) 2.42rem);background-size:100% 2.42rem}
+.paper::before{content:"";position:absolute;left:1.4rem;top:0;bottom:0;width:2px;background:rgba(215,38,30,.25)}
+.hd{text-align:center;border-bottom:.25rem double #1d2733;padding-bottom:.8rem;margin-bottom:1rem}
+.hd small{display:block;font-weight:900;letter-spacing:.18em;color:#d7261e;font-size:1rem}
+.hd h1{font-size:2.4rem;font-weight:900;line-height:1.1}
+.hd p{font-weight:800;font-size:1.15rem;color:#3b4a5a}
+.row{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;font-weight:900;font-size:1.25rem;margin-bottom:.8rem}
+.row input{font:inherit;font-weight:800;font-size:1.3rem;border:0;border-bottom:.18rem dashed #1d2733;background:transparent;padding:.15rem .4rem;width:18rem;color:#1d5fd6;font-family:"Comic Sans MS","Chalkboard SE",cursive}
+.row input:focus{outline:none;border-bottom-color:#1d5fd6}
+.score{margin-left:auto;font-size:1.5rem}.score b{display:inline-block;min-width:3.2rem;border-bottom:.18rem dashed #1d2733;text-align:center;color:#d7261e;font-family:"Comic Sans MS","Chalkboard SE",cursive}
+.ins{font-weight:800;font-size:1.1rem;color:#3b4a5a;margin-bottom:1rem;font-style:italic}
+.q{margin-bottom:1.2rem;padding:.6rem .7rem;border-radius:1rem;position:relative}
+.q.ok{background:rgba(36,150,63,.08)}.q.bad{background:rgba(215,38,30,.07)}
+.qt{font-weight:900;font-size:1.4rem;line-height:1.25;display:flex;gap:.6rem;align-items:flex-start}
+.qt .n{flex:none;width:2.2rem;height:2.2rem;border-radius:50%;background:#12306f;color:#fff;display:grid;place-items:center;font-size:1.15rem}
+.mark{margin-left:auto;font-size:2rem;line-height:1;font-family:"Comic Sans MS",cursive;font-weight:900}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.45rem 1.2rem;margin:.6rem 0 0 2.8rem}
+.op{display:flex;align-items:center;gap:.7rem;text-align:left;font-weight:800;font-size:1.25rem;padding:.4rem .6rem;border-radius:.8rem;line-height:1.2;position:relative}
+.op:hover:not(:disabled){background:rgba(29,95,214,.07)}
+.op .L{position:relative;flex:none;width:2.4rem;height:2.4rem;display:grid;place-items:center;font-weight:900;font-size:1.3rem}
+.op .L svg{position:absolute;inset:-.5rem;width:3.4rem;height:3.4rem;overflow:visible}
+.op .L svg path{fill:none;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:140;stroke-dashoffset:140;animation:draw .35s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.op.key{background:rgba(36,150,63,.14)}
+.op.key::after{content:"✓";position:absolute;right:.6rem;color:#24963f;font-weight:900;font-size:1.4rem}
+.op:disabled{cursor:default}
+.bar{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.2rem}
+.btn{background:#e8f1fa;border-radius:1rem;padding:.75rem 1.4rem;font-weight:900;font-size:1.2rem;box-shadow:0 .22rem 0 #c5d6e6}
+.btn:active{transform:translateY(.15rem);box-shadow:none}
+.btn.go{background:#24963f;color:#fff;box-shadow:0 .22rem 0 #156428}.btn.blue{background:#1d5fd6;color:#fff;box-shadow:0 .22rem 0 #123f94}.btn.dark{background:#3b4a5a;color:#fff;box-shadow:0 .22rem 0 #1d2733}
+.result{margin-top:1rem;border-radius:1.2rem;padding:1rem 1.3rem;text-align:center;font-weight:900;font-size:1.6rem;background:linear-gradient(#fff4b0,#ffd23f);border:.2rem solid #d9a800}
+.result small{display:block;font-size:1.05rem;font-weight:800;color:#5a4300}
+.stamp{position:absolute;right:2.5rem;top:12.5rem;transform:rotate(-12deg);border:.35rem solid #d7261e;color:#d7261e;font-weight:900;font-size:2.4rem;padding:.2rem 1rem;border-radius:.6rem;opacity:.85;font-family:"Comic Sans MS",cursive;pointer-events:none}
+.key-t{margin-top:1.2rem;border:.2rem solid #12306f;border-radius:1rem;overflow:hidden}
+.key-t h3{background:#12306f;color:#fff;padding:.5rem 1rem;font-size:1.3rem}
+.key-t table{width:100%;border-collapse:collapse;font-weight:800;font-size:1.15rem}
+.key-t td,.key-t th{padding:.45rem .9rem;border-bottom:1px solid #d5dde6;text-align:left}.key-t th{background:#eef3f8}
+.key-t tfoot td{font-weight:900;background:#fff8d6}
+.warn{color:#d7261e;font-weight:900;text-align:center;min-height:1.4rem;margin-top:.6rem;font-size:1.1rem}
+@media (max-width:800px){.opts{grid-template-columns:1fr;margin-left:0}.paper{padding:1.4rem}}
+</style><div class="wrap"></div></template>
   <section class="screen" id="sdet"><div id="sdetHost"></div></section>
 <template id="sdetTpl"><style>
 :host{--navy:#12306f;--ink:#12263a;--yel:#ffd23f;--red:#d7261e;--blue:#1d5fd6;--green:#24963f}
@@ -980,6 +1028,7 @@ function go(id){
   if(id==='race'&&cur!=='matter')return go('home');
   if(id==='race')rcRender();
   if(id==='freezer'&&cur!=='freeze')return go('home');
+  if(id==='exit'){document.body.dataset.lab='exit';$('#topic').innerHTML='Exit Ticket: Volume of Sound<span class="vi inline"> · Phiếu kiểm tra: Âm lượng</span>'}
   if(id==='sdet'){document.body.dataset.lab='sdet';$('#topic').innerHTML='Sound Detective Challenge<span class="vi inline"> · Thử thách thám tử âm thanh</span>'}
   if(id==='sound'){document.body.dataset.lab='sound';$('#topic').innerHTML='How do we measure sound?<span class="vi inline"> · Chúng ta đo âm thanh thế nào?</span>'}
   if(id==='drum'){document.body.dataset.lab='drum';$('#topic').innerHTML='Sound: drum and rice<span class="vi inline"> · Âm thanh: trống và gạo</span>'}
@@ -3554,6 +3603,46 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 setLab('evap');requestAnimationFrame(frame);
+/* ===== Exit ticket: volume of sound ===== */
+(()=>{const HOST=document.getElementById('etHost'),ROOT=HOST.attachShadow({mode:'open'});ROOT.appendChild(document.getElementById('etTpl').content.cloneNode(true));
+const $=s=>ROOT.querySelector(s),$$=s=>[...ROOT.querySelectorAll(s)];const SCR=document.getElementById('exit');
+let VI=document.body.classList.contains('vi-on');
+const bi=(en,vi)=>en+(VI&&vi?'<span class="vi">'+vi+'</span>':'');
+const Q=[
+ {q:['What does the volume of a sound tell us?','Âm lượng của âm thanh cho ta biết điều gì?'],o:[['How fast or slow it is','Nhanh hay chậm'],['How loud or quiet it is','To hay nhỏ'],['How long or short it is','Dài hay ngắn'],['How high or low it is','Cao hay thấp']],a:1,k:'How loud or quiet it is'},
+ {q:['What happens when you tap a drum harder?','Điều gì xảy ra khi em gõ trống mạnh hơn?'],o:[['The vibrations stop.','Rung động dừng lại.'],['The vibrations become smaller.','Rung động nhỏ đi.'],['The vibrations become bigger.','Rung động lớn hơn.'],['The drum makes no sound.','Trống không phát ra âm thanh.']],a:2,k:'The vibrations become bigger'},
+ {q:['Bigger vibrations make a sound ______.','Rung động lớn hơn làm âm thanh ______.'],o:[['louder','to hơn'],['quieter','nhỏ hơn'],['slower','chậm hơn'],['shorter','ngắn hơn']],a:0,k:'Louder'},
+ {q:['What should you do if a sound is too loud?','Em nên làm gì nếu âm thanh quá to?'],o:[['Turn the volume up.','Tăng âm lượng.'],['Keep the same volume.','Giữ nguyên âm lượng.'],['Turn the volume to MAX.','Tăng âm lượng lên MAX.'],['Turn the volume down.','Giảm âm lượng.']],a:3,k:'Turn the volume down'},
+ {q:['What unit do we use to measure sound volume?','Chúng ta dùng đơn vị gì để đo độ to của âm thanh?'],o:[['Centimetres (cm)','Xăng-ti-mét (cm)'],['Decibels (dB)','Đề-xi-ben (dB)'],['Grams (g)','Gam (g)'],['Metres (m)','Mét (m)']],a:1,k:'Decibels (dB)'},
+ {q:['Which tool can measure the volume of sound?','Dụng cụ nào đo được độ to của âm thanh?'],o:[['Drumstick','Dùi trống'],['Volume control','Nút chỉnh âm lượng'],['Sound meter','Máy đo âm thanh'],['Drum skin','Mặt trống']],a:2,k:'Sound meter'}];
+const S={name:'',ans:Array(6).fill(null),done:false,key:false,warn:''};
+const circ=c=>'<svg viewBox="0 0 54 54"><path stroke="'+c+'" d="M30 6 C14 4 5 16 6 28 C7 42 20 49 31 47 C44 45 50 33 48 22 C46 11 36 5 24 7"/></svg>';
+const score=()=>S.ans.reduce((n,a,i)=>n+(a===Q[i].a?1:0),0);
+function render(){const sc=score();
+ $('.wrap').innerHTML='<div class="paper">'+(S.done?'<div class="stamp">'+sc+' / 6</div>':'')+
+ '<div class="hd"><small>'+bi('GRADE 4 SCIENCE — EXIT TICKET','KHOA HỌC LỚP 4 — PHIẾU KIỂM TRA CUỐI GIỜ')+'</small><h1>'+bi('Volume of Sounds &amp; Measuring the Volume of Sound','Âm lượng và cách đo âm lượng')+'</h1></div>'+
+ '<div class="row">'+bi('Name:','Tên:')+' <input id="nm" value="'+S.name.replace(/"/g,'&quot;')+'" maxlength="40" autocomplete="off" '+(S.done?'readonly':'')+'><span class="score">'+(VI?'Điểm':'Score')+': <b>'+(S.done?sc:'&nbsp;')+'</b> / 6</span></div>'+
+ '<p class="ins">'+bi('Instructions: Read each question. Circle the correct answer.','Hướng dẫn: Đọc mỗi câu hỏi. Khoanh tròn đáp án đúng.')+'</p>'+
+ Q.map((q,i)=>{const a=S.ans[i],ok=a===q.a;return '<div class="q'+(S.done?(ok?' ok':' bad'):'')+'"><div class="qt"><span class="n">'+(i+1)+'</span><span>'+bi(q.q[0],q.q[1])+'</span>'+(S.done?'<span class="mark" style="color:'+(ok?'#24963f':'#d7261e')+'">'+(ok?'✓':'✗')+'</span>':'')+'</div><div class="opts">'+q.o.map((o,j)=>'<button class="op'+(S.done&&j===q.a&&!ok?' key':'')+'" data-q="'+i+'" data-o="'+j+'" '+(S.done?'disabled':'')+'><span class="L">'+'ABCD'[j]+(a===j?circ(S.done?(ok?'#24963f':'#d7261e'):'#d7261e'):'')+'</span><span>'+bi(o[0],o[1])+'</span></button>').join('')+'</div></div>'}).join('')+
+ (S.done?'<div class="result">'+(sc===6?'🌟 ':sc>=4?'👍 ':'💪 ')+bi(sc===6?'Perfect! '+sc+' out of 6':sc>=4?'Well done! '+sc+' out of 6':sc+' out of 6. Look at the green ticks and try again!',sc===6?'Hoàn hảo! '+sc+'/6':sc>=4?'Làm tốt lắm! '+sc+'/6':sc+'/6. Xem các dấu tích xanh và thử lại nhé!')+'<small>'+bi('Show your exit ticket to your teacher.','Cho giáo viên xem phiếu của em.')+'</small></div>':'')+
+ '<div class="warn">'+S.warn+'</div>'+
+ '<div class="bar">'+(S.done?'<button class="btn blue" id="again">🔄 '+bi('Next student','Học sinh tiếp theo')+'</button>':'<button class="btn go" id="check">✓ '+bi('Check my answers','Kiểm tra bài')+'</button><button class="btn" id="clear">🧽 '+bi('Clear','Xóa')+'</button>')+'<button class="btn dark" id="keyB">🔑 '+bi(S.key?"Hide answer key":"Teacher's answer key",S.key?'Ẩn đáp án':'Đáp án của giáo viên')+'</button><button class="btn" id="print">🖨 '+bi('Print paper copies','In phiếu giấy')+'</button></div>'+
+ (S.key?'<div class="key-t"><h3>'+bi("Teacher's Answer Key",'Đáp án của giáo viên')+'</h3><table><thead><tr><th>'+(VI?'Câu':'Question')+'</th><th>'+(VI?'Đáp án':'Answer')+'</th></tr></thead><tbody>'+Q.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+'ABCD'[q.a]+' — '+q.k+'</td></tr>').join('')+'</tbody><tfoot><tr><td colspan="2">'+(VI?'Tổng: 6 điểm':'Total: 6 marks')+'</td></tr></tfoot></table></div>':'')+
+ '</div>';
+ const nm=$('#nm');nm.oninput=()=>{S.name=nm.value};
+ $$('.op').forEach(b=>b.onclick=()=>{S.ans[+b.dataset.q]=+b.dataset.o;S.warn='';render()});
+ const c=$('#check');if(c)c.onclick=()=>{const miss=S.ans.map((a,i)=>a===null?i+1:0).filter(Boolean);if(miss.length){S.warn=(VI?'Em chưa trả lời câu: ':'You have not answered question ')+miss.join(', ');render();return}S.done=true;S.warn='';render();$('.wrap').scrollTop=0};
+ const cl=$('#clear');if(cl)cl.onclick=()=>{S.ans=Array(6).fill(null);S.warn='';render()};
+ const ag=$('#again');if(ag)ag.onclick=()=>{S.name='';S.ans=Array(6).fill(null);S.done=false;S.warn='';render();$('.wrap').scrollTop=0};
+ $('#keyB').onclick=()=>{S.key=!S.key;render()};
+ $('#print').onclick=printSheet}
+function printSheet(){const css='body{font-family:Arial,sans-serif;color:#000;margin:18mm}h1{font-size:20px;text-align:center;margin:0}h2{font-size:16px;text-align:center;margin:4px 0 14px}.r{display:flex;justify-content:space-between;font-weight:bold;margin:10px 0}.q{margin:12px 0;page-break-inside:avoid}.q b{display:block;margin-bottom:6px}.o{margin-left:22px;line-height:1.7}.k{page-break-before:always}table{border-collapse:collapse;width:100%}td,th{border:1px solid #000;padding:6px 10px;text-align:left}';
+ const body='<h1>GRADE 4 SCIENCE — EXIT TICKET</h1><h2>Topic: Volume of Sounds &amp; Measuring the Volume of Sound</h2><div class="r"><span>Name: ______________________________</span><span>Score: ____ / 6</span></div><p><i>Instructions: Read each question. Circle the correct answer.</i></p>'+Q.map((q,i)=>'<div class="q"><b>'+(i+1)+'. '+q.q[0]+'</b>'+q.o.map((o,j)=>'<div class="o">'+'ABCD'[j]+'. '+o[0]+'</div>').join('')+'</div>').join('')+
+ '<div class="k"><h1>Teacher\'s Answer Key</h1><br><table><tr><th>Question</th><th>Answer</th></tr>'+Q.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+'ABCD'[q.a]+' — '+q.k+'</td></tr>').join('')+'<tr><th colspan="2">Total: 6 marks</th></tr></table></div>';
+ const w=window.open('','_blank');if(!w){alert('Please allow pop-ups to print.');return}w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Exit Ticket – Volume of Sound</title><style>'+css+'</style></head><body>'+body+'<script>window.onload=()=>{window.print()}<\/script></body></html>');w.document.close()}
+document.getElementById('viBtn').addEventListener('click',()=>setTimeout(()=>{VI=document.body.classList.contains('vi-on');render()},0));
+render();
+})();
 /* ===== Sound Detective Challenge ===== */
 (()=>{
 const HOST=document.getElementById('sdetHost'),ROOT=HOST.attachShadow({mode:'open'});ROOT.appendChild(document.getElementById('sdetTpl').content.cloneNode(true));
