@@ -3824,22 +3824,31 @@ function draw1(t){scene1();if(S.ph!==0)return;const l=LENS;
 function hit1(p){for(let si=0;si<4;si++){const e=EGGS[S.slots[si]];const b=e.box;if(b&&p.x>b.x&&p.x<b.x+b.w&&p.y>b.y&&p.y<b.y+b.h)return si}return -1}
 function tick1(dt){if(S.ph!==0)return;const si=hit1({x:LENS.x,y:LENS.y});if(si<0)return;const e=EGGS[S.slots[si]];if(S.obs[e.k])return;LENS.hold[e.k]=(LENS.hold[e.k]||0)+dt;if(LENS.hold[e.k]>.6){S.obs[e.k]=1;SFX.pop();toast('🔍 '+L(e.en,e.vi)+': '+L(e.d[0],e.d[1]),'ok');if(Object.keys(S.obs).length===4){S.sub1=1}renderStep()}}
 /* ---------- step 2 : measure ---------- */
-const RX=560,SPOT=700;
+const RX=560,SPOT=700,EX=870,RHOME=560;const RUL={x:RHOME,drag:false,dx:0},REEL={x:330,y:200,drag:false,dx:0,dy:0,hx:330,hy:200};let edrag=null;
+function selEgg(i){S.mcur=i;S.mtry=[];S.wrapT=0;S.wrapGo=0;S.snap=0;RUL.x=RHOME;REEL.x=REEL.hx;REEL.y=REEL.hy;anim2=0;SFX.pop();renderStep()}
+function rulerHit(p){return p.x>RUL.x-40&&p.x<RUL.x+42&&p.y>BASE-10*SPX-50&&p.y<BASE+8}
+function snapGap(){const e=EGGS[S.mcur],h=eggH(S.mcur),w=eggW(e,h);return (EX-w/2)-(RUL.x+36)}
+function reel(x,y,lift){X.save();X.filter='drop-shadow(2px '+(lift?10:4)+'px '+(lift?10:4)+'px rgba(0,0,0,.35))';const g=X.createRadialGradient(x-12,y-14,6,x,y,46);g.addColorStop(0,'#ffe680');g.addColorStop(1,'#d9a400');X.fillStyle=g;X.beginPath();X.arc(x,y,44,0,7);X.fill();X.restore();X.strokeStyle='#8a6200';X.lineWidth=2;X.beginPath();X.arc(x,y,44,0,7);X.stroke();X.fillStyle='#333';X.beginPath();X.arc(x,y,15,0,7);X.fill();X.fillStyle='#ffd84a';X.fillRect(x+30,y+26,46,16);X.strokeStyle='#8a6200';X.strokeRect(x+30,y+26,46,16);X.fillStyle='#555';X.fillRect(x+74,y+22,6,24)}
+function hintBox(t,x,y){X.font='800 18px system-ui';const tw=X.measureText(t).width+40;X.fillStyle='rgba(18,38,58,.82)';X.beginPath();X.roundRect(x-tw/2,y-24,tw,48,14);X.fill();X.fillStyle='#fff';X.textAlign='center';X.fillText(t,x,y+6)}
 function ruler(x,base,cm){X.save();X.filter='drop-shadow(2px 4px 4px rgba(0,0,0,.3))';X.fillStyle='rgba(250,252,255,.92)';X.beginPath();X.roundRect(x-34,base-cm*SPX-44,70,cm*SPX+48,6);X.fill();X.restore();X.strokeStyle='#9fb3c6';X.lineWidth=1.5;X.beginPath();X.roundRect(x-34,base-cm*SPX-44,70,cm*SPX+48,6);X.stroke();
  for(let m=0;m<=cm*10;m++){const y=base-m*SPX/10,big=m%10===0,mid=m%5===0;X.strokeStyle='#111';X.lineWidth=big?2.4:1.2;X.beginPath();X.moveTo(x+36,y);X.lineTo(x+36-(big?26:mid?17:10),y);X.stroke();if(big){X.fillStyle='#111';X.font='900 22px system-ui';X.textAlign='right';X.fillText(m/10,x-2,y+8)}}
  X.fillStyle='#111';X.font='800 14px system-ui';X.textAlign='center';X.fillText('cm',x,base-cm*SPX-26)}
 function tape(x0,y,len,maxcm,cmPx){X.save();X.filter='drop-shadow(1px 3px 3px rgba(0,0,0,.3))';X.fillStyle='#ffd84a';X.fillRect(x0,y,len,36);X.restore();X.strokeStyle='#8a6200';X.lineWidth=1;X.strokeRect(x0,y,len,36);
  for(let c=0;c<=maxcm*2;c++){const xx=x0+c*cmPx/2;if(xx>x0+len+.5)break;X.strokeStyle='#2a1f00';X.lineWidth=c%2?1:2;X.beginPath();X.moveTo(xx,y);X.lineTo(xx,y+(c%2?9:16));X.stroke();if(c%2===0&&c>0){X.fillStyle='#2a1f00';X.font='800 13px system-ui';X.textAlign='center';X.fillText(c/2,xx,y+30)}}}
 let anim2=0;
-function draw2(t,dt){room();ruler(RX,BASE,10);
- const tray=EGGS.map((e,i)=>i).filter(i=>S.mcur!==i);let x=70;
+function draw2(t,dt){room();
+ const tray=EGGS.map((e,i)=>i).filter(i=>S.mcur!==i&&!(edrag&&edrag.i===i));let x=70;
  tray.forEach(i=>{const e=EGGS[i],h=eggH(i)*.5,w=eggW(e,h);const r=drawEgg(e,x+w/2,BASE,h,{a:(S.ph===0?S.meas[e.k]:S.around[e.k])?.45:1});e.tbox=r;if((S.ph===0?S.meas[e.k]:S.around[e.k])){X.fillStyle='#24963f';X.beginPath();X.arc(x+w/2,BASE-h-18,15,0,7);X.fill();X.fillStyle='#fff';X.font='900 18px system-ui';X.textAlign='center';X.fillText('✓',x+w/2,BASE-h-12)}x+=w+28});
- if(S.mcur===null){X.fillStyle='rgba(18,38,58,.8)';X.beginPath();X.roundRect(620,250,300,64,16);X.fill();X.fillStyle='#fff';X.font='800 18px system-ui';X.textAlign='center';X.fillText(L('Tap an egg to measure it','Chạm vào một quả trứng để đo'),770,278);X.fillText('👈',770,304);return}
- const e=EGGS[S.mcur];anim2=Math.min(1,anim2+dt*2.5);const h=eggH(S.mcur),w=eggW(e,h),cx=RX+38+w/2+4;
+ if(S.ph===0&&!(S.mcur!==null&&RUL.drag))ruler(RUL.x,BASE,10);
+ if(edrag){const e=EGGS[edrag.i],h=eggH(edrag.i)*.8;drawEgg(e,edrag.x,edrag.y+h/2,h)}
+ if(S.mcur===null){X.save();X.setLineDash([10,8]);X.strokeStyle='rgba(27,77,30,.5)';X.lineWidth=3;X.beginPath();X.ellipse(EX,BASE+6,120,22,0,0,7);X.stroke();X.restore();if(!edrag)hintBox(L('Drag an egg here to measure it 👇','Kéo một quả trứng vào đây để đo 👇'),EX,250);return}
+ const e=EGGS[S.mcur];anim2=Math.min(1,anim2+dt*2.5);const h=eggH(S.mcur),w=eggW(e,h),cx=EX;
  drawEgg(e,cx,BASE,h);
- if(S.ph===0){const ty=BASE-h;X.strokeStyle='#d7261e';X.setLineDash([9,7]);X.lineWidth=3;X.beginPath();X.moveTo(cx,ty);X.lineTo(RX-40,ty);X.stroke();X.setLineDash([]);X.fillStyle='#d7261e';X.beginPath();X.moveTo(RX-40,ty);X.lineTo(RX-58,ty-10);X.lineTo(RX-58,ty+10);X.fill();
-  X.font='900 30px system-ui';X.textAlign='right';X.fillText('?',RX-64,ty+11)}
+ if(S.ph===0){if(RUL.drag)ruler(RUL.x,BASE,10);const gap=snapGap(),near=Math.abs(gap)<70;
+  if(near){const RXv=RUL.x,ty=BASE-h;X.strokeStyle='#d7261e';X.setLineDash([9,7]);X.lineWidth=3;X.beginPath();X.moveTo(cx,ty);X.lineTo(RXv-40,ty);X.stroke();X.setLineDash([]);X.fillStyle='#d7261e';X.beginPath();X.moveTo(RXv-40,ty);X.lineTo(RXv-58,ty-10);X.lineTo(RXv-58,ty+10);X.fill();X.font='900 30px system-ui';X.textAlign='right';X.fillText('?',RXv-64,ty+11)}
+  if(!S.snap&&!RUL.drag){hintBox(L('Drag the ruler next to the egg 👉','Kéo thước đến sát quả trứng 👉'),RUL.x+30,BASE-10*SPX-80)}}
  else{const ys=[.25,.55,.85],cy=BASE-h,ey=ys.map(f=>cy+h*f);
+  if(S.aroundPick===1&&!S.wrapGo){const yy=ey[1],hw=w/2*1.02;X.save();X.setLineDash([8,6]);X.strokeStyle='rgba(232,180,21,.9)';X.lineWidth=5;X.beginPath();X.ellipse(cx,yy,hw,10,0,0,Math.PI);X.stroke();X.restore();reel(REEL.x,REEL.y,REEL.drag);if(!REEL.drag)hintBox(L('Drag the tape measure to the middle of the egg 👉','Kéo thước dây đến giữa quả trứng 👉'),REEL.x+60,REEL.y-80)}
   if(S.aroundPick===null){ys.forEach((f,i)=>{const yy=ey[i],hw=w/2*Math.sqrt(Math.max(0,1-Math.pow((f-.55)/.55,2)))*1.02;X.strokeStyle='rgba(29,95,214,.8)';X.setLineDash([8,6]);X.lineWidth=4;X.beginPath();X.ellipse(cx,yy,hw,10,0,0,Math.PI);X.stroke();X.setLineDash([]);X.fillStyle='#1d5fd6';X.beginPath();X.arc(cx+hw+34,yy,20,0,7);X.fill();X.fillStyle='#fff';X.font='900 20px system-ui';X.textAlign='center';X.fillText('ABC'[i],cx+hw+34,yy+7)})}
   else{const yy=ey[1],hw=w/2*1.02,p=Math.min(1,(S.wrapT||0));X.strokeStyle='#e8b415';X.lineWidth=12;X.beginPath();X.ellipse(cx,yy,hw,10,0,Math.PI,Math.PI+Math.PI*2*Math.min(1,p*1.5),false);X.stroke();
    const cmPx=38,len=e.c*cmPx*Math.max(0,Math.min(1,(p-.6)/.4));if(p>.6){tape(160,70,len,20,cmPx);X.fillStyle='#8a6200';X.font='800 15px system-ui';X.textAlign='left';X.fillText(L('Tape measure (cm)','Thước dây (cm)'),160,60);if(p>=1){X.strokeStyle='#d7261e';X.setLineDash([7,6]);X.lineWidth=3;X.beginPath();X.moveTo(160+len,40);X.lineTo(160+len,130);X.stroke();X.setLineDash([]);X.fillStyle='#d7261e';X.font='900 26px system-ui';X.textAlign='center';X.fillText('?',160+len,156)}}}}}
@@ -3885,25 +3894,30 @@ function draw3(t,dt){room();X.drawImage(nestBack,0,0);
 let last=performance.now();
 function step(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(!SCR.classList.contains('on')){requestAnimationFrame(step);return}if(cv.width<4)fit();
  X.setTransform(1,0,0,1,0,0);X.fillStyle='#dfe9ef';X.fillRect(0,0,cv.width,cv.height);X.setTransform(SC,0,0,SC,OX*SC,OY*SC);
- if(S.s===0){tick1(dt);draw1(now/1000)}else if(S.s===1){if(S.ph===2)draw2r();else{if(S.ph===1&&S.aroundPick===1&&S.mcur!==null&&(S.wrapT||0)<1){S.wrapT=(S.wrapT||0)+dt*.6;if(S.wrapT>=1)renderStep()}draw2(now/1000,dt)}}else if(S.s===2)draw3(now/1000,dt);
+ if(S.s===0){tick1(dt);draw1(now/1000)}else if(S.s===1){if(S.ph===2)draw2r();else{if(S.ph===1&&S.aroundPick===1&&S.wrapGo&&S.mcur!==null&&(S.wrapT||0)<1){S.wrapT=(S.wrapT||0)+dt*.6;if(S.wrapT>=1)renderStep()}draw2(now/1000,dt)}}else if(S.s===2)draw3(now/1000,dt);
  requestAnimationFrame(step)}
 /* ---------- canvas input ---------- */
 cv.addEventListener('pointerdown',e=>{ac();const p=toLocal(e);cv.setPointerCapture(e.pointerId);
  if(S.s===0&&S.ph===0){LENS.drag=true;LENS.dx=LENS.x-p.x;LENS.dy=LENS.y-p.y;if(Math.hypot(LENS.dx,LENS.dy)>LENS.r+160){LENS.x=p.x;LENS.y=p.y;LENS.dx=LENS.dy=0}return}
  if(S.s===0&&S.ph===1){const si=hit1(p);if(si>=0){drag={si,ei:S.slots[si],x:p.x,y:p.y+eggH(S.slots[si])/2};S.wrong=null;SFX.pop()}return}
- if(S.s===1&&S.ph<2){const i=hit2(p);if(i>=0){const done=S.ph===0?S.meas[EGGS[i].k]:S.around[EGGS[i].k];if(done)return toast(L('Already measured! Choose another egg.','Đã đo rồi! Chọn quả khác.'));S.mcur=i;S.mtry=[];S.wrapT=0;anim2=0;SFX.pop();renderStep();return}
-  if(S.ph===1&&S.mcur!==null&&S.aroundPick===null){const e=EGGS[S.mcur],h=eggH(S.mcur),w=eggW(e,h),cx=RX+38+w/2+4;[.25,.55,.85].forEach((f,i)=>{const yy=BASE-h+h*f;if(Math.abs(p.y-yy)<30&&p.x>cx-w/2-10&&p.x<cx+w/2+70)pickAround(i)})}return}
+ if(S.s===1&&S.ph<2){if(S.ph===0&&S.mcur!==null&&rulerHit(p)){RUL.drag=true;RUL.dx=RUL.x-p.x;if(S.snap){S.snap=0;renderStep()}return}
+  if(S.ph===1&&S.mcur!==null&&S.aroundPick===1&&!S.wrapGo&&Math.hypot(p.x-REEL.x,p.y-REEL.y)<70){REEL.drag=true;REEL.dx=REEL.x-p.x;REEL.dy=REEL.y-p.y;return}
+  const i=hit2(p);if(i>=0){const done=S.ph===0?S.meas[EGGS[i].k]:S.around[EGGS[i].k];if(done)return toast(L('Already measured! Choose another egg.','Đã đo rồi! Chọn quả khác.'));edrag={i,x:p.x,y:p.y,sx:p.x,sy:p.y};SFX.pop();return}
+  if(S.ph===1&&S.mcur!==null&&S.aroundPick===null){const e=EGGS[S.mcur],h=eggH(S.mcur),w=eggW(e,h),cx=EX;[.25,.55,.85].forEach((f,i)=>{const yy=BASE-h+h*f;if(Math.abs(p.y-yy)<30&&p.x>cx-w/2-10&&p.x<cx+w/2+70)pickAround(i)})}return}
  if(S.s===1&&S.ph===2){EGGS.forEach((eg,i)=>{const b=eg.rbox;if(b&&p.x>b.x&&p.x<b.x+b.w&&p.y>b.y&&p.y<b.y+b.h)tallPick(i)});return}
  if(S.s===2&&S.ph===0){NESTEGGS.forEach(([x,y],i)=>{if(Math.hypot(p.x-x,(p.y-y)*1.3)<55&&!S.cnt.includes(i)){S.cnt.push(i);SFX.pop();renderStep()}});return}
  if(S.s===2&&S.ph===1&&!S.hatched){if(Math.hypot(p.x-550,(p.y-330)*.75)<150){S.taps++;wob=1;SFX.crack();if(S.taps>=5)SFX.peep();if(S.taps>=8){S.hatched=true;hatchFade=0;setTimeout(()=>{SFX.peep();confetti();toast(L('Hello, duckling! 🐣','Xin chào, vịt con! 🐣'),'ok');renderStep()},900)}renderStep()}}});
-cv.addEventListener('pointermove',e=>{const p=toLocal(e);if(LENS.drag){LENS.x=Math.max(0,Math.min(W,p.x+LENS.dx));LENS.y=Math.max(0,Math.min(H,p.y+LENS.dy))}if(drag){drag.x=p.x;drag.y=p.y+eggH(drag.ei)/2}});
-const up=()=>{LENS.drag=false;if(drag){const to=SLOTX.reduce((b,x,i)=>Math.abs(x-drag.x)<Math.abs(SLOTX[b]-drag.x)?i:b,0);const a=drag.si;[S.slots[a],S.slots[to]]=[S.slots[to],S.slots[a]];drag=null;SFX.pop();renderStep()}};
+cv.addEventListener('pointermove',e=>{const p=toLocal(e);if(LENS.drag){LENS.x=Math.max(0,Math.min(W,p.x+LENS.dx));LENS.y=Math.max(0,Math.min(H,p.y+LENS.dy))}if(drag){drag.x=p.x;drag.y=p.y+eggH(drag.ei)/2}if(RUL.drag)RUL.x=Math.max(50,Math.min(W-60,p.x+RUL.dx));if(REEL.drag){REEL.x=Math.max(50,Math.min(W-50,p.x+REEL.dx));REEL.y=Math.max(60,Math.min(H-50,p.y+REEL.dy))}if(edrag){edrag.x=p.x;edrag.y=p.y}});
+const up=()=>{LENS.drag=false;
+ if(edrag){const d=edrag;edrag=null;if(Math.hypot(d.x-d.sx,d.y-d.sy)<15||d.x>RX-40)selEgg(d.i);else SFX.pop();return}
+ if(RUL.drag){RUL.drag=false;const g=snapGap();if(Math.abs(g)<70){RUL.x+=g;S.snap=1;SFX.good();toast(L('Good! Now follow the red line and read the ruler.','Tốt! Giờ nhìn theo đường đỏ và đọc thước.'),'ok')}renderStep();return}
+ if(REEL.drag){REEL.drag=false;const e=EGGS[S.mcur],h=eggH(S.mcur),w=eggW(e,h),yy=BASE-h+h*.55;if(Math.hypot(REEL.x-EX,REEL.y-yy)<w/2+90){S.wrapGo=1;S.wrapT=0;SFX.pop()}else{REEL.x=REEL.hx;REEL.y=REEL.hy;toast(L('Put the tape on the middle of the egg.','Đặt thước dây vào giữa quả trứng.'),'bad')}renderStep();return}if(drag){const to=SLOTX.reduce((b,x,i)=>Math.abs(x-drag.x)<Math.abs(SLOTX[b]-drag.x)?i:b,0);const a=drag.si;[S.slots[a],S.slots[to]]=[S.slots[to],S.slots[a]];drag=null;SFX.pop();renderStep()}};
 cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 /* ---------- step logic ---------- */
 function pickAround(i){if(i===1){S.aroundPick=1;S.wrapT=0;SFX.good();toast(L('Yes! Measure around the middle, the same place on each egg.','Đúng! Đo vòng quanh phần giữa, cùng một chỗ trên mỗi quả.'),'ok')}else{SFX.bad();toast(L('Measure around the SAME place on each egg: the middle.','Hãy đo cùng một chỗ trên mỗi quả: phần giữa.'),'bad')}renderStep()}
 function tallPick(i){if(S.tall!==3){S.tall=i;if(i===3){SFX.good();toast(L('Yes! The goose egg is the tallest: 8 cm.','Đúng! Trứng ngỗng cao nhất: 8 cm.'),'ok')}else{SFX.bad();toast(L('Look at the numbers again.','Nhìn lại các con số.'),'bad')}}
  else if(S.short!==0){S.short=i;if(i===0){SFX.good();toast(L('Yes! The quail egg is the shortest: 3 cm.','Đúng! Trứng chim cút thấp nhất: 3 cm.'),'ok');S.done[1]=1;confetti()}else{SFX.bad();toast(L('Look at the numbers again.','Nhìn lại các con số.'),'bad')}}renderStep()}
-function answerMeasure(n){const e=EGGS[S.mcur],want=S.ph===0?e.h:e.c;if(n===want){SFX.good();if(S.ph===0)S.meas[e.k]=n;else S.around[e.k]=n;toast('✅ '+L(e.en,e.vi)+': '+n+' cm','ok');S.mcur=null;S.wrapT=0;
+function answerMeasure(n){const e=EGGS[S.mcur],want=S.ph===0?e.h:e.c;if(n===want){SFX.good();if(S.ph===0)S.meas[e.k]=n;else S.around[e.k]=n;toast('✅ '+L(e.en,e.vi)+': '+n+' cm','ok');S.mcur=null;S.wrapT=0;S.wrapGo=0;S.snap=0;RUL.x=RHOME;REEL.x=REEL.hx;REEL.y=REEL.hy;
   const tot=S.ph===0?Object.keys(S.meas).length:Object.keys(S.around).length;if(tot===4){S.ph=S.ph===0?1:2;S.mcur=null;if(S.ph===1)toast(L('Great! Now measure AROUND each egg.','Tuyệt! Giờ đo VÒNG QUANH mỗi quả trứng.'),'ok')}}
  else{S.mtry.push(n);SFX.bad();toast(S.ph===0?L('Look where the red line meets the ruler.','Nhìn chỗ đường đỏ chạm vào thước.'):L('Look at the end of the yellow tape.','Nhìn vào cuối thước dây vàng.'),'bad')}renderStep()}
 /* ---------- side panel ---------- */
@@ -3922,9 +3936,9 @@ function renderStep(){const C=$('#stepC'),R=$('#resC');let h='',r='';labels();
   r='<b>'+L('The eggs','Các quả trứng')+'</b><table class="res">'+EGGS.map(e=>'<tr><td><img src="'+P+e.b+'.webp">'+L(e.bn[0],e.bn[1])+'</td><td>'+(S.obs[e.k]?L(e.d[0],e.d[1]):'?')+'</td></tr>').join('')+'</table>'}
  if(S.s===1){
   if(S.ph<2){const e=S.mcur!==null?EGGS[S.mcur]:null;
-   if(S.ph===0)h=hd(2,'Measure the height','Đo chiều cao')+'<p>'+bi('Can you measure the height of each egg? Tap an egg. Read the ruler where the red line points.','Em có đo được chiều cao mỗi quả trứng không? Chạm vào một quả. Đọc thước ở chỗ đường đỏ chỉ.')+'</p>';
-   else h=hd(2,'Measure around','Đo vòng quanh')+'<p>'+(S.aroundPick===null&&S.mcur!==null?bi('Where do we measure around the egg? Tap A, B or C.','Chúng ta đo vòng quanh trứng ở đâu? Chạm A, B hoặc C.'):bi('You must measure around the same place on each egg. Tap an egg, watch the tape, then read the number.','Em phải đo vòng quanh cùng một chỗ trên mỗi quả. Chạm vào trứng, xem thước dây rồi đọc số.'))+'</p>';
-   if(e&&(S.ph===0||(S.aroundPick===1&&(S.wrapT||0)>=1))){const mx=S.ph===0?10:20;h+='<p style="margin-top:.4rem">'+bi('How many centimetres?','Bao nhiêu xăng-ti-mét?')+'</p><div class="keys">'+Array.from({length:mx},(_,i)=>i+1).map(n=>'<button data-n="'+n+'" class="'+(S.mtry.includes(n)?'no':'')+'">'+n+'</button>').join('')+'</div>'}
+   if(S.ph===0)h=hd(2,'Measure the height','Đo chiều cao')+'<p>'+bi('Can you measure the height of each egg? Drag an egg onto the table spot. Then drag the ruler next to the egg and read where the red line points.','Em có đo được chiều cao mỗi quả trứng không? Kéo một quả trứng vào chỗ đo. Rồi kéo thước sát quả trứng và đọc số ở chỗ đường đỏ chỉ.')+'</p>';
+   else h=hd(2,'Measure around','Đo vòng quanh')+'<p>'+(S.aroundPick===null&&S.mcur!==null?bi('Where do we measure around the egg? Tap A, B or C.','Chúng ta đo vòng quanh trứng ở đâu? Chạm A, B hoặc C.'):bi('You must measure around the same place on each egg. Drag an egg to the table spot, drag the tape measure onto it, then read the number.','Em phải đo vòng quanh cùng một chỗ trên mỗi quả. Kéo trứng vào chỗ đo, kéo thước dây vào trứng rồi đọc số.'))+'</p>';
+   if(e&&((S.ph===0&&S.snap)||(S.aroundPick===1&&(S.wrapT||0)>=1))){const mx=S.ph===0?10:20;h+='<p style="margin-top:.4rem">'+bi('How many centimetres?','Bao nhiêu xăng-ti-mét?')+'</p><div class="keys">'+Array.from({length:mx},(_,i)=>i+1).map(n=>'<button data-n="'+n+'" class="'+(S.mtry.includes(n)?'no':'')+'">'+n+'</button>').join('')+'</div>'}
    }
   else{h=hd(2,'Compare our results','So sánh kết quả')+'<p>'+(S.tall!==3?bi('Which egg is the tallest? Tap it.','Quả trứng nào cao nhất? Chạm vào nó.'):S.short!==0?bi('Which egg is the shortest? Tap it.','Quả trứng nào thấp nhất? Chạm vào nó.'):bi('Measuring helps us compare the eggs.','Đo giúp chúng ta so sánh các quả trứng.'))+'</p><div class="bars">'+EGGS.map(e=>'<div>'+e.h+'<i style="height:'+(e.h/8*80)+'%"></i><img src="'+P+e.b+'.webp"></div>').join('')+'</div>'+nxt(S.done[1],L('How birds hatch','Chim nở thế nào'))}
   r='<b>'+L('Our measurements','Kết quả đo')+'</b><table class="res"><tr><th></th><th>'+L('Height','Cao')+'</th><th>'+L('Around','Vòng')+'</th></tr>'+EGGS.map(e=>'<tr><td><img src="'+P+'egg_'+e.k+'.webp">'+L(e.en,e.vi)+'</td><td>'+(S.meas[e.k]?S.meas[e.k]+' cm':'—')+'</td><td>'+(S.around[e.k]?S.around[e.k]+' cm':'—')+'</td></tr>').join('')+'</table>'}
