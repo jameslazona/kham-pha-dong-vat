@@ -5505,8 +5505,8 @@ function hostOpen(fresh){if(fresh||!H){H=store.get(HOSTK);if(fresh||!H||!H.room)
 function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n,old=H.teams[n]||{};H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
  if(o.ev){const e=o.ev,tm=L('Team','Nhóm')+' '+n;let msg='',k='';
   if(e.k==='join'){msg='👋 '+tm+' '+L('joined!','đã vào!');if(H.startAt)busSend({t:'start'})}
-  if(e.k==='star'){msg='⭐ '+tm+': '+L('Mission','Nhiệm vụ')+' '+(e.m+1)+' · '+L('Q','Câu')+(e.q+1)+' '+L('correct!','đúng!');k='ok'}
-  if(e.k==='miss'){msg='🔁 '+tm+': '+L('Mission','Nhiệm vụ')+' '+(e.m+1)+' · '+L('Q','Câu')+(e.q+1)+' '+L('needs another look','cần xem lại');k='no'}
+  if(e.k==='star'){msg='⭐ '+tm+' '+L('finished','đã xong')+' '+L('Mission','Nhiệm vụ')+' '+(e.m+1)+' · '+L('Q','Câu')+(e.q+1)+' (+1)';k='ok'}
+  if(e.k==='miss'){msg='✅ '+tm+' '+L('finished','đã xong')+' '+L('Mission','Nhiệm vụ')+' '+(e.m+1)+' · '+L('Q','Câu')+(e.q+1);k='no'}
   if(e.k==='mdone'){msg='🏅 '+tm+' '+L('completed Mission','hoàn thành Nhiệm vụ')+' '+(e.m+1)+'!';k='hi'}
   if(e.k==='done'){msg='🏆 '+tm+' '+L('finished ALL 4 missions!','đã xong CẢ 4 nhiệm vụ!');k='hi'}
   if(e.k==='help'){msg='🙋 '+tm+' '+L('needs help!','cần giúp đỡ!');k='help'}
@@ -5704,9 +5704,11 @@ const mname=m=>m<4?T([M[m].en,M[m].vi]):T([BONUS.en,BONUS.vi]);
 function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n;H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
  if(o.ev){const e=o.ev,tm=L('Team','Nhóm')+' '+n;let msg='',k='';
   if(e.k==='join'){msg='👋 '+tm+' '+L('joined!','đã vào!');if(H.startAt)busSend({t:'start'})}
-  if(e.k==='ok'){msg='⭐ '+tm+': '+T(O[e.o]||['',''])+' → '+e.g+' ✓';k='ok'}
-  if(e.k==='no'){msg='🔁 '+tm+': '+T(O[e.o]||['',''])+' '+L('needs another look','cần xem lại');k='no'}
-  if(e.k==='bok'){msg='🏅 '+tm+': '+L('bonus round correct!','đúng câu thưởng!');k='ok'}
+  const where=e.m!=null?mname(e.m)+' · '+L('object','đồ vật')+' '+((e.i||0)+1):'';
+  if(e.k==='ok'){msg='⭐ '+tm+' '+L('finished','đã xong')+' '+where+' (+1)';k='ok'}
+  if(e.k==='no'){msg='✅ '+tm+' '+L('finished','đã xong')+' '+where;k='no'}
+  if(e.k==='bok'){msg='⭐ '+tm+' '+L('finished bonus round','đã xong vòng thưởng')+' '+((e.r||0)+1)+' (+1)';k='ok'}
+  if(e.k==='bno'){msg='✅ '+tm+' '+L('finished bonus round','đã xong vòng thưởng')+' '+((e.r||0)+1);k='no'}
   if(e.k==='mdone'){msg='🏅 '+tm+' '+L('completed','hoàn thành')+' "'+mname(e.m)+'"!';k='hi'}
   if(e.k==='done'){msg='🏆 '+tm+' '+L('finished ALL missions!','đã xong TẤT CẢ nhiệm vụ!');k='hi'}
   if(e.k==='help'){msg='🙋 '+tm+' '+L('needs help!','cần giúp đỡ!');k='help'}
@@ -5808,9 +5810,9 @@ function bindDrag(){const c=$('#ocard');if(!c)return;let gh=null;
  c.onpointerup=c.onpointercancel=e=>{if(!gh)return;const b=over(e);gh.remove();gh=null;c.classList.remove('drag');$$('.bin').forEach(x=>x.classList.remove('hot'));if(b)sortInto(b.dataset.g,b)}}
 function sortInto(gid,el){if(S.done)return;const m=M[S.m],k=S.order[S.i],a=m.ans[k];if(S.ph<2)S.ph=2;
  if(gid===a){const ok=S.tries===0;S.done=true;S.ph=3;S.res[S.m][S.i]=ok?'ok':'no';S.sorted[k]=S.m+':'+a;if(ok){S.pts++;SFX.thunk();setTimeout(SFX.good,120);confetti(10);toast('⭐ '+L('Correct! +1 point','Đúng rồi! +1 điểm'),'ok')}else{SFX.thunk();toast(L('Yes, that is the right group now.','Đúng nhóm rồi.'),'ok')}
-  if(!S.obs)S.obs=m.obs[a];saveT();sendSt({k:ok?'ok':'no',o:k,g:T(m.g.find(x=>x.id===a).t)});render();if(ok)flyStar(el);return}
+  if(!S.obs)S.obs=m.obs[a];saveT();sendSt({k:ok?'ok':'no',m:S.m,i:S.i});render();if(ok)flyStar(el);return}
  S.tries++;SFX.bad();if(el){el.classList.remove('no');void el.offsetWidth;el.classList.add('no')}
- if(S.tries>=2){S.done=true;S.ph=3;S.res[S.m][S.i]='no';S.sorted[k]=S.m+':'+a;if(!S.obs)S.obs=m.obs[a];saveT();sendSt({k:'no',o:k});toast(L('Here is the right group.','Đây là nhóm đúng.'),'bad');setTimeout(render,450);return}
+ if(S.tries>=2){S.done=true;S.ph=3;S.res[S.m][S.i]='no';S.sorted[k]=S.m+':'+a;if(!S.obs)S.obs=m.obs[a];saveT();sendSt({k:'no',m:S.m,i:S.i});toast(L('Here is the right group.','Đây là nhóm đúng.'),'bad');setTimeout(render,450);return}
  toast(L('Not that group! Test it again.','Không phải nhóm đó! Thử lại nhé.'),'bad');const r=$('#result');if(r)r.innerHTML=resultHTML()}
 function flyStar(fromEl){const t=$('#bigstars');if(!t)return;const a=(fromEl&&fromEl.isConnected?fromEl:$('.qbox')).getBoundingClientRect(),b=t.getBoundingClientRect();const s=document.createElement('div');s.className='flystar';s.textContent='⭐';s.style.left=(a.left+a.width/2)+'px';s.style.top=(a.top+a.height/2)+'px';ROOT.appendChild(s);
  requestAnimationFrame(()=>requestAnimationFrame(()=>{s.style.left=(b.left+b.width/2-20)+'px';s.style.top=b.top+'px';s.style.transform='scale(.5)'}));setTimeout(()=>{s.remove();const r=$('#bigstars');if(r){r.classList.remove('bump');void r.offsetWidth;r.classList.add('bump')}SFX.star()},950)}
@@ -5823,7 +5825,7 @@ function nextObj(){nextSorter();if(S.i<5){S.i++;newObj();saveT();render()}else{S
 function bCheck(){const r=BONUS.rounds[S.br],sel=S.bsel;if(!sel.length){toast(L('Tap the pictures first.','Hãy chạm vào hình trước.'),'bad');return}
  const ok=sel.length===r.ans.length&&r.ans.every(x=>sel.includes(x));
  if(ok||S.tries>=1){const first=ok&&S.tries===0;S.done=true;S.res[4][S.br]=first?'ok':'no';S.bmarks={};S.order.forEach(k=>{const inA=r.ans.includes(k),inS=sel.includes(k);S.bmarks[k]=inA&&inS?'ok':inA?'miss':inS?'no':''});
-  if(first){S.pts++;SFX.good();confetti(16);sendSt({k:'bok'})}else{SFX.bad();sendSt(null)}S.order.forEach(k=>{if(r.ans.includes(k))S.bmarks[k]='ok'});saveT();render();if(first)flyStar($('.multi'));return}
+  if(first){S.pts++;SFX.good();confetti(16);sendSt({k:'bok',r:S.br})}else{SFX.bad();sendSt({k:'bno',r:S.br})}S.order.forEach(k=>{if(r.ans.includes(k))S.bmarks[k]='ok'});saveT();render();if(first)flyStar($('.multi'));return}
  S.tries++;SFX.bad();S.bmarks={};render();toast(L('Not quite. Look again!','Chưa đúng. Xem lại nhé!'),'bad')}
 function joinRoom(code,n){store.set('mdet-role','team');S.room=code;S.n=n;S.pts=0;S.res=[[],[],[],[],[]];S.sorted={};S.help=false;S.scr='lobby';S.sorter=1;if(code!=='SOLO')busOpen(code,teamMsg);saveT();render();setTimeout(()=>sendSt({k:'join'}),600)}
 $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;ac();const a=b.dataset.act;
@@ -6028,9 +6030,9 @@ const stname=i=>L(STEPS[i].k.toLowerCase(),STEPS[i].vi.toLowerCase());
 function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n;H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
  if(o.ev){const e=o.ev,tm=L('Team','Nhóm')+' '+n;let msg='',k='';
   if(e.k==='join'){msg='👋 '+tm+' '+L('joined!','đã vào!');if(H.startAt)busSend({t:'start'})}
-  if(e.k==='ok'){msg='⭐ '+tm+': '+mname(e.m)+' · '+(e.st>=0?stname(e.st):'')+' ✓';k='ok'}
+  if(e.k==='ok'){msg='⭐ '+tm+' '+L('finished','đã xong')+' '+mname(e.m)+' · '+(e.st>=0?stname(e.st):L('question','câu hỏi'))+' (+1)';k='ok'}
   if(e.k==='dress'){msg='🧸 '+tm+' '+L('dressed Teddy for','đã mặc đồ cho Gấu:')+' '+mname(e.m)+' (+'+e.p+')';k='ok'}
-  if(e.k==='no'){msg='🔁 '+tm+': '+mname(e.m)+' · '+(e.st>=0?stname(e.st):'')+' '+L('needs another look','cần xem lại');k='no'}
+  if(e.k==='no'){msg='✅ '+tm+' '+L('finished','đã xong')+' '+mname(e.m)+' · '+(e.st>=0?stname(e.st):L('question','câu hỏi'));k='no'}
   if(e.k==='mdone'){msg='🏅 '+tm+' '+L('finished','hoàn thành')+' "'+mname(e.m)+'"!';k='hi'}
   if(e.k==='done'){msg='🏆 '+tm+' '+L('finished ALL missions!','đã xong TẤT CẢ nhiệm vụ!');k='hi'}
   if(e.k==='help'){msg='🙋 '+tm+' '+L('needs help!','cần giúp đỡ!');k='help'}
