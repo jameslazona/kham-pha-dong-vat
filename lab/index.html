@@ -244,8 +244,8 @@ body[data-xst=grip] .xs-grip,body[data-xst=leg] .xs-leg,body[data-xst=react] .xs
 .tabs button[data-go=race]{display:none}
 body[data-lab=matter] .tabs button[data-go=race]{display:inline-block}
 #drum{position:relative}
-#drumHost,#soundHost,#sdetHost,#etHost,#et2Host{flex:1;min-width:0;display:flex}
-body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sdet] #bar .tabs,body[data-lab=exit] #bar .tabs,body[data-lab=exit2] #bar .tabs{display:none}
+#drumHost,#soundHost,#sdetHost,#etHost,#et2Host,#birdsHost{flex:1;min-width:0;display:flex}
+body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sdet] #bar .tabs,body[data-lab=exit] #bar .tabs,body[data-lab=exit2] #bar .tabs,body[data-lab=birds] #bar .tabs{display:none}
 #race{gap:.8rem;padding:.8rem;position:relative;overflow:hidden;background:linear-gradient(160deg,#e8f1f8,#f7fafc)}
 #rcMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:.55rem;min-height:0}
 #rcSide{width:21rem;flex:none;background:#fff;border-radius:1.1rem;padding:.8rem;box-shadow:0 .15rem .5rem rgba(18,38,58,.08);display:flex;flex-direction:column;gap:.45rem;overflow:auto}
@@ -421,6 +421,11 @@ body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sde
         <canvas id="thumb6" width="600" height="340"></canvas>
         <h2>Drugs<span class="vi">Thuốc và các chất tác động lên cơ thể</span></h2>
         <button class="go" data-lab="drug" data-go="warm">Start the lab ➜</button>
+      </div>
+      <div class="card">
+        <img class="thumb" src="eggs/thumb.webp" alt="">
+        <h2>Big eggs and small eggs (Grade 1)<span class="vi">Trứng to và trứng nhỏ (Lớp 1)</span></h2>
+        <button class="go" data-go="birds">Start the lab ➜</button>
       </div>
       <div class="card">
         <img class="thumb" src="race-img/drum-thumb.webp" alt="">
@@ -710,6 +715,98 @@ body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sde
     </aside>
   </section>
 
+  <section class="screen" id="birds"><div id="birdsHost"></div></section>
+<template id="birdsTpl"><style>:host{--navy:#12306f;--ink:#12263a;--yel:#ffd23f;--red:#d7261e;--blue:#1d5fd6;--green:#24963f;flex:1;min-width:0;height:100%;display:flex;font-family:"Nunito","Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:#e9f1f8;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;border:0;cursor:pointer;background:none}button:disabled{opacity:.4;cursor:default}
+img{pointer-events:none;-webkit-user-drag:none}
+.vi{display:block;font-weight:600;opacity:.72;font-size:.8em}
+.wrap{position:relative;display:flex;flex-direction:column;flex:1;min-height:0}
+#hd{flex:none;display:flex;align-items:center;gap:.6rem;background:#2e7d32;color:#fff;padding:.35rem .8rem;min-height:3rem}
+.brand{font-weight:900;font-size:1.2rem;white-space:nowrap}.brand em{font-style:normal;color:var(--yel)}
+.tabs{flex:1;display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap}
+.tab{padding:.35rem .85rem;border-radius:999px;font-weight:900;background:rgba(255,255,255,.12);color:#d8f0d8;line-height:1.05;font-size:.95rem}
+.tab b{display:inline-grid;place-items:center;width:1.4rem;height:1.4rem;border-radius:50%;background:rgba(255,255,255,.2);margin-right:.3rem;font-size:.8rem}
+.tab.on{background:var(--yel);color:#1b4d1e}.tab.on b{background:#1b4d1e;color:#fff}.tab.done b{background:#fff;color:#2e7d32}
+.hbtn{background:rgba(255,255,255,.16);color:#fff;font-weight:800;padding:.4rem .8rem;border-radius:999px}.hbtn.on{background:#fff;color:#2e7d32}
+#main{flex:1;min-height:0;display:grid;grid-template-columns:1fr 30rem;gap:.7rem;padding:.7rem}
+#stage{position:relative;min-height:0;border-radius:1.2rem;overflow:hidden;box-shadow:0 .4rem 1.2rem rgba(18,38,58,.18);background:#dfe9ef}
+#cv{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block}
+#ovl{position:absolute;inset:0;display:none;overflow:auto;padding:1rem;background:linear-gradient(#f3f8ea,#dcecc8)}
+#ovl.on{display:flex;flex-direction:column;gap:.8rem;align-items:center;justify-content:center}
+#side{min-height:0;overflow:auto;display:flex;flex-direction:column;gap:.6rem}
+.card{background:#fff;border-radius:1.1rem;padding:.85rem 1rem;box-shadow:0 .3rem .9rem rgba(18,38,58,.1)}
+.step h2{font-weight:900;font-size:1.5rem;line-height:1.1;margin-bottom:.4rem}.step h2 small{display:block;font-size:.8rem;color:#2e7d32;letter-spacing:.06em}
+.step p{font-weight:700;font-size:1.15rem;line-height:1.3}
+.btn{background:#e8f1fa;border-radius:1rem;padding:.6rem 1.1rem;font-weight:900;font-size:1.1rem;box-shadow:0 .22rem 0 #c5d6e6;line-height:1.1}
+.btn:active:not(:disabled){transform:translateY(.15rem);box-shadow:none}
+.btn.go{background:var(--green);color:#fff;box-shadow:0 .22rem 0 #156428}.btn.blue{background:var(--blue);color:#fff;box-shadow:0 .22rem 0 #123f94}
+.nx{margin-top:.7rem;display:flex;justify-content:flex-end;gap:.5rem}
+.chk{display:flex;flex-direction:column;gap:.35rem;margin-top:.5rem}.chk div{font-weight:800;display:flex;gap:.5rem;align-items:center;font-size:1.05rem}
+.chk i{font-style:normal;width:1.7rem;height:1.7rem;border-radius:50%;background:#e3eaf1;display:grid;place-items:center;font-size:.85rem;flex:none}.chk i.y{background:var(--green);color:#fff}
+.chk img{width:2rem}
+.keys{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;margin-top:.6rem}
+.keys button{background:#fff8d6;border:.18rem solid #f2b400;border-radius:.8rem;font-weight:900;font-size:1.5rem;padding:.35rem 0}
+.keys button.no{opacity:.3;border-color:#d7261e}
+.sim{display:flex;flex-direction:column;gap:.4rem;margin-top:.5rem}
+.sim .r{display:flex;gap:.4rem;align-items:center;background:#f4f8fc;border-radius:.8rem;padding:.35rem .5rem;font-weight:800;font-size:1.02rem}
+.sim .r span{flex:1;line-height:1.15}
+.sim .r button{border-radius:.6rem;padding:.3rem .55rem;font-weight:900;background:#fff;border:.15rem solid #c9d7e3;font-size:.9rem}
+.sim .r.ok{background:#e6f7eb}.sim .r button.ok{background:var(--green);color:#fff;border-color:var(--green)}.sim .r button.no{border-color:var(--red);opacity:.4}
+.opts{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
+.opts button{flex:1;min-width:6rem;background:#f4f8fc;border:.2rem solid #dbe6f0;border-radius:.9rem;padding:.5rem;font-weight:900;font-size:1.1rem}
+.opts button.ok{border-color:var(--green);background:#e6f7eb}.opts button.no{border-color:var(--red);opacity:.45}
+table.res{width:100%;border-collapse:separate;border-spacing:0 .25rem;font-weight:800}
+table.res th{font-size:.8rem;color:#5c6e80;text-align:left}table.res td{background:#f2f6fa;padding:.25rem .4rem}
+table.res td:first-child{border-radius:.5rem 0 0 .5rem}table.res td:last-child{border-radius:0 .5rem .5rem 0}
+table.res img{width:1.8rem;vertical-align:middle;margin-right:.3rem}
+.bars{display:flex;align-items:flex-end;gap:.6rem;height:8rem;margin-top:.5rem;padding:0 .4rem;border-bottom:.15rem solid #9fb3c6}
+.bars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-weight:900;font-size:.85rem}
+.bars i{display:block;width:70%;border-radius:.4rem .4rem 0 0;background:linear-gradient(#ffd56b,#e39b00)}
+.bars img{width:1.7rem;margin-top:.15rem}
+.big{background:linear-gradient(#fff4b0,#ffd23f);border-radius:1rem;padding:.55rem .8rem;font-weight:900;text-align:center;font-size:1.1rem;margin-top:.5rem;line-height:1.25}
+.kw{display:inline-block;background:#cfe8d0;color:#1b4d1e;font-weight:900;border-radius:999px;padding:.1rem .7rem;margin:.15rem .1rem;font-size:.95rem}
+/* overlay pieces */
+.otitle{font-weight:900;font-size:1.7rem;text-align:center;color:#1b4d1e;line-height:1.15}
+.photo{position:relative;border-radius:1rem;overflow:hidden;box-shadow:0 .5rem 1.2rem rgba(0,0,0,.25);background:#fff}
+.photo img{display:block;width:100%}
+.tgt{position:absolute;transform:translate(-50%,-50%);min-width:8.5rem;padding:.45rem .8rem;border-radius:999px;border:.22rem dashed #fff;background:rgba(0,0,0,.35);color:#fff;font-weight:900;font-size:1.1rem;text-align:center;cursor:pointer}
+.tgt.full{border-style:solid;border-color:#fff;background:var(--green)}
+.tgt.hot{box-shadow:0 0 0 .3rem var(--yel)}
+.chips{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+.chip{background:#fff;border:.2rem solid #2e7d32;color:#1b4d1e;font-weight:900;font-size:1.25rem;border-radius:999px;padding:.4rem 1.2rem;box-shadow:0 .2rem 0 #9cc89e}
+.chip.sel{background:var(--yel);border-color:#c99700}.chip.used{opacity:.25}
+.pair{display:flex;gap:1.4rem;justify-content:center;flex-wrap:wrap}
+.pc{width:17rem;background:#fff;border-radius:1.1rem;border:.3rem solid #fff;box-shadow:0 .4rem 1rem rgba(0,0,0,.2);overflow:hidden;display:flex;flex-direction:column;font-weight:900;font-size:1.3rem}
+.pc img{width:100%;height:13rem;object-fit:cover}.pc span{padding:.5rem;text-align:center}
+.pc.ok{border-color:var(--green)}.pc.no{border-color:var(--red);opacity:.6}
+.cyc{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;justify-content:center}
+.slot{width:10rem;height:9rem;border-radius:1rem;border:.25rem dashed #7fae7a;background:rgba(255,255,255,.6);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;color:#5a7d57;overflow:hidden;position:relative}
+.slot img{width:100%;height:100%;object-fit:cover}.slot b{position:absolute;top:.3rem;left:.3rem;background:#1b4d1e;color:#fff;border-radius:999px;padding:.05rem .6rem;font-size:.9rem}
+.arrow{font-size:2rem;color:#2e7d32;font-weight:900}
+.cards{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
+.cardp{width:10rem;height:8.4rem;border-radius:1rem;overflow:hidden;box-shadow:0 .3rem .8rem rgba(0,0,0,.2);border:.25rem solid #fff;background:#fff}
+.cardp img{width:100%;height:100%;object-fit:cover}.cardp.gone{visibility:hidden}
+.wings{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap}
+.wing{background:#fff;border-radius:1.1rem;padding:.6rem;box-shadow:0 .4rem 1rem rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;width:24rem}
+.wing .who{display:flex;align-items:center;gap:.6rem;font-weight:900;font-size:1.3rem}.wing .who img{width:4.5rem;height:4.5rem;object-fit:cover;border-radius:50%;border:.2rem solid #ddd}
+.wing svg{width:100%;cursor:pointer}
+.wing.found{box-shadow:0 0 0 .35rem var(--green)}
+.wgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem;width:100%;max-width:62rem}
+.wc{background:#fff;border-radius:1rem;overflow:hidden;box-shadow:0 .3rem .8rem rgba(0,0,0,.18);display:flex;flex-direction:column;cursor:pointer;border:.25rem solid #fff}
+.wc img{width:100%;height:8.5rem;object-fit:cover}
+.wc span{min-height:2.6rem;display:grid;place-items:center;font-weight:900;font-size:1.25rem;border-top:.15rem dashed #c9d7e3;color:#9aa9b6}
+.wc.ok{border-color:var(--green)}.wc.ok span{color:#1b4d1e;background:#e6f7eb;border-top-style:solid}
+.wc.shake,.cardp.shake,.pc.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-.5rem)}40%,80%{transform:translateX(.5rem)}}
+.cert{background:#fffdf2;border:.3rem solid #c9a24a;border-radius:1.4rem;padding:1.4rem 2rem;text-align:center;max-width:44rem;display:flex;flex-direction:column;gap:.6rem;align-items:center}
+.cert h3{font-size:2.2rem;font-weight:900;color:#1b4d1e}.cert p{font-weight:800;font-size:1.2rem}
+.stars{font-size:2.6rem;letter-spacing:.2em}
+#toast{position:absolute;left:35%;bottom:1.2rem;transform:translateX(-50%) translateY(170%);background:var(--ink);color:#fff;font-weight:800;font-size:1.2rem;padding:.65rem 1.3rem;border-radius:1rem;max-width:60%;text-align:center;transition:transform .25s,opacity .25s;z-index:80;opacity:0}
+#toast.on{transform:translateX(-50%) translateY(0);opacity:1}#toast.bad{background:#a52c1c}#toast.ok{background:#1f7a3a}
+.conf{position:absolute;top:-3rem;font-size:2rem;animation:fall 2.2s ease-in forwards;pointer-events:none;z-index:95}@keyframes fall{to{transform:translateY(110vh) rotate(500deg);opacity:.2}}
+@media (max-width:1000px){#main{grid-template-columns:1fr;grid-template-rows:60vh auto}#side{overflow:visible}}
+</style><div class="wrap"><header id="hd"><div class="brand">🥚 BIG EGGS AND <em>SMALL EGGS</em></div><div class="tabs" id="tabs"></div><button class="hbtn on" id="sndBtn">🔊</button></header><div id="main"><div id="stage"><canvas id="cv"></canvas><div id="ovl"></div></div><aside id="side"><div class="card step" id="stepC"></div><div class="card" id="resC"></div></aside></div><div id="toast"></div></div></template>
   <section class="screen" id="exit2"><div id="et2Host"></div></section>
 <template id="et2Tpl"><style>:host{flex:1;min-width:0;height:100%;display:flex;font-family:"Nunito","Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;color:#1d2733;background:radial-gradient(ellipse at 50% 30%,#a8784a,#6e4422);-webkit-user-select:none;user-select:none}
 *{box-sizing:border-box;margin:0;padding:0}button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
@@ -1082,6 +1179,7 @@ function go(id){
   if(id==='race'&&cur!=='matter')return go('home');
   if(id==='race')rcRender();
   if(id==='freezer'&&cur!=='freeze')return go('home');
+  if(id==='birds'){document.body.dataset.lab='birds';$('#topic').innerHTML='Big eggs and small eggs<span class="vi inline"> · Trứng to và trứng nhỏ</span>'}
   if(id==='exit2'){document.body.dataset.lab='exit2';$('#topic').innerHTML='Exit Ticket: Solids, Liquids and Gases<span class="vi inline"> · Phiếu kiểm tra: Chất rắn, lỏng, khí</span>'}
   if(id==='exit'){document.body.dataset.lab='exit';$('#topic').innerHTML='Exit Ticket: Volume of Sound<span class="vi inline"> · Phiếu kiểm tra: Âm lượng</span>'}
   if(id==='sdet'){document.body.dataset.lab='sdet';$('#topic').innerHTML='Sound Detective Challenge<span class="vi inline"> · Thử thách thám tử âm thanh</span>'}
@@ -3658,6 +3756,256 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 setLab('evap');requestAnimationFrame(frame);
+/* ===== Big eggs and small eggs (Grade 1) ===== */
+(()=>{const HOST=document.getElementById('birdsHost'),ROOT=HOST.attachShadow({mode:'open'});ROOT.appendChild(document.getElementById('birdsTpl').content.cloneNode(true));
+const $=s=>ROOT.querySelector(s),$$=s=>[...ROOT.querySelectorAll(s)];const SCR=document.getElementById('birds');
+let VI=document.body.classList.contains('vi-on');
+const L=(en,vi)=>VI?vi:en,bi=(en,vi)=>en+(VI?'<span class="vi">'+vi+'</span>':'');
+const P='eggs/',IMG={};function li(k){if(!IMG[k]){IMG[k]=new Image();IMG[k].src=P+k+'.webp'}return IMG[k]}
+const ok=im=>im&&im.complete&&im.naturalWidth>0;
+const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+function toast(m,k){const t=$('#toast');t.innerHTML=m;t.className='on '+(k||'');clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2600)}
+function confetti(){const st=$('#stage');for(let i=0;i<24;i++){const s=document.createElement('div');s.className='conf';s.textContent=['🥚','⭐','🐣','🎉'][i%4];s.style.left=(Math.random()*95)+'%';s.style.animationDelay=(Math.random()*.5)+'s';st.appendChild(s);setTimeout(()=>s.remove(),2900)}}
+/* ---------- sound ---------- */
+let AC=null,SOUND=true;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(_){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,t,d,type,v){if(!SOUND||!ac())return;const o=AC.createOscillator(),g=AC.createGain();o.type=type||'sine';o.frequency.value=f;const T0=AC.currentTime+t;g.gain.setValueAtTime(0,T0);g.gain.linearRampToValueAtTime(v||.15,T0+.01);g.gain.exponentialRampToValueAtTime(.001,T0+d);o.connect(g);g.connect(AC.destination);o.start(T0);o.stop(T0+d+.05)}
+const SFX={pop:()=>tone(700,0,.08,'sine',.12),good:()=>{tone(660,0,.15,'triangle',.18);tone(880,.12,.25,'triangle',.18)},bad:()=>tone(200,0,.25,'square',.06),
+ crack(){if(!SOUND||!ac())return;const n=AC.createBufferSource(),b=AC.createBuffer(1,AC.sampleRate*.08,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);n.buffer=b;const f=AC.createBiquadFilter();f.type='highpass';f.frequency.value=1500;const g=AC.createGain();g.gain.value=.6;n.connect(f);f.connect(g);g.connect(AC.destination);n.start()},
+ peep(){if(!SOUND||!ac())return;[0,.22,.44].forEach(t=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(2600,AC.currentTime+t);o.frequency.exponentialRampToValueAtTime(3600,AC.currentTime+t+.06);o.frequency.exponentialRampToValueAtTime(2400,AC.currentTime+t+.14);g.gain.setValueAtTime(0,AC.currentTime+t);g.gain.linearRampToValueAtTime(.08,AC.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+.16);o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+.2)})},
+ quack(){if(!SOUND||!ac())return;[0,.3].forEach(t=>{const o=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain();o.type='sawtooth';o.frequency.setValueAtTime(320,AC.currentTime+t);o.frequency.linearRampToValueAtTime(250,AC.currentTime+t+.18);f.type='bandpass';f.frequency.value=1100;f.Q.value=3;g.gain.setValueAtTime(0,AC.currentTime+t);g.gain.linearRampToValueAtTime(.25,AC.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+.2);o.connect(f);f.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+.25)})}};
+/* ---------- data ---------- */
+const EGGS=[
+ {k:'quail',en:'Quail egg',vi:'Trứng chim cút',b:'i_bird',bn:['quail','chim cút'],d:['Small, with dark spots','Nhỏ, có đốm đen'],h:3,c:7},
+ {k:'chicken',en:'Chicken egg',vi:'Trứng gà',b:'i_hen',bn:['chicken','gà'],d:['Smooth and brown','Nhẵn và màu nâu'],h:5,c:11},
+ {k:'turkey',en:'Turkey egg',vi:'Trứng gà tây',b:'i_turkey',bn:['turkey','gà tây'],d:['Pink with red speckles','Hồng, có lốm đốm đỏ'],h:6,c:12},
+ {k:'goose',en:'Goose egg',vi:'Trứng ngỗng',b:'i_goose',bn:['goose','ngỗng'],d:['Big and white','To và màu trắng'],h:8,c:17}];
+EGGS.forEach(e=>{e.img=li('egg_'+e.k);li(e.b)});['family','hatch','mother','father','duckling','beak'].forEach(li);
+const STEPS=[['Compare eggs','So sánh trứng'],['Measure eggs','Đo trứng'],['Hatching','Nở'],['Ducks','Vịt'],['Key words','Từ khóa']];
+const S={s:0,ph:0,done:[0,0,0,0,0],
+ obs:{},slots:shuf([0,1,2,3]),sim:{},
+ meas:{},around:{},mcur:null,mtry:[],place:null,aroundPick:null,tall:null,short:null,
+ cnt:[],count:null,taps:0,hatched:false,cyc:[],cycWrong:null,
+ lab:{},labSel:null,cq:0,cqAns:{},blue:{},words:{},wordSel:null};
+/* ---------- canvas ---------- */
+const cv=$('#cv');let X=cv.getContext('2d');const W=1100,H=640;let SC=1,OX=0,OY=0;
+function fit(){const r=cv.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1);cv.width=Math.max(2,Math.round(r.width*d));cv.height=Math.max(2,Math.round(r.height*d));SC=Math.min(cv.width/W,cv.height/H);OX=(cv.width/SC-W)/2;OY=(cv.height/SC-H)/2}
+new ResizeObserver(()=>fit()).observe(cv);
+function toLocal(e){const r=cv.getBoundingClientRect(),d=cv.width/r.width;return{x:(e.clientX-r.left)*d/SC-OX,y:(e.clientY-r.top)*d/SC-OY}}
+/* wood + wall textures */
+const wood=document.createElement('canvas');wood.width=1400;wood.height=260;{const w=wood.getContext('2d');let g=w.createLinearGradient(0,0,0,260);g.addColorStop(0,'#c99563');g.addColorStop(1,'#8a5a32');w.fillStyle=g;w.fillRect(0,0,1400,260);
+ for(let i=0;i<90;i++){const y=Math.random()*260;w.strokeStyle='rgba('+(Math.random()<.5?'70,40,15':'240,200,150')+','+(.06+Math.random()*.12)+')';w.lineWidth=1+Math.random()*3;w.beginPath();w.moveTo(0,y);for(let x=0;x<=1400;x+=70)w.lineTo(x,y+Math.sin(x/180+i)*6+Math.random()*2);w.stroke()}
+ for(let k=0;k<5;k++){const x=Math.random()*1400,y=40+Math.random()*180;w.strokeStyle='rgba(80,45,15,.25)';w.lineWidth=2;for(let r=4;r<26;r+=5){w.beginPath();w.ellipse(x,y,r*2.4,r*.6,0,0,7);w.stroke()}}}
+function room(){let g=X.createLinearGradient(0,-200,0,430);g.addColorStop(0,'#cfe3d0');g.addColorStop(1,'#f4f8ef');X.fillStyle=g;X.fillRect(-400,-300,W+800,740);
+ X.fillStyle='rgba(255,255,255,.5)';X.fillRect(-400,410,W+800,6);
+ X.drawImage(wood,-150,430,W+300,260);g=X.createLinearGradient(0,430,0,470);g.addColorStop(0,'rgba(0,0,0,.25)');g.addColorStop(1,'rgba(0,0,0,0)');X.fillStyle=g;X.fillRect(-400,430,W+800,40);X.fillStyle='#e3b382';X.fillRect(-400,430,W+800,3)}
+function eggW(e,h){const im=e.img;return ok(im)?h*im.naturalWidth/im.naturalHeight:h*.7}
+function drawEgg(e,cx,base,h,o){o=o||{};const w=eggW(e,h);X.save();X.globalAlpha=o.a===undefined?1:o.a;
+ X.fillStyle='rgba(40,25,10,.35)';X.filter='blur(6px)';X.beginPath();X.ellipse(cx+w*.12,base-2,w*.55,h*.06+3,0,0,7);X.fill();X.filter='none';
+ if(o.glow){X.shadowColor=o.glow;X.shadowBlur=30}
+ if(ok(e.img))X.drawImage(e.img,cx-w/2,base-h,w,h);X.restore();return{x:cx-w/2,y:base-h,w,h}}
+const SPX=40,BASE=600;
+/* ---------- step 1 : compare ---------- */
+const SLOTX=[190,430,670,910];
+const LENS={x:550,y:250,r:115,z:2.3,drag:false,hold:{}};
+let drag=null;
+function eggH(i){return EGGS[i].h*SPX}
+function scene1(){room();
+ S.slots.forEach((ei,si)=>{if(drag&&drag.ei===ei)return;const e=EGGS[ei];const r=drawEgg(e,SLOTX[si],BASE,eggH(ei),{glow:S.ph===1&&S.wrong&&S.wrong.includes(si)?'#ff3b30':null});e.box=r;
+  if(S.ph===0&&S.obs[e.k]){const tw=210,x=SLOTX[si]-tw/2,y=BASE-eggH(ei)-80;X.fillStyle='rgba(255,255,255,.94)';X.strokeStyle='#2e7d32';X.lineWidth=3;X.beginPath();X.roundRect(x,y,tw,62,14);X.fill();X.stroke();const b=li(e.b);if(ok(b))X.drawImage(b,x+6,y+6,50,50);X.fillStyle='#1b4d1e';X.font='900 19px system-ui';X.textAlign='left';X.fillText(L(e.en,e.vi),x+62,y+27);X.font='700 14px system-ui';X.fillStyle='#4a5a4a';X.fillText(L(e.d[0],e.d[1]),x+62,y+48)}});
+ if(S.ph===1){SLOTX.forEach((x,i)=>{X.fillStyle='rgba(27,77,30,.85)';X.beginPath();X.roundRect(x-70,612,140,24,12);X.fill();X.fillStyle='#fff';X.font='900 15px system-ui';X.textAlign='center';X.fillText((i+1)+(i===0?' · '+L('smallest','nhỏ nhất'):i===3?' · '+L('biggest','to nhất'):''),x,629)});
+  if(drag){const e=EGGS[drag.ei];drawEgg(e,drag.x,drag.y,eggH(drag.ei)*1.05,{glow:'#ffd23f'})}}}
+function draw1(t){scene1();if(S.ph!==0)return;const l=LENS;
+ X.save();X.beginPath();X.arc(l.x,l.y,l.r,0,7);X.clip();X.translate(l.x,l.y);X.scale(l.z,l.z);X.translate(-l.x,-l.y);scene1();X.restore();
+ let g=X.createLinearGradient(l.x-l.r,0,l.x+l.r,0);g.addColorStop(0,'#3a2a1a');g.addColorStop(.5,'#8a6a4a');g.addColorStop(1,'#2a1a0a');X.strokeStyle=g;X.lineWidth=16;X.beginPath();X.arc(l.x,l.y,l.r,0,7);X.stroke();
+ X.strokeStyle='rgba(255,255,255,.5)';X.lineWidth=4;X.beginPath();X.arc(l.x,l.y,l.r-10,3.6,4.6);X.stroke();
+ X.save();X.translate(l.x,l.y);X.rotate(.75);g=X.createLinearGradient(0,-14,0,14);g.addColorStop(0,'#6b4426');g.addColorStop(.5,'#a06a3c');g.addColorStop(1,'#3e2410');X.fillStyle=g;X.beginPath();X.roundRect(l.r+4,-15,150,30,12);X.fill();X.restore();
+ if(!Object.keys(S.obs).length){X.fillStyle='rgba(18,38,58,.8)';X.beginPath();X.roundRect(l.x-120,l.y+l.r+20,240,34,17);X.fill();X.fillStyle='#fff';X.font='800 16px system-ui';X.textAlign='center';X.fillText(L('Drag me over the eggs!','Kéo kính lúp qua các quả trứng!'),l.x,l.y+l.r+43)}}
+function hit1(p){for(let si=0;si<4;si++){const e=EGGS[S.slots[si]];const b=e.box;if(b&&p.x>b.x&&p.x<b.x+b.w&&p.y>b.y&&p.y<b.y+b.h)return si}return -1}
+function tick1(dt){if(S.ph!==0)return;const si=hit1({x:LENS.x,y:LENS.y});if(si<0)return;const e=EGGS[S.slots[si]];if(S.obs[e.k])return;LENS.hold[e.k]=(LENS.hold[e.k]||0)+dt;if(LENS.hold[e.k]>.6){S.obs[e.k]=1;SFX.pop();toast('🔍 '+L(e.en,e.vi)+': '+L(e.d[0],e.d[1]),'ok');if(Object.keys(S.obs).length===4){S.sub1=1}renderStep()}}
+/* ---------- step 2 : measure ---------- */
+const RX=560,SPOT=700;
+function ruler(x,base,cm){X.save();X.filter='drop-shadow(2px 4px 4px rgba(0,0,0,.3))';X.fillStyle='rgba(250,252,255,.92)';X.beginPath();X.roundRect(x-34,base-cm*SPX-44,70,cm*SPX+48,6);X.fill();X.restore();X.strokeStyle='#9fb3c6';X.lineWidth=1.5;X.beginPath();X.roundRect(x-34,base-cm*SPX-44,70,cm*SPX+48,6);X.stroke();
+ for(let m=0;m<=cm*10;m++){const y=base-m*SPX/10,big=m%10===0,mid=m%5===0;X.strokeStyle='#111';X.lineWidth=big?2.4:1.2;X.beginPath();X.moveTo(x+36,y);X.lineTo(x+36-(big?26:mid?17:10),y);X.stroke();if(big){X.fillStyle='#111';X.font='900 22px system-ui';X.textAlign='right';X.fillText(m/10,x-2,y+8)}}
+ X.fillStyle='#111';X.font='800 14px system-ui';X.textAlign='center';X.fillText('cm',x,base-cm*SPX-26)}
+function tape(x0,y,len,maxcm,cmPx){X.save();X.filter='drop-shadow(1px 3px 3px rgba(0,0,0,.3))';X.fillStyle='#ffd84a';X.fillRect(x0,y,len,36);X.restore();X.strokeStyle='#8a6200';X.lineWidth=1;X.strokeRect(x0,y,len,36);
+ for(let c=0;c<=maxcm*2;c++){const xx=x0+c*cmPx/2;if(xx>x0+len+.5)break;X.strokeStyle='#2a1f00';X.lineWidth=c%2?1:2;X.beginPath();X.moveTo(xx,y);X.lineTo(xx,y+(c%2?9:16));X.stroke();if(c%2===0&&c>0){X.fillStyle='#2a1f00';X.font='800 13px system-ui';X.textAlign='center';X.fillText(c/2,xx,y+30)}}}
+let anim2=0;
+function draw2(t,dt){room();ruler(RX,BASE,10);
+ const tray=EGGS.map((e,i)=>i).filter(i=>S.mcur!==i);let x=70;
+ tray.forEach(i=>{const e=EGGS[i],h=eggH(i)*.5,w=eggW(e,h);const r=drawEgg(e,x+w/2,BASE,h,{a:(S.ph===0?S.meas[e.k]:S.around[e.k])?.45:1});e.tbox=r;if((S.ph===0?S.meas[e.k]:S.around[e.k])){X.fillStyle='#24963f';X.beginPath();X.arc(x+w/2,BASE-h-18,15,0,7);X.fill();X.fillStyle='#fff';X.font='900 18px system-ui';X.textAlign='center';X.fillText('✓',x+w/2,BASE-h-12)}x+=w+28});
+ if(S.mcur===null){X.fillStyle='rgba(18,38,58,.8)';X.beginPath();X.roundRect(620,250,300,64,16);X.fill();X.fillStyle='#fff';X.font='800 18px system-ui';X.textAlign='center';X.fillText(L('Tap an egg to measure it','Chạm vào một quả trứng để đo'),770,278);X.fillText('👈',770,304);return}
+ const e=EGGS[S.mcur];anim2=Math.min(1,anim2+dt*2.5);const h=eggH(S.mcur),w=eggW(e,h),cx=RX+38+w/2+4;
+ drawEgg(e,cx,BASE,h);
+ if(S.ph===0){const ty=BASE-h;X.strokeStyle='#d7261e';X.setLineDash([9,7]);X.lineWidth=3;X.beginPath();X.moveTo(cx,ty);X.lineTo(RX-40,ty);X.stroke();X.setLineDash([]);X.fillStyle='#d7261e';X.beginPath();X.moveTo(RX-40,ty);X.lineTo(RX-58,ty-10);X.lineTo(RX-58,ty+10);X.fill();
+  X.font='900 30px system-ui';X.textAlign='right';X.fillText('?',RX-64,ty+11)}
+ else{const ys=[.25,.55,.85],cy=BASE-h,ey=ys.map(f=>cy+h*f);
+  if(S.aroundPick===null){ys.forEach((f,i)=>{const yy=ey[i],hw=w/2*Math.sqrt(Math.max(0,1-Math.pow((f-.55)/.55,2)))*1.02;X.strokeStyle='rgba(29,95,214,.8)';X.setLineDash([8,6]);X.lineWidth=4;X.beginPath();X.ellipse(cx,yy,hw,10,0,0,Math.PI);X.stroke();X.setLineDash([]);X.fillStyle='#1d5fd6';X.beginPath();X.arc(cx+hw+34,yy,20,0,7);X.fill();X.fillStyle='#fff';X.font='900 20px system-ui';X.textAlign='center';X.fillText('ABC'[i],cx+hw+34,yy+7)})}
+  else{const yy=ey[1],hw=w/2*1.02,p=Math.min(1,(S.wrapT||0));X.strokeStyle='#e8b415';X.lineWidth=12;X.beginPath();X.ellipse(cx,yy,hw,10,0,Math.PI,Math.PI+Math.PI*2*Math.min(1,p*1.5),false);X.stroke();
+   const cmPx=38,len=e.c*cmPx*Math.max(0,Math.min(1,(p-.6)/.4));if(p>.6){tape(160,70,len,20,cmPx);X.fillStyle='#8a6200';X.font='800 15px system-ui';X.textAlign='left';X.fillText(L('Tape measure (cm)','Thước dây (cm)'),160,60);if(p>=1){X.strokeStyle='#d7261e';X.setLineDash([7,6]);X.lineWidth=3;X.beginPath();X.moveTo(160+len,40);X.lineTo(160+len,130);X.stroke();X.setLineDash([]);X.fillStyle='#d7261e';X.font='900 26px system-ui';X.textAlign='center';X.fillText('?',160+len,156)}}}}}
+function hit2(p){for(let i=0;i<4;i++){if(i===S.mcur)continue;const b=EGGS[i].tbox;if(b&&p.x>b.x-8&&p.x<b.x+b.w+8&&p.y>b.y-8&&p.y<b.y+b.h+8)return i}return -1}
+function draw2r(){room();let x=120;const pos=[];EGGS.forEach((e,i)=>{const h=eggH(i),w=eggW(e,h);const r=drawEgg(e,x+w/2,BASE,h,{glow:(S.tall===i&&i===3)||(S.short===i&&i===0)?'#24963f':null});e.rbox=r;X.fillStyle='#1b4d1e';X.font='900 22px system-ui';X.textAlign='center';X.fillText(e.h+' cm',x+w/2,BASE-h-14);x+=w+90})}
+/* ---------- step 3 : nest & hatching ---------- */
+const nestBack=document.createElement('canvas'),nestFront=document.createElement('canvas');nestBack.width=nestFront.width=W;nestBack.height=nestFront.height=H;
+(function(){const NC=[[201,165,95],[176,137,74],[226,196,128],[140,104,55],[110,80,40],[235,214,160]];const cx=550,cy=470,rx=340,ry=125;
+ const strand=(c,inFront)=>{const a=Math.random()*Math.PI*2;const front=Math.sin(a)>0;if(front!==inFront&&Math.random()<.85)return;const rr=.78+Math.random()*.42;const x=cx+Math.cos(a)*rx*rr,y=cy+Math.sin(a)*ry*rr-(Math.random()*40);const ang=a+Math.PI/2+(Math.random()-.5)*.9,len=40+Math.random()*90;const col=NC[Math.floor(Math.random()*NC.length)];c.strokeStyle='rgba('+col.join(',')+','+(.7+Math.random()*.3)+')';c.lineWidth=1.5+Math.random()*3.2;c.lineCap='round';c.beginPath();c.moveTo(x-Math.cos(ang)*len/2,y-Math.sin(ang)*len*.35);c.quadraticCurveTo(x+(Math.random()-.5)*30,y+(Math.random()-.5)*20,x+Math.cos(ang)*len/2,y+Math.sin(ang)*len*.35);c.stroke()};
+ let b=nestBack.getContext('2d');b.fillStyle='rgba(40,25,10,.45)';b.filter='blur(14px)';b.beginPath();b.ellipse(cx+10,cy+60,rx*1.15,ry*.8,0,0,7);b.fill();b.filter='none';
+ let g=b.createRadialGradient(cx,cy+10,20,cx,cy,rx);g.addColorStop(0,'#3d2a14');g.addColorStop(.6,'#6b4b26');g.addColorStop(1,'#8f6a3a');b.fillStyle=g;b.beginPath();b.ellipse(cx,cy,rx*1.02,ry*1.05,0,0,7);b.fill();
+ for(let i=0;i<2600;i++)strand(b,false);
+ g=b.createRadialGradient(cx,cy+20,10,cx,cy,rx*.75);g.addColorStop(0,'rgba(45,30,12,.95)');g.addColorStop(.7,'rgba(80,55,25,.6)');g.addColorStop(1,'rgba(80,55,25,0)');b.fillStyle=g;b.beginPath();b.ellipse(cx,cy,rx*.78,ry*.7,0,0,7);b.fill();
+ for(let i=0;i<500;i++){const a=Math.random()*7,r=Math.random();const x=cx+Math.cos(a)*rx*.7*r,y=cy+Math.sin(a)*ry*.6*r;const col=NC[Math.floor(Math.random()*4)];b.strokeStyle='rgba('+col.join(',')+',.45)';b.lineWidth=1.2;b.beginPath();b.moveTo(x,y);b.lineTo(x+(Math.random()-.5)*50,y+(Math.random()-.5)*14);b.stroke()}
+ for(let i=0;i<220;i++){const a=Math.random()*7;const x=cx+Math.cos(a)*rx*.6*Math.random(),y=cy+Math.sin(a)*ry*.5*Math.random();b.fillStyle='rgba(235,235,230,.55)';b.beginPath();b.ellipse(x,y,4+Math.random()*6,2+Math.random()*3,Math.random()*3,0,7);b.fill()}
+ const f=nestFront.getContext('2d');for(let i=0;i<1500;i++)strand(f,true)})();
+function duckEgg(x,y,h,rot,o){o=o||{};const w=h*.74;X.save();X.translate(x,y);X.rotate(rot||0);
+ X.fillStyle='rgba(30,20,8,.4)';X.filter='blur(5px)';X.beginPath();X.ellipse(w*.08,h*.46,w*.5,h*.12,0,0,7);X.fill();X.filter='none';
+ const path=()=>{X.beginPath();X.moveTo(0,-h/2);X.bezierCurveTo(w*.62,-h/2,w*.56,h/2,0,h/2);X.bezierCurveTo(-w*.56,h/2,-w*.62,-h/2,0,-h/2);X.closePath()};
+ path();let g=X.createRadialGradient(-w*.18,-h*.2,h*.05,0,0,h*.62);g.addColorStop(0,'#f6faf1');g.addColorStop(.45,'#dbe8d3');g.addColorStop(.85,'#a9bfa2');g.addColorStop(1,'#82987c');X.fillStyle=g;X.fill();
+ X.save();path();X.clip();for(let i=0;i<60;i++){X.fillStyle='rgba(120,140,110,'+(Math.random()*.12)+')';X.beginPath();X.arc((Math.random()-.5)*w,(Math.random()-.5)*h,Math.random()*h*.03,0,7);X.fill()}
+ if(o.cracks){X.strokeStyle='#3d4a38';X.lineWidth=Math.max(1.5,h*.009);o.cracks.forEach(c=>{X.beginPath();c.forEach((p,i)=>i?X.lineTo(p[0]*w,p[1]*h):X.moveTo(p[0]*w,p[1]*h));X.stroke()})}
+ if(o.hole){X.fillStyle='#1d1a12';X.beginPath();o.hole.forEach((p,i)=>i?X.lineTo(p[0]*w,p[1]*h):X.moveTo(p[0]*w,p[1]*h));X.closePath();X.fill();
+  if(o.beak){const bx=o.beak[0]*w,by=o.beak[1]*h;g=X.createLinearGradient(bx,by-12,bx,by+12);g.addColorStop(0,'#f6b08a');g.addColorStop(1,'#d9775a');X.fillStyle=g;X.beginPath();X.moveTo(bx-14,by-9);X.quadraticCurveTo(bx+18,by-10,bx+o.beak[2]*h,by);X.quadraticCurveTo(bx+16,by+8,bx-14,by+8);X.fill();X.fillStyle='#fff';X.beginPath();X.arc(bx+o.beak[2]*h-6,by-3,2.5,0,7);X.fill()}}
+ X.restore();X.fillStyle='rgba(255,255,255,.55)';X.beginPath();X.ellipse(-w*.2,-h*.22,w*.1,h*.16,-.3,0,7);X.fill();X.restore()}
+const NESTEGGS=[[430,445,-.3],[540,430,.1],[655,445,.35],[480,500,-.15],[600,505,.2],[710,495,.5]];
+const CRK=(()=>{const ring=[];for(let i=0;i<=24;i++){const t=i/24,x=-.42+t*.84;ring.push([x,-.12+Math.sin(t*20)*.035+(i%2?.02:-.02)])}const star=[[[.18,-.24],[.25,-.3],[.31,-.27]],[[.18,-.24],[.12,-.33]],[[.18,-.24],[.26,-.18],[.33,-.2]],[[.18,-.24],[.1,-.17]]];return{ring,star}})();
+let hatchFade=0,wob=0;
+function draw3(t,dt){room();X.drawImage(nestBack,0,0);
+ if(S.ph===0){NESTEGGS.forEach(([x,y,r],i)=>{duckEgg(x,y,118,r);if(S.cnt.includes(i)){const n=S.cnt.indexOf(i)+1;X.fillStyle='#1d5fd6';X.beginPath();X.arc(x,y-30,24,0,7);X.fill();X.strokeStyle='#fff';X.lineWidth=3;X.stroke();X.fillStyle='#fff';X.font='900 26px system-ui';X.textAlign='center';X.fillText(n,x,y-21)}});X.drawImage(nestFront,0,0);
+  X.fillStyle='rgba(18,38,58,.8)';X.beginPath();X.roundRect(330,40,440,48,24);X.fill();X.fillStyle='#fff';X.font='800 20px system-ui';X.textAlign='center';X.fillText(L("This is a duck's nest. Tap each egg to count!",'Đây là tổ vịt. Chạm vào từng quả để đếm!'),550,71);return}
+ if(S.ph===1){wob*=Math.pow(.02,dt);const p=S.taps;const rot=Math.sin(t*28)*wob*.12;
+  if(!S.hatched||hatchFade<1){const cr=[];if(p>=2)cr.push(...CRK.star);if(p>=3){const n=Math.min(CRK.ring.length,Math.round((p-2)/4*CRK.ring.length));cr.push(CRK.ring.slice(0,n))}
+   const hole=p>=4?[[.15,-.28],[.24,-.31],[.3,-.25],[.27,-.19],[.19,-.2]]:null;const beak=p>=5?[.24,-.25,.11]:null;
+   X.save();X.globalAlpha=1-hatchFade;
+   duckEgg(550,330,300,rot,{cracks:cr,hole,beak});X.restore()}
+  X.drawImage(nestFront,0,0);
+  if(S.hatched){hatchFade=Math.min(1,hatchFade+dt*.9);const im=li('hatch');if(ok(im)){X.save();X.globalAlpha=hatchFade;const iw=720,ih=iw*im.naturalHeight/im.naturalWidth;X.beginPath();X.roundRect(550-iw/2,40,iw,ih,24);X.clip();X.drawImage(im,550-iw/2,40,iw,ih);X.restore()}}
+  else{X.fillStyle='rgba(18,38,58,.8)';X.beginPath();X.roundRect(360,30,380,48,24);X.fill();X.fillStyle='#fff';X.font='800 20px system-ui';X.textAlign='center';X.fillText(L('Tap the egg to help the duckling! ('+p+'/8)','Chạm vào trứng để giúp vịt con! ('+p+'/8)'),550,61)}
+  return}
+ X.drawImage(nestFront,0,0)}
+/* ---------- main loop ---------- */
+let last=performance.now();
+function step(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(!SCR.classList.contains('on')){requestAnimationFrame(step);return}if(cv.width<4)fit();
+ X.setTransform(1,0,0,1,0,0);X.fillStyle='#dfe9ef';X.fillRect(0,0,cv.width,cv.height);X.setTransform(SC,0,0,SC,OX*SC,OY*SC);
+ if(S.s===0){tick1(dt);draw1(now/1000)}else if(S.s===1){if(S.ph===2)draw2r();else{if(S.ph===1&&S.aroundPick===1&&S.mcur!==null&&(S.wrapT||0)<1){S.wrapT=(S.wrapT||0)+dt*.6;if(S.wrapT>=1)renderStep()}draw2(now/1000,dt)}}else if(S.s===2)draw3(now/1000,dt);
+ requestAnimationFrame(step)}
+/* ---------- canvas input ---------- */
+cv.addEventListener('pointerdown',e=>{ac();const p=toLocal(e);cv.setPointerCapture(e.pointerId);
+ if(S.s===0&&S.ph===0){LENS.drag=true;LENS.dx=LENS.x-p.x;LENS.dy=LENS.y-p.y;if(Math.hypot(LENS.dx,LENS.dy)>LENS.r+160){LENS.x=p.x;LENS.y=p.y;LENS.dx=LENS.dy=0}return}
+ if(S.s===0&&S.ph===1){const si=hit1(p);if(si>=0){drag={si,ei:S.slots[si],x:p.x,y:p.y+eggH(S.slots[si])/2};S.wrong=null;SFX.pop()}return}
+ if(S.s===1&&S.ph<2){const i=hit2(p);if(i>=0){const done=S.ph===0?S.meas[EGGS[i].k]:S.around[EGGS[i].k];if(done)return toast(L('Already measured! Choose another egg.','Đã đo rồi! Chọn quả khác.'));S.mcur=i;S.mtry=[];S.wrapT=0;anim2=0;SFX.pop();renderStep();return}
+  if(S.ph===1&&S.mcur!==null&&S.aroundPick===null){const e=EGGS[S.mcur],h=eggH(S.mcur),w=eggW(e,h),cx=RX+38+w/2+4;[.25,.55,.85].forEach((f,i)=>{const yy=BASE-h+h*f;if(Math.abs(p.y-yy)<30&&p.x>cx-w/2-10&&p.x<cx+w/2+70)pickAround(i)})}return}
+ if(S.s===1&&S.ph===2){EGGS.forEach((eg,i)=>{const b=eg.rbox;if(b&&p.x>b.x&&p.x<b.x+b.w&&p.y>b.y&&p.y<b.y+b.h)tallPick(i)});return}
+ if(S.s===2&&S.ph===0){NESTEGGS.forEach(([x,y],i)=>{if(Math.hypot(p.x-x,(p.y-y)*1.3)<55&&!S.cnt.includes(i)){S.cnt.push(i);SFX.pop();renderStep()}});return}
+ if(S.s===2&&S.ph===1&&!S.hatched){if(Math.hypot(p.x-550,(p.y-330)*.75)<150){S.taps++;wob=1;SFX.crack();if(S.taps>=5)SFX.peep();if(S.taps>=8){S.hatched=true;hatchFade=0;setTimeout(()=>{SFX.peep();confetti();toast(L('Hello, duckling! 🐣','Xin chào, vịt con! 🐣'),'ok');renderStep()},900)}renderStep()}}});
+cv.addEventListener('pointermove',e=>{const p=toLocal(e);if(LENS.drag){LENS.x=Math.max(0,Math.min(W,p.x+LENS.dx));LENS.y=Math.max(0,Math.min(H,p.y+LENS.dy))}if(drag){drag.x=p.x;drag.y=p.y+eggH(drag.ei)/2}});
+const up=()=>{LENS.drag=false;if(drag){const to=SLOTX.reduce((b,x,i)=>Math.abs(x-drag.x)<Math.abs(SLOTX[b]-drag.x)?i:b,0);const a=drag.si;[S.slots[a],S.slots[to]]=[S.slots[to],S.slots[a]];drag=null;SFX.pop();renderStep()}};
+cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+/* ---------- step logic ---------- */
+function pickAround(i){if(i===1){S.aroundPick=1;S.wrapT=0;SFX.good();toast(L('Yes! Measure around the middle, the same place on each egg.','Đúng! Đo vòng quanh phần giữa, cùng một chỗ trên mỗi quả.'),'ok')}else{SFX.bad();toast(L('Measure around the SAME place on each egg: the middle.','Hãy đo cùng một chỗ trên mỗi quả: phần giữa.'),'bad')}renderStep()}
+function tallPick(i){if(S.tall!==3){S.tall=i;if(i===3){SFX.good();toast(L('Yes! The goose egg is the tallest: 8 cm.','Đúng! Trứng ngỗng cao nhất: 8 cm.'),'ok')}else{SFX.bad();toast(L('Look at the numbers again.','Nhìn lại các con số.'),'bad')}}
+ else if(S.short!==0){S.short=i;if(i===0){SFX.good();toast(L('Yes! The quail egg is the shortest: 3 cm.','Đúng! Trứng chim cút thấp nhất: 3 cm.'),'ok');S.done[1]=1;confetti()}else{SFX.bad();toast(L('Look at the numbers again.','Nhìn lại các con số.'),'bad')}}renderStep()}
+function answerMeasure(n){const e=EGGS[S.mcur],want=S.ph===0?e.h:e.c;if(n===want){SFX.good();if(S.ph===0)S.meas[e.k]=n;else S.around[e.k]=n;toast('✅ '+L(e.en,e.vi)+': '+n+' cm','ok');S.mcur=null;S.wrapT=0;
+  const tot=S.ph===0?Object.keys(S.meas).length:Object.keys(S.around).length;if(tot===4){S.ph=S.ph===0?1:2;S.mcur=null;if(S.ph===1)toast(L('Great! Now measure AROUND each egg.','Tuyệt! Giờ đo VÒNG QUANH mỗi quả trứng.'),'ok')}}
+ else{S.mtry.push(n);SFX.bad();toast(S.ph===0?L('Look where the red line meets the ruler.','Nhìn chỗ đường đỏ chạm vào thước.'):L('Look at the end of the yellow tape.','Nhìn vào cuối thước dây vàng.'),'bad')}renderStep()}
+/* ---------- side panel ---------- */
+function labels(){$('#tabs').innerHTML=STEPS.map((s,i)=>'<button class="tab'+(S.s===i?' on':'')+(S.done[i]?' done':'')+'" data-s="'+i+'"><b>'+(S.done[i]?'✓':i+1)+'</b>'+L(s[0],s[1])+'</button>').join('');$$('.tab').forEach(b=>b.onclick=()=>{S.s=+b.dataset.s;S.ph=S.s===S.lastS?S.ph:0;S.lastS=S.s;go()})}
+function hd(n,en,vi){return '<h2><small>'+L('STEP','BƯỚC')+' '+n+'</small>'+L(en,vi)+'</h2>'}
+function nxt(okk,lbl){return '<div class="nx"><button class="btn go" id="nx" '+(okk?'':'disabled')+'>'+(lbl||L('Next','Tiếp'))+' ➜</button></div>'}
+function eggRow(e,v){return '<tr><td><img src="'+P+'egg_'+e.k+'.webp">'+L(e.en,e.vi)+'</td><td>'+(v!==undefined?v+' cm':'—')+'</td></tr>'}
+function renderStep(){const C=$('#stepC'),R=$('#resC');let h='',r='';labels();
+ if(S.s===0){
+  if(S.ph===0){const n=Object.keys(S.obs).length;h=hd(1,'Observe the eggs','Quan sát trứng')+'<p>'+bi('Birds lay eggs. Different types of bird lay eggs of a different size. Drag the magnifying glass over each egg to observe it.','Chim đẻ trứng. Các loài chim khác nhau đẻ trứng có kích thước khác nhau. Kéo kính lúp qua từng quả để quan sát.')+'</p><div class="chk">'+EGGS.map(e=>'<div><i class="'+(S.obs[e.k]?'y':'')+'">✓</i><img src="'+P+e.b+'.webp">'+(S.obs[e.k]?L(e.en,e.vi):'?')+'</div>').join('')+'</div>'+nxt(n===4)}
+  else if(S.ph===1){h=hd(1,'Order the eggs','Sắp xếp trứng')+'<p>'+bi('Drag the eggs to put them in order, from the smallest to the biggest.','Kéo các quả trứng để xếp theo thứ tự, từ nhỏ nhất đến to nhất.')+'</p><div class="nx"><button class="btn blue" id="chk1">✓ '+L('Check','Kiểm tra')+'</button></div>'}
+  else{const st=[['They are all eggs.','Chúng đều là trứng.','s'],['They all have hard shells.','Chúng đều có vỏ cứng.','s'],['They are all oval.','Chúng đều có hình bầu dục.','s'],['They are different sizes.','Chúng có kích thước khác nhau.','d'],['They are different colours.','Chúng có màu khác nhau.','d'],['Some have spots and some do not.','Có quả có đốm, có quả không.','d']];
+   const all=st.every((x,i)=>S.sim[i]===x[2]);if(all)S.done[0]=1;
+   h=hd(1,'Similar or different?','Giống hay khác?')+'<p>'+bi('Scientists compare things by observing how they are similar and how they differ.','Nhà khoa học so sánh bằng cách quan sát điểm giống và điểm khác.')+'</p><div class="sim">'+st.map((x,i)=>'<div class="r'+(S.sim[i]===x[2]?' ok':'')+'"><span>'+bi(x[0],x[1])+'</span>'+['s','d'].map(k=>'<button data-i="'+i+'" data-k="'+k+'" class="'+(S.sim[i]===k?(k===x[2]?'ok':'no'):'')+'">'+(k==='s'?'= '+L('Similar','Giống'):'≠ '+L('Different','Khác'))+'</button>').join('')+'</div>').join('')+'</div>'+(all?'<div class="big">'+bi('Great comparing, scientists!','So sánh giỏi lắm, các nhà khoa học!')+'</div>':'')+nxt(all,L('Measure the eggs','Đo trứng'));
+   C.innerHTML=h;$$('.sim [data-i]').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,k=b.dataset.k;S.sim[i]=k;if(k===st[i][2])SFX.good();else SFX.bad();renderStep()})}
+  r='<b>'+L('The eggs','Các quả trứng')+'</b><table class="res">'+EGGS.map(e=>'<tr><td><img src="'+P+e.b+'.webp">'+L(e.bn[0],e.bn[1])+'</td><td>'+(S.obs[e.k]?L(e.d[0],e.d[1]):'?')+'</td></tr>').join('')+'</table>'}
+ if(S.s===1){
+  if(S.ph<2){const e=S.mcur!==null?EGGS[S.mcur]:null;
+   if(S.ph===0)h=hd(2,'Measure the height','Đo chiều cao')+'<p>'+bi('Can you measure the height of each egg? Tap an egg. Read the ruler where the red line points.','Em có đo được chiều cao mỗi quả trứng không? Chạm vào một quả. Đọc thước ở chỗ đường đỏ chỉ.')+'</p>';
+   else h=hd(2,'Measure around','Đo vòng quanh')+'<p>'+(S.aroundPick===null&&S.mcur!==null?bi('Where do we measure around the egg? Tap A, B or C.','Chúng ta đo vòng quanh trứng ở đâu? Chạm A, B hoặc C.'):bi('You must measure around the same place on each egg. Tap an egg, watch the tape, then read the number.','Em phải đo vòng quanh cùng một chỗ trên mỗi quả. Chạm vào trứng, xem thước dây rồi đọc số.'))+'</p>';
+   if(e&&(S.ph===0||(S.aroundPick===1&&(S.wrapT||0)>=1))){const mx=S.ph===0?10:20;h+='<p style="margin-top:.4rem">'+bi('How many centimetres?','Bao nhiêu xăng-ti-mét?')+'</p><div class="keys">'+Array.from({length:mx},(_,i)=>i+1).map(n=>'<button data-n="'+n+'" class="'+(S.mtry.includes(n)?'no':'')+'">'+n+'</button>').join('')+'</div>'}
+   }
+  else{h=hd(2,'Compare our results','So sánh kết quả')+'<p>'+(S.tall!==3?bi('Which egg is the tallest? Tap it.','Quả trứng nào cao nhất? Chạm vào nó.'):S.short!==0?bi('Which egg is the shortest? Tap it.','Quả trứng nào thấp nhất? Chạm vào nó.'):bi('Measuring helps us compare the eggs.','Đo giúp chúng ta so sánh các quả trứng.'))+'</p><div class="bars">'+EGGS.map(e=>'<div>'+e.h+'<i style="height:'+(e.h/8*80)+'%"></i><img src="'+P+e.b+'.webp"></div>').join('')+'</div>'+nxt(S.done[1],L('How birds hatch','Chim nở thế nào'))}
+  r='<b>'+L('Our measurements','Kết quả đo')+'</b><table class="res"><tr><th></th><th>'+L('Height','Cao')+'</th><th>'+L('Around','Vòng')+'</th></tr>'+EGGS.map(e=>'<tr><td><img src="'+P+'egg_'+e.k+'.webp">'+L(e.en,e.vi)+'</td><td>'+(S.meas[e.k]?S.meas[e.k]+' cm':'—')+'</td><td>'+(S.around[e.k]?S.around[e.k]+' cm':'—')+'</td></tr>').join('')+'</table>'}
+ if(S.s===2){
+  if(S.ph===0){const n=S.cnt.length;h=hd(3,'Count the eggs','Đếm trứng')+'<p>'+bi('Birds lay their eggs on land. They usually make a nest to keep their eggs safe.','Chim đẻ trứng trên cạn. Chúng thường làm tổ để giữ trứng an toàn.')+'</p>'+(n===6?'<p style="margin-top:.4rem">'+bi('How many eggs are there?','Có bao nhiêu quả trứng?')+'</p><div class="opts">'+[4,5,6,7,8].map(k=>'<button data-c="'+k+'" class="'+(S.count===k?(k===6?'ok':'no'):'')+'">'+k+'</button>').join('')+'</div>':'<div class="chk"><div><i class="'+(n?'y':'')+'">'+n+'</i>'+L('eggs counted','quả đã đếm')+'</div></div>')+nxt(S.count===6)}
+  else if(S.ph===1){h=hd(3,'Watch it hatch','Xem trứng nở')+'<p>'+bi("Birds' eggs have <b>hard shells</b>. The baby bird inside can crack the shell with its <b>beak</b> when it is ready to <b>hatch</b>.",'Trứng chim có <b>vỏ cứng</b>. Chim non bên trong dùng <b>mỏ</b> làm vỡ vỏ khi sẵn sàng <b>nở</b>.')+'</p>'+(S.hatched?'<div class="big">'+bi('Baby ducks are called ducklings!','Vịt con được gọi là ducklings!')+'</div>':'')+nxt(S.hatched)}
+  else{const okk=S.cyc.length===4;h=hd(3,'Birds grow and change','Chim lớn lên và thay đổi')+'<p>'+bi('Tap the pictures in order: first, next, then, last.','Chạm vào các hình theo thứ tự: đầu tiên, tiếp theo, sau đó, cuối cùng.')+'</p>'+(okk?'<div class="big">'+bi('Egg → hatching → duckling → duck','Trứng → nở → vịt con → vịt lớn')+'</div>':'')+nxt(okk,L('Meet the ducks','Gặp gia đình vịt'))}
+  r='<b>'+L('Key words','Từ khóa')+'</b><div>'+[['lay','đẻ'],['nest','tổ'],['hard shells','vỏ cứng'],['beak','mỏ'],['hatch','nở'],['ducklings','vịt con']].map(w=>'<span class="kw">'+w[0]+(VI?' · '+w[1]:'')+'</span>').join('')+'</div>'}
+ if(S.s===3){
+  if(S.ph===0){const okk=['mother','father','ducklings'].every(k=>S.lab[k]);h=hd(4,'Who is who?','Ai là ai?')+'<p>'+bi('Here are the ducklings with their mother and father. Tap a word, then tap the right duck.','Đây là vịt con cùng vịt mẹ và vịt bố. Chạm một từ, rồi chạm vào đúng con vịt.')+'</p>'+nxt(okk)}
+  else if(S.ph===1){h=hd(4,'Compare the ducks','So sánh các con vịt')+'<p>'+bi('How have the ducklings changed? How do they differ from the adults?','Vịt con đã thay đổi thế nào? Chúng khác vịt lớn ra sao?')+'</p><div class="chk">'+CQ.map((q,i)=>'<div><i class="'+(S.cqAns[i]?'y':'')+'">'+(i+1)+'</i>'+L(q.q[0],q.q[1])+'</div>').join('')+'</div>'+nxt(Object.keys(S.cqAns).length===CQ.length)}
+  else{const okk=S.blue.m&&S.blue.f;if(okk)S.done[3]=1;h=hd(4,'Find the blue feathers','Tìm lông màu xanh')+'<p>'+bi('How do the father\'s feather colours differ from the mother\'s? Can you see a place where both adults have blue feathers? Tap it on each wing.','Màu lông vịt bố khác vịt mẹ thế nào? Em có thấy chỗ cả hai con đều có lông xanh không? Chạm vào chỗ đó trên mỗi cánh.')+'</p>'+(okk?'<div class="big">'+bi('Both adults have blue feathers on their wings!','Cả vịt bố và vịt mẹ đều có lông xanh trên cánh!')+'</div>':'')+nxt(okk,L('Key words','Từ khóa'))}
+  r='<b>'+L('Key words','Từ khóa')+'</b><div>'+[['mother','mẹ'],['father','bố'],['ducklings','vịt con'],['feathers','lông vũ']].map(w=>'<span class="kw">'+w[0]+(VI?' · '+w[1]:'')+'</span>').join('')+'</div>'}
+ if(S.s===4){const okk=Object.keys(S.words).length===WORDS.length;if(okk)S.done[4]=1;h=hd(5,'Key words','Từ khóa')+'<p>'+bi('Tap a word, then tap the picture it matches.','Chạm một từ, rồi chạm vào hình phù hợp.')+'</p><div class="chk"><div><i class="'+(okk?'y':'')+'">'+Object.keys(S.words).length+'</i>'+L('of '+WORDS.length+' words matched','/'+WORDS.length+' từ đã nối')+'</div></div>';
+  r='<b>'+L('What we learned','Điều chúng ta đã học')+'</b><p style="font-weight:700;margin-top:.3rem">'+bi('Birds lay eggs. Different birds lay eggs of different sizes. Ducklings hatch from eggs and grow into ducks.','Chim đẻ trứng. Các loài chim khác nhau đẻ trứng kích thước khác nhau. Vịt con nở từ trứng và lớn lên thành vịt.')+'</p>'}
+ if(S.s!==0||S.ph!==2)C.innerHTML=h;R.innerHTML=r;
+ const n=$('#nx');if(n)n.onclick=()=>{SFX.pop();if(S.s===0){if(S.ph<2)S.ph++;else{S.s=1;S.ph=0}}else if(S.s===1){S.s=2;S.ph=0}else if(S.s===2){if(S.ph<2)S.ph++;else{S.s=3;S.ph=0}}else if(S.s===3){if(S.ph<2)S.ph++;else{S.s=4;S.ph=0}}S.lastS=S.s;go()};
+ $$('.keys [data-n]').forEach(b=>b.onclick=()=>answerMeasure(+b.dataset.n));
+ const c1=$('#chk1');if(c1)c1.onclick=()=>{const wrong=S.slots.map((ei,si)=>ei===si?-1:si).filter(x=>x>=0);if(!wrong.length){SFX.good();confetti();toast(L('Perfect! Quail, chicken, turkey, goose.','Hoàn hảo! Chim cút, gà, gà tây, ngỗng.'),'ok');S.ph=2;renderStep()}else{S.wrong=wrong;SFX.bad();toast(L('Not yet. Compare the sizes again!','Chưa đúng. So sánh kích thước lại nhé!'),'bad');setTimeout(()=>S.wrong=null,1500)}};
+ $$('.opts [data-c]').forEach(b=>b.onclick=()=>{S.count=+b.dataset.c;if(S.count===6){SFX.good();toast(L('Yes! There are 6 eggs in the nest.','Đúng! Có 6 quả trứng trong tổ.'),'ok')}else SFX.bad();renderStep()});
+ overlay()}
+/* ---------- overlays (DOM) ---------- */
+const CQ=[{q:['Who is bigger?','Ai to hơn?'],a:[['duckling','Duckling','Vịt con'],['mother','Adult duck','Vịt lớn']],ok:1},
+ {q:['Who has soft, fluffy yellow feathers?','Ai có lông tơ mềm màu vàng?'],a:[['duckling','Duckling','Vịt con'],['mother','Adult duck','Vịt lớn']],ok:0},
+ {q:['Who has a shiny green head?','Ai có đầu màu xanh lá óng ánh?'],a:[['mother','Mother','Vịt mẹ'],['father','Father','Vịt bố']],ok:1},
+ {q:['Who has brown feathers with dark spots all over?','Ai có lông nâu với đốm sẫm khắp mình?'],a:[['mother','Mother','Vịt mẹ'],['father','Father','Vịt bố']],ok:0}];
+const WORDS=[['hatch','nở','hatch'],['nest','tổ','@nest'],['beak','mỏ','beak'],['ducklings','vịt con','duckling'],['mother','mẹ','mother'],['father','bố','father'],['measure','đo','@measure'],['compare','so sánh','@compare']];
+let SNAP={};
+function snaps(){if(SNAP.nestURL)return;const mk=fn=>{const c=document.createElement('canvas');c.width=W;c.height=H;drawInto(c.getContext('2d'),fn);return c};
+ SNAP.nestURL=crop(mk(()=>{X.fillStyle='#e8efe0';X.fillRect(0,0,W,H);X.drawImage(nestBack,0,0);NESTEGGS.forEach(([x,y,r])=>duckEgg(x,y,118,r));X.drawImage(nestFront,0,0)}),180,300,740,330);
+ SNAP.measureURL=crop(mk(()=>{room();ruler(RX,BASE,10);const e=EGGS[2],h=eggH(2),w=eggW(e,h);drawEgg(e,RX+38+w/2+4,BASE,h)}),440,160,400,470);
+ SNAP.compareURL=crop(mk(()=>{room();let x=120;EGGS.forEach((e,i)=>{const h=eggH(i),w=eggW(e,h);drawEgg(e,x+w/2,BASE,h);x+=w+50})}),80,250,940,390);
+ SNAP.eggURL=crop(mk(()=>{room();X.drawImage(nestBack,0,0);duckEgg(550,330,300,0);X.drawImage(nestFront,0,0)}),220,150,660,460)}
+function drawInto(ctx,fn){const real=X;X=ctx;try{fn()}finally{X=real}}
+function crop(c,x,y,w,h){const o=document.createElement('canvas');o.width=w;o.height=h;o.getContext('2d').drawImage(c,x,y,w,h,0,0,w,h);return o.toDataURL('image/jpeg',.85)}
+function overlay(){const O=$('#ovl');const need=S.s>=3||(S.s===2&&S.ph===2);O.classList.toggle('on',need);if(!need){O.innerHTML='';return}
+ if(EGGS.some(e=>!ok(e.img))){setTimeout(overlay,300);return}snaps();
+ if(S.s===2){const C=[['egg',SNAP.eggURL],['hatch',P+'hatch.webp'],['duckling',P+'duckling.webp'],['adult',P+'mother.webp']];if(!S.cycOrder)S.cycOrder=shuf([0,1,2,3]);
+  O.innerHTML='<div class="otitle">'+bi('How does a duck grow and change?','Vịt lớn lên và thay đổi thế nào?')+'</div><div class="cyc">'+[0,1,2,3].map(i=>(i?'<span class="arrow">➜</span>':'')+'<div class="slot"><b>'+L(['first','next','then','last'][i],['đầu tiên','tiếp theo','sau đó','cuối cùng'][i])+'</b>'+(S.cyc[i]!==undefined?'<img src="'+C[S.cyc[i]][1]+'">':'')+'</div>').join('')+'</div><div class="cards">'+S.cycOrder.map(k=>'<button class="cardp'+(S.cyc.includes(k)?' gone':'')+'" data-k="'+k+'"><img src="'+C[k][1]+'"></button>').join('')+'</div>';
+  $$('.cardp').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;if(k===S.cyc.length){S.cyc.push(k);SFX.good();if(S.cyc.length===4){S.done[2]=1;confetti();SFX.quack()}renderStep()}else{SFX.bad();b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');toast(L('What comes '+['first','next','then','last'][S.cyc.length]+'?','Hình nào '+['đầu tiên','tiếp theo','sau đó','cuối cùng'][S.cyc.length]+'?'),'bad')}});return}
+ if(S.s===3&&S.ph===0){const T={father:[24,32],mother:[70,36],ducklings:[36,82]};
+  O.innerHTML='<div class="otitle">'+bi('Label the duck family','Gắn tên gia đình vịt')+'</div><div class="photo" style="width:min(100%,46rem)"><img src="'+P+'family.webp">'+Object.keys(T).map(k=>'<div class="tgt'+(S.lab[k]?' full':'')+'" data-t="'+k+'" style="left:'+T[k][0]+'%;top:'+T[k][1]+'%">'+(S.lab[k]?L(k,{mother:'vịt mẹ',father:'vịt bố',ducklings:'vịt con'}[k]):'?')+'</div>').join('')+'</div><div class="chips">'+['mother','father','ducklings'].map(k=>'<button class="chip'+(S.labSel===k?' sel':'')+(S.lab[k]?' used':'')+'" data-c="'+k+'">'+k+(VI?' · '+{mother:'vịt mẹ',father:'vịt bố',ducklings:'vịt con'}[k]:'')+'</button>').join('')+'</div>';
+  $$('.chip').forEach(b=>b.onclick=()=>{if(S.lab[b.dataset.c])return;S.labSel=b.dataset.c;SFX.pop();overlay()});
+  $$('.tgt').forEach(b=>b.onclick=()=>{if(!S.labSel)return toast(L('First tap a word.','Trước tiên chạm vào một từ.'));if(b.dataset.t===S.labSel){S.lab[S.labSel]=1;S.labSel=null;SFX.good();if(Object.keys(S.lab).length===3)SFX.quack();renderStep()}else{SFX.bad();toast(L('Look again!','Nhìn lại nhé!'),'bad')}});return}
+ if(S.s===3&&S.ph===1){const i=Math.min(S.cq,CQ.length-1),q=CQ[i];const done=Object.keys(S.cqAns).length===CQ.length;
+  O.innerHTML='<div class="otitle">'+(i+1)+'. '+bi(q.q[0],q.q[1])+'</div><div class="pair">'+q.a.map((a,j)=>'<button class="pc'+(S.cqPick===j?(j===q.ok?' ok':' no'):'')+'" data-j="'+j+'"><img src="'+P+a[0]+'.webp"><span>'+L(a[1],a[2])+'</span></button>').join('')+'</div>'+(done?'<div class="otitle" style="font-size:1.3rem">✅ '+L('All done! Tap Next.','Xong rồi! Chạm Tiếp.')+'</div>':'');
+  $$('.pc').forEach(b=>b.onclick=()=>{const j=+b.dataset.j;S.cqPick=j;if(j===q.ok){SFX.good();S.cqAns[i]=1;overlay();setTimeout(()=>{S.cqPick=null;if(S.cq<CQ.length-1)S.cq++;renderStep()},900)}else{SFX.bad();b.classList.add('shake');overlay()}});return}
+ if(S.s===3&&S.ph===2){O.innerHTML='<div class="otitle">'+bi('Tap the blue feathers on each wing','Chạm vào lông xanh trên mỗi cánh')+'</div><div class="wings">'+[['m','mother','Mother','Vịt mẹ'],['f','father','Father','Vịt bố']].map(([k,im,en,vi])=>'<div class="wing'+(S.blue[k]?' found':'')+'"><div class="who"><img src="'+P+im+'.webp">'+L(en,vi)+(S.blue[k]?' ✅':'')+'</div>'+wingSVG(k)+'</div>').join('')+'</div>';
+  $$('.wing svg').forEach(sv=>sv.addEventListener('click',ev=>{const k=sv.dataset.k;if(ev.target.closest('.spec')){if(!S.blue[k]){S.blue[k]=1;SFX.good();toast(L('Yes! Blue feathers!','Đúng rồi! Lông màu xanh!'),'ok');renderStep()}}else{SFX.bad();toast(L('That is not blue. Look again!','Chỗ đó không phải màu xanh. Nhìn lại nhé!'),'bad')}}));return}
+ if(S.s===4){if(!S.wOrder)S.wOrder=shuf(WORDS.map((_,i)=>i));const src=w=>w[2]==='@nest'?SNAP.nestURL:w[2]==='@measure'?SNAP.measureURL:w[2]==='@compare'?SNAP.compareURL:P+w[2]+'.webp';const okk=Object.keys(S.words).length===WORDS.length;
+  if(okk){O.innerHTML='<div class="cert"><div class="stars">⭐⭐⭐</div><h3>'+bi('Super scientists!','Những nhà khoa học xuất sắc!')+'</h3><p>'+bi('You compared, measured and observed eggs, watched a duckling hatch, and compared ducklings with adult ducks.','Các em đã so sánh, đo và quan sát trứng, xem vịt con nở và so sánh vịt con với vịt lớn.')+'</p><div>'+WORDS.map(w=>'<span class="kw">'+w[0]+'</span>').join('')+'</div><button class="btn blue" id="again">🔄 '+L('Play again','Chơi lại')+'</button></div>';$('#again').onclick=()=>{Object.assign(S,{s:0,ph:0,done:[0,0,0,0,0],obs:{},slots:shuf([0,1,2,3]),sim:{},meas:{},around:{},mcur:null,aroundPick:null,tall:null,short:null,cnt:[],count:null,taps:0,hatched:false,cyc:[],cycOrder:null,lab:{},cq:0,cqAns:{},blue:{},words:{},wOrder:null});go()};return}
+  O.innerHTML='<div class="wgrid">'+S.wOrder.map(i=>{const w=WORDS[i],d=S.words[i];return '<div class="wc'+(d?' ok':'')+'" data-i="'+i+'"><img src="'+src(w)+'"><span>'+(d?w[0]+(VI?' · '+w[1]:''):'?')+'</span></div>'}).join('')+'</div><div class="chips">'+WORDS.map((w,i)=>'<button class="chip'+(S.wordSel===i?' sel':'')+(S.words[i]?' used':'')+'" data-w="'+i+'">'+w[0]+'</button>').join('')+'</div>';
+  $$('.chip').forEach(b=>b.onclick=()=>{const i=+b.dataset.w;if(S.words[i])return;S.wordSel=i;SFX.pop();overlay()});
+  $$('.wc').forEach(b=>b.onclick=()=>{if(S.wordSel===null||S.wordSel===undefined)return toast(L('First tap a word.','Trước tiên chạm vào một từ.'));const i=+b.dataset.i;if(i===S.wordSel){S.words[i]=1;S.wordSel=null;SFX.good();if(Object.keys(S.words).length===WORDS.length){confetti();SFX.quack()}renderStep()}else{SFX.bad();b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake')}});return}}
+function wingSVG(k){const fem=k==='m';let seed=fem?7:3;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
+ const base=fem?['#a77a45','#b98b54','#946737','#c89c66']:['#9c958b','#aaa398','#8f887e','#b3ac a2'.replace(' ','')];const edge=fem?'#e2c49a':'#cfc8bc',shaft=fem?'#4a2e12':'#5b554d';
+ let defs='<defs><linearGradient id="sp'+k+'" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2236a8"/><stop offset=".35" stop-color="#3e63e6"/><stop offset=".6" stop-color="#5a3fc4"/><stop offset="1" stop-color="#2a2f9e"/></linearGradient><radialGradient id="fs'+k+'" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></radialGradient><filter id="ws'+k+'"><feDropShadow dx="2" dy="4" stdDeviation="4" flood-opacity=".35"/></filter></defs>';
+ const feather=(x,y,len,wid,ang,fill,opt)=>{opt=opt||{};const a=ang*Math.PI/180,c=Math.cos(a),s=Math.sin(a);const P=(u,v)=>(x+u*c-v*s).toFixed(1)+' '+(y+u*s+v*c).toFixed(1);
+  const d='M'+P(0,0)+' C'+P(len*.3,-wid*.62)+' '+P(len*.85,-wid*.55)+' '+P(len,0)+' C'+P(len*.85,wid*.55)+' '+P(len*.3,wid*.62)+' '+P(0,0)+'Z';
+  let g='<path d="'+d+'" fill="'+fill+'" stroke="'+(opt.edge||edge)+'" stroke-width="'+(opt.ew||1.6)+'"/><path d="'+d+'" fill="url(#fs'+k+')"/>';
+  if(opt.mottle)g+='<path d="M'+P(len*.25,-wid*.18)+' C'+P(len*.5,-wid*.32)+' '+P(len*.7,wid*.28)+' '+P(len*.45,wid*.2)+'Z" fill="#3b2410" opacity=".55"/>';
+  g+='<path d="M'+P(len*.05,0)+' L'+P(len*.92,0)+'" stroke="'+(opt.shaft||shaft)+'" stroke-width="1.2" opacity=".6"/>';return g};
+ let g='';
+ // primaries (long, pointed, bottom right)
+ for(let i=0;i<7;i++)g+=feather(150+i*6,150+i*6,220-i*8,34,8+i*1.5,fem?'#6e5232':'#6a645c',{edge:'#3a2a1a',shaft:'#d9d0c0'});
+ // white trailing edge + speculum (secondaries)
+ for(let i=0;i<9;i++){const x=70+i*26;g+='<g class="spec">'+feather(x,136,96,34,14,'#f4f4f2',{edge:'#999',ew:1})+feather(x,128,88,30,14,'#151515',{edge:'#000',ew:1})+feather(x,118,80,30,14,'url(#sp'+k+')',{edge:'#1a237e',ew:1.2,shaft:'#9fb4ff'})+'</g>'}
+ // greater coverts with white bar
+ for(let i=0;i<10;i++){const x=48+i*25;g+=feather(x,108,62,30,14,'#fafafa',{edge:'#bbb',ew:1})+feather(x,100,56,28,14,'#1a1a1a',{edge:'#000',ew:1})+feather(x,92,50,28,14,base[i%4],{mottle:fem})}
+ // median & lesser coverts (small, many rows)
+ for(let r=0;r<4;r++)for(let i=0;i<11-r;i++){const x=30+i*25+r*10+rnd()*6,y=76-r*14+rnd()*4;g+=feather(x,y,44-r*3,24-r*2,12,base[Math.floor(rnd()*4)],{mottle:fem&&rnd()<.8})}
+ // tertials (long, top right, over speculum end)
+ for(let i=0;i<3;i++)g+=feather(250+i*10,70+i*10,130,36,22+i*4,fem?'#8d6a42':'#a39b8f',{mottle:fem,edge:fem?'#d7b88c':'#ddd6ca'});
+ const body='<path d="M18 80 C60 30 200 22 300 50 C360 70 395 120 400 150 C340 190 250 210 120 205 C60 200 20 150 18 80Z" fill="'+(fem?'#8a6034':'#8a837a')+'"/>';
+ return '<svg viewBox="0 0 410 230" data-k="'+k+'">'+defs+'<g filter="url(#ws'+k+')">'+body+g+'</g></svg>'}
+/* ---------- boot ---------- */
+function go(){if(S.s===1&&S.ph===0&&S.mcur===null){}renderStep();$('#stage').scrollTop=0}
+$('#sndBtn').onclick=()=>{SOUND=!SOUND;$('#sndBtn').textContent=SOUND?'🔊':'🔇';$('#sndBtn').classList.toggle('on',SOUND)};
+document.getElementById('viBtn').addEventListener('click',()=>setTimeout(()=>{VI=document.body.classList.contains('vi-on');renderStep()},0));
+fit();renderStep();requestAnimationFrame(step);setTimeout(fit,100);
+})();
 /* ===== Exit ticket: solids, liquids and gases ===== */
 (()=>{const HOST=document.getElementById('et2Host'),ROOT=HOST.attachShadow({mode:'open'});ROOT.appendChild(document.getElementById('et2Tpl').content.cloneNode(true));
 const $=s=>ROOT.querySelector(s),$$=s=>[...ROOT.querySelectorAll(s)];const SCR=document.getElementById('exit2');
