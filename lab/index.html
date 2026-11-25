@@ -244,8 +244,8 @@ body[data-xst=grip] .xs-grip,body[data-xst=leg] .xs-leg,body[data-xst=react] .xs
 .tabs button[data-go=race]{display:none}
 body[data-lab=matter] .tabs button[data-go=race]{display:inline-block}
 #drum{position:relative}
-#drumHost,#soundHost,#sdetHost,#etHost,#et2Host,#birdsHost{flex:1;min-width:0;display:flex}
-body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sdet] #bar .tabs,body[data-lab=exit] #bar .tabs,body[data-lab=exit2] #bar .tabs,body[data-lab=birds] #bar .tabs{display:none}
+#drumHost,#soundHost,#sdetHost,#etHost,#et2Host,#birdsHost,#bdetHost{flex:1;min-width:0;display:flex}
+body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sdet] #bar .tabs,body[data-lab=exit] #bar .tabs,body[data-lab=exit2] #bar .tabs,body[data-lab=birds] #bar .tabs,body[data-lab=bdet] #bar .tabs{display:none}
 #race{gap:.8rem;padding:.8rem;position:relative;overflow:hidden;background:linear-gradient(160deg,#e8f1f8,#f7fafc)}
 #rcMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:.55rem;min-height:0}
 #rcSide{width:21rem;flex:none;background:#fff;border-radius:1.1rem;padding:.8rem;box-shadow:0 .15rem .5rem rgba(18,38,58,.08);display:flex;flex-direction:column;gap:.45rem;overflow:auto}
@@ -426,6 +426,11 @@ body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sde
         <img class="thumb" src="eggs/thumb.webp" alt="">
         <h2>Big eggs and small eggs (Grade 1)<span class="vi">Trứng to và trứng nhỏ (Lớp 1)</span></h2>
         <button class="go" data-go="birds">Start the lab ➜</button>
+      </div>
+      <div class="card">
+        <img class="thumb" src="bdet/thumb.webp" alt="">
+        <h2>Little Bird Detectives: team missions (Grade 1)<span class="vi">Thám tử chim nhỏ: nhiệm vụ theo nhóm (Lớp 1)</span></h2>
+        <button class="go" data-go="bdet">Start the missions ➜</button>
       </div>
       <div class="card">
         <img class="thumb" src="race-img/drum-thumb.webp" alt="">
@@ -716,6 +721,147 @@ body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sde
   </section>
 
   <section class="screen" id="birds"><div id="birdsHost"></div></section>
+  <section class="screen" id="bdet"><div id="bdetHost"></div></section>
+<template id="bdetTpl"><style>
+:host{--ink:#14213d;--teal:#0f4c5c;--pur:#7b2cbf;--yel:#ffd60a;--grn:#2b9348;--red:#d62828;flex:1;min-width:0;height:100%;display:flex;font-family:"Baloo 2","Nunito",ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);font-size:clamp(13px,1.08vw,24px)}
+*{box-sizing:border-box}button{font:inherit;cursor:pointer;color:inherit}
+.wrap{flex:1;display:grid;grid-template-columns:1fr 16.5em;gap:.7em;padding:.7em;min-height:0;background:linear-gradient(180deg,#e9f6ff 0%,#f7fbe9 70%,#cfe9a8 100%);position:relative;overflow:hidden}
+.wrap:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2.4em;background:repeating-linear-gradient(100deg,#5fae3a 0 .35em,#7cc94b .35em .7em);clip-path:polygon(0 60%,2% 10%,4% 55%,6% 0,8% 60%,10% 15%,12% 55%,14% 5%,16% 60%,18% 12%,20% 58%,22% 0,24% 60%,26% 18%,28% 55%,30% 2%,32% 60%,34% 14%,36% 55%,38% 0,40% 60%,42% 10%,44% 58%,46% 4%,48% 60%,50% 12%,52% 55%,54% 0,56% 60%,58% 15%,60% 55%,62% 4%,64% 60%,66% 12%,68% 58%,70% 0,72% 60%,74% 14%,76% 55%,78% 2%,80% 60%,82% 12%,84% 55%,86% 0,88% 60%,90% 16%,92% 58%,94% 4%,96% 60%,98% 12%,100% 55%,100% 100%,0 100%);pointer-events:none;opacity:.9}
+#stage{position:relative;min-height:0;overflow:auto;border-radius:1.2em;z-index:1;padding-bottom:1.5em}
+aside{z-index:1;background:#fff;border-radius:1.2em;box-shadow:0 .3em 1em rgba(20,33,61,.15);padding:.8em;display:flex;flex-direction:column;gap:.5em;min-height:0;overflow:auto}
+aside h3{margin:0;font-size:1.15em;line-height:1.1;color:var(--pur)}aside h3 small{display:block;color:#666;font-size:.65em;font-weight:700}
+.team{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.4em;padding:.45em .5em;border-radius:.8em;border:.18em solid transparent;background:#f4f6fb;transition:.25s}
+.team.turn{border-color:var(--c);background:#fff;box-shadow:0 0 0 .25em color-mix(in srgb,var(--c) 25%,transparent);transform:scale(1.03)}
+.team .dot{width:2.1em;height:2.1em;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:900;font-size:1em;box-shadow:inset 0 -.2em 0 rgba(0,0,0,.2)}
+.team .nm{font-weight:900;line-height:1}.team .nm i{display:block;font-style:normal;font-size:.75em;color:#c48a00;letter-spacing:-.05em;min-height:1em;word-break:break-all}
+.team .sc{font-size:1.6em;font-weight:900;display:flex;align-items:center;gap:.15em}
+.team .pm{display:flex;flex-direction:column;gap:.1em}.team .pm button{border:0;background:#e3e8f2;border-radius:.4em;width:1.5em;height:1.2em;line-height:1;font-weight:900;padding:0;font-size:.8em}
+.team.bump .sc{animation:bump .6s}@keyframes bump{40%{transform:scale(1.5)}}
+.tiny{border:0;background:#eef1f7;border-radius:.6em;padding:.35em .6em;font-weight:800;font-size:.85em}
+.speaker{margin-top:auto;background:#fff7d1;border-radius:.9em;padding:.6em;text-align:center}
+.speaker b{display:block;font-size:.9em}.speaker .num{font-size:2.4em;font-weight:900;line-height:1.1;color:var(--pur)}
+.speaker button{border:0;background:var(--pur);color:#fff;border-radius:.7em;padding:.4em .8em;font-weight:900}
+.spin{animation:spin .12s linear infinite}@keyframes spin{50%{transform:translateY(-.15em) scale(1.1)}}
+.vi{display:block;font-size:.78em;color:#4b5f7a;font-weight:700;font-style:italic}
+/* intro */
+.intro{padding:.4em .6em;font-size:1.12em}
+.reveal svg{height:6em!important}
+.speaker .sz{font-size:.75em;margin-top:.35em;display:flex;align-items:center;justify-content:center;gap:.3em;white-space:nowrap}
+.hero{display:grid;grid-template-columns:8em 1fr 8em;align-items:center}
+.hero img{width:100%}
+.ttl{text-align:center}
+.ttl h1{margin:0;display:inline-block;background:var(--teal);color:#fff;font-size:2.7em;line-height:1;padding:.2em .7em .15em;border-radius:1em;box-shadow:0 .12em 0 #072f3a;letter-spacing:.01em;text-shadow:0 .06em 0 rgba(0,0,0,.25)}
+.ttl h1 em{font-style:normal;color:var(--yel)}
+.ttl h2{margin:.35em auto 0;display:inline-block;background:var(--pur);color:#fff;font-size:1.35em;padding:.15em 1em;border-radius:1em}.ttl h2 em{font-style:normal;color:var(--yel)}
+.mcards{display:grid;grid-template-columns:repeat(4,1fr);gap:.8em;margin-top:.8em}
+.mc{position:relative;background:#fff;border:.22em solid var(--c);border-radius:1em;padding:1.1em .5em .5em;box-shadow:0 .25em .7em rgba(0,0,0,.12)}
+.mc .tag{position:absolute;top:-.85em;left:50%;transform:translateX(-50%);background:var(--pur);color:#fff;font-weight:900;padding:.1em .9em;border-radius:1em;white-space:nowrap}
+.mc .hd{display:flex;align-items:center;gap:.4em;background:var(--yel);border-radius:.7em;padding:.25em .4em;font-weight:900;line-height:1.05;color:#1a1d5e;min-height:3.4em}
+.mc .hd img{width:2.8em;height:2.8em;object-fit:cover;border-radius:.5em}
+.mc .ph{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:.7em;margin-top:.4em;display:block}
+.mc.done:after{content:"✓";position:absolute;right:.3em;top:.3em;width:1.6em;height:1.6em;border-radius:50%;background:var(--grn);color:#fff;display:grid;place-items:center;font-weight:900}
+.ltts{display:flex;justify-content:center;gap:.5em;margin:.9em 0 .3em;flex-wrap:wrap}
+.ltt{display:flex;align-items:center;gap:.4em;background:#fff;border-radius:2em;padding:.3em .9em .3em .35em;font-weight:900;font-size:1.1em;box-shadow:0 .15em .4em rgba(0,0,0,.1)}
+.ltt span{width:1.9em;height:1.9em;border-radius:50%;display:grid;place-items:center;background:var(--c);font-size:1em}
+.ltt.on{background:var(--c);color:#fff;transform:scale(1.08)}
+.arrow{align-self:center;font-weight:900;color:#8a96ad}
+.setup{display:flex;justify-content:center;align-items:center;gap:.8em;flex-wrap:wrap;margin-top:.5em}
+.setup .n button{border:.15em solid #cdd5e3;background:#fff;border-radius:.6em;width:2.2em;height:2.2em;font-weight:900}.setup .n button.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.big{border:0;background:linear-gradient(#36b35a,#23873f);color:#fff;font-weight:900;font-size:1.35em;padding:.45em 1.4em;border-radius:1em;box-shadow:0 .2em 0 #145a27}
+.big:active{transform:translateY(.15em);box-shadow:none}
+.big.alt{background:linear-gradient(#9d4edd,#7b2cbf);box-shadow:0 .2em 0 #4a148c}
+.clock{display:inline-flex;align-items:center;gap:.35em;background:#fff;border-radius:2em;padding:.2em .8em;font-weight:900;font-size:1.15em;box-shadow:0 .15em .4em rgba(0,0,0,.12)}
+.clock.low{background:#ffe1e1;color:var(--red);animation:pulse 1s infinite}@keyframes pulse{50%{transform:scale(1.06)}}
+/* mission */
+.mhead{display:flex;align-items:center;gap:.6em;background:#fff;border-radius:1em;padding:.4em .6em;box-shadow:0 .2em .6em rgba(0,0,0,.1);border-left:.5em solid var(--c)}
+.mhead img{width:3em;height:3em;border-radius:.6em;object-fit:cover}
+.mhead h2{margin:0;font-size:1.45em;line-height:1}.mhead h2 small{display:block;font-size:.55em;color:var(--pur);letter-spacing:.06em}
+.mhead .qdots{display:flex;gap:.3em;margin-left:auto}.qdots i{width:1em;height:1em;border-radius:50%;background:#dde3ee}.qdots i.on{background:var(--c)}.qdots i.ok{background:var(--grn)}.qdots i.no{background:#b9c1cf}
+.turnb{display:flex;align-items:center;gap:.6em;margin:.6em 0 .2em;flex-wrap:wrap}
+.turnb .tb{background:var(--c);color:#fff;font-weight:900;padding:.25em .9em;border-radius:2em;font-size:1.15em;box-shadow:0 .15em 0 rgba(0,0,0,.2)}
+.steps{display:flex;gap:.35em;margin-left:auto;align-items:center}
+.st{display:flex;align-items:center;gap:.3em;border:0;background:#fff;border-radius:2em;padding:.2em .7em .2em .25em;font-weight:900;opacity:.55;box-shadow:0 .1em .3em rgba(0,0,0,.1)}
+.st span{width:1.6em;height:1.6em;display:grid;place-items:center;border-radius:50%;background:var(--c)}
+.st.on{opacity:1;background:var(--c);color:#fff;transform:scale(1.1)}.st.past{opacity:.9}
+.qbox{background:#fff;border-radius:1.1em;padding:.7em .9em;margin-top:.5em;box-shadow:0 .2em .7em rgba(0,0,0,.1)}
+.qbox .q{font-size:1.65em;font-weight:900;line-height:1.1}.qbox .q .vi{font-size:.6em}
+.phase{margin-top:.5em;display:flex;align-items:center;gap:.7em;background:#f3f0ff;border-radius:.9em;padding:.5em .8em;font-weight:800;font-size:1.1em}
+.phase .cd{font-size:1.6em;font-weight:900;color:var(--pur);min-width:1.6em;text-align:center}
+.phase .frame{background:#fff;border:.15em dashed var(--pur);border-radius:.6em;padding:.15em .6em;font-weight:900}
+.phase button{margin-left:auto}
+.area{margin-top:.6em;position:relative;transition:.3s}
+.area.lock{filter:saturate(.75);opacity:.8}
+.area.lock *{pointer-events:none}
+.opts{display:flex;gap:1em;justify-content:center;flex-wrap:wrap;align-items:stretch}
+.op{position:relative;border:.25em solid #dfe5ef;background:#fff;border-radius:1.1em;padding:.5em;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.3em;min-width:9em;font-weight:900;font-size:1.25em;box-shadow:0 .25em 0 #cfd7e5;transition:transform .15s}
+.op:hover{transform:translateY(-.15em)}
+.op img{max-width:100%;display:block}
+.op .em{font-size:3.2em;line-height:1}
+.op .lt{position:absolute;top:.3em;left:.3em;width:1.7em;height:1.7em;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-size:.85em}
+.op.ok{border-color:var(--grn);background:#e9f9ee;box-shadow:0 .25em 0 #2b9348}
+.op.no{border-color:var(--red);background:#ffecec;animation:shake .4s}
+.op.used{opacity:.35}
+.op .badge{position:absolute;top:-.6em;right:-.6em;width:1.9em;height:1.9em;border-radius:50%;background:var(--pur);color:#fff;display:grid;place-items:center;font-size:.9em;box-shadow:0 .15em .3em rgba(0,0,0,.3)}
+@keyframes shake{20%,60%{transform:translateX(-.4em)}40%,80%{transform:translateX(.4em)}}
+.table{background:linear-gradient(#c98d55,#a06a3a);border-radius:1em;padding:1em 1em .6em;box-shadow:inset 0 .4em 0 rgba(255,255,255,.15)}
+.eggrow{display:flex;justify-content:center;align-items:flex-end;gap:1.6em;min-height:13em}
+.egg{border:0;background:none;padding:0;position:relative;filter:drop-shadow(0 .5em .35em rgba(0,0,0,.35));transition:transform .2s}
+.egg:hover{transform:translateY(-.3em)}
+.egg img{display:block;height:100%}
+.egg.used{opacity:.25;filter:grayscale(1)}
+.egg .badge{position:absolute;top:-1.1em;left:50%;transform:translateX(-50%);width:1.9em;height:1.9em;border-radius:50%;background:var(--pur);color:#fff;display:grid;place-items:center;font-weight:900}
+.slots{display:flex;gap:.8em;justify-content:center;margin-top:.8em;flex-wrap:wrap}
+.slot{width:8.5em;height:7.5em;border:.2em dashed #9aa6bb;border-radius:1em;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:.3em;font-weight:900}
+.slot small{color:var(--pur);font-size:.8em}
+.slot img{max-height:4.6em}
+.slot.ok{border:.2em solid var(--grn);background:#e9f9ee}.slot.no{border:.2em solid var(--red);background:#ffecec}
+.slot .ch{color:#9aa6bb}
+.pics{display:grid;grid-template-columns:repeat(3,1fr);gap:1em}
+.pic{position:relative;border:.25em solid #dfe5ef;border-radius:1.1em;overflow:hidden;background:#fff;padding:0;box-shadow:0 .25em 0 #cfd7e5}
+.pic img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.pic .lt{position:absolute;top:.35em;left:.35em;width:1.8em;height:1.8em;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:900;font-size:1.2em}
+.pic .cap{padding:.3em;font-weight:900;font-size:1.05em}
+.pic .badge{position:absolute;top:.35em;right:.35em;background:var(--pur);color:#fff;font-weight:900;border-radius:1em;padding:.1em .7em;font-size:1.1em}
+.pic.ok{border-color:var(--grn)}.pic.no{border-color:var(--red);animation:shake .4s}
+.pic.used{opacity:.55}
+.lab3{display:grid;grid-template-columns:repeat(3,1fr);gap:1em}
+.lab3 .card{background:#fff;border:.25em solid #dfe5ef;border-radius:1.1em;overflow:hidden}
+.lab3 .card img{width:100%;aspect-ratio:5/4;object-fit:cover;display:block}
+.lab3 .card.ok{border-color:var(--grn)}.lab3 .card.no{border-color:var(--red);animation:shake .4s}
+.chips{display:flex;gap:.3em;justify-content:center;padding:.4em;flex-wrap:wrap}
+.chips button{border:.15em solid #cfd7e5;background:#f6f8fc;border-radius:2em;padding:.2em .7em;font-weight:900;font-size:.95em}
+.chips button.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.chips .choose{color:#8a96ad}
+.res{margin-top:.6em;display:flex;align-items:center;gap:.8em;justify-content:center;flex-wrap:wrap}
+.res .msg{font-size:1.35em;font-weight:900;padding:.3em .9em;border-radius:1em}
+.res .msg.ok{background:#e9f9ee;color:#1d6b33}.res .msg.no{background:#ffecec;color:#a11}
+.reveal{display:flex;gap:.8em;align-items:center;justify-content:center;margin-top:.5em;background:#fffbe6;border-radius:1em;padding:.5em;font-weight:900;font-size:1.2em}
+.reveal img{height:5.5em;border-radius:.7em}
+svg.eggsv{height:12em;display:block}
+/* overlays */
+.ov{position:absolute;inset:0;z-index:5;display:grid;place-items:center;background:rgba(10,30,50,.55);backdrop-filter:blur(3px);border-radius:1.2em;animation:fade .3s}
+@keyframes fade{from{opacity:0}}
+.sp{background:#fff;border-radius:1.5em;padding:1.2em 1.6em;text-align:center;max-width:36em;border:.35em solid var(--c);box-shadow:0 1em 3em rgba(0,0,0,.35);animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+.sp .tag{display:inline-block;background:var(--pur);color:#fff;font-weight:900;padding:.15em 1em;border-radius:1em;font-size:1.1em}
+.sp h2{margin:.3em 0;font-size:2.2em;line-height:1;color:#1a1d5e}
+.sp .row{display:flex;gap:.8em;align-items:center;justify-content:center}
+.sp .row img.ph{width:15em;aspect-ratio:4/3;object-fit:cover;border-radius:1em}
+.sp .row img.ic{width:5em;border-radius:.8em}
+.sp p{font-weight:800;margin:.5em 0}
+.sp .learn{background:#f3f0ff;border-radius:.8em;padding:.4em .7em;font-weight:800;font-size:.95em}
+.pod{display:flex;gap:1em;align-items:flex-end;justify-content:center;margin:1em 0}
+.pod div{display:flex;flex-direction:column;align-items:center;gap:.3em;font-weight:900}
+.pod .bar{width:5.5em;border-radius:.8em .8em 0 0;background:var(--c);color:#fff;display:grid;place-items:start center;padding-top:.3em;font-size:1.5em;box-shadow:inset 0 -.4em 0 rgba(0,0,0,.15)}
+.pod .crown{font-size:2em;line-height:1}
+#toast{position:absolute;left:50%;bottom:1.6em;transform:translateX(-50%) translateY(150%);background:#14213d;color:#fff;font-weight:900;padding:.5em 1.2em;border-radius:1em;font-size:1.25em;z-index:9;transition:.3s;opacity:0;pointer-events:none;text-align:center}
+#toast.on{transform:translateX(-50%);opacity:1}#toast.ok{background:#2b9348}#toast.bad{background:#c1121f}
+.conf{position:absolute;top:-2em;font-size:2em;z-index:8;animation:fall 2.6s linear forwards;pointer-events:none}@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+.flystar{position:fixed;z-index:20;font-size:3em;pointer-events:none;transition:all .9s cubic-bezier(.5,-0.3,.6,1)}
+.mute{border:0;background:#eef1f7;border-radius:.6em;padding:.25em .5em}
+.toolbar{display:flex;gap:.4em;flex-wrap:wrap}
+</style><div class="wrap"><div id="stage"></div><aside id="board"></aside><div id="toast"></div></div></template>
+
 <template id="birdsTpl"><style>:host{--navy:#12306f;--ink:#12263a;--yel:#ffd23f;--red:#d7261e;--blue:#1d5fd6;--green:#24963f;flex:1;min-width:0;height:100%;display:flex;font-family:"Nunito","Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:#e9f1f8;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit;border:0;cursor:pointer;background:none}button:disabled{opacity:.4;cursor:default}
@@ -1179,6 +1325,7 @@ function go(id){
   if(id==='race'&&cur!=='matter')return go('home');
   if(id==='race')rcRender();
   if(id==='freezer'&&cur!=='freeze')return go('home');
+  if(id==='bdet'){document.body.dataset.lab='bdet';$('#topic').innerHTML='Little Bird Detectives<span class="vi inline"> · Thám tử chim nhỏ</span>'}
   if(id==='birds'){document.body.dataset.lab='birds';$('#topic').innerHTML='Big eggs and small eggs<span class="vi inline"> · Trứng to và trứng nhỏ</span>'}
   if(id==='exit2'){document.body.dataset.lab='exit2';$('#topic').innerHTML='Exit Ticket: Solids, Liquids and Gases<span class="vi inline"> · Phiếu kiểm tra: Chất rắn, lỏng, khí</span>'}
   if(id==='exit'){document.body.dataset.lab='exit';$('#topic').innerHTML='Exit Ticket: Volume of Sound<span class="vi inline"> · Phiếu kiểm tra: Âm lượng</span>'}
@@ -4667,6 +4814,192 @@ function renderStep(){const C=$('#stepC'),s=LS.s,hd=(n,en,vi)=>'<h2><small>'+L('
 /* boot */
 fit();labels();renderStep();renderTable();requestAnimationFrame(step);
 setTimeout(fit,100);
+})();
+</script>
+<script>
+/* ===== Little Bird Detectives (Grade 1 team missions) ===== */
+(()=>{const HOST=document.getElementById('bdetHost'),ROOT=HOST.attachShadow({mode:'open'});ROOT.appendChild(document.getElementById('bdetTpl').content.cloneNode(true));
+const $=s=>ROOT.querySelector(s),$$=s=>[...ROOT.querySelectorAll(s)];const SCR=document.getElementById('bdet');
+let VI=document.body.classList.contains('vi-on');
+const L=(en,vi)=>VI?vi:en,bi=(en,vi)=>en+(VI?'<span class="vi">'+vi+'</span>':''),B=a=>bi(a[0],a[1]),T=a=>L(a[0],a[1]);
+const P='bdet/',E='eggs/';
+const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+/* ---------- sound ---------- */
+let AC=null,SOUND=true;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(_){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,t,d,type,v){if(!SOUND||!ac())return;const o=AC.createOscillator(),g=AC.createGain();o.type=type||'sine';o.frequency.value=f;const T0=AC.currentTime+t;g.gain.setValueAtTime(0,T0);g.gain.linearRampToValueAtTime(v||.15,T0+.01);g.gain.exponentialRampToValueAtTime(.001,T0+d);o.connect(g);g.connect(AC.destination);o.start(T0);o.stop(T0+d+.05)}
+const SFX={pop:()=>tone(720,0,.07,'sine',.12),tick:()=>tone(1200,0,.04,'square',.03),
+ good:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,i*.08,.25,'triangle',.16))},
+ bad:()=>{tone(220,0,.18,'sawtooth',.07);tone(180,.14,.25,'sawtooth',.07)},
+ star:()=>{[1319,1568,2093].forEach((f,i)=>tone(f,.05+i*.07,.3,'sine',.12))},
+ phase:()=>{tone(880,0,.12,'triangle',.12);tone(1175,.1,.18,'triangle',.12)},
+ fan:()=>{[392,523,659,784,659,784,1047].forEach((f,i)=>tone(f,i*.12,.3,'triangle',.15))},
+ quack(){if(!SOUND||!ac())return;[0,.28].forEach(t=>{const o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();o.type='sawtooth';o.frequency.setValueAtTime(520,AC.currentTime+t);o.frequency.exponentialRampToValueAtTime(330,AC.currentTime+t+.18);f.type='bandpass';f.frequency.value=1100;f.Q.value=3;g.gain.setValueAtTime(0,AC.currentTime+t);g.gain.linearRampToValueAtTime(.22,AC.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+.2);o.connect(f);f.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+.25)})}};
+function toast(m,k){const t=$('#toast');t.innerHTML=m;t.className='on '+(k||'');clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2400)}
+function confetti(n){const st=$('.wrap');for(let i=0;i<(n||26);i++){const s=document.createElement('div');s.className='conf';s.textContent=['⭐','🥚','🐣','🦆','🎉'][i%5];s.style.left=(Math.random()*95)+'%';s.style.animationDelay=(Math.random()*.6)+'s';st.appendChild(s);setTimeout(()=>s.remove(),3400)}}
+/* ---------- data ---------- */
+const COLS=['#e63946','#1d6fd6','#2b9348','#f77f00','#7b2cbf','#0f9aa8'];
+const PH=[{k:'LOOK',vi:'NHÌN',e:'👀',c:'#4cc9f0',t:5,say:['Look carefully at the pictures.','Nhìn kĩ các bức tranh.']},{k:'THINK',vi:'NGHĨ',e:'🤔',c:'#ffd60a',t:10,say:['Think quietly. Do not talk yet!','Suy nghĩ im lặng. Chưa nói nhé!']},{k:'TALK',vi:'NÓI',e:'💬',c:'#f72585',t:15,say:['Talk with your team. Use this sentence:','Thảo luận với nhóm. Dùng câu này:']},{k:'SHOW',vi:'TRẢ LỜI',e:'✋',c:'#2b9348',say:['Show your answer! Tap it on the board.','Trả lời! Chạm vào bảng.']}];
+const EG={quail:{en:'quail egg',vi:'trứng chim cút',cm:3,w:93,h:127},chicken:{en:'chicken egg',vi:'trứng gà',cm:5,w:123,h:177},turkey:{en:'turkey egg',vi:'trứng gà tây',cm:6,w:157,h:237},goose:{en:'goose egg',vi:'trứng ngỗng',cm:8,w:211,h:315}};
+const eggImg=k=>E+'egg_'+k+'.webp';
+function eggSVG(k,f,lab){const e=EG[k],w=e.w,h=e.h;let s='<svg class="eggsv" viewBox="-6 -6 '+(w+12)+' '+(h+12)+'" style="height:'+(e.cm*1.45+1)+'em"><image href="'+eggImg(k)+'" width="'+w+'" height="'+h+'"/>';
+ if(f!=null){const y=h*f,hw=(w/2)*Math.sqrt(Math.max(.04,1-Math.pow((f-.56)/.6,2)))*1.03,c=w/2,sag=hw*.28,bw=Math.max(9,w*.1),d='M'+(c-hw)+' '+y+' Q'+c+' '+(y+sag*2)+' '+(c+hw)+' '+y;
+  s+='<path d="'+d+'" fill="none" stroke="#9a7400" stroke-width="'+(bw+3)+'" stroke-linecap="round"/><path d="'+d+'" fill="none" stroke="#ffd60a" stroke-width="'+bw+'" stroke-linecap="round"/><path d="'+d+'" fill="none" stroke="#3b2f00" stroke-width="'+(bw*.45)+'" stroke-dasharray="1.2 '+(w*.045)+'" transform="translate(0,'+(-bw*.22)+')"/>'}
+ return s+'</svg>'}
+function rulerSVG(k,lift,line){const e=EG[k],U=24,base=262,sc=e.cm*U/e.h,iw=e.w*sc,y0=base-lift*U;let s='<svg viewBox="0 0 '+(118+iw)+' 292" style="height:15em;display:block;margin:auto"><rect x="0" y="'+base+'" width="'+(118+iw)+'" height="30" fill="#a8703f"/><rect x="0" y="'+base+'" width="'+(118+iw)+'" height="5" fill="#c98d55"/>';
+ s+='<rect x="22" y="'+(y0-10*U-14)+'" width="50" height="'+(10*U+20)+'" rx="4" fill="#fdfdf7" stroke="#9fb3c6" stroke-width="1.5"/>';
+ for(let m=0;m<=100;m++){const y=y0-m*U/10,bg=m%10===0,md=m%5===0;s+='<line x1="72" x2="'+(72-(bg?16:md?11:6))+'" y1="'+y+'" y2="'+y+'" stroke="#111" stroke-width="'+(bg?1.8:.8)+'"/>';if(bg)s+='<text x="46" y="'+(y+5)+'" font-size="15" font-weight="900" text-anchor="middle" font-family="system-ui">'+(m/10)+'</text>'}
+ s+='<image href="'+eggImg(k)+'" x="96" y="'+(base-e.cm*U)+'" width="'+iw+'" height="'+(e.cm*U)+'"/>';
+ if(line){const ty=base-e.cm*U;s+='<line x1="'+(96+iw/2)+'" x2="76" y1="'+ty+'" y2="'+ty+'" stroke="#d62828" stroke-width="2.5" stroke-dasharray="6 5"/><path d="M74 '+ty+' l9 -6 v12z" fill="#d62828"/>'}
+ return s+'</svg>'}
+const M=[
+ {en:'Egg Detective',vi:'Thám tử trứng',c:'#00b4d8',ic:'ic1',ph:'m1',learn:['Observing and comparing egg sizes','Quan sát và so sánh kích thước trứng'],qs:[
+  {type:'order',mode:'eggs',q:['Arrange the eggs from BIGGEST to SMALLEST. Tap the eggs in order.','Xếp các quả trứng từ TO NHẤT đến NHỎ NHẤT. Chạm vào trứng theo thứ tự.'],frame:['The ___ egg is the biggest.','Trứng ___ là to nhất.'],
+   items:['quail','chicken','turkey','goose'],ans:['goose','turkey','chicken','quail'],slots:[['Biggest','To nhất'],null,null,['Smallest','Nhỏ nhất']]},
+  {type:'choice',mode:'eggs',q:['Which egg is the SMALLEST?','Quả trứng nào NHỎ NHẤT?'],frame:['The ___ egg is the smallest.','Trứng ___ là nhỏ nhất.'],opts:['goose','quail','chicken','turkey'],ans:'quail'},
+  {type:'choice',mode:'eggs',q:['Which egg has dark SPOTS?','Quả trứng nào có ĐỐM sẫm màu?'],frame:['The ___ egg has spots.','Trứng ___ có đốm.'],opts:['chicken','turkey','quail','goose'],ans:'quail'},
+  {type:'choice',q:['Which bird lays the BIGGEST egg?','Loài chim nào đẻ quả trứng TO NHẤT?'],frame:['The ___ lays the biggest egg.','Con ___ đẻ quả trứng to nhất.'],
+   opts:[{id:'hen',img:E+'i_hen.webp',t:['chicken','gà']},{id:'goose',img:E+'i_goose.webp',t:['goose','ngỗng']},{id:'quail',img:E+'i_bird.webp',t:['quail','chim cút']}],ans:'goose',reveal:{html:()=>eggSVG('goose',null),t:['Yes! The goose egg is the biggest egg.','Đúng! Trứng ngỗng là to nhất.']}}]},
+ {en:'Measuring Master',vi:'Bậc thầy đo lường',c:'#f72585',ic:'ic2',ph:'m2',learn:['Measuring around the same place on each egg','Đo vòng quanh cùng một chỗ trên mỗi quả trứng'],qs:[
+  {type:'choice',key:'around',q:['We measure AROUND two eggs. Which way is correct?','Chúng ta đo VÒNG QUANH hai quả trứng. Cách nào đúng?'],frame:['Picture ___ is correct because...','Hình ___ đúng vì...'],ans:'ok',
+   reveal:{t:['Measure around the SAME place on each egg: the middle.','Đo vòng quanh CÙNG một chỗ trên mỗi quả: phần giữa.']}},
+  {type:'choice',q:['Which tool do we use to measure AROUND an egg?','Dụng cụ nào dùng để đo VÒNG QUANH quả trứng?'],frame:['We use a ___.','Chúng ta dùng ___.'],
+   opts:[{id:'ruler',img:P+'ic2.webp',t:['ruler','thước kẻ']},{id:'tape',svg:'<svg viewBox="0 0 120 100" style="height:7em"><path d="M60 62 H116 V80 H60Z" fill="#ffd60a" stroke="#9a7400" stroke-width="2"/><line x1="66" x2="66" y1="62" y2="74" stroke="#3b2f00" stroke-width="1.5"/><line x1="72" x2="72" y1="62" y2="70" stroke="#3b2f00" stroke-width="1.5"/><line x1="78" x2="78" y1="62" y2="74" stroke="#3b2f00" stroke-width="1.5"/><line x1="84" x2="84" y1="62" y2="70" stroke="#3b2f00" stroke-width="1.5"/><line x1="90" x2="90" y1="62" y2="74" stroke="#3b2f00" stroke-width="1.5"/><line x1="96" x2="96" y1="62" y2="70" stroke="#3b2f00" stroke-width="1.5"/><line x1="102" x2="102" y1="62" y2="74" stroke="#3b2f00" stroke-width="1.5"/><line x1="108" x2="108" y1="62" y2="70" stroke="#3b2f00" stroke-width="1.5"/><line x1="114" x2="114" y1="62" y2="74" stroke="#3b2f00" stroke-width="1.5"/><rect x="110" y="56" width="8" height="30" rx="2" fill="#555"/><circle cx="48" cy="50" r="40" fill="#f6c90e" stroke="#9a7400" stroke-width="3"/><circle cx="48" cy="50" r="30" fill="#ffd94a"/><circle cx="48" cy="50" r="12" fill="#333"/><circle cx="48" cy="50" r="5" fill="#999"/><path d="M20 22 A40 40 0 0 1 60 11" stroke="#fff" stroke-width="4" fill="none" opacity=".5"/></svg>',t:['tape measure','thước dây']},{id:'mag',img:P+'ic1.webp',t:['magnifying glass','kính lúp']}],ans:'tape',reveal:{img:P+'m2.webp',t:['A tape measure can bend around the egg.','Thước dây uốn được quanh quả trứng.']}},
+  {type:'choice',key:'ruler0',q:['We measure how TALL the egg is. Which ruler is used the right way?','Chúng ta đo quả trứng CAO bao nhiêu. Thước nào được dùng đúng cách?'],frame:['Ruler ___ is right. It starts at...','Thước ___ đúng. Nó bắt đầu từ...'],ans:'ok',
+   reveal:{t:['Start the ruler at 0, on the table.','Đặt số 0 của thước sát mặt bàn.']}},
+  {type:'choice',q:['Read the ruler. How tall is the turkey egg?','Đọc thước. Trứng gà tây cao bao nhiêu?'],frame:['The egg is ___ centimetres tall.','Quả trứng cao ___ xăng-ti-mét.'],
+   opts:[{id:'5',t:['5 cm','5 cm'],em:'5️⃣'},{id:'6',t:['6 cm','6 cm'],em:'6️⃣'},{id:'7',t:['7 cm','7 cm'],em:'7️⃣'}],ans:'6',pre:()=>rulerSVG('turkey',0,true)}]},
+ {en:'Hatching Hero',vi:'Anh hùng nở trứng',c:'#70c000',ic:'ic3',ph:'m3',learn:['Hatching and bird growth','Sự nở và lớn lên của chim'],qs:[
+  {type:'order',mode:'pics',q:['Put the pictures in the correct order. What happens FIRST?','Xếp các bức tranh theo đúng thứ tự. Điều gì xảy ra ĐẦU TIÊN?'],frame:['First, ___. Next, ___. Last, ___.','Đầu tiên, ___. Tiếp theo, ___. Cuối cùng, ___.'],
+   items:[{id:'nest',img:P+'m1.webp',t:['Eggs in a nest','Trứng trong tổ']},{id:'hatch',img:P+'m3.webp',t:['The duckling hatches','Vịt con nở ra']},{id:'duckling',img:E+'duckling.webp',t:['A duckling','Một chú vịt con']}],ans:['nest','hatch','duckling'],slots:[['First','Đầu tiên'],['Next','Tiếp theo'],['Last','Cuối cùng']]},
+  {type:'choice',q:['What cracks the shell?','Bộ phận nào làm vỡ vỏ trứng?'],frame:['The ___ cracks the shell.','Cái ___ làm vỡ vỏ trứng.'],
+   opts:[{id:'wing',em:'🪽',t:['the wing','cánh']},{id:'beak',em:'🐤',t:['the beak','mỏ']},{id:'foot',em:'🦶',t:['the foot','chân']}],ans:'beak',reveal:{img:E+'beak.webp',t:['The beak! The baby bird pecks the hard shell.','Cái mỏ! Chim non mổ vỡ lớp vỏ cứng.']}},
+  {type:'choice',q:['Baby ducks are called...','Vịt con được gọi là...'],frame:['Baby ducks are called ___.','Vịt con được gọi là ___.'],
+   opts:[{id:'puppies',em:'🐶',t:['puppies','chó con']},{id:'kittens',em:'🐱',t:['kittens','mèo con']},{id:'ducklings',em:'🐥',t:['ducklings','vịt con']}],ans:'ducklings',reveal:{img:E+'duckling.webp',t:['Ducklings hatch from eggs.','Vịt con nở ra từ trứng.']}},
+  {type:'choice',q:['A duckling grows up. What does it become?','Vịt con lớn lên. Nó trở thành con gì?'],frame:['A duckling grows into a ___.','Vịt con lớn lên thành ___.'],
+   opts:[{id:'hen',img:E+'i_hen.webp',t:['a hen','con gà mái']},{id:'duck',img:P+'mom.webp',t:['a duck','con vịt']},{id:'fish',em:'🐟',t:['a fish','con cá']}],ans:'duck',reveal:{img:E+'family.webp',t:['Egg → duckling → duck!','Trứng → vịt con → vịt!']}}]},
+ {en:'Duck Family Detective',vi:'Thám tử gia đình vịt',c:'#9d4edd',ic:'ic4',ph:'m4',learn:['Telling apart ducklings, the mother and the father','Phân biệt vịt con, vịt mẹ và vịt bố'],qs:[
+  {type:'label',q:['Who is who? Choose a word for each duck.','Ai là ai? Chọn từ cho mỗi con vịt.'],frame:['This is the ___. It has...','Đây là ___. Nó có...'],
+   cards:[{id:'duckling',img:E+'duckling.webp'},{id:'father',img:P+'dad.webp'},{id:'mother',img:P+'mom.webp'}],words:{duckling:['duckling','vịt con'],mother:['mother','vịt mẹ'],father:['father','vịt bố']}},
+  {type:'choice',q:['Which duck has a shiny GREEN head?','Con vịt nào có đầu màu XANH LÁ bóng?'],frame:['The ___ has a green head.','Con ___ có đầu màu xanh lá.'],
+   opts:[{id:'mother',img:P+'mom.webp',t:['mother','vịt mẹ']},{id:'duckling',img:E+'duckling.webp',t:['duckling','vịt con']},{id:'father',img:P+'dad.webp',t:['father','vịt bố']}],ans:'father'},
+  {type:'choice',q:['Is a duckling BIGGER or SMALLER than its mother?','Vịt con TO HƠN hay NHỎ HƠN vịt mẹ?'],frame:['A duckling is ___ than its mother.','Vịt con ___ vịt mẹ.'],pre:()=>'<img src="'+E+'family.webp" style="height:11em;border-radius:1em;display:block;margin:auto">',
+   opts:[{id:'big',em:'🐘',t:['bigger','to hơn']},{id:'small',em:'🐭',t:['smaller','nhỏ hơn']}],ans:'small'},
+  {type:'choice',bonus:1,q:['BONUS: Where do BOTH adult ducks have blue feathers?','CÂU THƯỞNG: Cả hai con vịt trưởng thành có lông màu xanh dương ở đâu?'],frame:['They have blue feathers on their ___.','Chúng có lông xanh ở ___.'],pre:()=>'<img src="'+P+'m4.webp" style="height:11em;border-radius:1em;display:block;margin:auto">',
+   opts:[{id:'head',em:'🙂',t:['on their heads','trên đầu']},{id:'wings',em:'🪽',t:['on their wings','trên cánh']},{id:'feet',em:'🦶',t:['on their feet','ở chân']}],ans:'wings',reveal:{t:['On their wings! Both the mother and the father have a blue patch.','Trên cánh! Cả vịt mẹ và vịt bố đều có một mảng lông xanh.']}}]}
+];
+/* ---------- state ---------- */
+const S={scr:'intro',nT:4,size:5,teams:[],turn:0,m:0,q:0,ph:0,cd:5,tries:0,done:false,res:null,sel:[],lab:{},marks:{},opts:null,splash:null,mleft:150,ileft:120,mres:[[],[],[],[]],spk:'?',spinning:false,resetArm:false};
+function mkTeams(){const old=S.teams;S.teams=Array.from({length:S.nT},(_,i)=>({n:i+1,s:old[i]?old[i].s:0,c:COLS[i]}))}mkTeams();
+const curM=()=>M[S.m],curQ=()=>M[S.m].qs[S.q];
+function newQ(){S.ph=0;S.cd=PH[0].t;S.tries=0;S.done=false;S.res=null;S.sel=[];S.lab={};S.marks={};S.spk='?';const q=curQ();
+ if(q.type==='order')S.opts=shuf(q.items.map(x=>typeof x==='string'?x:x.id));
+ else if(q.type==='label')S.opts=shuf(q.cards.map(c=>c.id));
+ else if(q.key){S.opts=shuf(['ok','bad'])}
+ else S.opts=shuf(q.opts.map(o=>typeof o==='string'?o:o.id));
+ if(q.type==='order'&&q.mode==='pics'){const lets=['A','B','C'];S.letters={};S.opts.forEach((id,i)=>S.letters[id]=lets[i])}}
+/* ---------- render ---------- */
+function stepsHTML(){return '<div class="steps">'+PH.map((p,i)=>'<button class="st '+(i===S.ph?'on':i<S.ph?'past':'')+'" style="--c:'+p.c+'" data-act="ph" data-i="'+i+'"><span>'+p.e+'</span>'+L(p.k,p.vi)+'</button>'+(i<3?'<b class="arrow">→</b>':'')).join('')+'</div>'}
+function phaseHTML(){const p=PH[S.ph],q=curQ();if(S.done)return '';
+ let h='<span style="font-size:1.6em">'+p.e+'</span><span>'+B(p.say)+'</span>';
+ if(S.ph===2)h+='<span class="frame">'+B(q.frame)+'</span>';
+ if(S.ph<3)h+='<span class="cd">'+S.cd+'</span><button class="big" style="font-size:.95em" data-act="show">✋ '+L('We are ready!','Chúng em sẵn sàng!')+'</button>';
+ return h}
+function renderPhase(){const ph=$('#phase');if(ph){ph.innerHTML=phaseHTML();ph.style.display=S.done?'none':'flex'}const st=$('.steps');if(st)st.outerHTML=stepsHTML();const a=$('.area');if(a)a.classList.toggle('lock',S.ph<3&&!S.done)}
+function eggBtn(k,cls,badge){const e=EG[k];return '<button class="egg '+(cls||'')+'" data-act="pick" data-id="'+k+'" style="height:'+(e.cm*1.45)+'em" aria-label="'+T([e.en,e.vi])+'"><img src="'+eggImg(k)+'" alt="">'+(badge?'<span class="badge">'+badge+'</span>':'')+'</button>'}
+function areaHTML(){const q=curQ();let h='';
+ if(q.type==='order'){const n=q.ans.length;
+  if(q.mode==='eggs')h+='<div class="table"><div class="eggrow">'+S.opts.map(k=>{const i=S.sel.indexOf(k);return eggBtn(k,i>=0?'used':'',i>=0?i+1:'')}).join('')+'</div></div>';
+  else h+='<div class="pics">'+S.opts.map(id=>{const it=q.items.find(x=>x.id===id),i=S.sel.indexOf(id);return '<button class="pic '+(i>=0?'used':'')+'" data-act="pick" data-id="'+id+'"><img src="'+it.img+'" alt=""><span class="lt">'+S.letters[id]+'</span>'+(i>=0?'<span class="badge">'+T(q.slots[i])+'</span>':'')+'</button>'}).join('')+'</div>';
+  h+='<div class="slots">'+Array.from({length:n},(_,i)=>{const id=S.sel[i],mk=S.marks[i]||'';let inner='';
+   if(id){if(q.mode==='eggs')inner='<img src="'+eggImg(id)+'" alt=""><span>'+T([EG[id].en,EG[id].vi])+'</span>';else{const it=q.items.find(x=>x.id===id);inner='<span style="font-size:1.8em">'+S.letters[id]+'</span><span style="font-size:.8em;text-align:center;line-height:1">'+T(it.t)+'</span>'}}
+   else inner='<span class="ch">'+L('Choose','Chọn')+'</span>';
+   return '<div class="slot '+mk+'" data-act="unslot" data-i="'+i+'"><small>'+(i+1)+(q.slots[i]?' · '+T(q.slots[i]):'')+'</small>'+inner+'</div>'}).join('')+'</div>'}
+ else if(q.type==='label'){h+='<div class="lab3">'+S.opts.map(id=>{const c=q.cards.find(x=>x.id===id),mk=S.marks[id]||'';return '<div class="card '+mk+'"><img src="'+c.img+'" alt=""><div class="chips">'+Object.keys(q.words).map(w=>'<button class="'+(S.lab[id]===w?'on':'')+'" data-act="lab" data-card="'+id+'" data-w="'+w+'">'+T(q.words[w])+'</button>').join('')+'</div></div>'}).join('')+'</div>';
+  h+='<div class="res"><button class="tiny" data-act="labreset">↺ '+L('Reset','Làm lại')+'</button></div>'}
+ else{if(q.pre)h+='<div style="margin-bottom:.6em">'+q.pre()+'</div>';
+  if(q.key==='around'){h+='<div class="opts">'+S.opts.map((v,i)=>{const L2='AB'[i],mk=S.marks[v]||'';const fs=v==='ok'?[.56,.56]:[.56,.2];return '<button class="op '+mk+'" data-act="pick" data-id="'+v+'"><span class="lt">'+L2+'</span><div class="table" style="display:flex;gap:1em;align-items:flex-end;padding:.6em 1em .4em">'+eggSVG('chicken',fs[0])+eggSVG('goose',fs[1])+'</div></button>'}).join('')+'</div>'}
+  else if(q.key==='ruler0'){h+='<div class="opts">'+S.opts.map((v,i)=>{const mk=S.marks[v]||'';return '<button class="op '+mk+'" data-act="pick" data-id="'+v+'"><span class="lt">'+'AB'[i]+'</span>'+rulerSVG('chicken',v==='ok'?0:2,true)+'</button>'}).join('')+'</div>'}
+  else if(q.mode==='eggs'){h+='<div class="table"><div class="eggrow">'+S.opts.map(k=>{const mk=S.marks[k]||'';return '<button class="egg op '+mk+'" style="height:'+(EG[k].cm*1.45+2.6)+'em;min-width:0;background:transparent;border-color:transparent;box-shadow:none;padding:.3em" data-act="pick" data-id="'+k+'"><img src="'+eggImg(k)+'" alt="" style="height:'+(EG[k].cm*1.45)+'em"></button>'}).join('')+'</div></div>'}
+  else{h+='<div class="opts">'+S.opts.map(id=>{const o=q.opts.find(x=>x.id===id),mk=S.marks[id]||'';return '<button class="op '+mk+'" data-act="pick" data-id="'+id+'" style="width:12em">'+(o.svg?o.svg:o.img?'<img src="'+o.img+'" alt="" style="height:7em;object-fit:contain;border-radius:.6em">':'<span class="em">'+o.em+'</span>')+'<span>'+B(o.t)+'</span></button>'}).join('')+'</div>'}}
+ return h}
+function resultHTML(){if(!S.done)return S.tries&&curQ().type!=='label'&&curQ().type!=='order'?'<div class="res"><span class="msg no">'+bi('Not yet. Talk again and try once more!','Chưa đúng. Thảo luận lại và thử lần nữa!')+'</span></div>':(S.tries&&curQ().type==='order'?'<div class="res"><span class="msg no">'+bi('Not quite!','Chưa đúng!')+'</span><button class="tiny" data-act="retry">↺ '+L('Try again','Thử lại')+'</button></div>':'');
+ const q=curQ(),last=S.q===3;let h='';
+ if(q.reveal){const r=q.reveal;h+='<div class="reveal">'+(r.img?'<img src="'+r.img+'" alt="">':'')+(r.html?r.html():'')+'<span>'+B(r.t)+'</span></div>'}
+ h+='<div class="res"><span class="msg '+(S.res==='ok'?'ok':'no')+'">'+(S.res==='ok'?'⭐ '+bi('Team '+S.teams[S.turn].n+' earns a star!','Nhóm '+S.teams[S.turn].n+' được một ngôi sao!'):bi('Here is the answer. Good try!','Đây là đáp án. Các em đã cố gắng!'))+'</span><button class="big" data-act="next">'+(last?L('Finish mission','Hoàn thành nhiệm vụ'):L('Next question','Câu tiếp theo'))+' ➜</button></div>';return h}
+function renderBoard(){const t=S.teams;$('#board').innerHTML='<h3>🏆 '+L('Team Scoreboard','Bảng điểm các nhóm')+'<small>'+L('Each correct answer = 1 star','Mỗi câu đúng = 1 ngôi sao')+'</small></h3>'+
+ t.map((x,i)=>'<div class="team '+(S.scr==='m'&&i===S.turn?'turn':'')+'" style="--c:'+x.c+'" data-act="turn" data-i="'+i+'"><span class="dot">'+x.n+'</span><span class="nm">'+L('Team','Nhóm')+' '+x.n+'<i>'+'⭐'.repeat(Math.min(x.s,12))+'</i></span><span style="display:flex;align-items:center;gap:.3em"><span class="sc">'+x.s+'</span><span class="pm"><button data-act="plus" data-i="'+i+'">+</button><button data-act="minus" data-i="'+i+'">−</button></span></span></div>').join('')+
+ '<div class="toolbar"><button class="tiny" data-act="reset">'+(S.resetArm?L('Tap again to reset','Chạm lần nữa để đặt lại'):'↺ '+L('Reset scores','Đặt lại điểm'))+'</button><button class="tiny" data-act="mute">'+(SOUND?'🔊':'🔇')+'</button>'+(S.scr!=='intro'?'<button class="tiny" data-act="home">🏠 '+L('Missions','Nhiệm vụ')+'</button>':'')+'</div>'+
+ '<div class="speaker"><b>'+(S.scr==='m'?L('Who speaks for Team ','Ai nói cho Nhóm ')+S.teams[S.turn].n+'?':L('Who speaks?','Ai sẽ nói?'))+'</b><div class="num '+(S.spinning?'spin':'')+'" id="spk">'+(S.spk==='?'?'🎲':'👤 '+S.spk)+'</div><div style="font-size:.8em;font-weight:700;margin-bottom:.3em">'+(S.spk==='?'?L('Everyone gets a turn!','Ai cũng có lượt!'):L('Student number ','Học sinh số ')+S.spk)+'</div><button data-act="spk">🎲 '+L('Pick a speaker','Chọn người nói')+'</button><div class="sz">'+L('Students per team','Số HS mỗi nhóm')+': <button class="tiny" data-act="size" data-d="-1">−</button> <b>'+S.size+'</b> <button class="tiny" data-act="size" data-d="1">+</button></div></div>'}
+const fmt=s=>Math.floor(Math.max(0,s)/60)+':'+String(Math.max(0,s)%60).padStart(2,'0');
+function render(){renderBoard();const st=$('#stage');let h='';
+ if(S.scr==='intro'){h='<div class="intro"><div class="hero"><img src="'+P+'boy.webp" alt=""><div class="ttl"><h1>LITTLE BIRD <em>DETECTIVES!</em></h1><br><h2><em>4 '+L('MISSIONS','NHIỆM VỤ')+'</em> • '+L('ONE SCIENCE TEAM','MỘT ĐỘI KHOA HỌC')+'</h2>'+(VI?'<div class="vi" style="margin-top:.3em">Những thám tử chim nhỏ</div>':'')+'</div><img src="'+P+'girl.webp" alt=""></div>'+
+  '<div class="mcards">'+M.map((m,i)=>'<div class="mc '+(S.mres[i].length===4?'done':'')+'" style="--c:'+m.c+';cursor:pointer" data-act="mission" data-i="'+i+'"><span class="tag">'+L('MISSION','NHIỆM VỤ')+' '+(i+1)+'</span><div class="hd"><img src="'+P+m.ic+'.webp" alt=""><span>'+B([m.en.toUpperCase(),m.vi])+'</span></div><img class="ph" src="'+P+m.ph+'.webp" alt=""></div>').join('')+'</div>'+
+  '<div class="ltts">'+PH.map((p,i)=>'<span class="ltt" style="--c:'+p.c+'"><span>'+p.e+'</span>'+p.k+(VI?' <small style="font-weight:700">('+p.vi+')</small>':'')+'</span>'+(i<3?'<b class="arrow">→</b>':'')).join('')+'</div>'+
+  '<div class="setup"><span class="clock '+(S.ileft<=15?'low':'')+'" id="iclock">⏱ '+fmt(S.ileft)+'</span><span class="n" style="font-weight:900">'+L('Teams','Số nhóm')+': '+[2,3,4,5,6].map(n=>'<button class="'+(n===S.nT?'on':'')+'" data-act="nT" data-n="'+n+'">'+n+'</button>').join(' ')+'</span><button class="big" data-act="start">🔍 '+L('Start the missions','Bắt đầu nhiệm vụ')+'</button></div></div>'}
+ else if(S.scr==='m'){const m=curM(),q=curQ(),t=S.teams[S.turn];
+  h='<div class="mhead" style="--c:'+m.c+'"><img src="'+P+m.ic+'.webp" alt=""><h2><small>'+L('MISSION','NHIỆM VỤ')+' '+(S.m+1)+' · '+L('QUESTION','CÂU')+' '+(S.q+1)+'/4'+(q.bonus?' · BONUS':'')+'</small>'+B([m.en,m.vi])+'</h2><span class="clock '+(S.mleft<=20?'low':'')+'" id="mclock" style="margin-left:auto">⏱ '+fmt(S.mleft)+'</span><span class="qdots">'+m.qs.map((_,i)=>'<i class="'+(i===S.q?'on':S.mres[S.m][i]==='ok'?'ok':S.mres[S.m][i]?'no':'')+'"></i>').join('')+'</span></div>'+
+   '<div class="turnb"><span class="tb" style="--c:'+t.c+'">👉 '+L('Team','Nhóm')+' '+t.n+L("'s turn",' trả lời')+'</span>'+stepsHTML()+'</div>'+
+   '<div class="qbox"><div class="q">'+B(q.q)+'</div><div class="phase" id="phase" style="display:'+(S.done?'none':'flex')+'">'+phaseHTML()+'</div><div class="area '+(S.ph<3&&!S.done?'lock':'')+'">'+areaHTML()+'</div><div id="result">'+resultHTML()+'</div></div>';
+  if(S.splash==='start')h+='<div class="ov"><div class="sp" style="--c:'+m.c+'"><span class="tag">'+L('MISSION','NHIỆM VỤ')+' '+(S.m+1)+'</span><h2>'+B([m.en,m.vi])+'</h2><div class="row"><img class="ic" src="'+P+m.ic+'.webp" alt=""><img class="ph" src="'+P+m.ph+'.webp" alt=""></div><p>'+bi('4 questions. Each team gets a turn. About 2½ minutes.','4 câu hỏi. Mỗi nhóm có một lượt. Khoảng 2 phút rưỡi.')+'</p><div class="learn">🎯 '+B(m.learn)+'</div><p><button class="big" data-act="go">'+L('Go, detectives!','Bắt đầu nào, các thám tử!')+' ➜</button></p></div></div>';
+  if(S.splash==='end'){const got=S.mres[S.m].filter(x=>x==='ok').length,nx=M.findIndex((_,i)=>S.mres[i].length<4);h+='<div class="ov"><div class="sp" style="--c:'+m.c+'"><span class="tag">'+L('MISSION','NHIỆM VỤ')+' '+(S.m+1)+' '+L('COMPLETE!','HOÀN THÀNH!')+'</span><h2>'+'⭐'.repeat(got)+(got<4?'<span style="opacity:.25">'+'⭐'.repeat(4-got)+'</span>':'')+'</h2><p>'+bi('Stars won in this mission: '+got+' of 4','Số sao trong nhiệm vụ này: '+got+'/4')+'</p><div class="learn">🎯 '+B(m.learn)+'</div><p>'+(nx>=0?'<button class="big" data-act="mission" data-i="'+nx+'">'+L('Mission','Nhiệm vụ')+' '+(nx+1)+': '+T([M[nx].en,M[nx].vi])+' ➜</button>':'<button class="big alt" data-act="final">🏆 '+L('See the winners','Xem đội thắng')+'</button>')+'</p></div></div>'}}
+ else{const ord=S.teams.slice().sort((a,b)=>b.s-a.s),top=ord[0].s,mx=Math.max(1,top);
+  h='<div class="intro" style="text-align:center"><div class="hero"><img src="'+P+'boy.webp" alt=""><div class="ttl"><h1>🏆 '+L('GREAT','GIỎI LẮM,')+' <em>'+L('DETECTIVES!','CÁC THÁM TỬ!')+'</em></h1><br><h2>'+L('Every team finished all 4 missions!','Tất cả các nhóm đã hoàn thành 4 nhiệm vụ!')+'</h2></div><img src="'+P+'girl.webp" alt=""></div>'+
+   '<div class="pod">'+S.teams.map(x=>'<div><span class="crown">'+(x.s===top&&top>0?'👑':'')+'</span><span>'+L('Team','Nhóm')+' '+x.n+'</span><span class="bar" style="--c:'+x.c+';height:'+(3+x.s/mx*9)+'em">⭐'+x.s+'</span></div>').join('')+'</div>'+
+   '<div class="mcards" style="grid-template-columns:repeat(4,1fr)">'+M.map((m,i)=>'<div class="mc done" style="--c:'+m.c+'"><span class="tag">'+L('MISSION','NHIỆM VỤ')+' '+(i+1)+'</span><div class="hd" style="min-height:0"><img src="'+P+m.ic+'.webp" alt="" style="width:2em;height:2em"><span style="font-size:.85em">'+T(m.learn)+'</span></div></div>').join('')+'</div>'+
+   '<p><button class="big" data-act="again">↺ '+L('Play again','Chơi lại')+'</button></p></div>'}
+ st.innerHTML=h}
+/* ---------- logic ---------- */
+function flyStar(fromEl){const t=$$('.team')[S.turn];if(!t)return;const a=(fromEl||$('.qbox')).getBoundingClientRect(),b=t.getBoundingClientRect();const s=document.createElement('div');s.className='flystar';s.textContent='⭐';s.style.left=(a.left+a.width/2)+'px';s.style.top=(a.top+a.height/2)+'px';ROOT.appendChild(s);
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{s.style.left=(b.right-60)+'px';s.style.top=(b.top)+'px';s.style.transform='scale(.5)'}));setTimeout(()=>{s.remove();const r=$$('.team')[S.turn];if(r){r.classList.remove('bump');void r.offsetWidth;r.classList.add('bump')}SFX.star()},950)}
+function finish(ok,el){S.done=true;S.res=ok?'ok':'reveal';S.mres[S.m][S.q]=ok?'ok':'no';
+ if(ok){S.teams[S.turn].s++;SFX.good();if(S.m===3)setTimeout(SFX.quack,500);confetti(14);toast('⭐ '+L('Correct!','Chính xác!'),'ok')}else{SFX.bad();toast(L('Look at the right answer.','Xem đáp án đúng nhé.'),'bad')}
+ render();if(ok)flyStar(el)}
+function wrong(){S.tries++;SFX.bad();if(S.tries>=2)return true;toast(L('Not yet! Talk again.','Chưa đúng! Thảo luận lại.'),'bad');return false}
+function pick(id,el){const q=curQ();if(S.done||S.ph<3)return;SFX.pop();
+ if(q.type==='order'){if(S.sel.includes(id)||S.sel.length>=q.ans.length)return;S.sel.push(id);
+  if(S.sel.length===q.ans.length){const ok=S.sel.every((x,i)=>x===q.ans[i]);if(ok){S.marks={};q.ans.forEach((_,i)=>S.marks[i]='ok');return finish(true,$('.slots'))}
+   S.sel.forEach((x,i)=>S.marks[i]=x===q.ans[i]?'ok':'no');if(wrong()){S.sel=q.ans.slice();S.marks={};q.ans.forEach((_,i)=>S.marks[i]='ok');return finish(false)}}
+  return render()}
+ const ans=q.key?'ok':q.ans;
+ if(id===ans){S.marks[id]='ok';return finish(S.tries<2,el)}
+ S.marks[id]='no';if(wrong()){S.marks[ans]='ok';return finish(false)}render()}
+function labCheck(){const q=curQ();if(Object.keys(S.lab).length<q.cards.length)return render();let all=true;S.marks={};q.cards.forEach(c=>{const ok=S.lab[c.id]===c.id;S.marks[c.id]=ok?'ok':'no';if(!ok)all=false});
+ if(all)return finish(true,$('.lab3'));if(wrong()){q.cards.forEach(c=>{S.lab[c.id]=c.id;S.marks[c.id]='ok'});return finish(false)}render()}
+function nextQ(){S.mres[S.m][S.q]=S.mres[S.m][S.q]||'no';S.turn=(S.turn+1)%S.nT;if(S.q<3){S.q++;newQ();render()}else{S.splash='end';SFX.fan();confetti(30);render()}}
+function startMission(i){S.scr='m';S.m=i;S.q=0;S.mres[i]=[];S.mleft=150;S.splash='start';newQ();render()}
+$('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;ac();const a=b.dataset.act,i=+b.dataset.i;
+ if(a==='pick')return pick(b.dataset.id,b);
+ if(a==='unslot'){if(S.done||S.marks[i])return;if(i<S.sel.length){S.sel.splice(i,1);SFX.pop();render()}return}
+ if(a==='retry'){S.sel=[];S.marks={};render();return}
+ if(a==='lab'){if(S.done||S.ph<3)return;const c=b.dataset.card,w=b.dataset.w;Object.keys(S.lab).forEach(k=>{if(S.lab[k]===w)delete S.lab[k]});S.lab[c]=w;S.marks={};SFX.pop();return labCheck()}
+ if(a==='labreset'){if(S.done)return;S.lab={};S.marks={};render();return}
+ if(a==='ph'){if(S.done)return;S.ph=i;S.cd=PH[i].t||0;SFX.phase();return render()}
+ if(a==='show'){S.ph=3;SFX.phase();return render()}
+ if(a==='next')return nextQ();
+ if(a==='go'){S.splash=null;SFX.phase();return render()}
+ if(a==='mission')return startMission(i);
+ if(a==='start'){const nx=M.findIndex((_,k)=>S.mres[k].length<4);return startMission(nx<0?0:nx)}
+ if(a==='final'){S.scr='end';S.splash=null;SFX.fan();confetti(40);return render()}
+ if(a==='again'){S.teams.forEach(t=>t.s=0);S.mres=[[],[],[],[]];S.scr='intro';S.turn=0;S.ileft=120;return render()}
+ if(a==='home'){S.scr='intro';S.splash=null;return render()}
+ if(a==='nT'){S.nT=+b.dataset.n;mkTeams();S.turn=0;return render()}
+ if(a==='turn'){if(e.target.closest('.pm'))return;S.turn=i;S.spk='?';SFX.pop();return render()}
+ if(a==='plus'){S.teams[i].s++;SFX.star();return renderBoard()}
+ if(a==='minus'){S.teams[i].s=Math.max(0,S.teams[i].s-1);SFX.pop();return renderBoard()}
+ if(a==='reset'){if(!S.resetArm){S.resetArm=true;renderBoard();setTimeout(()=>{S.resetArm=false;renderBoard()},3000);return}S.resetArm=false;S.teams.forEach(t=>t.s=0);SFX.pop();return render()}
+ if(a==='mute'){SOUND=!SOUND;return renderBoard()}
+ if(a==='size'){S.size=Math.max(2,Math.min(8,S.size+(+b.dataset.d)));return renderBoard()}
+ if(a==='spk'){if(S.spinning)return;S.spinning=true;let n=0;const last=S.spk;const iv=setInterval(()=>{const el=$('#spk');S.spk=1+Math.floor(Math.random()*S.size);if(el)el.textContent='👤 '+S.spk;SFX.tick();if(++n>14){clearInterval(iv);while(S.spk===last&&S.size>1)S.spk=1+Math.floor(Math.random()*S.size);S.spinning=false;SFX.phase();renderBoard()}},90);renderBoard()}});
+/* ---------- timers ---------- */
+setInterval(()=>{if(!SCR.classList.contains('on'))return;
+ if(S.scr==='intro'){if(S.ileft>0){S.ileft--;const c=$('#iclock');if(c){c.textContent='⏱ '+fmt(S.ileft);c.classList.toggle('low',S.ileft<=15)}if(S.ileft===0){SFX.phase();toast(L('Intro time is up! Start Mission 1.','Hết giờ giới thiệu! Bắt đầu Nhiệm vụ 1.'))}}return}
+ if(S.scr!=='m'||S.splash)return;
+ if(S.mleft>0){S.mleft--;const c=$('#mclock');if(c){c.textContent='⏱ '+fmt(S.mleft);c.classList.toggle('low',S.mleft<=20)}if(S.mleft===0){SFX.phase();toast(L('Time is up for this mission! Finish this question.','Hết giờ nhiệm vụ! Hoàn thành câu này nhé.'))}}
+ if(!S.done&&S.ph<3){S.cd--;if(S.cd<=3&&S.cd>0)SFX.tick();if(S.cd<=0){S.ph++;S.cd=PH[S.ph].t||0;SFX.phase();renderPhase()}else{const c=$('#phase .cd');if(c)c.textContent=S.cd}}},1000);
+document.getElementById('viBtn').addEventListener('click',()=>setTimeout(()=>{VI=document.body.classList.contains('vi-on');if(SCR.classList.contains('on'))render()},0));
+new MutationObserver(()=>{if(SCR.classList.contains('on')){VI=document.body.classList.contains('vi-on');render()}}).observe(SCR,{attributes:true,attributeFilter:['class']});
+render();
 })();
 </script>
 </body>
