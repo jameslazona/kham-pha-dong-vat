@@ -1357,6 +1357,7 @@ let viOn=false;const EXTRA={};
 
 /* ---------- navigation ---------- */
 function go(id){
+  try{localStorage.setItem('scilab-last',JSON.stringify({id,lab:cur}))}catch(_){}
   $$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));
   $$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
   if(id==='quiz'&&qi<0)startQuiz();
@@ -4111,7 +4112,7 @@ function labels(){$('#tabs').innerHTML=STEPS.map((s,i)=>'<button class="tab'+(S.
 function hd(n,en,vi){return '<h2><small>'+L('STEP','BƯỚC')+' '+n+'</small>'+L(en,vi)+'</h2>'}
 function nxt(okk,lbl){return '<div class="nx"><button class="btn go" id="nx" '+(okk?'':'disabled')+'>'+(lbl||L('Next','Tiếp'))+' ➜</button></div>'}
 function eggRow(e,v){return '<tr><td><img src="'+P+'egg_'+e.k+'.webp">'+L(e.en,e.vi)+'</td><td>'+(v!==undefined?v+' cm':'—')+'</td></tr>'}
-function renderStep(){const C=$('#stepC'),R=$('#resC');let h='',r='';labels();
+function renderStep(){try{localStorage.setItem('birds-state',JSON.stringify(S))}catch(_){}const C=$('#stepC'),R=$('#resC');let h='',r='';labels();
  if(S.s===0){
   if(S.ph===0){const n=Object.keys(S.obs).length;h=hd(1,'Observe the eggs','Quan sát trứng')+'<p>'+bi('Birds lay eggs. Different types of bird lay eggs of a different size. Drag the magnifying glass over each egg to observe it.','Chim đẻ trứng. Các loài chim khác nhau đẻ trứng có kích thước khác nhau. Kéo kính lúp qua từng quả để quan sát.')+'</p><div class="chk">'+EGGS.map(e=>'<div><i class="'+(S.obs[e.k]?'y':'')+'">✓</i><img src="'+P+e.b+'.webp">'+(S.obs[e.k]?L(e.en,e.vi):'?')+'</div>').join('')+'</div>'+nxt(n===4)}
   else if(S.ph===1){h=hd(1,'Order the eggs','Sắp xếp trứng')+'<p>'+bi('Drag the eggs to put them in order, from the smallest to the biggest.','Kéo các quả trứng để xếp theo thứ tự, từ nhỏ nhất đến to nhất.')+'</p><div class="nx"><button class="btn blue" id="chk1">✓ '+L('Check','Kiểm tra')+'</button></div>'}
@@ -4204,6 +4205,7 @@ function wingSVG(k){const fem=k==='m';let seed=fem?7:3;const rnd=()=>{seed=(seed
 function go(){if(S.s===1&&S.ph===0&&S.mcur===null){}renderStep();$('#stage').scrollTop=0}
 $('#sndBtn').onclick=()=>{SOUND=!SOUND;$('#sndBtn').textContent=SOUND?'🔊':'🔇';$('#sndBtn').classList.toggle('on',SOUND)};
 document.getElementById('viBtn').addEventListener('click',()=>setTimeout(()=>{VI=document.body.classList.contains('vi-on');renderStep()},0));
+try{const sv=JSON.parse(localStorage.getItem('birds-state')||'null');if(sv&&typeof sv.s==='number'){Object.assign(S,sv);Object.assign(S,{mcur:null,mtry:[],wrapT:0,wrapGo:0,snap:0,labSel:null,wordSel:null})}}catch(_){}
 fit();renderStep();requestAnimationFrame(step);setTimeout(fit,100);
 })();
 /* ===== Exit ticket: solids, liquids and gases ===== */
@@ -5016,7 +5018,7 @@ function render(){const w=$('.wrap');w.classList.toggle('host',S.scr==='host');w
  if(S.scr==='home'){const saved=store.get('bdet-team');h='<div class="intro">'+hero('LITTLE BIRD <em>DETECTIVES!</em>','<em>4 '+L('MISSIONS','NHIỆM VỤ')+'</em> • '+L('ONE SCIENCE TEAM','MỘT ĐỘI KHOA HỌC'))+CARDS()+LTTS()+
   '<div class="roles"><button class="role" data-act="tojoin"><span class="rimg">📱</span><b>'+B(['Team tablet','Máy tính bảng của nhóm'])+'</b><small>'+B(['Each team opens this on its own device.','Mỗi nhóm mở trên thiết bị của mình.'])+'</small></button>'+
   '<button class="role" data-act="tohost"><span class="rimg">📺</span><b>'+B(['Teacher monitor','Màn hình giáo viên'])+'</b><small>'+B(['Open on the classroom TV to watch every team live.','Mở trên TV của lớp để theo dõi trực tiếp các nhóm.'])+'</small></button></div>'+
-  (saved&&['m','lobby'].includes(saved.scr)?'<p style="text-align:center"><button class="big alt" data-act="resume">↩ '+L('Continue as Team','Tiếp tục là Nhóm')+' '+saved.n+'</button></p>':'')+'</div>'}
+  (saved&&['m','lobby','tend'].includes(saved.scr)?'<p style="text-align:center"><button class="big alt" data-act="resume">↩ '+L('Continue as Team','Tiếp tục là Nhóm')+' '+saved.n+'</button></p>':'')+'</div>'}
  else if(S.scr==='join'){h='<div class="intro">'+hero('LITTLE BIRD <em>DETECTIVES!</em>',L('Join your team','Vào nhóm của em'))+
   '<div class="joinbox"><label>'+B(['1. Type the code on the TV','1. Nhập mã trên TV'])+'</label><input id="code" maxlength="4" autocomplete="off" autocapitalize="characters" value="'+S.code+'" placeholder="ABCD">'+
   '<label>'+B(['2. Choose your team','2. Chọn nhóm của em'])+'</label><div class="tpick">'+[1,2,3,4,5,6].map(n=>'<button class="'+(n===S.n?'on':'')+'" style="--c:'+COLS[n-1]+'" data-act="pickn" data-n="'+n+'">'+n+'</button>').join('')+'</div>'+
@@ -5070,7 +5072,7 @@ function labCheck(){const q=curQ();if(Object.keys(S.lab).length<q.cards.length)r
  if(all)return finish(true,$('.lab3'));if(wrong()){q.cards.forEach(c=>{S.lab[c.id]=c.id;S.marks[c.id]='ok'});return finish(false)}render()}
 function nextQ(){if(S.q<3){S.q++;newQ();saveT();render()}else{S.splash='end';SFX.fan();confetti(30);saveT();sendSt({k:'mdone',m:S.m});render()}}
 function startMission(i){S.scr='m';S.m=i;S.q=0;S.mres[i]=[];S.mleft=150;S.splash='start';newQ();saveT();render()}
-function joinRoom(code,n){S.room=code;S.n=n;S.stars=0;S.mres=[[],[],[],[]];S.help=false;S.scr='lobby';if(code!=='SOLO')busOpen(code,teamMsg);saveT();render();setTimeout(()=>sendSt({k:'join'}),600)}
+function joinRoom(code,n){store.set('bdet-role','team');S.room=code;S.n=n;S.stars=0;S.mres=[[],[],[],[]];S.help=false;S.scr='lobby';if(code!=='SOLO')busOpen(code,teamMsg);saveT();render();setTimeout(()=>sendSt({k:'join'}),600)}
 $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;ac();const a=b.dataset.act,i=+b.dataset.i;
  if(a==='pick')return pick(b.dataset.id,b);
  if(a==='unslot'){if(S.done||S.marks[i])return;if(i<S.sel.length){S.sel.splice(i,1);SFX.pop();render()}return}
@@ -5085,18 +5087,18 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='finishall'){S.scr='tend';S.splash=null;SFX.fan();confetti(40);saveT();sendSt({k:'done'});return render()}
  if(a==='begin')return startMission(0);
  if(a==='tojoin'){S.scr='join';return render()}
- if(a==='tohome'){if(S.scr==='host')busClose();S.scr='home';return render()}
+ if(a==='tohome'){if(S.scr==='host')busClose();store.set('bdet-role',null);S.scr='home';return render()}
  if(a==='pickn'){S.n=+b.dataset.n;SFX.pop();return render()}
  if(a==='join'){const c=(S.code||'').trim();if(c.length!==4){toast(L('Type the 4-letter code from the TV.','Nhập mã 4 kí tự trên TV.'),'bad');return}return joinRoom(c,S.n)}
  if(a==='solo')return joinRoom('SOLO',S.n);
- if(a==='resume'){const v=store.get('bdet-team');if(!v)return;Object.assign(S,v);if(S.scr==='m'){newQ();}if(S.room!=='SOLO')busOpen(S.room,teamMsg);render();setTimeout(()=>sendSt(null),600);return}
- if(a==='leave'){if(!S.leaveArm){S.leaveArm=true;renderBoard();setTimeout(()=>{S.leaveArm=false;renderBoard()},3000);return}S.leaveArm=false;busClose();store.set('bdet-team',null);S.scr='home';return render()}
+ if(a==='resume'){const v=store.get('bdet-team');if(!v)return;Object.assign(S,v);store.set('bdet-role','team');if(S.scr==='m'){newQ();}if(S.room!=='SOLO')busOpen(S.room,teamMsg);render();setTimeout(()=>sendSt(null),600);return}
+ if(a==='leave'){if(!S.leaveArm){S.leaveArm=true;renderBoard();setTimeout(()=>{S.leaveArm=false;renderBoard()},3000);return}S.leaveArm=false;busClose();store.set('bdet-team',null);store.set('bdet-role',null);S.scr='home';return render()}
  if(a==='help'){S.help=!S.help;SFX.pop();sendSt(S.help?{k:'help'}:null);toast(S.help?L('Your teacher can see you need help.','Thầy cô đã thấy nhóm cần giúp.'):L('OK!','Được rồi!'),'ok');return renderBoard()}
  if(a==='mute'){SOUND=!SOUND;return S.scr==='host'?renderHost():renderBoard()}
  if(a==='size'){S.size=Math.max(2,Math.min(8,S.size+(+b.dataset.d)));return renderBoard()}
  if(a==='spk'){if(S.spinning)return;S.spinning=true;let n=0;const last=S.spk;const iv=setInterval(()=>{const el=$('#spk');S.spk=1+Math.floor(Math.random()*S.size);if(el)el.textContent='👤 '+S.spk;SFX.tick();if(++n>14){clearInterval(iv);while(S.spk===last&&S.size>1)S.spk=1+Math.floor(Math.random()*S.size);S.spinning=false;SFX.phase();renderBoard()}},90);renderBoard();return}
  /* host */
- if(a==='tohost'){S.scr='host';hostOpen(false);return render()}
+ if(a==='tohost'){store.set('bdet-role','host');S.scr='host';hostOpen(false);return render()}
  if(a==='hstart'){H.startAt=Date.now();store.set(HOSTK,H);busSend({t:'start'});SFX.fan();flashBanner('🚀 '+L('Missions started! Good luck, detectives!','Bắt đầu nhiệm vụ! Chúc các thám tử may mắn!'),'hi','#2b9348');return renderHost()}
  if(a==='hend'){H.showEnd=true;store.set(HOSTK,H);SFX.fan();confetti(40);return renderHost()}
  if(a==='hback'){H.showEnd=false;store.set(HOSTK,H);return renderHost()}
@@ -5111,9 +5113,24 @@ setInterval(()=>{if(!SCR.classList.contains('on'))return;
  if(S.mleft>0){S.mleft--;const c=$('#mclock');if(c){c.textContent='⏱ '+fmt(S.mleft);c.classList.toggle('low',S.mleft<=20)}if(S.mleft===0){SFX.phase();toast(L('Time is up for this mission! Finish this question.','Hết giờ nhiệm vụ! Hoàn thành câu này nhé.'))}}
  if(!S.done&&S.ph<3){S.cd--;if(S.cd<=3&&S.cd>0)SFX.tick();if(S.cd<=0){S.ph++;S.cd=PH[S.ph].t||0;SFX.phase();renderPhase()}else{const c=$('#phase .cd');if(c)c.textContent=S.cd}}},1000);
 document.getElementById('viBtn').addEventListener('click',()=>setTimeout(()=>{VI=document.body.classList.contains('vi-on');if(SCR.classList.contains('on'))render()},0));
-new MutationObserver(()=>{if(SCR.classList.contains('on')){VI=document.body.classList.contains('vi-on');render()}}).observe(SCR,{attributes:true,attributeFilter:['class']});
+let booted=false;function autoResume(){if(booted)return;booted=true;if(S.scr!=='home')return;const role=store.get('bdet-role');
+ if(role==='host'){S.scr='host';hostOpen(false);return}
+ const v=store.get('bdet-team');if(role==='team'&&v&&['m','lobby','tend'].includes(v.scr)){Object.assign(S,v);if(S.scr==='m')newQ();if(S.room!=='SOLO')busOpen(S.room,teamMsg);setTimeout(()=>sendSt(null),800)}}
+new MutationObserver(()=>{if(SCR.classList.contains('on')){VI=document.body.classList.contains('vi-on');autoResume();render()}}).observe(SCR,{attributes:true,attributeFilter:['class']});
 render();
 })();
+</script>
+<script>
+/* ===== reopen where the teacher left off ===== */
+(()=>{const vb=document.getElementById('viBtn');
+ vb.addEventListener('click',()=>setTimeout(()=>{try{localStorage.setItem('scilab-vi',document.body.classList.contains('vi-on')?'1':'0')}catch(_){}},0));
+ try{if(localStorage.getItem('scilab-vi')==='1'&&!document.body.classList.contains('vi-on'))vb.click()}catch(_){}
+ let l=null;try{l=JSON.parse(localStorage.getItem('scilab-last')||'null')}catch(_){}
+ if(!l||!l.id||l.id==='home'||!document.getElementById(l.id))return;
+ try{if(l.lab&&typeof LABS!=='undefined'&&LABS[l.lab]&&l.lab!==cur)setLab(l.lab);go(l.id)}catch(e){return}
+ const b=document.createElement('div');b.id='wb';b.innerHTML='↩ <b>Welcome back!</b> You are where you left off. Tap <b>Science Lab</b> (top left) to see all the labs.<span class="vi">Chào mừng trở lại! Đây là chỗ thầy cô dừng lần trước. Chạm <b>Science Lab</b> (góc trên trái) để xem tất cả bài.</span>';
+ b.style.cssText='position:fixed;left:50%;top:4.2rem;transform:translateX(-50%);z-index:999;background:#12263a;color:#fff;font:800 1.05rem/1.3 Nunito,system-ui,sans-serif;padding:.6rem 1.2rem;border-radius:1rem;box-shadow:0 .5rem 1.5rem rgba(0,0,0,.35);max-width:92vw;text-align:center;transition:opacity .6s';
+ document.body.appendChild(b);setTimeout(()=>{b.style.opacity='0';setTimeout(()=>b.remove(),700)},6000)})();
 </script>
 </body>
 </html>
