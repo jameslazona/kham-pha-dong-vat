@@ -257,8 +257,8 @@ body[data-xst=grip] .xs-grip,body[data-xst=leg] .xs-leg,body[data-xst=react] .xs
 .tabs button[data-go=race]{display:none}
 body[data-lab=matter] .tabs button[data-go=race]{display:inline-block}
 #drum{position:relative}
-#drumHost,#soundHost,#sdetHost,#etHost,#et2Host,#et3Host,#et4Host,#birdsHost,#bdetHost,#mdetHost,#tdyHost,#neutHost,#chemHost{flex:1;min-width:0;display:flex}
-body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sdet] #bar .tabs,body[data-lab=exit] #bar .tabs,body[data-lab=exit2] #bar .tabs,body[data-lab=exit3] #bar .tabs,body[data-lab=exit4] #bar .tabs,body[data-lab=birds] #bar .tabs,body[data-lab=bdet] #bar .tabs,body[data-lab=mdet] #bar .tabs,body[data-lab=tdy] #bar .tabs,body[data-lab=neut] #bar .tabs,body[data-lab=chem] #bar .tabs{display:none}
+#drumHost,#soundHost,#sdetHost,#etHost,#et2Host,#et3Host,#et4Host,#birdsHost,#bdetHost,#mdetHost,#tdyHost,#neutHost,#chemHost,#neu2Host{flex:1;min-width:0;display:flex}
+body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sdet] #bar .tabs,body[data-lab=exit] #bar .tabs,body[data-lab=exit2] #bar .tabs,body[data-lab=exit3] #bar .tabs,body[data-lab=exit4] #bar .tabs,body[data-lab=birds] #bar .tabs,body[data-lab=bdet] #bar .tabs,body[data-lab=mdet] #bar .tabs,body[data-lab=tdy] #bar .tabs,body[data-lab=neut] #bar .tabs,body[data-lab=chem] #bar .tabs,body[data-lab=neu2] #bar .tabs{display:none}
 #race{gap:.8rem;padding:.8rem;position:relative;overflow:hidden;background:linear-gradient(160deg,#e8f1f8,#f7fafc)}
 #rcMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:.55rem;min-height:0}
 #rcSide{width:21rem;flex:none;background:#fff;border-radius:1.1rem;padding:.8rem;box-shadow:0 .15rem .5rem rgba(18,38,58,.08);display:flex;flex-direction:column;gap:.45rem;overflow:auto}
@@ -470,7 +470,7 @@ body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sde
       </div>
     </section>
     <section class="gsec" data-g="7">
-      <h2 class="gh"><span class="gb">Middle School</span><span class="vi inline"> · Trung học cơ sở</span><small>5 activities</small></h2>
+      <h2 class="gh"><span class="gb">Middle School</span><span class="vi inline"> · Trung học cơ sở</span><small>6 activities</small></h2>
       <div class="cards">
       <div class="card">
         <canvas id="thumb3" width="600" height="340"></canvas>
@@ -500,6 +500,11 @@ body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sde
         <h2>Chemical industry and neutralisation<span class="vi">Công nghiệp hóa chất và phản ứng trung hòa</span></h2>
         <button class="go" data-go="neut">Start the lab ➜</button>
         <button class="go" data-go="chem" style="background:#7b2cbf">🏆 Mission Challenge (team tablets) ➜</button>
+      </div>
+      <div class="card">
+        <img class="thumb" src="neut/thumb2.webp" alt="">
+        <h2>Neutralisation Explorer: acids, bases and daily life<span class="vi">Khám phá phản ứng trung hòa: axit, bazơ và đời sống</span></h2>
+        <button class="go" data-go="neu2">Start the lab ➜</button>
       </div>
       </div>
     </section>
@@ -783,6 +788,75 @@ body[data-lab=drum] #bar .tabs,body[data-lab=sound] #bar .tabs,body[data-lab=sde
   <section class="screen" id="tdy"><div id="tdyHost"></div></section>
   <section class="screen" id="neut"><div id="neutHost"></div></section>
   <section class="screen" id="chem"><div id="chemHost"></div></section>
+  <section class="screen" id="neu2"><div id="neu2Host"></div></section>
+<template id="neu2Tpl"><style>
+:host{flex:1;min-width:0;display:flex;font-family:"Nunito","Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;color:#12263a;font-size:clamp(13px,min(1.05vw,1.9vh),24px)}
+*{box-sizing:border-box}button{font:inherit;color:inherit;cursor:pointer}
+.wrap{flex:1;display:flex;flex-direction:column;min-height:0;background:linear-gradient(180deg,#e9f3fb,#f6fbff);position:relative;overflow:hidden}
+.stations{display:flex;gap:.5em;padding:.6em .8em .4em;flex-wrap:wrap;align-items:center}
+.stations button{border:.15em solid #c9d6e3;background:#fff;border-radius:999px;padding:.35em 1em;font-weight:900;display:flex;align-items:center;gap:.4em}
+.stations button.on{background:#12306f;color:#fff;border-color:#12306f}
+.stations button .ok{color:#2b9348}.stations button.on .ok{color:#9ef0b4}
+.stations .sp{flex:1}
+.vi{display:block;font-size:.8em;color:#4b5f7a;font-weight:700;font-style:italic}
+.main{flex:1;min-height:0;display:grid;grid-template-columns:1.35fr 1fr;gap:.8em;padding:0 .8em .8em}
+.bench{position:relative;border-radius:1.2em;overflow:hidden;background:linear-gradient(#dfeaf3 0 62%,#b9c7d3 62% 64%,#8d99a6 64%);box-shadow:inset 0 0 0 .2em #fff,0 .4em 1em rgba(0,0,0,.15);min-height:0}
+.bench svg.scene{position:absolute;inset:0;width:100%;height:100%}
+.panel{background:#fff;border-radius:1.2em;box-shadow:0 .3em 1em rgba(0,0,0,.12);padding:.8em 1em;overflow:auto;display:flex;flex-direction:column;gap:.6em}
+.panel h2{margin:0;font-size:1.45em;line-height:1.1}.panel h2 small{display:block;font-size:.55em;color:#7b2cbf;letter-spacing:.06em}
+.task{background:#f3f0ff;border-radius:.8em;padding:.5em .7em;font-weight:800;font-size:1.05em}
+table.t{border-collapse:collapse;width:100%;font-weight:800;font-size:.95em}
+table.t th{background:#12306f;color:#fff;padding:.3em .4em;font-size:.85em}table.t td{border:1px solid #d5dee8;padding:.25em .4em;text-align:center}
+table.t td.v{cursor:pointer;min-width:3.2em}table.t td.v.sel{outline:.2em solid #f77f00}table.t td.v.good{background:#d8f5e0}table.t td.v.bad{background:#ffd6d6}
+.tw{display:grid;grid-template-columns:repeat(3,1fr);gap:.4em}.tw .sh{font-weight:900;text-align:center;font-size:.9em;border-radius:.5em;padding:.15em;background:#eef3f8}
+.q{border:.15em solid #e3e9f1;border-radius:.9em;padding:.5em .6em}.q b.qq{display:block;font-size:1.05em;margin-bottom:.35em}
+.opts{display:flex;flex-wrap:wrap;gap:.4em}.opts button{border:.15em solid #cfd8e3;background:#f7f9fc;border-radius:.7em;padding:.3em .8em;font-weight:900;display:flex;align-items:center;gap:.35em}
+.opts button.ok{background:#d8f5e0;border-color:#2b9348}.opts button.no{background:#ffe1e1;border-color:#d62828;animation:shake .4s}
+.sw{width:1.4em;height:1.4em;border-radius:50%;display:inline-block;border:.1em solid rgba(0,0,0,.2)}
+.ctrl{display:flex;flex-wrap:wrap;gap:.45em}
+.btn{border:0;border-radius:.8em;padding:.5em 1em;font-weight:900;color:#fff;background:linear-gradient(#36b35a,#23873f);box-shadow:0 .2em 0 #145a27}
+.btn.b{background:linear-gradient(#3d8bfd,#1d5fd6);box-shadow:0 .2em 0 #103d91}.btn.o{background:linear-gradient(#ffb703,#fb8500);box-shadow:0 .2em 0 #b35c00}.btn.g{background:#e3e8f0;color:#12263a;box-shadow:0 .2em 0 #b8c2cf}.btn.p{background:linear-gradient(#9d4edd,#7b2cbf);box-shadow:0 .2em 0 #4a148c}
+.btn:active{transform:translateY(.15em);box-shadow:none}.btn:disabled{opacity:.45}
+.meter{display:flex;align-items:center;gap:.6em;font-weight:900}
+.eq{display:flex;align-items:center;justify-content:center;gap:.4em;flex-wrap:wrap;font-weight:900;font-size:1.05em}
+.eq span{border-radius:.7em;padding:.25em .6em;color:#12263a}
+.scale{display:flex;height:1.3em;border-radius:.4em;overflow:hidden;font-size:.7em;font-weight:900}
+.scale i{flex:1;display:grid;place-items:center;color:#fff;font-style:normal}
+.match{display:grid;grid-template-columns:repeat(2,1fr);gap:.6em}
+.prob{position:relative;border:.2em dashed #c9d6e3;border-radius:1em;overflow:hidden;background:#fff;min-height:9em;display:flex;flex-direction:column}
+.prob img{width:100%;height:6.5em;object-fit:cover}.prob b{padding:.2em .5em;font-size:1em}.prob .slot{margin:.3em;min-height:2.2em;border-radius:.6em;background:#f1f5f9;display:grid;place-items:center;font-weight:900;font-size:.9em;color:#8a96ad;text-align:center;padding:.2em}
+.prob.hot{border-color:#f77f00;border-style:solid}.prob.ok{border-color:#2b9348;border-style:solid}.prob.ok .slot{background:#d8f5e0;color:#14532d}.prob.no{animation:shake .4s}
+.chips{display:flex;flex-wrap:wrap;gap:.45em}.chip{border:.18em solid #12306f;background:#fff;border-radius:.8em;padding:.4em .7em;font-weight:900;touch-action:none;cursor:grab;user-select:none}
+.chip small{display:block;font-weight:700;color:#5c6e80;font-size:.8em}.chip.used{opacity:.25;pointer-events:none}.chip.sel{background:#12306f;color:#fff}.chip.sel small{color:#cfe0ff}
+.ghost{position:fixed;z-index:50;pointer-events:none;transform:translate(-50%,-50%) rotate(-3deg);box-shadow:0 .8em 1.6em rgba(0,0,0,.35)}
+#toast{position:absolute;left:50%;bottom:1.2em;transform:translateX(-50%) translateY(150%);background:#14213d;color:#fff;font-weight:900;padding:.5em 1.2em;border-radius:1em;font-size:1.2em;z-index:9;transition:.3s;opacity:0;pointer-events:none;text-align:center;max-width:90%}
+#toast.on{transform:translateX(-50%);opacity:1}#toast.ok{background:#2b9348}#toast.bad{background:#c1121f}
+.win{background:#e9f9ee;border:.15em solid #2b9348;border-radius:.9em;padding:.5em .7em;font-weight:900}
+.tip{font-size:.9em;color:#5c6e80;font-weight:700}
+.safe{background:#fff7d6;border-radius:.7em;padding:.35em .6em;font-weight:800;font-size:.88em}
+@keyframes shake{20%,60%{transform:translateX(-.35em)}40%,80%{transform:translateX(.35em)}}
+.bub{animation:rise 1.4s linear infinite}@keyframes rise{from{transform:translateY(0);opacity:.9}to{transform:translateY(-60px);opacity:0}}
+.drip{animation:drip .5s linear}@keyframes drip{from{transform:translateY(0)}to{transform:translateY(120px);opacity:0}}
+.steam{animation:steam 2s ease-out infinite}@keyframes steam{from{transform:translateY(0) scale(.6);opacity:.7}to{transform:translateY(-70px) scale(1.4);opacity:0}}
+.cryst{animation:grow .8s ease-out both}@keyframes grow{from{transform:scale(0)}}
+.lab .sm{font-size:.85em}
+.done-badge{position:absolute;top:.6em;right:.6em;background:#2b9348;color:#fff;font-weight:900;border-radius:1em;padding:.2em .8em}
+.tabletpack{cursor:grab;touch-action:none}
+
+.sub{display:flex;gap:.4em;flex-wrap:wrap}.sub button{border:.15em solid #c9d6e3;background:#f7f9fc;border-radius:.7em;padding:.3em .8em;font-weight:900}.sub button.on{background:#0f9aa8;border-color:#0f9aa8;color:#fff}
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:.6em}.bin2{border:.2em dashed #9aa6bb;border-radius:1em;padding:.5em;min-height:5.5em;background:#f8fafc}.bin2{display:flex;flex-wrap:wrap;gap:.3em;align-content:flex-start}.bin2 h4{margin:0 0 .3em;font-size:1em;width:100%}.bin2.hot{border-style:solid;border-color:#f77f00}.bin2 .chip{cursor:default}
+.tiles{display:flex;flex-wrap:wrap;gap:.4em}.tile2{border:.15em solid #12306f;background:#fff;border-radius:.6em;padding:.3em .6em;font-weight:900;cursor:grab;touch-action:none;user-select:none}.tile2.used{opacity:.25;pointer-events:none}.tile2.sel{background:#12306f;color:#fff}
+.eqb{display:flex;flex-wrap:wrap;align-items:center;gap:.35em;font-weight:900;font-size:1.05em;margin:.3em 0}.eqb .sl{min-width:6.5em;min-height:2em;border:.15em dashed #9aa6bb;border-radius:.6em;display:grid;place-items:center;padding:.15em .4em;background:#f8fafc;color:#8a96ad;font-size:.9em}.eqb .sl.ok{border-style:solid;border-color:#2b9348;background:#d8f5e0;color:#14532d}.eqb .sl.hot{border-color:#f77f00}.eqb .sl.no{animation:shake .4s;border-color:#d62828}
+.myth{border-radius:1em;padding:.7em .9em;background:#fff;border:.2em solid #dfe5ef;font-weight:900;font-size:1.15em;box-shadow:0 .25em 0 #cfd7e5}
+.myth .mf{display:flex;gap:.5em;margin-top:.5em}.myth .mf button{flex:1;border:0;border-radius:.8em;padding:.5em;font-weight:900;font-size:1em;color:#fff}.mf .f{background:#2b9348}.mf .m{background:#d62828}
+.mythres{border-radius:.8em;padding:.4em .6em;font-weight:800;font-size:.92em}
+.healthbar{height:1.1em;border-radius:1em;background:#e3e8ef;overflow:hidden}.healthbar i{display:block;height:100%;border-radius:1em;transition:width .5s}
+.flame{animation:fl .5s ease-in-out infinite alternate;transform-origin:center bottom}@keyframes fl{to{transform:scaleY(1.2) translateY(-3px)}}
+.rain2{animation:rf .9s linear infinite}@keyframes rf{from{transform:translateY(-40px)}to{transform:translateY(160px)}}
+.puff{animation:puff 3s ease-out infinite}@keyframes puff{from{transform:translate(0,0) scale(.6);opacity:.85}to{transform:translate(40px,-110px) scale(1.8);opacity:0}}
+.settle{transition:all 2.2s ease}
+.swim{animation:swim 3s ease-in-out infinite alternate}@keyframes swim{to{transform:translateX(40px)}}
+</style><div class="wrap"><div class="stations" id="stations"></div><div class="main"><div class="bench" id="bench"></div><div class="panel" id="panel"></div></div><div id="toast"></div></div></template>
 <template id="chemTpl"><style>
 :host{--ink:#14213d;--teal:#0f4c5c;--pur:#7b2cbf;--yel:#ffd60a;--grn:#2b9348;--red:#d62828;flex:1;min-width:0;height:100%;display:flex;font-family:"Baloo 2","Nunito",ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);font-size:clamp(14px,min(1.3vw,2.3vh),26px)}
 *{box-sizing:border-box}button{font:inherit;cursor:pointer;color:inherit}
@@ -2248,6 +2322,7 @@ function go(id){
   if(id==='race'&&cur!=='matter')return go('home');
   if(id==='race')rcRender();
   if(id==='freezer'&&cur!=='freeze')return go('home');
+  if(id==='neu2'){document.body.dataset.lab='neu2';$('#topic').innerHTML='Neutralisation Explorer<span class="vi inline"> · Khám phá phản ứng trung hòa</span>'}
   if(id==='chem'){document.body.dataset.lab='chem';$('#topic').innerHTML='Chemistry Mission Challenge<span class="vi inline"> · Thử thách nhiệm vụ hóa học</span>'}
   if(id==='neut'){document.body.dataset.lab='neut';$('#topic').innerHTML='Chemical industry and neutralisation<span class="vi inline"> · Công nghiệp hóa chất và phản ứng trung hòa</span>'}
   if(id==='tdy'){document.body.dataset.lab='tdy';$('#topic').innerHTML='Dress the Teddy Bear<span class="vi inline"> · Mặc đồ cho Gấu bông</span>'}
@@ -7085,6 +7160,194 @@ render();
 })();
 </script>
 <script>
+</script>
+<script>
+/* ===== Neutralisation Explorer (Middle School) ===== */
+(()=>{const HOST=document.getElementById('neu2Host'),ROOT=HOST.attachShadow({mode:'open'});ROOT.appendChild(document.getElementById('neu2Tpl').content.cloneNode(true));
+const $=s=>ROOT.querySelector(s),$$=s=>[...ROOT.querySelectorAll(s)];const SCR=document.getElementById('neu2');
+let VI=document.body.classList.contains('vi-on');const L=(e,v)=>VI?v:e,bi=(e,v)=>e+(VI?'<span class="vi">'+v+'</span>':''),B=a=>bi(a[0],a[1]),T=a=>L(a[0],a[1]);
+const P='neut/';
+let AC=null;function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(_){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,t,d,ty,v){if(!ac())return;const o=AC.createOscillator(),g=AC.createGain();o.type=ty||'sine';o.frequency.value=f;const T0=AC.currentTime+t;g.gain.setValueAtTime(0,T0);g.gain.linearRampToValueAtTime(v||.12,T0+.01);g.gain.exponentialRampToValueAtTime(.001,T0+d);o.connect(g);g.connect(AC.destination);o.start(T0);o.stop(T0+d+.05)}
+function noise(d,f,v){if(!ac())return;const n=Math.floor(AC.sampleRate*d),b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*(1-i/n);const s=AC.createBufferSource(),fl=AC.createBiquadFilter(),g=AC.createGain();s.buffer=b;fl.type='bandpass';fl.frequency.value=f;g.gain.value=v;s.connect(fl);fl.connect(g);g.connect(AC.destination);s.start()}
+const SFX={good:()=>[523,659,784,1047].forEach((f,i)=>tone(f,i*.08,.25,'triangle',.14)),bad:()=>{tone(220,0,.18,'sawtooth',.06);tone(180,.14,.22,'sawtooth',.06)},pop:()=>tone(700,0,.06,'sine',.1),fan:()=>[392,523,659,784,1047].forEach((f,i)=>tone(f,i*.11,.3,'triangle',.14)),pour:()=>noise(.7,700,.25),stir:()=>noise(1.2,1800,.12),zap:()=>{tone(900,0,.08,'square',.05);tone(1300,.06,.1,'sine',.08)},hiss:()=>noise(1.5,4000,.15)};
+function toast(m,k){const t=$('#toast');t.innerHTML=m;t.className='on '+(k||'');clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2600)}
+const UIC=[[0,[200,20,30]],[2,[226,40,30]],[3,[240,90,30]],[4,[250,150,20]],[5,[250,210,30]],[6,[180,205,40]],[7,[60,165,70]],[8,[30,160,150]],[9,[30,120,210]],[10,[50,70,180]],[11,[90,50,170]],[12,[110,30,150]],[14,[90,20,120]]];
+function ui(p){p=Math.max(0,Math.min(14,p));for(let i=1;i<UIC.length;i++)if(p<=UIC[i][0]){const[a,ca]=UIC[i-1],[b,cb]=UIC[i],t=(p-a)/(b-a);return 'rgb('+ca.map((c,j)=>Math.round(c+(cb[j]-c)*t)).join(',')+')'}return 'rgb(90,20,120)'}
+const scaleHTML=()=>'<div class="scale">'+Array.from({length:15},(_,i)=>'<i style="background:'+ui(i)+'">'+i+'</i>').join('')+'</div>';
+const DEFS='<defs><linearGradient id="gl" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset=".25" stop-color="#fff" stop-opacity=".08"/><stop offset=".8" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#fff" stop-opacity=".45"/></linearGradient><linearGradient id="liq" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".16"/><stop offset=".4" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient><filter id="sh"><feDropShadow dx="0" dy="6" stdDeviation="5" flood-opacity=".3"/></filter><radialGradient id="sun"><stop offset="0" stop-color="#fff6b0"/><stop offset="1" stop-color="#ffc300"/></radialGradient></defs>';
+/* ---------- state ---------- */
+const SUBS=[{id:'naoh',t:['Sodium hydroxide','Natri hiđroxit'],pw:'#f6f7f8',sol:1,ph:13,look:'pellets'},{id:'cuo',t:['Copper oxide','Đồng oxit'],pw:'#1d1d1d',sol:0,ph:7,look:'powder'},{id:'koh',t:['Potassium hydroxide','Kali hiđroxit'],pw:'#fbfbf6',sol:1,ph:13,look:'pellets'},{id:'feo',t:['Iron oxide (rust)','Sắt oxit (gỉ sắt)'],pw:'#8b3a12',sol:0,ph:7,look:'powder'},{id:'mgoh',t:['Magnesium hydroxide','Magie hiđroxit'],pw:'#ffffff',sol:0,ph:9,look:'powder'}];
+const S0=()=>({st:0,done:[0,0,0,0],s1:{added:[],ind:[],bin:{},ans:{}},s2:{h:8,oh:0,water:0,eq:{},ans:{}},s3:{sub:0,st:{ph:1.2,tabs:0,ok:0},th:{ph:7,hist:[7],hp:100,ev:0,ok:0},ru:{t:0,eq:{}},ans:{}},s4:{spray:0,myth:{},ans:{}}});
+let S;try{S=JSON.parse(localStorage.getItem('neu2-state')||'null')}catch(_){}if(!S||!S.s1)S=S0();
+const save=()=>{try{localStorage.setItem('neu2-state',JSON.stringify(S))}catch(_){}};
+const ST=[{e:'🧂',t:['1 Base or alkali?','1 Bazơ hay kiềm?']},{e:'⚛️',t:['2 Particle reactor','2 Lò phản ứng hạt']},{e:'🫀',t:['3 Body and home','3 Cơ thể và gia đình']},{e:'🌍',t:['4 Planet and myths','4 Trái Đất và lầm tưởng']}];
+function renderTabs(){$('#stations').innerHTML=ST.map((s,i)=>'<button data-st="'+i+'" class="'+(i===S.st?'on':'')+'">'+s.e+' '+T(s.t)+(S.done[i]?' <span class="ok">✓</span>':'')+'</button>').join('')+'<span class="sp"></span><button data-act="reset">↺ '+L('Start again','Làm lại từ đầu')+'</button>'}
+function qHTML(id,store,q,opts,ans){const a=store[id];return '<div class="q"><b class="qq">'+B(q)+'</b><div class="opts">'+opts.map((o,i)=>'<button data-q="'+id+'" data-i="'+i+'" class="'+(a&&a.ok&&i===ans?'ok':a&&a.wrong&&a.wrong.includes(i)?'no':'')+'">'+(o.c?'<span class="sw" style="background:'+o.c+'"></span>':'')+B(o.t)+'</button>').join('')+'</div></div>'}
+function answerQ(store,id,i,ans,after){const a=store[id]||(store[id]={wrong:[]});if(a.ok)return;if(i===ans){a.ok=1;SFX.good();toast('✅ '+L('Correct!','Đúng rồi!'),'ok')}else{a.wrong.push(i);SFX.bad();toast(L('Not quite. Think again!','Chưa đúng. Nghĩ lại nhé!'),'bad')}save();after&&after();render()}
+const okAll=(store,ids)=>ids.every(k=>store[k]&&store[k].ok);
+function finish(i,msg){if(S.done[i])return;S.done[i]=1;save();setTimeout(()=>{SFX.fan();toast('🏅 '+(S.done.every(Boolean)?L('All 4 stations complete! Super scientists!','Hoàn thành cả 4 trạm! Các nhà khoa học xuất sắc!'):msg),'ok');render()},400)}
+/* drag helper */
+function bindDrag(sel,attr,targetSel,targetAttr,onDrop){$$(sel).forEach(c=>{let gh=null,sx=0,sy=0,moved=false;
+ c.onpointerdown=e=>{if(c.classList.contains('used'))return;ac();e.preventDefault();c.setPointerCapture(e.pointerId);sx=e.clientX;sy=e.clientY;moved=false;gh=c.cloneNode(true);gh.classList.add('ghost');ROOT.appendChild(gh);mv(e)};
+ const over=e=>$$(targetSel).find(t=>{const r=t.getBoundingClientRect();return e.clientX>r.left&&e.clientX<r.right&&e.clientY>r.top&&e.clientY<r.bottom});
+ const mv=e=>{if(!gh)return;if(Math.hypot(e.clientX-sx,e.clientY-sy)>8)moved=true;gh.style.left=e.clientX+'px';gh.style.top=e.clientY+'px';$$(targetSel).forEach(t=>t.classList.remove('hot'));const t=over(e);if(t)t.classList.add('hot')};
+ c.onpointermove=mv;c.onpointerup=c.onpointercancel=e=>{if(!gh)return;const t=over(e);gh.remove();gh=null;$$(targetSel).forEach(x=>x.classList.remove('hot'));if(t&&moved)onDrop(c.getAttribute(attr),t.getAttribute(targetAttr));else if(!moved)onDrop(c.getAttribute(attr),null)}})}
+let SEL=null;
+/* ============ Station 1: base or alkali ============ */
+function s1Bench(){const d=S.s1;let s='<svg class="scene" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet">'+DEFS+'<text x="500" y="44" font-size="22" font-weight="900" text-anchor="middle" fill="#12306f" font-family="system-ui">'+L('Each beaker: 100 cm³ of water. Tap a jar to add the base and stir.','Mỗi cốc: 100 cm³ nước. Chạm vào lọ để cho bazơ vào và khuấy.')+'</text>';
+ SUBS.forEach((u,i)=>{const x=110+i*195,add=d.added.includes(u.id),ind=d.ind.includes(u.id),col=ind?ui(u.sol?u.ph:u.ph):'#d6ecff';
+  s+='<g class="jar" data-sub="'+u.id+'" style="cursor:pointer" filter="url(#sh)"><rect x="'+(x-34)+'" y="80" width="68" height="78" rx="10" fill="#fff" fill-opacity=".85" stroke="#9fb3c6" stroke-width="2"/><rect x="'+(x-38)+'" y="70" width="76" height="16" rx="5" fill="#455a64"/><rect x="'+(x-30)+'" y="118" width="60" height="36" rx="6" fill="'+u.pw+'" stroke="#cfd8dc"/>'+(u.look==='pellets'?Array.from({length:6},(_,j)=>'<ellipse cx="'+(x-20+(j%3)*20)+'" cy="'+(128+Math.floor(j/3)*14)+'" rx="7" ry="4" fill="#fff" stroke="#ccd"/>').join(''):'')+'<rect x="'+(x-32)+'" y="92" width="64" height="20" rx="3" fill="#fffbe6"/><text x="'+x+'" y="106" font-size="10" font-weight="900" text-anchor="middle" font-family="system-ui" fill="#12306f">'+T(u.t).split(' (')[0]+'</text></g>';
+  s+='<g><rect x="'+(x-62)+'" y="300" width="124" height="190" rx="10" fill="url(#gl)" stroke="#9fb3c6" stroke-width="3"/>';
+  const clear=!add||u.sol;s+='<rect x="'+(x-58)+'" y="350" width="116" height="136" rx="6" fill="'+col+'" opacity="'+(ind?.85:.55)+'"/>';
+  if(add&&!u.sol)s+='<rect x="'+(x-58)+'" y="350" width="116" height="136" rx="6" fill="'+u.pw+'" opacity="'+(u.id==='mgoh'?.55:.25)+'"/><ellipse cx="'+x+'" cy="478" rx="52" ry="9" fill="'+u.pw+'" opacity=".95"/>'+Array.from({length:14},(_,j)=>'<circle cx="'+(x-48+(j*7.1)%96)+'" cy="'+(470-(j*13)%22)+'" r="3" fill="'+u.pw+'" stroke="rgba(0,0,0,.15)"/>').join('');
+  s+='<rect x="'+(x-58)+'" y="350" width="116" height="136" rx="6" fill="url(#liq)"/></g>';
+  s+='<text x="'+x+'" y="520" font-size="15" font-weight="900" text-anchor="middle" fill="#12306f" font-family="system-ui">'+T(u.t).split(' (')[0]+'</text>';
+  if(add)s+='<text x="'+x+'" y="545" font-size="14" font-weight="900" text-anchor="middle" fill="'+(u.sol?'#2b9348':'#b35c00')+'" font-family="system-ui">'+(u.sol?L('dissolved ✓','đã tan ✓'):L('does not dissolve','không tan'))+'</text>';
+  if(add&&!ind)s+='<g class="indb" data-ind="'+u.id+'" style="cursor:pointer"><rect x="'+(x-55)+'" y="560" width="110" height="34" rx="10" fill="#7b2cbf"/><text x="'+x+'" y="582" font-size="13" font-weight="900" text-anchor="middle" fill="#fff" font-family="system-ui">+ '+L('indicator','chỉ thị')+'</text></g>';
+  if(ind)s+='<text x="'+x+'" y="582" font-size="15" font-weight="900" text-anchor="middle" fill="'+ui(u.ph)+'" font-family="system-ui">pH ≈ '+u.ph+'</text>'});
+ return s+'</svg>'}
+function s1Panel(){const d=S.s1,all=SUBS.every(u=>d.ind.includes(u.id));let h='<h2><small>'+L('STATION 1 · BASE OR ALKALI?','TRẠM 1 · BAZƠ HAY KIỀM?')+'</small>'+bi('Which bases dissolve?','Bazơ nào tan trong nước?')+'</h2>';
+ h+='<div class="task">'+bi('A base neutralises an acid. An alkali is a base that DISSOLVES in water. Test each base, then sort them.','Bazơ trung hòa axit. Kiềm là bazơ TAN trong nước. Thử từng bazơ rồi phân loại.')+'</div>'+scaleHTML();
+ h+='<div class="tip">'+L('Tested','Đã thử')+': '+d.ind.length+' / 5</div>';
+ if(all){h+='<div class="chips">'+SUBS.map(u=>'<div class="chip tile2 '+(d.bin[u.id]?'used':'')+(SEL===u.id?' sel':'')+'" data-s1="'+u.id+'">'+T(u.t)+'</div>').join('')+'</div>';
+  h+='<div class="bins"><div class="bin2" data-bin="alk"><h4>🫗 '+B(['Alkali (soluble base)','Kiềm (bazơ tan)'])+'</h4>'+SUBS.filter(u=>d.bin[u.id]==='alk').map(u=>'<span class="chip">'+T(u.t)+'</span>').join(' ')+'</div><div class="bin2" data-bin="ins"><h4>🪨 '+B(['Insoluble base','Bazơ không tan'])+'</h4>'+SUBS.filter(u=>d.bin[u.id]==='ins').map(u=>'<span class="chip">'+T(u.t)+'</span>').join(' ')+'</div></div>';
+  if(SUBS.every(u=>d.bin[u.id])){h+=qHTML('every',d.ans,['Is every base an alkali?','Có phải mọi bazơ đều là kiềm?'],[{t:['Yes','Đúng']},{t:['No. Some bases do not dissolve.','Không. Có bazơ không tan.']}],1);
+   h+=qHTML('neut',d.ans,['Can an insoluble base, like magnesium hydroxide, still neutralise an acid?','Bazơ không tan, như magie hiđroxit, có trung hòa được axit không?'],[{t:['Yes, all bases neutralise acids','Có, mọi bazơ đều trung hòa axit']},{t:['No, only alkalis can','Không, chỉ kiềm mới làm được']}],0)}}
+ h+='<div class="safe">💡 '+bi('Magnesium hydroxide only dissolves a tiny bit. That is why Milk of Magnesia looks milky.','Magie hiđroxit chỉ tan rất ít. Vì vậy sữa magie trông đục như sữa.')+'</div>';return h}
+function s1Add(id){const d=S.s1;if(d.added.includes(id))return;d.added.push(id);SFX.pour();setTimeout(SFX.stir,500);save();render()}
+function s1Ind(id){const d=S.s1;if(d.ind.includes(id))return;d.ind.push(id);SFX.pop();save();render();if(d.ind.length===5)toast(L('All tested! Now sort them.','Đã thử hết! Giờ phân loại.'),'ok')}
+function s1Sort(id,bin){const u=SUBS.find(x=>x.id===id),ok=(u.sol?'alk':'ins')===bin;if(ok){S.s1.bin[id]=bin;SEL=null;SFX.good();save();render()}else{SFX.bad();toast(u.sol?L('It dissolved, so it is an alkali.','Nó tan, nên nó là kiềm.'):L('It did not dissolve. It is an insoluble base.','Nó không tan. Nó là bazơ không tan.'),'bad')}}
+/* ============ Station 2: particle reactor ============ */
+let PT=[],raf=0;
+function initParticles(){const d=S.s2;PT=[];const rnd=()=>({x:80+Math.random()*840,y:120+Math.random()*380,vx:(Math.random()-.5)*1.6,vy:(Math.random()-.5)*1.6});
+ for(let i=0;i<8;i++)PT.push(Object.assign(rnd(),{k:'Cl'}));for(let i=0;i<d.h;i++)PT.push(Object.assign(rnd(),{k:'H'}));for(let i=0;i<8-d.h+d.oh;i++)PT.push(Object.assign(rnd(),{k:'Na'}));for(let i=0;i<d.oh;i++)PT.push(Object.assign(rnd(),{k:'OH'}));for(let i=0;i<d.water;i++)PT.push(Object.assign(rnd(),{k:'W'}))}
+const s2ph=()=>{const d=S.s2;return d.h>0?Math.max(1,7-d.h*.75):d.oh>0?Math.min(13,7+d.oh*.75):7};
+function s2Bench(){return '<svg class="scene" id="psvg" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet">'+DEFS+'<rect x="40" y="70" width="920" height="470" rx="30" fill="'+ui(s2ph())+'" opacity=".22" id="pbg"/><rect x="40" y="70" width="920" height="470" rx="30" fill="none" stroke="#9fb3c6" stroke-width="4"/><text x="500" y="50" font-size="22" font-weight="900" text-anchor="middle" fill="#12306f" font-family="system-ui">'+L('Zoom in: particles in hydrochloric acid','Phóng to: các hạt trong axit clohiđric')+'</text><g id="plyr"></g><g transform="translate(70 560)" font-family="system-ui" font-size="17" font-weight="900"><circle cx="10" cy="22" r="11" fill="#e63946"/><text x="28" y="28">H⁺ ('+L('acid','axit')+')</text><circle cx="190" cy="22" r="13" fill="#2b9348"/><text x="210" y="28">Cl⁻</text><circle cx="290" cy="22" r="13" fill="#1d6fd6"/><text x="310" y="28">OH⁻ ('+L('base','bazơ')+')</text><circle cx="480" cy="22" r="12" fill="#8e9aaf"/><text x="500" y="28">Na⁺</text><g transform="translate(590 22)"><circle r="11" fill="#e8f4ff" stroke="#1d6fd6" stroke-width="3"/><circle cx="-11" cy="-8" r="6" fill="#fff" stroke="#e63946" stroke-width="2"/><circle cx="11" cy="-8" r="6" fill="#fff" stroke="#e63946" stroke-width="2"/></g><text x="612" y="28">H₂O ('+L('water','nước')+')</text></g></svg>'}
+function drawP(){const g=$('#plyr');if(!g)return;let s='';PT.forEach(p=>{if(p.k==='H')s+='<circle cx="'+p.x+'" cy="'+p.y+'" r="11" fill="#e63946"/><text x="'+p.x+'" y="'+(p.y+5)+'" font-size="12" font-weight="900" text-anchor="middle" fill="#fff" font-family="system-ui">H⁺</text>';
+ if(p.k==='Cl')s+='<circle cx="'+p.x+'" cy="'+p.y+'" r="15" fill="#2b9348"/><text x="'+p.x+'" y="'+(p.y+5)+'" font-size="12" font-weight="900" text-anchor="middle" fill="#fff" font-family="system-ui">Cl⁻</text>';
+ if(p.k==='Na')s+='<circle cx="'+p.x+'" cy="'+p.y+'" r="13" fill="#8e9aaf"/><text x="'+p.x+'" y="'+(p.y+5)+'" font-size="12" font-weight="900" text-anchor="middle" fill="#fff" font-family="system-ui">Na⁺</text>';
+ if(p.k==='OH')s+='<circle cx="'+p.x+'" cy="'+p.y+'" r="15" fill="#1d6fd6"/><text x="'+p.x+'" y="'+(p.y+5)+'" font-size="11" font-weight="900" text-anchor="middle" fill="#fff" font-family="system-ui">OH⁻</text>';
+ if(p.k==='W')s+='<g transform="translate('+p.x+' '+p.y+')"><circle r="13" fill="#e8f4ff" stroke="#1d6fd6" stroke-width="3"/><circle cx="-13" cy="-9" r="7" fill="#fff" stroke="#e63946" stroke-width="2"/><circle cx="13" cy="-9" r="7" fill="#fff" stroke="#e63946" stroke-width="2"/></g>';
+ if(p.k==='flash')s+='<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(30-p.t)+'" fill="#ffd60a" opacity="'+(p.t/30)+'"/>'});g.innerHTML=s}
+function stepP(){if(S.st!==1||!SCR.classList.contains('on')){raf=0;return}
+ PT.forEach(p=>{if(p.k==='flash'){p.t--;return}if(p.target){const dx=p.target.x-p.x,dy=p.target.y-p.y,dd=Math.hypot(dx,dy);if(dd<16){const t=p.target;t.k='W';t.vx=(Math.random()-.5);t.vy=(Math.random()-.5);p.k='dead';PT.push({k:'flash',x:t.x,y:t.y,t:30});SFX.zap();p.target=null;return}p.x+=dx/dd*5;p.y+=dy/dd*5;return}
+  p.x+=p.vx;p.y+=p.vy;if(p.x<70||p.x>930)p.vx*=-1;if(p.y<100||p.y>520)p.vy*=-1});
+ PT=PT.filter(p=>p.k!=='dead'&&!(p.k==='flash'&&p.t<=0));drawP();raf=requestAnimationFrame(stepP)}
+function s2Add(){const d=S.s2;if(d.oh>=4){toast(L('Too much base! The solution is now alkaline.','Quá nhiều bazơ! Dung dịch đã thành kiềm.'),'bad');return}SFX.pour();
+ const x=500,y=110;const na={k:'Na',x,y,vx:(Math.random()-.5)*1.6,vy:1.2},oh={k:'OH',x:x+30,y,vx:(Math.random()-.5)*1.6,vy:1.4};PT.push(na);
+ if(d.h>0){const free=PT.filter(p=>p.k==='H'&&!p.claimed);const h=free.sort((a,b)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y))[0];if(h){h.claimed=1;oh.target=h;h.vx=h.vy=0}d.h--;d.water++}else d.oh++;
+ PT.push(oh);save();updS2();if(d.h===0&&d.oh===0&&!d.neutral){d.neutral=1;save();setTimeout(()=>{SFX.good();toast('🎉 '+L('Neutral! Every H⁺ met an OH⁻ and made water.','Trung tính! Mọi H⁺ gặp OH⁻ tạo thành nước.'),'ok');render()},900)}}
+function updS2(){const bg=$('#pbg');if(bg)bg.setAttribute('fill',ui(s2ph()));const p=$('#panel');if(p){const k=p.scrollTop;p.innerHTML=s2Panel();p.scrollTop=k;bindS2()}}
+const EQ1={a:['acid','axit'],b:['base','bazơ'],s:['salt','muối'],w:['water','nước']};
+const EQ2=[{id:'mg',t:['magnesium hydroxide','magie hiđroxit']},{id:'hcl',t:['hydrochloric acid','axit clohiđric']},{id:'mgcl',t:['magnesium chloride','magie clorua']},{id:'w',t:['water','nước']}];
+const BANK=[{id:'a',t:['acid','axit']},{id:'b',t:['base','bazơ']},{id:'s',t:['salt','muối']},{id:'w',t:['water','nước']},{id:'mg',t:['magnesium hydroxide','magie hiđroxit']},{id:'hcl',t:['hydrochloric acid','axit clohiđric']},{id:'mgcl',t:['magnesium chloride','magie clorua']},{id:'x1',t:['oxygen','oxi']},{id:'x2',t:['sugar','đường']}];
+function slot(e,i){const v=S.s2.eq[e+i];return '<span class="sl '+(v?'ok':'')+'" data-slot="'+e+i+'">'+(v?T(BANK.find(b=>b.id===v).t):'?')+'</span>'}
+function s2Panel(){const d=S.s2,ph=s2ph();let h='<h2><small>'+L('STATION 2 · PARTICLE REACTOR','TRẠM 2 · LÒ PHẢN ỨNG HẠT')+'</small>'+bi('What happens in neutralisation?','Điều gì xảy ra trong phản ứng trung hòa?')+'</h2>';
+ h+='<div class="task">'+bi('Acids have H⁺ particles. Bases have OH⁻. Add the base one scoop at a time and watch H⁺ + OH⁻ make water.','Axit có hạt H⁺. Bazơ có OH⁻. Thêm từng thìa bazơ và xem H⁺ + OH⁻ tạo thành nước.')+'</div>'+scaleHTML();
+ h+='<div class="meter">pH <span style="font-size:2em;color:'+ui(ph)+'">'+ph.toFixed(1)+'</span><span class="sw" style="width:2em;height:2em;background:'+ui(ph)+'"></span><span class="tip">H⁺: '+d.h+' · OH⁻: '+d.oh+' · H₂O: '+d.water+'</span></div>';
+ h+='<div class="ctrl"><button class="btn b" data-act="addbase">🥄 '+L('Add 1 scoop of sodium hydroxide','Thêm 1 thìa natri hiđroxit')+'</button><button class="btn g" data-act="s2reset">↺ '+L('New acid','Axit mới')+'</button></div>';
+ if(d.neutral){h+='<div class="win">'+bi('The Na⁺ and Cl⁻ stay behind. Together they are the SALT (sodium chloride).','Na⁺ và Cl⁻ còn lại. Chúng tạo thành MUỐI (natri clorua).')+'</div>';
+  h+='<div class="q"><b class="qq">'+bi('Build the word equations. Drag the words into the gaps.','Hoàn thành phương trình chữ. Kéo từ vào chỗ trống.')+'</b><div class="eqb">'+slot('e1',0)+' + '+slot('e1',1)+' → '+slot('e1',2)+' + '+slot('e1',3)+'</div><div class="eqb">'+slot('e2',0)+' + '+slot('e2',1)+' → '+slot('e2',2)+' + '+slot('e2',3)+'</div><div class="tiles">'+BANK.map(b=>'<span class="tile2'+(SEL===b.id?' sel':'')+'" data-tile="'+b.id+'">'+T(b.t)+'</span>').join('')+'</div></div>';
+  if(Object.keys(d.eq).length===8)h+=qHTML('prod',d.ans,['Which two products are always made?','Hai sản phẩm nào luôn được tạo ra?'],[{t:['salt and water','muối và nước']},{t:['acid and gas','axit và khí']},{t:['base and sugar','bazơ và đường']}],0)}
+ return h}
+function bindS2(){bindDrag('[data-tile]','data-tile','[data-slot]','data-slot',(id,sl)=>{if(sl==null){SEL=SEL===id?null:id;SFX.pop();updS2();return}s2Place(id,sl)})}
+const ALLOW={e10:['a','b'],e11:['a','b'],e12:['s'],e13:['w'],e20:['mg','hcl'],e21:['mg','hcl'],e22:['mgcl'],e23:['w']};
+function s2Place(id,sl){const d=S.s2;if(d.eq[sl])return;const sib=sl[2]==='0'?sl.slice(0,2)+'1':sl[2]==='1'?sl.slice(0,2)+'0':null;
+ const ok=ALLOW[sl].includes(id)&&!(sib&&d.eq[sib]===id);
+ if(ok){d.eq[sl]=id;SEL=null;SFX.good();save();updS2()}else{SFX.bad();const el=$('[data-slot="'+sl+'"]');if(el){el.classList.remove('no');void el.offsetWidth;el.classList.add('no')}}}
+/* ============ Station 3: body and home ============ */
+const SUB3=[{e:'🫃',t:['Stomach','Dạ dày']},{e:'🦷',t:['Teeth','Răng']},{e:'🔩',t:['Rust','Gỉ sắt']}];
+function s3Bench(){const d=S.s3;let s='<svg class="scene" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet">'+DEFS;
+ if(d.sub===0){const ph=d.st.ph,burn=ph<2.4;s+='<image href="'+P+'stomach.webp" x="60" y="60" width="560" height="420" preserveAspectRatio="xMidYMid slice"/>';
+  s+='<rect x="60" y="60" width="560" height="420" fill="'+ui(ph)+'" opacity=".25"/>';
+  if(burn)s+=Array.from({length:5},(_,i)=>'<path class="flame" d="M'+(250+i*40)+' 110 q-18 -40 0 -70 q18 30 0 70z" fill="#ff7b00" opacity=".9" style="animation-delay:'+(i*.1)+'s"/>').join('')+'<text x="340" y="40" font-size="24" font-weight="900" text-anchor="middle" fill="#d62828" font-family="system-ui">🔥 '+L('HEARTBURN!','Ợ NÓNG!')+'</text>';
+  s+='<g transform="translate(680 120)" filter="url(#sh)"><rect width="260" height="170" rx="18" fill="#263238"/><rect x="18" y="18" width="224" height="86" rx="10" fill="#b9f6ca"/><text x="130" y="80" font-size="52" font-weight="900" text-anchor="middle" font-family="ui-monospace,monospace" fill="#1b3a2a">'+ph.toFixed(1)+'</text><text x="130" y="140" font-size="20" font-weight="900" text-anchor="middle" fill="#fff" font-family="system-ui">'+L('stomach pH','pH dạ dày')+'</text></g>';
+  s+='<g transform="translate(700 340)">'+Array.from({length:d.st.tabs},(_,i)=>'<ellipse cx="'+(i*44)+'" cy="0" rx="20" ry="11" fill="#fff" stroke="#aab"/>').join('')+'</g>'}
+ if(d.sub===1){const th=d.th,hp=th.hp;s+='<image href="'+P+'tooth.webp" x="40" y="60" width="380" height="300" preserveAspectRatio="xMidYMid slice"/>'+(hp<70?'<g opacity="'+((70-hp)/70)+'"><circle cx="200" cy="150" r="14" fill="#6b4b2a"/><circle cx="260" cy="200" r="10" fill="#6b4b2a"/><circle cx="170" cy="230" r="9" fill="#6b4b2a"/></g>':'');
+  s+='<text x="230" y="400" font-size="20" font-weight="900" text-anchor="middle" fill="#12306f" font-family="system-ui">'+L('Tooth enamel','Men răng')+': '+hp+'%</text><rect x="80" y="415" width="300" height="20" rx="10" fill="#e3e8ef"/><rect x="80" y="415" width="'+(3*hp)+'" height="20" rx="10" fill="'+(hp>60?'#2b9348':hp>30?'#f77f00':'#d62828')+'"/>';
+  const gx=470,gy=80,gw=480,gh=300;s+='<rect x="'+gx+'" y="'+gy+'" width="'+gw+'" height="'+gh+'" rx="12" fill="#fff" stroke="#ccd"/><rect x="'+gx+'" y="'+(gy+gh-(5.5-3)/6*gh)+'" width="'+gw+'" height="'+((5.5-3)/6*gh)+'" fill="#ffd6d6" opacity=".7"/><text x="'+(gx+8)+'" y="'+(gy+gh-6)+'" font-size="13" font-weight="900" fill="#c1121f" font-family="system-ui">'+L('danger: pH below 5.5 harms enamel','nguy hiểm: pH dưới 5,5 hại men răng')+'</text>';
+  for(let p=3;p<=9;p++){const y=gy+gh-(p-3)/6*gh;s+='<text x="'+(gx-6)+'" y="'+(y+4)+'" font-size="12" text-anchor="end" font-family="system-ui">'+p+'</text>'}
+  const pts=th.hist.map((p,i)=>(gx+10+i*(gw-20)/Math.max(8,th.hist.length-1))+','+(gy+gh-(p-3)/6*gh)).join(' ');s+='<polyline points="'+pts+'" fill="none" stroke="#12306f" stroke-width="4"/>';
+  s+='<text x="'+(gx+gw/2)+'" y="'+(gy-12)+'" font-size="18" font-weight="900" text-anchor="middle" fill="#12306f" font-family="system-ui">'+L('Mouth pH through the day','pH trong miệng suốt ngày')+'</text>'}
+ if(d.sub===2){const t=d.ru.t;  s+='<clipPath id="rh"><rect x="80" y="60" width="260" height="320"/></clipPath><image href="'+P+'rust.webp" x="80" y="60" width="520" height="320" preserveAspectRatio="xMidYMid slice" clip-path="url(#rh)"/><clipPath id="rc"><rect x="80" y="60" width="260" height="320"/></clipPath><image href="'+P+'rust.webp" x="-180" y="60" width="520" height="320" preserveAspectRatio="xMidYMid slice" clip-path="url(#rc)" opacity="'+(t/100)+'"/>';
+  s+='<rect x="60" y="220" width="300" height="200" rx="14" fill="#cfe8ff" opacity=".45" stroke="#9fb3c6" stroke-width="3"/><text x="210" y="450" font-size="18" font-weight="900" text-anchor="middle" fill="#12306f" font-family="system-ui">'+L('Bath of dilute sulfuric acid','Bể axit sunfuric loãng')+'</text>';
+  if(t>0&&t<100)s+=Array.from({length:10},(_,i)=>'<circle class="bub" cx="'+(120+(i*23)%180)+'" cy="'+(400-(i*17)%60)+'" r="'+(3+i%3)+'" fill="#fff" opacity=".8" style="animation-delay:'+(i*.15)+'s"/>').join('');
+  s+='<text x="700" y="140" font-size="24" font-weight="900" text-anchor="middle" fill="#12306f" font-family="system-ui">'+L('Rust removed','Đã tẩy gỉ')+': '+t+'%</text><rect x="560" y="160" width="280" height="22" rx="11" fill="#e3e8ef"/><rect x="560" y="160" width="'+(2.8*t)+'" height="22" rx="11" fill="#8b3a12"/>'}
+ return s+'</svg>'}
+function s3Panel(){const d=S.s3;let h='<h2><small>'+L('STATION 3 · BODY AND HOME','TRẠM 3 · CƠ THỂ VÀ GIA ĐÌNH')+'</small>'+bi('Neutralisation helps us every day','Phản ứng trung hòa giúp ta mỗi ngày')+'</h2><div class="sub">'+SUB3.map((s,i)=>'<button data-sub="'+i+'" class="'+(d.sub===i?'on':'')+'">'+s.e+' '+T(s.t)+([d.st.ok,d.th.ok,d.ru.ok][i]?' ✓':'')+'</button>').join('')+'</div>';
+ if(d.sub===0){const ph=d.st.ph;h+='<div class="task">'+bi('After a big spicy meal, there is too much stomach acid. Give antacid tablets one at a time until the heartburn stops (pH 2.5 to 4). The stomach still needs some acid to digest food!','Sau bữa ăn cay, dạ dày có quá nhiều axit. Cho uống từng viên kháng axit đến khi hết ợ nóng (pH 2,5 đến 4). Dạ dày vẫn cần một ít axit để tiêu hóa!')+'</div>'+scaleHTML();
+  h+='<div class="ctrl"><button class="btn b" data-act="tab">💊 '+L('Give 1 antacid tablet','Cho 1 viên kháng axit')+'</button><button class="btn g" data-act="stres">↺ '+L('New meal','Bữa ăn mới')+'</button></div>';
+  if(d.st.ok)h+='<div class="win">✅ '+bi('Heartburn gone! The magnesium hydroxide in the antacid neutralised SOME of the acid.','Hết ợ nóng! Magie hiđroxit trong thuốc đã trung hòa MỘT PHẦN axit.')+'</div>';
+  if(ph>5)h+='<div class="safe">⚠️ '+bi('Too many tablets! Now there is not enough acid to digest food. Press New meal.','Quá nhiều viên! Giờ không đủ axit để tiêu hóa thức ăn. Bấm Bữa ăn mới.')+'</div>';
+  h+=qHTML('mg',d.ans,['Which base is in Milk of Magnesia?','Bazơ nào có trong sữa magie?'],[{t:['magnesium hydroxide','magie hiđroxit']},{t:['hydrochloric acid','axit clohiđric']},{t:['vinegar','giấm']}],0)}
+ if(d.sub===1){const th=d.th;h+='<div class="task">'+bi('Sugary food makes acid in your mouth. Plan Teddy’s day! Keep the tooth healthy using toothpaste, which contains a base.','Đồ ngọt tạo axit trong miệng. Lên kế hoạch cho một ngày! Giữ răng khỏe bằng kem đánh răng có chứa bazơ.')+'</div>';
+  h+='<div class="meter">'+L('Mouth pH','pH miệng')+' <span style="font-size:1.8em;color:'+ui(th.ph)+'">'+th.ph.toFixed(1)+'</span> · '+L('events','sự kiện')+' '+th.ev+' / 8</div>';
+  h+=th.ev<8?'<div class="ctrl"><button class="btn o" data-act="mouth" data-k="sweet">🍬 '+L('Eat sweets','Ăn kẹo')+'</button><button class="btn o" data-act="mouth" data-k="cola">🥤 '+L('Drink cola','Uống nước ngọt')+'</button><button class="btn b" data-act="mouth" data-k="brush">🪥 '+L('Brush teeth','Đánh răng')+'</button><button class="btn g" data-act="mouth" data-k="wait">⏳ '+L('Wait an hour','Chờ một giờ')+'</button></div>':'<div class="'+(th.hp>=60?'win':'safe')+'">'+(th.hp>=60?'✅ '+bi('Healthy tooth! The base in toothpaste neutralised the mouth acid.','Răng khỏe! Bazơ trong kem đánh răng đã trung hòa axit trong miệng.'):'⚠️ '+bi('The tooth got damaged. Brush more often after sweets! Try again.','Răng bị hại. Hãy đánh răng thường xuyên sau khi ăn ngọt! Thử lại.'))+'</div><button class="btn g" data-act="mouthres">↺ '+L('New day','Ngày mới')+'</button>';
+  h+=qHTML('tp',d.ans,['Why does toothpaste help?','Vì sao kem đánh răng có ích?'],[{t:['It contains a base that neutralises mouth acid','Nó chứa bazơ trung hòa axit trong miệng']},{t:['It contains sugar','Nó chứa đường']},{t:['It is an acid','Nó là axit']}],0)}
+ if(d.sub===2){const t=d.ru.t;h+='<div class="task">'+bi('Put the rusty bolt in acid. Drag the slider to let time pass. The acid reacts with the rust (iron oxide).','Cho bu lông gỉ vào axit. Kéo thanh trượt để thời gian trôi. Axit phản ứng với gỉ (sắt oxit).')+'</div>';
+  h+='<input type="range" id="rustr" min="0" max="100" value="'+t+'" style="width:100%;accent-color:#8b3a12">';
+  if(t>=100){h+='<div class="q"><b class="qq">'+bi('Complete the word equation:','Hoàn thành phương trình chữ:')+'</b><div class="eqb">'+L('sulfuric acid','axit sunfuric')+' + '+L('iron oxide','sắt oxit')+' → <span class="sl '+(d.ru.eq.p?'ok':'')+'">'+(d.ru.eq.p?L('iron sulfate','sắt sunfat'):'?')+'</span> + '+L('water','nước')+'</div><div class="opts">'+[['iron sulfate','sắt sunfat'],['iron chloride','sắt clorua'],['rust','gỉ sắt']].map((o,i)=>'<button data-ru="'+i+'" class="'+(d.ru.eq.p&&i===0?'ok':'')+'">'+B(o)+'</button>').join('')+'</div></div>'}
+  h+='<div class="safe">⚠️ '+bi('Never use acid on your skin or at home. Only trained adults use rust removers.','Không bao giờ để axit dính da hay dùng ở nhà. Chỉ người lớn được hướng dẫn mới dùng chất tẩy gỉ.')+'</div>'}
+ return h}
+function s3Check(){const d=S.s3;if(d.st.ok&&d.th.ok&&d.ru.ok&&okAll(d.ans,['mg','tp']))finish(2,L('Station 3 complete!','Hoàn thành trạm 3!'))}
+/* ============ Station 4: planet and myths ============ */
+const MYTHS=[{t:['Bee venom is acidic (pH 5.0–5.5).','Nọc ong mật có tính axit (pH 5,0–5,5).'],f:1,why:['Fact. The book gives pH 5.0–5.5.','Đúng. Sách ghi pH 5,0–5,5.']},
+ {t:['Baking soda stops bee-sting pain because it neutralises the venom.','Muối nở hết đau ong đốt vì nó trung hòa nọc.'],f:0,why:['Myth. The pain comes from other substances in the venom, not from the pH.','Lầm tưởng. Cơn đau do các chất khác trong nọc, không phải do pH.']},
+ {t:['Vinegar can neutralise wasp venom.','Giấm trung hòa được nọc ong bắp cày.'],f:0,why:['Myth. Wasp venom is slightly acidic and vinegar is also an acid.','Lầm tưởng. Nọc ong bắp cày hơi axit và giấm cũng là axit.']},
+ {t:['Calcium hydroxide spray can neutralise acidic factory gases.','Phun canxi hiđroxit trung hòa được khí thải có tính axit.'],f:1,why:['Fact. Calcium hydroxide is a base.','Đúng. Canxi hiđroxit là bazơ.']},
+ {t:['Every base dissolves in water.','Mọi bazơ đều tan trong nước.'],f:0,why:['Myth. Only alkalis dissolve. Some bases are insoluble.','Lầm tưởng. Chỉ kiềm mới tan. Có bazơ không tan.']}];
+function s4Bench(){const sp=S.s4.spray,rph=4.2+sp*.021,healthy=rph>=5.6;let s='<svg class="scene" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet">'+DEFS+'<rect width="1000" height="620" fill="'+(healthy?'#bfe4ff':'#b8b4a6')+'"/>';
+ s+='<circle cx="880" cy="80" r="45" fill="url(#sun)" opacity="'+(healthy?1:.5)+'"/>';
+ s+='<rect y="400" width="1000" height="220" fill="'+(healthy?'#6ab04c':'#8a8f5a')+'"/><ellipse cx="760" cy="500" rx="200" ry="55" fill="'+(healthy?'#2a9df4':'#7f8f7a')+'"/>';
+ s+=healthy?'<g class="swim"><path d="M700 500 q20 -14 40 0 q-20 14 -40 0z M740 500 l12 -8 v16z" fill="#ff9f1c"/></g><g class="swim" style="animation-delay:1s"><path d="M780 520 q16 -11 32 0 q-16 11 -32 0z M812 520 l10 -7 v14z" fill="#ff9f1c"/></g>':'<path d="M720 505 q20 -6 40 0 q-20 6 -40 0z" fill="#ccc" transform="rotate(180 740 505)"/>';
+ [[560,330],[880,340]].forEach(([x,y])=>{s+='<rect x="'+(x-8)+'" y="'+y+'" width="16" height="70" fill="#5a3825"/><circle cx="'+x+'" cy="'+(y-10)+'" r="45" fill="'+(healthy?'#2d6a4f':'#9a8b4f')+'"/>'});
+ s+='<rect x="60" y="260" width="320" height="140" fill="#9aa5b1"/><rect x="80" y="290" width="40" height="40" fill="#cfd8dc"/><rect x="140" y="290" width="40" height="40" fill="#cfd8dc"/><rect x="200" y="290" width="40" height="40" fill="#cfd8dc"/>';
+ [[120,120],[200,100],[290,130]].forEach(([x,y])=>{s+='<rect x="'+(x-14)+'" y="'+y+'" width="28" height="'+(260-y)+'" fill="#d62828"/><rect x="'+(x-14)+'" y="'+(y+30)+'" width="28" height="18" fill="#fff"/><rect x="'+(x-14)+'" y="'+(y+80)+'" width="28" height="18" fill="#fff"/>';
+  for(let k=0;k<3;k++)s+='<circle class="puff" cx="'+x+'" cy="'+(y-10)+'" r="22" fill="'+(sp>60?'#ffffff':sp>30?'#d9d9c8':'#b5b08a')+'" style="animation-delay:'+(k)+'s"/>'});
+ if(sp>0)s+='<g opacity="'+(sp/100)+'"><path d="M330 200 q40 -20 80 0" stroke="#fff" stroke-width="6" fill="none" stroke-dasharray="4 8"/><text x="430" y="190" font-size="16" font-weight="900" fill="#12306f" font-family="system-ui">Ca(OH)₂ '+L('spray','phun')+'</text></g>';
+ for(let i=0;i<26;i++)s+='<line class="rain2" x1="'+(420+(i*23)%560)+'" y1="'+(150+(i*37)%120)+'" x2="'+(415+(i*23)%560)+'" y2="'+(170+(i*37)%120)+'" stroke="'+ui(rph)+'" stroke-width="3" style="animation-delay:'+((i%7)*.13)+'s"/>';
+ s+='<g transform="translate(40 450)" filter="url(#sh)"><rect width="250" height="130" rx="16" fill="#263238"/><rect x="14" y="14" width="222" height="66" rx="8" fill="#b9f6ca"/><text x="125" y="62" font-size="40" font-weight="900" text-anchor="middle" font-family="ui-monospace,monospace" fill="#1b3a2a">'+rph.toFixed(1)+'</text><text x="125" y="110" font-size="17" font-weight="900" text-anchor="middle" fill="#fff" font-family="system-ui">'+L('rain pH','pH nước mưa')+'</text></g>';
+ return s+'</svg>'}
+function s4Panel(){const d=S.s4,sp=d.spray,rph=4.2+sp*.021;let h='<h2><small>'+L('STATION 4 · PLANET AND MYTHS','TRẠM 4 · TRÁI ĐẤT VÀ LẦM TƯỞNG')+'</small>'+bi('Stop the acid rain!','Ngăn mưa axit!')+'</h2>';
+ h+='<div class="task">'+bi('The factory releases acidic gases. Turn up the calcium hydroxide spray and watch the rain, the lake and the trees.','Nhà máy thải khí có tính axit. Tăng lượng phun canxi hiđroxit và quan sát mưa, hồ và cây.')+'</div>';
+ h+='<label style="font-weight:900">💨 '+L('Calcium hydroxide spray','Phun canxi hiđroxit')+': '+sp+'%<input type="range" id="sprayr" min="0" max="100" step="5" value="'+sp+'" style="width:100%;accent-color:#0f9aa8"></label>'+scaleHTML();
+ h+=rph>=5.6?'<div class="win">✅ '+bi('Rain pH '+rph.toFixed(1)+': the lake and trees are healthy again.','pH mưa '+rph.toFixed(1)+': hồ và cây khỏe mạnh trở lại.')+'</div>':'<div class="safe">🌧️ '+bi('Rain pH '+rph.toFixed(1)+': acid rain harms lakes, fish and trees.','pH mưa '+rph.toFixed(1)+': mưa axit hại hồ, cá và cây.')+'</div>';
+ h+='<h2 style="font-size:1.2em;margin-top:.3em">🐝 '+bi('Myth or fact?','Lầm tưởng hay sự thật?')+'</h2>';
+ MYTHS.forEach((m,i)=>{const a=d.myth[i];h+='<div class="myth">'+B(m.t)+(a?'<div class="mythres" style="background:'+(a.ok?'#d8f5e0':'#ffe1e1')+';margin-top:.4em">'+(m.f?'✅ ':'❌ ')+B(m.why)+'</div>':'<div class="mf"><button class="f" data-myth="'+i+'" data-v="1">✔ '+L('FACT','SỰ THẬT')+'</button><button class="m" data-myth="'+i+'" data-v="0">✖ '+L('MYTH','LẦM TƯỞNG')+'</button></div>')+'</div>'});
+ h+='<div class="safe">⚠️ '+bi('For stings, follow proper first aid. Do not use kitchen chemicals.','Khi bị đốt, hãy sơ cứu đúng cách. Không dùng hóa chất trong bếp.')+'</div>';return h}
+function s4Check(){const d=S.s4;if(4.2+d.spray*.021>=5.6&&MYTHS.every((_,i)=>d.myth[i]))finish(3,L('Station 4 complete!','Hoàn thành trạm 4!'))}
+/* ---------- render ---------- */
+function render(){renderTabs();const b=$('#bench'),p=$('#panel'),keep=p.scrollTop;
+ if(S.st===0){b.innerHTML=s1Bench();p.innerHTML=s1Panel();bindDrag('[data-s1]','data-s1','[data-bin]','data-bin',(id,bin)=>{if(bin==null){SEL=SEL===id?null:id;SFX.pop();render();return}s1Sort(id,bin)})}
+ if(S.st===1){b.innerHTML=s2Bench();p.innerHTML=s2Panel();bindS2();if(!PT.length)initParticles();drawP();if(!raf)raf=requestAnimationFrame(stepP)}
+ if(S.st===2){b.innerHTML=s3Bench();p.innerHTML=s3Panel();const r=$('#rustr');if(r)r.oninput=()=>{S.s3.ru.t=+r.value;if(+r.value%10===0)SFX.pop();$('#bench').innerHTML=s3Bench();if(S.s3.ru.t>=100&&!p.querySelector('[data-ru]')){save();render()}};if(r)r.onchange=()=>{save();render()}}
+ if(S.st===3){b.innerHTML=s4Bench();p.innerHTML=s4Panel();const r=$('#sprayr');if(r){r.oninput=()=>{S.s4.spray=+r.value;$('#bench').innerHTML=s4Bench();};r.onchange=()=>{SFX.hiss();save();s4Check();render()}}}
+ p.scrollTop=keep;if(S.done[S.st])p.insertAdjacentHTML('afterbegin','<div class="win" style="text-align:center">🏅 '+bi('Station complete!','Đã hoàn thành trạm!')+'</div>')}
+ROOT.addEventListener('click',e=>{ac();const st=e.target.closest('[data-st]');if(st){S.st=+st.dataset.st;SEL=null;save();render();return}
+ const j=e.target.closest('.jar');if(j&&S.st===0)return s1Add(j.dataset.sub);
+ const ib=e.target.closest('.indb');if(ib&&S.st===0)return s1Ind(ib.dataset.ind);
+ const bin=e.target.closest('[data-bin]');if(bin&&SEL&&S.st===0)return s1Sort(SEL,bin.dataset.bin);
+ const sl=e.target.closest('[data-slot]');if(sl&&SEL&&S.st===1)return s2Place(SEL,sl.dataset.slot);
+ const sb=e.target.closest('[data-sub]');if(sb&&S.st===2){S.s3.sub=+sb.dataset.sub;save();return render()}
+ const ru=e.target.closest('[data-ru]');if(ru){if(+ru.dataset.ru===0){S.s3.ru.eq.p=1;S.s3.ru.ok=1;SFX.good();save();s3Check();render()}else{SFX.bad();ru.classList.add('no')}return}
+ const my=e.target.closest('[data-myth]');if(my){const i=+my.dataset.myth,v=+my.dataset.v,ok=v===MYTHS[i].f;S.s4.myth[i]={ok};ok?SFX.good():SFX.bad();save();s4Check();return render()}
+ const q=e.target.closest('[data-q]');if(q){const id=q.dataset.q,i=+q.dataset.i;
+  if(S.st===0)return answerQ(S.s1.ans,id,i,{every:1,neut:0}[id],()=>{if(okAll(S.s1.ans,['every','neut']))finish(0,L('Station 1 complete!','Hoàn thành trạm 1!'))});
+  if(S.st===1)return answerQ(S.s2.ans,id,i,{prod:0}[id],()=>{if(okAll(S.s2.ans,['prod']))finish(1,L('Station 2 complete!','Hoàn thành trạm 2!'))});
+  if(S.st===2)return answerQ(S.s3.ans,id,i,{mg:0,tp:0}[id],s3Check)}
+ const a=e.target.closest('[data-act]');if(!a)return;const act=a.dataset.act;
+ if(act==='addbase')return s2Add();
+ if(act==='s2reset'){S.s2={h:8,oh:0,water:0,eq:S.s2.eq,ans:S.s2.ans,neutral:S.s2.neutral};initParticles();save();return render()}
+ if(act==='tab'){const s=S.s3.st;if(s.ph>5){toast(L('Too many already! Press New meal.','Đã quá nhiều! Bấm Bữa ăn mới.'),'bad');return}s.tabs++;s.ph=Math.round((s.ph+.75)*10)/10;SFX.pop();setTimeout(SFX.stir,100);if(s.ph>=2.5&&s.ph<=4&&!s.ok){s.ok=1;SFX.good()}if(s.ph>5)SFX.bad();save();s3Check();return render()}
+ if(act==='stres'){S.s3.st={ph:1.2,tabs:0,ok:S.s3.st.ok};save();return render()}
+ if(act==='mouth'){const th=S.s3.th;if(th.ev>=8)return;const k=a.dataset.k;th.ph=k==='sweet'?4.6:k==='cola'?4.2:k==='brush'?7.6:Math.min(7,th.ph+1);if(k==='brush')SFX.stir();else SFX.pop();th.ev++;th.hist.push(th.ph);if(th.ph<5.5)th.hp=Math.max(0,th.hp-10);if(th.ev>=8&&th.hp>=60&&!th.ok){th.ok=1;SFX.good()}save();s3Check();return render()}
+ if(act==='mouthres'){S.s3.th={ph:7,hist:[7],hp:100,ev:0,ok:S.s3.th.ok};save();return render()}
+ if(act==='reset'){if(!a.dataset.arm){a.dataset.arm=1;a.textContent=L('Tap again to reset everything','Chạm lần nữa để làm lại tất cả');setTimeout(()=>{if(a.isConnected)renderTabs()},3000);return}S=S0();PT=[];save();return render()}});
+document.getElementById('viBtn').addEventListener('click',()=>setTimeout(()=>{VI=document.body.classList.contains('vi-on');if(SCR.classList.contains('on'))render()},0));
+new MutationObserver(()=>{if(SCR.classList.contains('on')){VI=document.body.classList.contains('vi-on');render()}}).observe(SCR,{attributes:true,attributeFilter:['class']});
+render();
+})();
 </script>
 <script>
 /* ===== home: sort and filter labs by grade ===== */
