@@ -6037,7 +6037,7 @@ function teamMsg(o){if(o.t==='start'&&S.scr==='lobby'){SFX.fan();startMission(0)
 let H=null;const HOSTK='bdet-host';
 function hostOpen(fresh){if(fresh||!H){H=store.get(HOSTK);if(fresh||!H||!H.room){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i=0;i<4;i++)r+=A[Math.floor(Math.random()*A.length)];H={room:r,startAt:null,teams:{},feed:[],intro:120,showEnd:false}}}
  store.set(HOSTK,H);busOpen(H.room,hostMsg);setTimeout(()=>busSend({t:'hello'}),900)}
-function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n,old=H.teams[n]||{};H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
+function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n,old=H.teams[n]||{};if(H.startAt&&o.s&&o.s.scr==='lobby')busSend({t:'start'});H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
  if(o.ev){const e=o.ev,tm=L('Team','Nhóm')+' '+n;let msg='',k='';
   if(e.k==='join'){msg='👋 '+tm+' '+L('joined!','đã vào!');if(H.startAt)busSend({t:'start'})}
   if(e.k==='star'){msg='⭐ '+tm+' '+L('finished','đã xong')+' '+L('Mission','Nhiệm vụ')+' '+(e.m+1)+' · '+L('Q','Câu')+(e.q+1)+' (+1)';k='ok'}
@@ -6067,10 +6067,10 @@ function render(){const w=$('.wrap');w.classList.toggle('host',S.scr==='host');w
  else if(S.scr==='join'){h='<div class="intro">'+hero('LITTLE BIRD <em>DETECTIVES!</em>',L('Join your team','Vào nhóm của em'))+
   '<div class="joinbox"><label>'+B(['1. Type the code on the TV','1. Nhập mã trên TV'])+'</label><input id="code" maxlength="4" autocomplete="off" autocapitalize="characters" value="'+S.code+'" placeholder="ABCD">'+
   '<label>'+B(['2. Choose your team','2. Chọn nhóm của em'])+'</label><div class="tpick">'+[1,2,3,4,5,6].map(n=>'<button class="'+(n===S.n?'on':'')+'" style="--c:'+COLS[n-1]+'" data-act="pickn" data-n="'+n+'">'+n+'</button>').join('')+'</div>'+
-  '<button class="big" data-act="join">🚀 '+L('Join the missions','Vào nhiệm vụ')+'</button><button class="tiny" data-act="solo">'+L('Practise without a code','Luyện tập không cần mã')+'</button> <button class="tiny" data-act="tohome">← '+L('Back','Quay lại')+'</button></div></div>'}
+  '<button class="big" data-act="join">🚀 '+L('Join the missions','Vào nhiệm vụ')+'</button><button class="tiny" data-act="tohome">← '+L('Back','Quay lại')+'</button></div></div>'}
  else if(S.scr==='lobby'){h='<div class="intro" style="text-align:center">'+hero('LITTLE BIRD <em>DETECTIVES!</em>','<em>'+L('Team','Nhóm')+' '+S.n+'</em> '+L('is ready!','đã sẵn sàng!'))+
   '<div class="wait" style="--c:'+tcol()+'"><div class="egg-wob">🥚</div><b>'+(S.room==='SOLO'?B(['Practice mode. Start when you are ready.','Chế độ luyện tập. Bắt đầu khi sẵn sàng.']):B(['Waiting for your teacher to start the missions…','Chờ thầy cô bắt đầu nhiệm vụ…']))+'</b></div>'+LTTS()+CARDS(true)+
-  '<p><button class="big" data-act="begin">'+(S.room==='SOLO'?'🔍 '+L('Start Mission 1','Bắt đầu Nhiệm vụ 1'):L('Start now','Bắt đầu ngay'))+'</button></p></div>'}
+  ''+(S.room==='SOLO'?'<p><button class="big" data-act="begin">🔍 '+L('Start Mission 1','Bắt đầu Nhiệm vụ 1')+'</button></p>':'<p style="font-weight:800;color:#5c6e80">🔒 '+bi('Only your teacher can start the missions. If they have already started, you will join in a moment.','Chỉ thầy cô mới bắt đầu được nhiệm vụ. Nếu nhiệm vụ đã bắt đầu, nhóm em sẽ vào ngay sau đây.')+'</p>')+'</div>'}
  else if(S.scr==='m'){const m=curM(),q=curQ();
   h='<div class="mhead" style="--c:'+m.c+'"><img src="'+P+m.ic+'.webp" alt=""><h2><small>'+L('MISSION','NHIỆM VỤ')+' '+(S.m+1)+' · '+L('QUESTION','CÂU')+' '+(S.q+1)+'/4'+(q.bonus?' · BONUS':'')+'</small>'+B([m.en,m.vi])+'</h2><span class="clock '+(S.mleft<=20?'low':'')+'" id="mclock" style="margin-left:auto">⏱ '+fmt(S.mleft)+'</span><span class="qdots">'+m.qs.map((_,i)=>'<i class="'+(i===S.q?'on':S.mres[S.m][i]==='ok'?'ok':S.mres[S.m][i]?'no':'')+'"></i>').join('')+'</span></div>'+
    '<div class="turnb"><span class="tb" style="--c:'+tcol()+'">'+L('Team','Nhóm')+' '+S.n+'</span>'+stepsHTML()+'</div>'+
@@ -6130,7 +6130,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='go'){S.splash=null;SFX.phase();saveT();return render()}
  if(a==='nextm')return startMission(S.m+1);
  if(a==='finishall'){S.scr='tend';S.splash=null;SFX.fan();confetti(40);saveT();sendSt({k:'done'});return render()}
- if(a==='begin')return startMission(0);
+ if(a==='begin'){if(S.room!=='SOLO')return;return startMission(0)}
  if(a==='tojoin'){S.scr='join';return render()}
  if(a==='tohome'){if(S.scr==='host')busClose();store.set('bdet-role',null);S.scr='home';return render()}
  if(a==='pickn'){S.n=+b.dataset.n;SFX.pop();return render()}
@@ -6151,6 +6151,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='helpok'){const n=+b.dataset.n;if(H.teams[n])H.teams[n].help=false;busSend({t:'helpok',n});store.set(HOSTK,H);return renderHost()}});
 /* ---------- timers ---------- */
 setInterval(()=>{if(!SCR.classList.contains('on'))return;
+ if(S.scr==='lobby'&&S.room&&S.room!=='SOLO'&&Date.now()%5000<1000)sendSt(null);
  if(S.scr==='host'&&H){if(!H.startAt&&H.intro>0){H.intro--;if(H.intro===0){SFX.phase();flashBanner('⏰ '+L('Intro time is up! Press Start.','Hết giờ giới thiệu! Bấm Bắt đầu.'),'hi','#f77f00')}}
   const c=$('#hclock');if(c)c.textContent=H.startAt?'⏱ '+fmt((Date.now()-H.startAt)/1000):L('Intro','Giới thiệu')+' ⏱ '+fmt(H.intro);
   $$('.tile.flashing').forEach(t=>{});if(Date.now()%5000<1000)renderHost();return}
@@ -6236,7 +6237,7 @@ let H=null;const HOSTK='mdet-host';
 function hostOpen(fresh){if(fresh||!H){H=store.get(HOSTK);if(fresh||!H||!H.room){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i=0;i<4;i++)r+=A[Math.floor(Math.random()*A.length)];H={room:r,startAt:null,teams:{},feed:[],intro:120,showEnd:false}}}
  store.set(HOSTK,H);busOpen(H.room,hostMsg);setTimeout(()=>busSend({t:'hello'}),900)}
 const mname=m=>m<4?T([M[m].en,M[m].vi]):T([BONUS.en,BONUS.vi]);
-function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n;H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
+function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n;if(H.startAt&&o.s&&o.s.scr==='lobby')busSend({t:'start'});H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
  if(o.ev){const e=o.ev,tm=L('Team','Nhóm')+' '+n;let msg='',k='';
   if(e.k==='join'){msg='👋 '+tm+' '+L('joined!','đã vào!');if(H.startAt)busSend({t:'start'})}
   const where=e.m!=null?mname(e.m)+' · '+L('object','đồ vật')+' '+((e.i||0)+1):'';
@@ -6297,10 +6298,10 @@ function render(){const w=$('.wrap');w.classList.toggle('host',S.scr==='host');w
  else if(S.scr==='join'){h='<div class="intro">'+hero(TITLE,L('Join your team','Vào nhóm của em'))+
   '<div class="joinbox"><label>'+B(['1. Type the code on the TV','1. Nhập mã trên TV'])+'</label><input id="code" maxlength="4" autocomplete="off" autocapitalize="characters" value="'+S.code+'" placeholder="ABCD">'+
   '<label>'+B(['2. Choose your team','2. Chọn nhóm của em'])+'</label><div class="tpick">'+[1,2,3,4,5,6].map(n=>'<button class="'+(n===S.n?'on':'')+'" style="--c:'+COLS[n-1]+'" data-act="pickn" data-n="'+n+'">'+n+'</button>').join('')+'</div>'+
-  '<button class="big" data-act="join">🚀 '+L('Join the missions','Vào nhiệm vụ')+'</button><button class="tiny" data-act="solo">'+L('Practise without a code','Luyện tập không cần mã')+'</button> <button class="tiny" data-act="tohome">← '+L('Back','Quay lại')+'</button></div></div>'}
+  '<button class="big" data-act="join">🚀 '+L('Join the missions','Vào nhiệm vụ')+'</button><button class="tiny" data-act="tohome">← '+L('Back','Quay lại')+'</button></div></div>'}
  else if(S.scr==='lobby'){h='<div class="intro" style="text-align:center">'+hero(TITLE,'<em>'+L('Team','Nhóm')+' '+S.n+'</em> '+L('is ready!','đã sẵn sàng!'))+
   '<div class="wait" style="--c:'+tcol()+'"><div class="egg-wob">🔍</div><b>'+(S.room==='SOLO'?B(['Practice mode. Start when you are ready.','Chế độ luyện tập. Bắt đầu khi sẵn sàng.']):B(['Waiting for your teacher to start the missions…','Chờ thầy cô bắt đầu nhiệm vụ…']))+'</b></div>'+PSTRIP()+CARDS(true)+
-  '<p><button class="big" data-act="begin">'+(S.room==='SOLO'?'🔍 '+L('Start Mission 1','Bắt đầu Nhiệm vụ 1'):L('Start now','Bắt đầu ngay'))+'</button></p></div>'}
+  ''+(S.room==='SOLO'?'<p><button class="big" data-act="begin">🔍 '+L('Start Mission 1','Bắt đầu Nhiệm vụ 1')+'</button></p>':'<p style="font-weight:800;color:#5c6e80">🔒 '+bi('Only your teacher can start the missions. If they have already started, you will join in a moment.','Chỉ thầy cô mới bắt đầu được nhiệm vụ. Nếu nhiệm vụ đã bắt đầu, nhóm em sẽ vào ngay sau đây.')+'</p>')+'</div>'}
  else if(S.scr==='m')h=S.m<4?missionHTML():bonusHTML();
  else if(S.scr==='tend'){h='<div class="intro" style="text-align:center">'+hero('🏆 '+L('SUPER','GIỎI LẮM,')+' <em>'+L('DETECTIVES!','CÁC THÁM TỬ!')+'</em>',L('Team','Nhóm')+' '+S.n+' '+L('finished every mission!','đã xong tất cả nhiệm vụ!'))+
   '<div class="cert" style="--c:'+tcol()+'"><div class="cs">'+'⭐'.repeat(Math.min(S.pts,13))+'</div><h3>'+S.pts+' / '+MAXP+' '+L('points','điểm')+'</h3><p>'+bi('You tested materials and sorted them: hard or soft, shiny or dull, rough or smooth, flexible or rigid.','Các em đã thử và phân loại vật liệu: cứng hay mềm, sáng bóng hay xỉn màu, nhám hay nhẵn, dễ uốn hay không uốn được.')+'</p></div>'+CARDS()+
@@ -6374,7 +6375,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='bcheck')return bCheck();
  if(a==='bnext'){if(S.br===0){S.br=1;S.bsel=[];S.bmarks={};S.tries=0;S.done=false;S.order=shuf(BONUS.items);saveT();return render()}S.splash='end';SFX.fan();confetti(30);saveT();sendSt({k:'mdone',m:4});return render()}
  if(a==='finishall'){S.scr='tend';S.splash=null;SFX.fan();confetti(40);saveT();sendSt({k:'done'});return render()}
- if(a==='begin')return startMission(0);
+ if(a==='begin'){if(S.room!=='SOLO')return;return startMission(0)}
  if(a==='tojoin'){S.scr='join';return render()}
  if(a==='tohome'){if(S.scr==='host')busClose();store.set('mdet-role',null);S.scr='home';return render()}
  if(a==='pickn'){S.n=+b.dataset.n;SFX.pop();return render()}
@@ -6392,6 +6393,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='hnew'){if(!S.leaveArm){S.leaveArm=true;renderHost();setTimeout(()=>{S.leaveArm=false;if(S.scr==='host')renderHost()},3000);return}S.leaveArm=false;hostOpen(true);return renderHost()}
  if(a==='helpok'){const n=+b.dataset.n;if(H.teams[n])H.teams[n].help=false;busSend({t:'helpok',n});store.set(HOSTK,H);return renderHost()}});
 setInterval(()=>{if(!SCR.classList.contains('on'))return;
+ if(S.scr==='lobby'&&S.room&&S.room!=='SOLO'&&Date.now()%5000<1000)sendSt(null);
  if(S.scr==='host'&&H){if(!H.startAt&&H.intro>0){H.intro--;if(H.intro===0){SFX.phase();flashBanner('⏰ '+L('Intro time is up! Press Start.','Hết giờ giới thiệu! Bấm Bắt đầu.'),'hi','#f77f00')}}
   const c=$('#hclock');if(c){c.textContent=H.startAt?'⏱ '+fmt((Date.now()-H.startAt)/1000):L('Intro','Giới thiệu')+' ⏱ '+fmt(H.intro);c.classList.toggle('low',!H.startAt&&H.intro<=15)}if(Date.now()%5000<1000)renderHost()}},1000);
 document.getElementById('viBtn').addEventListener('click',()=>setTimeout(()=>{VI=document.body.classList.contains('vi-on');if(SCR.classList.contains('on'))render()},0));
@@ -6562,7 +6564,7 @@ function hostOpen(fresh){if(fresh||!H){H=store.get(HOSTK);if(fresh||!H||!H.room)
  store.set(HOSTK,H);busOpen(H.room,hostMsg);setTimeout(()=>busSend({t:'hello'}),900)}
 const mname=m=>m<4?T([M[m].en,M[m].vi]):L('Teddy’s glasses','Kính của Gấu');
 const stname=i=>L(STEPS[i].k.toLowerCase(),STEPS[i].vi.toLowerCase());
-function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n;H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
+function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n;if(H.startAt&&o.s&&o.s.scr==='lobby')busSend({t:'start'});H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
  if(o.ev){const e=o.ev,tm=L('Team','Nhóm')+' '+n;let msg='',k='';
   if(e.k==='join'){msg='👋 '+tm+' '+L('joined!','đã vào!');if(H.startAt)busSend({t:'start'})}
   if(e.k==='ok'){msg='⭐ '+tm+' '+L('finished','đã xong')+' '+mname(e.m)+' · '+(e.st>=0?stname(e.st):L('question','câu hỏi'))+' (+1)';k='ok'}
@@ -6626,10 +6628,10 @@ function render(){const w=$('.wrap');w.classList.toggle('host',S.scr==='host');w
  else if(S.scr==='join'){h='<div class="intro">'+hero(TITLE,L('Join your team','Vào nhóm của em'))+
   '<div class="joinbox"><label>'+B(['1. Type the code on the TV','1. Nhập mã trên TV'])+'</label><input id="code" maxlength="4" autocomplete="off" autocapitalize="characters" value="'+S.code+'" placeholder="ABCD">'+
   '<label>'+B(['2. Choose your team','2. Chọn nhóm của em'])+'</label><div class="tpick">'+[1,2,3,4,5,6].map(n=>'<button class="'+(n===S.n?'on':'')+'" style="--c:'+COLS[n-1]+'" data-act="pickn" data-n="'+n+'">'+n+'</button>').join('')+'</div>'+
-  '<button class="big" data-act="join">🚀 '+L('Join the missions','Vào nhiệm vụ')+'</button><button class="tiny" data-act="solo">'+L('Practise without a code','Luyện tập không cần mã')+'</button> <button class="tiny" data-act="tohome">← '+L('Back','Quay lại')+'</button></div></div>'}
+  '<button class="big" data-act="join">🚀 '+L('Join the missions','Vào nhiệm vụ')+'</button><button class="tiny" data-act="tohome">← '+L('Back','Quay lại')+'</button></div></div>'}
  else if(S.scr==='lobby'){h='<div class="intro" style="text-align:center">'+hero(TITLE,'<em>'+L('Team','Nhóm')+' '+S.n+'</em> '+L('is ready!','đã sẵn sàng!'))+
   '<div class="wait" style="--c:'+tcol()+'"><div class="egg-wob">🧸</div><b>'+(S.room==='SOLO'?B(['Practice mode. Start when you are ready.','Chế độ luyện tập. Bắt đầu khi sẵn sàng.']):B(['Waiting for your teacher to start the missions…','Chờ thầy cô bắt đầu nhiệm vụ…']))+'</b></div>'+PSTRIP()+CARDS(true)+
-  '<p><button class="big" data-act="begin">'+(S.room==='SOLO'?'🧸 '+L('Start Mission 1','Bắt đầu Nhiệm vụ 1'):L('Start now','Bắt đầu ngay'))+'</button></p></div>'}
+  ''+(S.room==='SOLO'?'<p><button class="big" data-act="begin">🧸 '+L('Start Mission 1','Bắt đầu Nhiệm vụ 1')+'</button></p>':'<p style="font-weight:800;color:#5c6e80">🔒 '+bi('Only your teacher can start the missions. If they have already started, you will join in a moment.','Chỉ thầy cô mới bắt đầu được nhiệm vụ. Nếu nhiệm vụ đã bắt đầu, nhóm em sẽ vào ngay sau đây.')+'</p>')+'</div>'}
  else if(S.scr==='m')h=S.m<4?missionHTML():bonusHTML();
  else if(S.scr==='tend'){h='<div class="intro" style="text-align:center">'+hero('🏆 '+L('SUPER','GIỎI LẮM,')+' <em>'+L('DESIGNERS!','CÁC NHÀ THIẾT KẾ!')+'</em>',L('Team','Nhóm')+' '+S.n+' '+L('dressed Teddy for every day!','đã mặc đồ cho Gấu cho mọi ngày!'))+
   '<div class="cert" style="--c:'+tcol()+'"><div class="cs">'+'⭐'.repeat(Math.min(S.pts,16))+'</div><h3>'+S.pts+' / '+MAXP+' '+L('points','điểm')+'</h3><p>'+bi('You chose clothes and materials that keep Teddy comfy, warm, dry and cool.','Các em đã chọn quần áo và vật liệu giúp Gấu thoải mái, ấm áp, khô ráo và mát mẻ.')+'</p></div>'+CARDS()+'<p>'+bi('Look at the TV to see all the teams!','Hãy nhìn lên TV để xem tất cả các nhóm!')+'</p></div>'}
@@ -6692,7 +6694,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='bonus')return startBonus();
  if(a==='bnext'){S.sorter=S.sorter%S.size+1;if(S.bq<3){S.bq++;newStep();saveT();return render()}S.splash='end';SFX.fan();confetti(30);saveT();sendSt({k:'mdone',m:4});return render()}
  if(a==='finishall'){S.scr='tend';S.splash=null;SFX.fan();confetti(40);saveT();sendSt({k:'done'});return render()}
- if(a==='begin')return startMission(0);
+ if(a==='begin'){if(S.room!=='SOLO')return;return startMission(0)}
  if(a==='tojoin'){S.scr='join';return render()}
  if(a==='tohome'){if(S.scr==='host')busClose();store.set('tdy-role',null);S.scr='home';return render()}
  if(a==='pickn'){S.n=+b.dataset.n;SFX.pop();return render()}
@@ -6710,6 +6712,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='hnew'){if(!S.leaveArm){S.leaveArm=true;renderHost();setTimeout(()=>{S.leaveArm=false;if(S.scr==='host')renderHost()},3000);return}S.leaveArm=false;hostOpen(true);return renderHost()}
  if(a==='helpok'){const n=+b.dataset.n;if(H.teams[n])H.teams[n].help=false;busSend({t:'helpok',n});store.set(HOSTK,H);return renderHost()}});
 setInterval(()=>{if(!SCR.classList.contains('on'))return;
+ if(S.scr==='lobby'&&S.room&&S.room!=='SOLO'&&Date.now()%5000<1000)sendSt(null);
  if(S.scr==='host'&&H){if(!H.startAt&&H.intro>0){H.intro--;if(H.intro===0){SFX.phase();flashBanner('⏰ '+L('Intro time is up! Press Start.','Hết giờ giới thiệu! Bấm Bắt đầu.'),'hi','#f77f00')}}
   const c=$('#hclock');if(c){c.textContent=H.startAt?'⏱ '+fmt((Date.now()-H.startAt)/1000):L('Intro','Giới thiệu')+' ⏱ '+fmt(H.intro);c.classList.toggle('low',!H.startAt&&H.intro<=15)}if(Date.now()%5000<1000)renderHost()}},1000);
 document.getElementById('viBtn').addEventListener('click',()=>setTimeout(()=>{VI=document.body.classList.contains('vi-on');if(SCR.classList.contains('on'))render()},0));
@@ -7014,7 +7017,7 @@ function teamMsg(o){if(o.t==='start'&&S.scr==='lobby'){SFX.fan();startMission(0)
 let H=null;const HOSTK='chem2-host';
 function hostOpen(fresh){if(fresh||!H){H=store.get(HOSTK);if(fresh||!H||!H.room){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i=0;i<4;i++)r+=A[Math.floor(Math.random()*A.length)];H={room:r,startAt:null,teams:{},feed:[],intro:120,showEnd:false}}}
  store.set(HOSTK,H);busOpen(H.room,hostMsg);setTimeout(()=>busSend({t:'hello'}),900)}
-function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n,old=H.teams[n]||{};H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
+function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n,old=H.teams[n]||{};if(H.startAt&&o.s&&o.s.scr==='lobby')busSend({t:'start'});H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
  if(o.ev){const e=o.ev,tm=L('Team','Nhóm')+' '+n;let msg='',k='';
   if(e.k==='join'){msg='👋 '+tm+' '+L('joined!','đã vào!');if(H.startAt)busSend({t:'start'})}
   if(e.k==='star'){msg='⭐ '+tm+' '+L('finished','đã xong')+' '+L('Mission','Nhiệm vụ')+' '+(e.m+1)+' · '+L('Q','Câu')+(e.q+1)+' (+1)';k='ok'}
@@ -7044,10 +7047,10 @@ function render(){const w=$('.wrap');w.classList.toggle('host',S.scr==='host');w
  else if(S.scr==='join'){h='<div class="intro">'+hero('CHEMISTRY <em>MISSION CHALLENGE!</em>',L('Join your team','Vào nhóm của em'))+
   '<div class="joinbox"><label>'+B(['1. Type the code on the TV','1. Nhập mã trên TV'])+'</label><input id="code" maxlength="4" autocomplete="off" autocapitalize="characters" value="'+S.code+'" placeholder="ABCD">'+
   '<label>'+B(['2. Choose your team','2. Chọn nhóm của em'])+'</label><div class="tpick">'+[1,2,3,4,5,6].map(n=>'<button class="'+(n===S.n?'on':'')+'" style="--c:'+COLS[n-1]+'" data-act="pickn" data-n="'+n+'">'+n+'</button>').join('')+'</div>'+
-  '<button class="big" data-act="join">🚀 '+L('Join the missions','Vào nhiệm vụ')+'</button><button class="tiny" data-act="solo">'+L('Practise without a code','Luyện tập không cần mã')+'</button> <button class="tiny" data-act="tohome">← '+L('Back','Quay lại')+'</button></div></div>'}
+  '<button class="big" data-act="join">🚀 '+L('Join the missions','Vào nhiệm vụ')+'</button><button class="tiny" data-act="tohome">← '+L('Back','Quay lại')+'</button></div></div>'}
  else if(S.scr==='lobby'){h='<div class="intro" style="text-align:center">'+hero('CHEMISTRY <em>MISSION CHALLENGE!</em>','<em>'+L('Team','Nhóm')+' '+S.n+'</em> '+L('is ready!','đã sẵn sàng!'))+
   '<div class="wait" style="--c:'+tcol()+'"><div class="egg-wob">⚗️</div><b>'+(S.room==='SOLO'?B(['Practice mode. Start when you are ready.','Chế độ luyện tập. Bắt đầu khi sẵn sàng.']):B(['Waiting for your teacher to start the missions…','Chờ thầy cô bắt đầu nhiệm vụ…']))+'</b></div>'+LTTS()+CARDS(true)+
-  '<p><button class="big" data-act="begin">'+(S.room==='SOLO'?'🔍 '+L('Start Mission 1','Bắt đầu Nhiệm vụ 1'):L('Start now','Bắt đầu ngay'))+'</button></p></div>'}
+  ''+(S.room==='SOLO'?'<p><button class="big" data-act="begin">🔍 '+L('Start Mission 1','Bắt đầu Nhiệm vụ 1')+'</button></p>':'<p style="font-weight:800;color:#5c6e80">🔒 '+bi('Only your teacher can start the missions. If they have already started, you will join in a moment.','Chỉ thầy cô mới bắt đầu được nhiệm vụ. Nếu nhiệm vụ đã bắt đầu, nhóm em sẽ vào ngay sau đây.')+'</p>')+'</div>'}
  else if(S.scr==='m'){const m=curM(),q=curQ();
   h='<div class="mhead" style="--c:'+m.c+'"><img src="'+P+m.ic+'.webp" alt=""><h2><small>'+L('MISSION','NHIỆM VỤ')+' '+(S.m+1)+' · '+L('QUESTION','CÂU')+' '+(S.q+1)+'/'+m.qs.length+(q.bonus?' · BONUS':'')+'</small>'+B([m.en,m.vi])+'</h2><span class="clock '+(S.mleft<=20?'low':'')+'" id="mclock" style="margin-left:auto">⏱ '+fmt(S.mleft)+'</span><span class="qdots">'+m.qs.map((_,i)=>'<i class="'+(i===S.q?'on':S.mres[S.m][i]==='ok'?'ok':S.mres[S.m][i]?'no':'')+'"></i>').join('')+'</span></div>'+
    '<div class="turnb"><span class="tb" style="--c:'+tcol()+'">'+L('Team','Nhóm')+' '+S.n+'</span>'+stepsHTML()+'</div>'+
@@ -7107,7 +7110,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='go'){S.splash=null;SFX.phase();saveT();return render()}
  if(a==='nextm')return startMission(S.m+1);
  if(a==='finishall'){S.scr='tend';S.splash=null;SFX.fan();confetti(40);saveT();sendSt({k:'done'});return render()}
- if(a==='begin')return startMission(0);
+ if(a==='begin'){if(S.room!=='SOLO')return;return startMission(0)}
  if(a==='tojoin'){S.scr='join';return render()}
  if(a==='tohome'){if(S.scr==='host')busClose();store.set('chem-role',null);S.scr='home';return render()}
  if(a==='pickn'){S.n=+b.dataset.n;SFX.pop();return render()}
@@ -7128,6 +7131,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='helpok'){const n=+b.dataset.n;if(H.teams[n])H.teams[n].help=false;busSend({t:'helpok',n});store.set(HOSTK,H);return renderHost()}});
 /* ---------- timers ---------- */
 setInterval(()=>{if(!SCR.classList.contains('on'))return;
+ if(S.scr==='lobby'&&S.room&&S.room!=='SOLO'&&Date.now()%5000<1000)sendSt(null);
  if(S.scr==='host'&&H){if(!H.startAt&&H.intro>0){H.intro--;if(H.intro===0){SFX.phase();flashBanner('⏰ '+L('Intro time is up! Press Start.','Hết giờ giới thiệu! Bấm Bắt đầu.'),'hi','#f77f00')}}
   const c=$('#hclock');if(c)c.textContent=H.startAt?'⏱ '+fmt((Date.now()-H.startAt)/1000):L('Intro','Giới thiệu')+' ⏱ '+fmt(H.intro);
   $$('.tile.flashing').forEach(t=>{});if(Date.now()%5000<1000)renderHost();return}
