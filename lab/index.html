@@ -1369,6 +1369,7 @@ svg.eggsv{height:12em;display:block}
 .realg{position:absolute;right:3%;bottom:3%;width:24%;background:#fff;border-radius:.8em;padding:.3em;box-shadow:0 .3em .8em rgba(0,0,0,.25);text-align:center;font-weight:800}.realg img{width:100%;border-radius:.5em;display:block}
 .partlbl{position:absolute;left:3%;top:4%;background:#0f4c5c;color:#fff;font-weight:900;border-radius:1em;padding:.2em .8em;font-size:1.2em}
 .hero .tdmini{height:7em}.intro{font-size:.98em}.role{padding:.5em}.role .rimg{font-size:2.2em}
+.nmgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.35em;width:100%}.nmin{font:inherit;font-weight:800;padding:.35em .5em;border:.12em solid #cdd5e3;border-radius:.5em;min-width:0}.joinbox input.nmin{font-size:1.05em;letter-spacing:0;width:auto;text-transform:none;padding:.35em .5em;text-align:left;border-width:.12em}.nmlist{font-weight:800;font-size:.85em;background:#f4f6fb;border-radius:.6em;padding:.3em .5em;line-height:1.3}.tnames{font-weight:800;font-size:.85em;color:#33415c;margin:.15em 0;line-height:1.25}
 </style><div class="wrap"><div id="stage"></div><aside id="board"></aside><div id="toast"></div></div></template>
 <template id="mdetTpl"><style>
 :host{--ink:#14213d;--teal:#0f4c5c;--pur:#7b2cbf;--yel:#ffd60a;--grn:#2b9348;--red:#d62828;flex:1;min-width:0;height:100%;display:flex;font-family:"Baloo 2","Nunito",ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);font-size:clamp(14px,min(1.3vw,2.3vh),26px)}
@@ -1591,6 +1592,7 @@ svg.eggsv{height:12em;display:block}
 .mo.on{border-color:var(--teal);box-shadow:0 0 0 .3em rgba(15,76,92,.3)}.mo.on:after{content:"✓";position:absolute;top:.3em;right:.3em;width:1.6em;height:1.6em;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:900}
 .mo.ok{border-color:var(--grn)}.mo.no{border-color:var(--red)}.mo.miss{border-color:var(--yel);border-style:dashed}
 .ptsbig{font-size:1.1em;font-weight:900;background:#fff;border-radius:2em;padding:.2em .8em;box-shadow:0 .15em .4em rgba(0,0,0,.12)}
+.nmgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.35em;width:100%}.nmin{font:inherit;font-weight:800;padding:.35em .5em;border:.12em solid #cdd5e3;border-radius:.5em;min-width:0}.joinbox input.nmin{font-size:1.05em;letter-spacing:0;width:auto;text-transform:none;padding:.35em .5em;text-align:left;border-width:.12em}.nmlist{font-weight:800;font-size:.85em;background:#f4f6fb;border-radius:.6em;padding:.3em .5em;line-height:1.3}.tnames{font-weight:800;font-size:.85em;color:#33415c;margin:.15em 0;line-height:1.25}
 </style><div class="wrap"><div id="stage"></div><aside id="board"></aside><div id="toast"></div></div></template>
 <template id="bdetTpl"><style>
 :host{--ink:#14213d;--teal:#0f4c5c;--pur:#7b2cbf;--yel:#ffd60a;--grn:#2b9348;--red:#d62828;flex:1;min-width:0;height:100%;display:flex;font-family:"Baloo 2","Nunito",ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);font-size:clamp(13px,1.08vw,24px)}
@@ -1769,6 +1771,7 @@ svg.eggsv{height:12em;display:block}
 .flash.ok{font-size:1.7em;top:12%}.flash.help{background:#c1121f;color:#fff}
 @keyframes flashin{0%{opacity:0;transform:translateX(-50%) scale(.5)}10%{opacity:1;transform:translateX(-50%) scale(1.08)}18%{transform:translateX(-50%) scale(1)}85%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(-1em)}}
 .hint{margin-top:.6em}
+.nmgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.35em;width:100%}.nmin{font:inherit;font-weight:800;padding:.35em .5em;border:.12em solid #cdd5e3;border-radius:.5em;min-width:0}.joinbox input.nmin{font-size:1.05em;letter-spacing:0;width:auto;text-transform:none;padding:.35em .5em;text-align:left;border-width:.12em}.nmlist{font-weight:800;font-size:.85em;background:#f4f6fb;border-radius:.6em;padding:.3em .5em;line-height:1.3}.tnames{font-weight:800;font-size:.85em;color:#33415c;margin:.15em 0;line-height:1.25}
 </style><div class="wrap"><div id="stage"></div><aside id="board"></aside><div id="toast"></div></div></template>
 
 <template id="birdsTpl"><style>:host{--navy:#12306f;--ink:#12263a;--yel:#ffd23f;--red:#d7261e;--blue:#1d5fd6;--green:#24963f;flex:1;min-width:0;height:100%;display:flex;font-family:"Nunito","Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:#e9f1f8;-webkit-user-select:none;user-select:none;touch-action:manipulation}
@@ -6120,10 +6123,14 @@ function busSend(o){if(!BUS.topic)return;o.mid=Math.random().toString(36).slice(
 function netDot(){const d=$('#net');if(d){d.className='net '+(BUS.state==='on'?'on':'off');d.textContent=BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…')}}
 const netHTML=()=>'<span id="net" class="net '+(BUS.state==='on'?'on':'off')+'">'+(BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…'))+'</span>';
 /* ---------- team state ---------- */
-const S={scr:'home',room:'',n:1,stars:0,m:0,q:0,ph:0,cd:5,tries:0,done:false,res:null,sel:[],lab:{},marks:{},opts:null,splash:null,mleft:150,mres:[[],[],[],[]],spk:'?',spinning:false,size:5,help:false,code:'',leaveArm:false};
+const S={scr:'home',room:'',n:1,stars:0,m:0,q:0,ph:0,cd:5,tries:0,done:false,res:null,sel:[],lab:{},marks:{},opts:null,splash:null,mleft:150,mres:[[],[],[],[]],spk:'?',spinning:false,size:5,help:false,code:'',leaveArm:false,names:[]};
+const esc=t=>String(t).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const NM=()=>(S.names||[]).filter(x=>x&&x.trim());const who=n=>NM()[n-1]?esc(NM()[n-1]):n;
+function namesHTML(){const v=(S.names||[]).concat(Array(6).fill('')).slice(0,6);return '<div class="nmgrid">'+v.map((x,i)=>'<input class="nmin" data-ni="'+i+'" maxlength="20" placeholder="'+L('Student','Học sinh')+' '+(i+1)+'" value="'+esc(x)+'">').join('')+'</div>'}
+function bindNames(){$$('.nmin').forEach(el=>el.oninput=()=>{const a=(S.names||[]).concat(Array(6).fill('')).slice(0,6);a[+el.dataset.ni]=el.value;S.names=a;if(NM().length)S.size=Math.max(2,NM().length);saveT()})}
 const tcol=()=>COLS[(S.n-1)%COLS.length];
-function saveT(){store.set('bdet-team',{scr:S.scr,room:S.room,n:S.n,stars:S.stars,m:S.m,q:S.q,mres:S.mres,splash:S.splash,size:S.size,mleft:S.mleft})}
-function status(){return {stars:S.stars,m:S.m,q:S.q,res:S.mres,scr:S.scr,help:S.help,mleft:S.mleft}}
+function saveT(){store.set('bdet-team',{scr:S.scr,room:S.room,n:S.n,stars:S.stars,m:S.m,q:S.q,mres:S.mres,splash:S.splash,size:S.size,mleft:S.mleft,names:S.names})}
+function status(){return {stars:S.stars,m:S.m,q:S.q,res:S.mres,scr:S.scr,help:S.help,mleft:S.mleft,names:NM()}}
 function sendSt(ev){if(S.room==='SOLO')return;busSend({t:'st',n:S.n,s:status(),ev:ev||null})}
 function teamMsg(o){if(o.t==='start'&&S.scr==='lobby'){SFX.fan();startMission(0);setTimeout(()=>sendSt(null),500)}
  if(o.t==='hello')sendSt(null);
@@ -6145,9 +6152,9 @@ function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n,old=H.teams[n]||{};if(H
 function flashBanner(msg,k,c){const w=$('.wrap');const b=document.createElement('div');b.className='flash '+k;b.style.setProperty('--c',c||'#14213d');b.innerHTML=msg;const k2=$$('.flash').length;b.style.marginTop=(k2*4.2)+'em';w.appendChild(b);setTimeout(()=>b.remove(),3200)}
 /* ---------- render ---------- */
 function teamPanel(){const c=tcol();const prog=M.map((m,i)=>'<div class="mp" style="--c:'+m.c+'"><img src="'+P+m.ic+'.webp" alt=""><span>'+[0,1,2,3].map(j=>{const r=S.mres[i][j];return '<i class="'+(r==='ok'?'ok':r?'no':(S.scr==='m'&&i===S.m&&j===S.q?'on':''))+'"></i>'}).join('')+'</span></div>').join('');
- return '<div class="tbadge" style="--c:'+c+'"><span class="dot">'+S.n+'</span><span><b>'+L('Team','Nhóm')+' '+S.n+'</b>'+(S.room==='SOLO'?'<small>'+L('Practice','Luyện tập')+'</small>':'<small>'+L('Room','Phòng')+' '+S.room+' '+netHTML()+'</small>')+'</span></div>'+
+ return '<div class="tbadge" style="--c:'+c+'"><span class="dot">'+S.n+'</span><span><b>'+L('Team','Nhóm')+' '+S.n+'</b>'+(S.room==='SOLO'?'<small>'+L('Practice','Luyện tập')+'</small>':'<small>'+L('Room','Phòng')+' '+S.room+' '+netHTML()+'</small>')+'</span></div>'+(NM().length?'<div class="nmlist">👥 '+NM().map(esc).join(' · ')+'</div>':'')+''+
  '<div class="bigstars" id="bigstars">⭐ '+S.stars+'<small>'+L('stars','sao')+'</small></div><div class="mps">'+prog+'</div>'+
- '<div class="speaker"><b>'+L('Who speaks for your team?','Ai nói cho nhóm?')+'</b><div class="num '+(S.spinning?'spin':'')+'" id="spk">'+(S.spk==='?'?'🎲':'👤 '+S.spk)+'</div><div style="font-size:.8em;font-weight:700;margin-bottom:.3em">'+(S.spk==='?'?L('Everyone gets a turn!','Ai cũng có lượt!'):L('Student number ','Học sinh số ')+S.spk)+'</div><button data-act="spk">🎲 '+L('Pick a speaker','Chọn người nói')+'</button><div class="sz">'+L('Students','Số HS')+': <button class="tiny" data-act="size" data-d="-1">−</button> <b>'+S.size+'</b> <button class="tiny" data-act="size" data-d="1">+</button></div></div>'+
+ '<div class="speaker"><b>'+L('Who speaks for your team?','Ai nói cho nhóm?')+'</b><div class="num '+(S.spinning?'spin':'')+'" id="spk">'+(S.spk==='?'?'🎲':'👤 '+who(S.spk))+'</div><div style="font-size:.8em;font-weight:700;margin-bottom:.3em">'+(S.spk==='?'?L('Everyone gets a turn!','Ai cũng có lượt!'):NM()[S.spk-1]?L('It is your turn to speak!','Đến lượt em nói!'):L('Student number ','Học sinh số ')+S.spk)+'</div><button data-act="spk">🎲 '+L('Pick a speaker','Chọn người nói')+'</button><div class="sz">'+L('Students','Số HS')+': <button class="tiny" data-act="size" data-d="-1">−</button> <b>'+S.size+'</b> <button class="tiny" data-act="size" data-d="1">+</button></div></div>'+
  (S.room!=='SOLO'?'<button class="helpb '+(S.help?'on':'')+'" data-act="help">🙋 '+(S.help?L('Teacher is called…','Đã gọi thầy cô…'):L('Ask the teacher','Gọi thầy cô'))+'</button>':'')+
  '<div class="toolbar"><button class="tiny" data-act="mute">'+(SOUND?'🔊':'🔇')+'</button><button class="tiny" data-act="leave">'+(S.leaveArm?L('Tap again to leave','Chạm lần nữa để thoát'):'🚪 '+L('Leave','Thoát'))+'</button></div>'}
 function renderBoard(){const b=$('#board');if(!b)return;b.innerHTML=['m','lobby','tend'].includes(S.scr)?teamPanel():''}
@@ -6161,10 +6168,10 @@ function render(){const w=$('.wrap');w.classList.toggle('host',S.scr==='host');w
   (saved&&['m','lobby','tend'].includes(saved.scr)?'<p style="text-align:center"><button class="big alt" data-act="resume">↩ '+L('Continue as Team','Tiếp tục là Nhóm')+' '+saved.n+'</button></p>':'')+'</div>'}
  else if(S.scr==='join'){h='<div class="intro">'+hero('LITTLE BIRD <em>DETECTIVES!</em>',L('Join your team','Vào nhóm của em'))+
   '<div class="joinbox"><label>'+B(['1. Type the code on the TV','1. Nhập mã trên TV'])+'</label><input id="code" maxlength="4" autocomplete="off" autocapitalize="characters" value="'+S.code+'" placeholder="ABCD">'+
-  '<label>'+B(['2. Choose your team','2. Chọn nhóm của em'])+'</label><div class="tpick">'+[1,2,3,4,5,6].map(n=>'<button class="'+(n===S.n?'on':'')+'" style="--c:'+COLS[n-1]+'" data-act="pickn" data-n="'+n+'">'+n+'</button>').join('')+'</div>'+
+  '<label>'+B(['2. Choose your team','2. Chọn nhóm của em'])+'</label><div class="tpick">'+[1,2,3,4,5,6].map(n=>'<button class="'+(n===S.n?'on':'')+'" style="--c:'+COLS[n-1]+'" data-act="pickn" data-n="'+n+'">'+n+'</button>').join('')+'</div><label>'+B(['3. Write your names (optional)','3. Viết tên các em (không bắt buộc)'])+'</label>'+namesHTML()+
   '<button class="big" data-act="join">🚀 '+L('Join the missions','Vào nhiệm vụ')+'</button><button class="tiny" data-act="tohome">← '+L('Back','Quay lại')+'</button></div></div>'}
  else if(S.scr==='lobby'){h='<div class="intro" style="text-align:center">'+hero('LITTLE BIRD <em>DETECTIVES!</em>','<em>'+L('Team','Nhóm')+' '+S.n+'</em> '+L('is ready!','đã sẵn sàng!'))+
-  '<div class="wait" style="--c:'+tcol()+'"><div class="egg-wob">🥚</div><b>'+(S.room==='SOLO'?B(['Practice mode. Start when you are ready.','Chế độ luyện tập. Bắt đầu khi sẵn sàng.']):B(['Waiting for your teacher to start the missions…','Chờ thầy cô bắt đầu nhiệm vụ…']))+'</b></div>'+LTTS()+CARDS(true)+
+  '<div class="wait" style="--c:'+tcol()+'"><div style="font-weight:900;margin-bottom:.3em">✏️ '+L('Our names','Tên các thành viên')+'</div>'+namesHTML()+'<button class="tiny" data-act="savenames" style="margin:.3em 0">💾 '+L('Save names','Lưu tên')+'</button><div class="egg-wob">🥚</div><b>'+(S.room==='SOLO'?B(['Practice mode. Start when you are ready.','Chế độ luyện tập. Bắt đầu khi sẵn sàng.']):B(['Waiting for your teacher to start the missions…','Chờ thầy cô bắt đầu nhiệm vụ…']))+'</b></div>'+LTTS()+CARDS(true)+
   ''+(S.room==='SOLO'?'<p><button class="big" data-act="begin">🔍 '+L('Start Mission 1','Bắt đầu Nhiệm vụ 1')+'</button></p>':'<p style="font-weight:800;color:#5c6e80">🔒 '+bi('Only your teacher can start the missions. If they have already started, you will join in a moment.','Chỉ thầy cô mới bắt đầu được nhiệm vụ. Nếu nhiệm vụ đã bắt đầu, nhóm em sẽ vào ngay sau đây.')+'</p>')+'</div>'}
  else if(S.scr==='m'){const m=curM(),q=curQ();
   h='<div class="mhead" style="--c:'+m.c+'"><img src="'+P+m.ic+'.webp" alt=""><h2><small>'+L('MISSION','NHIỆM VỤ')+' '+(S.m+1)+' · '+L('QUESTION','CÂU')+' '+(S.q+1)+'/4'+(q.bonus?' · BONUS':'')+'</small>'+B([m.en,m.vi])+'</h2><span class="clock '+(S.mleft<=20?'low':'')+'" id="mclock" style="margin-left:auto">⏱ '+fmt(S.mleft)+'</span><span class="qdots">'+m.qs.map((_,i)=>'<i class="'+(i===S.q?'on':S.mres[S.m][i]==='ok'?'ok':S.mres[S.m][i]?'no':'')+'"></i>').join('')+'</span></div>'+
@@ -6173,16 +6180,16 @@ function render(){const w=$('.wrap');w.classList.toggle('host',S.scr==='host');w
   if(S.splash==='start')h+='<div class="ov"><div class="sp" style="--c:'+m.c+'"><span class="tag">'+L('MISSION','NHIỆM VỤ')+' '+(S.m+1)+'</span><h2>'+B([m.en,m.vi])+'</h2><div class="row"><img class="ic" src="'+P+m.ic+'.webp" alt=""><img class="ph" src="'+P+m.ph+'.webp" alt=""></div><p>'+bi('4 questions. Work together. About 2½ minutes.','4 câu hỏi. Cùng nhau làm. Khoảng 2 phút rưỡi.')+'</p><div class="learn">🎯 '+B(m.learn)+'</div><p><button class="big" data-act="go">'+L('Go, detectives!','Bắt đầu nào, các thám tử!')+' ➜</button></p></div></div>';
   if(S.splash==='end'){const got=S.mres[S.m].filter(x=>x==='ok').length;h+='<div class="ov"><div class="sp" style="--c:'+m.c+'"><span class="tag">'+L('MISSION','NHIỆM VỤ')+' '+(S.m+1)+' '+L('COMPLETE!','HOÀN THÀNH!')+'</span><h2>'+'⭐'.repeat(got)+(got<4?'<span style="opacity:.25">'+'⭐'.repeat(4-got)+'</span>':'')+'</h2><p>'+bi('Stars in this mission: '+got+' of 4','Số sao trong nhiệm vụ này: '+got+'/4')+'</p><div class="learn">🎯 '+B(m.learn)+'</div><p>'+(S.m<3?'<button class="big" data-act="nextm">'+L('Mission','Nhiệm vụ')+' '+(S.m+2)+': '+T([M[S.m+1].en,M[S.m+1].vi])+' ➜</button>':'<button class="big alt" data-act="finishall">🏆 '+L('See our stars','Xem số sao của nhóm')+'</button>')+'</p></div></div>'}}
  else if(S.scr==='tend'){h='<div class="intro" style="text-align:center">'+hero('🏆 '+L('GREAT','GIỎI LẮM,')+' <em>'+L('DETECTIVES!','CÁC THÁM TỬ!')+'</em>',L('Team','Nhóm')+' '+S.n+' '+L('finished all 4 missions!','đã xong cả 4 nhiệm vụ!'))+
-  '<div class="cert" style="--c:'+tcol()+'"><div class="cs">'+'⭐'.repeat(Math.min(S.stars,16))+'</div><h3>'+S.stars+' / 16 '+L('stars','sao')+'</h3><p>'+bi('You compared eggs, measured them, put hatching in order and named the duck family.','Các em đã so sánh trứng, đo trứng, sắp xếp quá trình nở và gọi tên gia đình vịt.')+'</p></div>'+CARDS()+
+  '<div class="cert" style="--c:'+tcol()+'">'+(NM().length?'<div style="font-weight:900;font-size:1.2em">'+NM().map(esc).join(' · ')+'</div>':'')+'<div class="cs">'+'⭐'.repeat(Math.min(S.stars,16))+'</div><h3>'+S.stars+' / 16 '+L('stars','sao')+'</h3><p>'+bi('You compared eggs, measured them, put hatching in order and named the duck family.','Các em đã so sánh trứng, đo trứng, sắp xếp quá trình nở và gọi tên gia đình vịt.')+'</p></div>'+CARDS()+
   '<p>'+bi('Look at the TV to see all the teams!','Hãy nhìn lên TV để xem tất cả các nhóm!')+'</p></div>'}
  else if(S.scr==='host'){st.innerHTML='';return renderHost()}
- st.innerHTML=h;if(S.scr==='join'){const c=$('#code');if(c){c.oninput=()=>{c.value=c.value.toUpperCase().replace(/[^A-Z0-9]/g,'');S.code=c.value}}}}
+ st.innerHTML=h;if(S.scr==='join'||S.scr==='lobby')bindNames();if(S.scr==='join'){const c=$('#code');if(c){c.oninput=()=>{c.value=c.value.toUpperCase().replace(/[^A-Z0-9]/g,'');S.code=c.value}}}}
 function tileHTML(n){const t=H.teams[n],c=COLS[(n-1)%COLS.length];
  if(!t)return '<div class="tile off" style="--c:'+c+'"><div class="th"><span class="dot">'+n+'</span>'+L('Team','Nhóm')+' '+n+'</div><div class="twait">'+L('Not joined yet','Chưa vào')+'</div></div>';
  const fin=t.scr==='tend',fl=Date.now()-(t.flash||0)<2500;const where=fin?'🏆 '+L('All missions done!','Xong tất cả nhiệm vụ!'):t.scr==='lobby'?'⏳ '+L('Ready, waiting','Sẵn sàng, đang chờ'):'<img src="'+P+M[t.m].ic+'.webp" alt="">'+((t.res[t.m]||[]).length>=4?L('Mission','Nhiệm vụ')+' '+(t.m+1)+' ✓ '+L('done','xong'):L('Mission','Nhiệm vụ')+' '+(t.m+1)+' · '+L('Q','Câu')+' '+((t.res[t.m]||[]).length+1)+'/4');
  return '<div class="tile '+(fl?'flashing':'')+(t.help?' help':'')+(fin?' fin':'')+'" style="--c:'+c+'"><div class="th"><span class="dot">'+n+'</span>'+L('Team','Nhóm')+' '+n+'<span class="tst">⭐ '+t.stars+'</span></div>'+
   (t.help?'<button class="helpack" data-act="helpok" data-n="'+n+'">🙋 '+L('NEEDS HELP — tap when helped','CẦN GIÚP — chạm khi đã giúp')+'</button>':'')+
-  '<div class="where">'+where+'</div><div class="tprog">'+M.map((m,i)=>'<div class="tr"><img src="'+P+m.ic+'.webp" alt="">'+[0,1,2,3].map(j=>{const r=(t.res[i]||[])[j];return '<i class="'+(r==='ok'?'ok':r?'no':'')+'">'+(r==='ok'?'⭐':r?'✗':'')+'</i>'}).join('')+'</div>').join('')+'</div></div>'}
+  (t.names&&t.names.length?'<div class="tnames">👥 '+t.names.map(esc).join(', ')+'</div>':'')+'<div class="where">'+where+'</div><div class="tprog">'+M.map((m,i)=>'<div class="tr"><img src="'+P+m.ic+'.webp" alt="">'+[0,1,2,3].map(j=>{const r=(t.res[i]||[])[j];return '<i class="'+(r==='ok'?'ok':r?'no':'')+'">'+(r==='ok'?'⭐':r?'✗':'')+'</i>'}).join('')+'</div>').join('')+'</div></div>'}
 function renderHost(){if(!H)return;const st=$('#stage');const ns=Object.keys(H.teams).map(Number),maxN=Math.max(4,...ns,0);const tiles=Array.from({length:Math.min(6,maxN)},(_,i)=>tileHTML(i+1)).join('');
  const el=H.startAt?(Date.now()-H.startAt)/1000:0;
  let h='<div class="hhead"><div class="hcode"><small>'+L('JOIN CODE','MÃ THAM GIA')+'</small><b>'+H.room+'</b></div><div class="htitle"><h1>LITTLE BIRD <em>DETECTIVES!</em></h1><span>'+B(['Teacher monitor · live','Màn hình giáo viên · trực tiếp'])+' '+netHTML()+'</span></div>'+
@@ -6212,7 +6219,7 @@ function labCheck(){const q=curQ();if(Object.keys(S.lab).length<q.cards.length)r
  if(all)return finish(true,$('.lab3'));if(wrong()){q.cards.forEach(c=>{S.lab[c.id]=c.id;S.marks[c.id]='ok'});return finish(false)}render()}
 function nextQ(){if(S.q<3){S.q++;newQ();saveT();render()}else{S.splash='end';SFX.fan();confetti(30);saveT();sendSt({k:'mdone',m:S.m});render()}}
 function startMission(i){S.scr='m';S.m=i;S.q=0;S.mres[i]=[];S.mleft=150;S.splash='start';newQ();saveT();render()}
-function joinRoom(code,n){store.set('bdet-role','team');S.room=code;S.n=n;S.stars=0;S.mres=[[],[],[],[]];S.help=false;S.scr='lobby';if(code!=='SOLO')busOpen(code,teamMsg);saveT();render();setTimeout(()=>sendSt({k:'join'}),600)}
+function joinRoom(code,n){store.set('bdet-role','team');S.names=NM();if(S.names.length)S.size=Math.max(2,S.names.length);S.room=code;S.n=n;S.stars=0;S.mres=[[],[],[],[]];S.help=false;S.scr='lobby';if(code!=='SOLO')busOpen(code,teamMsg);saveT();render();setTimeout(()=>sendSt({k:'join'}),600)}
 $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;ac();const a=b.dataset.act,i=+b.dataset.i;
  if(a==='pick')return pick(b.dataset.id,b);
  if(a==='unslot'){if(S.done||S.marks[i])return;if(i<S.sel.length){S.sel.splice(i,1);SFX.pop();render()}return}
@@ -6229,6 +6236,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='tojoin'){S.scr='join';return render()}
  if(a==='tohome'){if(S.scr==='host')busClose();store.set('bdet-role',null);S.scr='home';return render()}
  if(a==='pickn'){S.n=+b.dataset.n;SFX.pop();return render()}
+ if(a==='savenames'){S.names=NM();if(S.names.length)S.size=Math.max(2,S.names.length);saveT();sendSt(null);toast(L('Names saved!','Đã lưu tên!'),'ok');return render()}
  if(a==='join'){const c=(S.code||'').trim();if(c.length!==4){toast(L('Type the 4-letter code from the TV.','Nhập mã 4 kí tự trên TV.'),'bad');return}return joinRoom(c,S.n)}
  if(a==='solo')return joinRoom('SOLO',S.n);
  if(a==='resume'){const v=store.get('bdet-team');if(!v)return;Object.assign(S,v);store.set('bdet-role','team');if(S.scr==='m'){newQ();}if(S.room!=='SOLO')busOpen(S.room,teamMsg);render();setTimeout(()=>sendSt(null),600);return}
@@ -6236,7 +6244,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='help'){S.help=!S.help;SFX.pop();sendSt(S.help?{k:'help'}:null);toast(S.help?L('Your teacher can see you need help.','Thầy cô đã thấy nhóm cần giúp.'):L('OK!','Được rồi!'),'ok');return renderBoard()}
  if(a==='mute'){SOUND=!SOUND;return S.scr==='host'?renderHost():renderBoard()}
  if(a==='size'){S.size=Math.max(2,Math.min(8,S.size+(+b.dataset.d)));return renderBoard()}
- if(a==='spk'){if(S.spinning)return;S.spinning=true;let n=0;const last=S.spk;const iv=setInterval(()=>{const el=$('#spk');S.spk=1+Math.floor(Math.random()*S.size);if(el)el.textContent='👤 '+S.spk;SFX.tick();if(++n>14){clearInterval(iv);while(S.spk===last&&S.size>1)S.spk=1+Math.floor(Math.random()*S.size);S.spinning=false;SFX.phase();renderBoard()}},90);renderBoard();return}
+ if(a==='spk'){if(S.spinning)return;S.spinning=true;let n=0;const last=S.spk;const iv=setInterval(()=>{const el=$('#spk');S.spk=1+Math.floor(Math.random()*S.size);if(el)el.innerHTML='👤 '+who(S.spk);SFX.tick();if(++n>14){clearInterval(iv);while(S.spk===last&&S.size>1)S.spk=1+Math.floor(Math.random()*S.size);S.spinning=false;SFX.phase();renderBoard()}},90);renderBoard();return}
  /* host */
  if(a==='tohost'){store.set('bdet-role','host');S.scr='host';hostOpen(false);return render()}
  if(a==='hstart'){H.startAt=Date.now();store.set(HOSTK,H);busSend({t:'start'});SFX.fan();flashBanner('🚀 '+L('Missions started! Good luck, detectives!','Bắt đầu nhiệm vụ! Chúc các thám tử may mắn!'),'hi','#2b9348');return renderHost()}
@@ -6321,10 +6329,14 @@ function busSend(o){if(!BUS.topic)return;o.mid=Math.random().toString(36).slice(
 function netDot(){const d=$('#net');if(d){d.className='net '+(BUS.state==='on'?'on':'off');d.textContent=BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…')}}
 const netHTML=()=>'<span id="net" class="net '+(BUS.state==='on'?'on':'off')+'">'+(BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…'))+'</span>';
 /* ---------- team state ---------- */
-const S={scr:'home',room:'',n:1,pts:0,m:0,i:0,order:[],res:[[],[],[],[],[]],sorted:{},ph:0,tries:0,done:false,tested:false,obs:null,splash:null,br:0,bsel:[],bmarks:{},sorter:1,size:5,help:false,code:'',leaveArm:false};
+const S={scr:'home',room:'',n:1,pts:0,m:0,i:0,order:[],res:[[],[],[],[],[]],sorted:{},ph:0,tries:0,done:false,tested:false,obs:null,splash:null,br:0,bsel:[],bmarks:{},sorter:1,size:5,help:false,code:'',leaveArm:false,names:[]};
+const esc=t=>String(t).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const NM=()=>(S.names||[]).filter(x=>x&&x.trim());const who=n=>NM()[n-1]?esc(NM()[n-1]):n;
+function namesHTML(){const v=(S.names||[]).concat(Array(6).fill('')).slice(0,6);return '<div class="nmgrid">'+v.map((x,i)=>'<input class="nmin" data-ni="'+i+'" maxlength="20" placeholder="'+L('Student','Học sinh')+' '+(i+1)+'" value="'+esc(x)+'">').join('')+'</div>'}
+function bindNames(){$$('.nmin').forEach(el=>el.oninput=()=>{const a=(S.names||[]).concat(Array(6).fill('')).slice(0,6);a[+el.dataset.ni]=el.value;S.names=a;if(NM().length)S.size=Math.max(2,NM().length);saveT()})}
 const tcol=()=>COLS[(S.n-1)%COLS.length];
-function saveT(){store.set('mdet-team',{scr:S.scr,room:S.room,n:S.n,pts:S.pts,m:S.m,i:S.i,order:S.order,res:S.res,sorted:S.sorted,splash:S.splash,br:S.br,size:S.size,sorter:S.sorter})}
-function sendSt(ev){if(S.room==='SOLO')return;busSend({t:'st',n:S.n,s:{pts:S.pts,m:S.m,i:S.i,res:S.res,scr:S.scr,help:S.help},ev:ev||null})}
+function saveT(){store.set('mdet-team',{scr:S.scr,room:S.room,n:S.n,pts:S.pts,m:S.m,i:S.i,order:S.order,res:S.res,sorted:S.sorted,splash:S.splash,br:S.br,size:S.size,sorter:S.sorter,names:S.names})}
+function sendSt(ev){if(S.room==='SOLO')return;busSend({t:'st',n:S.n,s:{pts:S.pts,m:S.m,i:S.i,res:S.res,scr:S.scr,help:S.help,names:NM()},ev:ev||null})}
 function teamMsg(o){if(o.t==='start'&&S.scr==='lobby'){SFX.fan();startMission(0);setTimeout(()=>sendSt(null),500)}if(o.t==='hello')sendSt(null);
  if(o.t==='helpok'&&o.n===S.n&&S.help){S.help=false;toast(L('Your teacher is coming! 🙋','Thầy cô đang đến! 🙋'),'ok');renderBoard()}}
 /* ---------- host ---------- */
@@ -6350,9 +6362,9 @@ function flashBanner(msg,k,c){const w=$('.wrap');const b=document.createElement(
 const fmt=s=>Math.floor(Math.max(0,s)/60)+':'+String(Math.floor(Math.max(0,s)%60)).padStart(2,'0');
 function progRows(res,cur){return [0,1,2,3,4].map(m=>'<div class="mp" style="--c:'+(m<4?M[m].c:BONUS.c)+'"><b style="width:1.6em;text-align:center">'+(m<4?M[m].ic:BONUS.ic)+'</b><span>'+Array.from({length:m<4?6:2},(_,j)=>{const r=(res[m]||[])[j];return '<i class="'+(r==='ok'?'ok':r?'no':(cur&&cur[0]===m&&cur[1]===j?'on':''))+'"></i>'}).join('')+'</span></div>').join('')}
 function teamPanel(){const c=tcol();
- return '<div class="tbadge" style="--c:'+c+'"><span class="dot">'+S.n+'</span><span><b>'+L('Team','Nhóm')+' '+S.n+'</b>'+(S.room==='SOLO'?'<small>'+L('Practice','Luyện tập')+'</small>':'<small>'+L('Room','Phòng')+' '+S.room+' '+netHTML()+'</small>')+'</span></div>'+
+ return '<div class="tbadge" style="--c:'+c+'"><span class="dot">'+S.n+'</span><span><b>'+L('Team','Nhóm')+' '+S.n+'</b>'+(S.room==='SOLO'?'<small>'+L('Practice','Luyện tập')+'</small>':'<small>'+L('Room','Phòng')+' '+S.room+' '+netHTML()+'</small>')+'</span></div>'+(NM().length?'<div class="nmlist">👥 '+NM().map(esc).join(' · ')+'</div>':'')+''+
  '<div class="bigstars" id="bigstars">⭐ '+S.pts+'<small>'+L('points','điểm')+' / '+MAXP+'</small></div><div class="mps">'+progRows(S.res,S.scr==='m'?[S.m,S.m<4?S.i:S.br]:null)+'</div>'+
- '<div class="speaker"><b>'+L('Whose turn to sort?','Đến lượt ai phân loại?')+'</b><div class="num" id="spk">👤 '+S.sorter+'</div><div style="font-size:.8em;font-weight:700;margin-bottom:.3em">'+L('Student number ','Học sinh số ')+S.sorter+L(' moves the object. Everyone helps decide!',' kéo đồ vật. Cả nhóm cùng quyết định!')+'</div><div class="sz">'+L('Students','Số HS')+': <button class="tiny" data-act="size" data-d="-1">−</button> <b>'+S.size+'</b> <button class="tiny" data-act="size" data-d="1">+</button></div></div>'+
+ '<div class="speaker"><b>'+L('Whose turn to sort?','Đến lượt ai phân loại?')+'</b><div class="num" id="spk">👤 '+who(S.sorter)+'</div><div style="font-size:.8em;font-weight:700;margin-bottom:.3em">'+(NM()[S.sorter-1]?who(S.sorter):L('Student number ','Học sinh số ')+S.sorter)+L(' moves the object. Everyone helps decide!',' kéo đồ vật. Cả nhóm cùng quyết định!')+'</div><div class="sz">'+L('Students','Số HS')+': <button class="tiny" data-act="size" data-d="-1">−</button> <b>'+S.size+'</b> <button class="tiny" data-act="size" data-d="1">+</button></div></div>'+
  (S.room!=='SOLO'?'<button class="helpb '+(S.help?'on':'')+'" data-act="help">🙋 '+(S.help?L('Teacher is called…','Đã gọi thầy cô…'):L('Ask the teacher','Gọi thầy cô'))+'</button>':'')+
  '<div class="toolbar"><button class="tiny" data-act="mute">'+(SOUND?'🔊':'🔇')+'</button><button class="tiny" data-act="leave">'+(S.leaveArm?L('Tap again to leave','Chạm lần nữa để thoát'):'🚪 '+L('Leave','Thoát'))+'</button></div>'}
 function renderBoard(){const b=$('#board');if(b)b.innerHTML=['m','lobby','tend'].includes(S.scr)?teamPanel():''}
@@ -6365,7 +6377,7 @@ function stepsHTML(){return '<div class="steps">'+PH.map((p,i)=>'<span class="st
 function binHTML(m,g){const got=Object.keys(S.sorted).filter(k=>S.sorted[k]===m+':'+g.id);return '<div class="bin" style="--bc:'+g.c+'" data-act="bin" data-g="'+g.id+'"><span class="bico">'+g.em+'</span><h3>'+B(g.t)+'</h3><span class="tapme">'+L('Drag here or tap','Kéo vào đây hoặc chạm')+'</span><div class="got">'+got.map(k=>'<img src="'+img(k)+'" alt="'+T(O[k])+'" title="'+T(O[k])+'">').join('')+'</div></div>'}
 function missionHTML(){const m=M[S.m],k=S.order[S.i],g=m.g;
  let h='<div class="mhead" style="--c:'+m.c+'"><span style="font-size:2.6em">'+m.ic+'</span><h2><small>'+L('MISSION','NHIỆM VỤ')+' '+(S.m+1)+' · '+L('OBJECT','ĐỒ VẬT')+' '+(S.i+1)+'/6</small>'+B([m.en,m.vi])+'</h2><span class="ptsbig" style="margin-left:auto">⭐ '+S.pts+' / '+MAXP+'</span><span class="qdots">'+S.order.map((_,j)=>'<i class="'+(j===S.i?'on':S.res[S.m][j]==='ok'?'ok':S.res[S.m][j]?'no':'')+'"></i>').join('')+'</span></div>'+
- '<div class="turnb"><span class="tb" style="--c:'+tcol()+'">👤 '+L('Student','Học sinh')+' '+S.sorter+L(' sorts',' phân loại')+'</span>'+stepsHTML()+'</div>';
+ '<div class="turnb"><span class="tb" style="--c:'+tcol()+'">👤 '+(NM()[S.sorter-1]?who(S.sorter):L('Student','Học sinh')+' '+S.sorter)+L(' sorts',' phân loại')+'</span>'+stepsHTML()+'</div>';
  h+='<div class="qbox"><div class="q" style="font-size:1.35em">'+bi('Is the '+O[k][0]+' '+g[0].t[0].toLowerCase()+' or '+g[1].t[0].toLowerCase()+'? Test it, talk, then sort it!',O[k][1]+' '+g[0].t[1].toLowerCase()+' hay '+g[1].t[1].toLowerCase()+'? Thử, thảo luận rồi phân loại!')+'</div>'+
  '<div class="sortw">'+binHTML(S.m,g[0])+'<div class="objc">'+(S.done?'<div class="ocard" style="opacity:.35"><img src="'+img(k)+'" alt=""></div>':'<div class="ocard" id="ocard"><img src="'+img(k)+'" alt="'+T(O[k])+'"></div>')+'<div class="oname">'+B(O[k])+'</div>'+
  (S.done?'':'<button class="testb" data-act="test">'+m.tic+' '+T(m.tb)+'</button>')+'<div class="obs" id="obs">'+(S.obs?B(S.obs):bi('Tap the orange button to test it.','Chạm nút cam để thử.'))+'</div></div>'+binHTML(S.m,g[1])+'</div>'+
@@ -6392,18 +6404,18 @@ function render(){const w=$('.wrap');w.classList.toggle('host',S.scr==='host');w
   (saved&&['m','lobby','tend'].includes(saved.scr)?'<p style="text-align:center"><button class="big alt" data-act="resume">↩ '+L('Continue as Team','Tiếp tục là Nhóm')+' '+saved.n+'</button></p>':'')+'</div>'}
  else if(S.scr==='join'){h='<div class="intro">'+hero(TITLE,L('Join your team','Vào nhóm của em'))+
   '<div class="joinbox"><label>'+B(['1. Type the code on the TV','1. Nhập mã trên TV'])+'</label><input id="code" maxlength="4" autocomplete="off" autocapitalize="characters" value="'+S.code+'" placeholder="ABCD">'+
-  '<label>'+B(['2. Choose your team','2. Chọn nhóm của em'])+'</label><div class="tpick">'+[1,2,3,4,5,6].map(n=>'<button class="'+(n===S.n?'on':'')+'" style="--c:'+COLS[n-1]+'" data-act="pickn" data-n="'+n+'">'+n+'</button>').join('')+'</div>'+
+  '<label>'+B(['2. Choose your team','2. Chọn nhóm của em'])+'</label><div class="tpick">'+[1,2,3,4,5,6].map(n=>'<button class="'+(n===S.n?'on':'')+'" style="--c:'+COLS[n-1]+'" data-act="pickn" data-n="'+n+'">'+n+'</button>').join('')+'</div><label>'+B(['3. Write your names (optional)','3. Viết tên các em (không bắt buộc)'])+'</label>'+namesHTML()+
   '<button class="big" data-act="join">🚀 '+L('Join the missions','Vào nhiệm vụ')+'</button><button class="tiny" data-act="tohome">← '+L('Back','Quay lại')+'</button></div></div>'}
  else if(S.scr==='lobby'){h='<div class="intro" style="text-align:center">'+hero(TITLE,'<em>'+L('Team','Nhóm')+' '+S.n+'</em> '+L('is ready!','đã sẵn sàng!'))+
-  '<div class="wait" style="--c:'+tcol()+'"><div class="egg-wob">🔍</div><b>'+(S.room==='SOLO'?B(['Practice mode. Start when you are ready.','Chế độ luyện tập. Bắt đầu khi sẵn sàng.']):B(['Waiting for your teacher to start the missions…','Chờ thầy cô bắt đầu nhiệm vụ…']))+'</b></div>'+PSTRIP()+CARDS(true)+
+  '<div class="wait" style="--c:'+tcol()+'"><div style="font-weight:900;margin-bottom:.3em">✏️ '+L('Our names','Tên các thành viên')+'</div>'+namesHTML()+'<button class="tiny" data-act="savenames" style="margin:.3em 0">💾 '+L('Save names','Lưu tên')+'</button><div class="egg-wob">🔍</div><b>'+(S.room==='SOLO'?B(['Practice mode. Start when you are ready.','Chế độ luyện tập. Bắt đầu khi sẵn sàng.']):B(['Waiting for your teacher to start the missions…','Chờ thầy cô bắt đầu nhiệm vụ…']))+'</b></div>'+PSTRIP()+CARDS(true)+
   ''+(S.room==='SOLO'?'<p><button class="big" data-act="begin">🔍 '+L('Start Mission 1','Bắt đầu Nhiệm vụ 1')+'</button></p>':'<p style="font-weight:800;color:#5c6e80">🔒 '+bi('Only your teacher can start the missions. If they have already started, you will join in a moment.','Chỉ thầy cô mới bắt đầu được nhiệm vụ. Nếu nhiệm vụ đã bắt đầu, nhóm em sẽ vào ngay sau đây.')+'</p>')+'</div>'}
  else if(S.scr==='m')h=S.m<4?missionHTML():bonusHTML();
  else if(S.scr==='tend'){h='<div class="intro" style="text-align:center">'+hero('🏆 '+L('SUPER','GIỎI LẮM,')+' <em>'+L('DETECTIVES!','CÁC THÁM TỬ!')+'</em>',L('Team','Nhóm')+' '+S.n+' '+L('finished every mission!','đã xong tất cả nhiệm vụ!'))+
-  '<div class="cert" style="--c:'+tcol()+'"><div class="cs">'+'⭐'.repeat(Math.min(S.pts,13))+'</div><h3>'+S.pts+' / '+MAXP+' '+L('points','điểm')+'</h3><p>'+bi('You tested materials and sorted them: hard or soft, shiny or dull, rough or smooth, flexible or rigid.','Các em đã thử và phân loại vật liệu: cứng hay mềm, sáng bóng hay xỉn màu, nhám hay nhẵn, dễ uốn hay không uốn được.')+'</p></div>'+CARDS()+
+  '<div class="cert" style="--c:'+tcol()+'">'+(NM().length?'<div style="font-weight:900;font-size:1.2em">'+NM().map(esc).join(' · ')+'</div>':'')+'<div class="cs">'+'⭐'.repeat(Math.min(S.pts,13))+'</div><h3>'+S.pts+' / '+MAXP+' '+L('points','điểm')+'</h3><p>'+bi('You tested materials and sorted them: hard or soft, shiny or dull, rough or smooth, flexible or rigid.','Các em đã thử và phân loại vật liệu: cứng hay mềm, sáng bóng hay xỉn màu, nhám hay nhẵn, dễ uốn hay không uốn được.')+'</p></div>'+CARDS()+
   '<p>'+bi('Look at the TV to see all the teams!','Hãy nhìn lên TV để xem tất cả các nhóm!')+'</p></div>'}
  else if(S.scr==='host'){st.innerHTML='';return renderHost()}
  st.innerHTML=h;
- if(S.scr==='join'){const c=$('#code');if(c)c.oninput=()=>{c.value=c.value.toUpperCase().replace(/[^A-Z0-9]/g,'');S.code=c.value}}
+ if(S.scr==='join'||S.scr==='lobby')bindNames();if(S.scr==='join'){const c=$('#code');if(c)c.oninput=()=>{c.value=c.value.toUpperCase().replace(/[^A-Z0-9]/g,'');S.code=c.value}}
  if(S.scr==='m'&&S.m<4&&!S.done)bindDrag()}
 function tileHTML(n){const t=H.teams[n],c=COLS[(n-1)%COLS.length];
  if(!t)return '<div class="tile off" style="--c:'+c+'"><div class="th"><span class="dot">'+n+'</span>'+L('Team','Nhóm')+' '+n+'</div><div class="twait">'+L('Not joined yet','Chưa vào')+'</div></div>';
@@ -6411,7 +6423,7 @@ function tileHTML(n){const t=H.teams[n],c=COLS[(n-1)%COLS.length];
  const where=fin?'🏆 '+L('All missions done!','Xong tất cả nhiệm vụ!'):t.scr==='lobby'?'⏳ '+L('Ready, waiting','Sẵn sàng, đang chờ'):'<b>'+(t.m<4?M[t.m].ic:'🏅')+'</b> '+mname(t.m)+' · '+(r.length>=cnt?'✓':(r.length+1)+'/'+cnt);
  return '<div class="tile '+(fl?'flashing':'')+(t.help?' help':'')+(fin?' fin':'')+'" style="--c:'+c+'"><div class="th"><span class="dot">'+n+'</span>'+L('Team','Nhóm')+' '+n+'<span class="tst">⭐ '+t.pts+'</span></div>'+
   (t.help?'<button class="helpack" data-act="helpok" data-n="'+n+'">🙋 '+L('NEEDS HELP — tap when helped','CẦN GIÚP — chạm khi đã giúp')+'</button>':'')+
-  '<div class="where">'+where+'</div><div class="tprog">'+[0,1,2,3,4].map(m=>'<div class="tr"><b style="width:1.5em;text-align:center">'+(m<4?M[m].ic:'🏅')+'</b>'+Array.from({length:m<4?6:2},(_,j)=>{const x=(t.res[m]||[])[j];return '<i class="'+(x==='ok'?'ok':x?'no':'')+'">'+(x==='ok'?'⭐':x?'✗':'')+'</i>'}).join('')+'</div>').join('')+'</div></div>'}
+  (t.names&&t.names.length?'<div class="tnames">👥 '+t.names.map(esc).join(', ')+'</div>':'')+'<div class="where">'+where+'</div><div class="tprog">'+[0,1,2,3,4].map(m=>'<div class="tr"><b style="width:1.5em;text-align:center">'+(m<4?M[m].ic:'🏅')+'</b>'+Array.from({length:m<4?6:2},(_,j)=>{const x=(t.res[m]||[])[j];return '<i class="'+(x==='ok'?'ok':x?'no':'')+'">'+(x==='ok'?'⭐':x?'✗':'')+'</i>'}).join('')+'</div>').join('')+'</div></div>'}
 function renderHost(){if(!H)return;const st=$('#stage');const ns=Object.keys(H.teams).map(Number),maxN=Math.max(4,...ns,0);const tiles=Array.from({length:Math.min(6,maxN)},(_,i)=>tileHTML(i+1)).join('');
  const el=H.startAt?(Date.now()-H.startAt)/1000:0;
  let h='<div class="hhead"><div class="hcode"><small>'+L('JOIN CODE','MÃ THAM GIA')+'</small><b>'+H.room+'</b></div><div class="htitle"><h1>MATERIAL <em>DETECTIVES!</em></h1><span>'+B(['Teacher monitor · live','Màn hình giáo viên · trực tiếp'])+' '+netHTML()+'</span></div>'+
@@ -6458,7 +6470,7 @@ function bCheck(){const r=BONUS.rounds[S.br],sel=S.bsel;if(!sel.length){toast(L(
  if(ok||S.tries>=1){const first=ok&&S.tries===0;S.done=true;S.res[4][S.br]=first?'ok':'no';S.bmarks={};S.order.forEach(k=>{const inA=r.ans.includes(k),inS=sel.includes(k);S.bmarks[k]=inA&&inS?'ok':inA?'miss':inS?'no':''});
   if(first){S.pts++;SFX.good();confetti(16);sendSt({k:'bok',r:S.br})}else{SFX.bad();sendSt({k:'bno',r:S.br})}S.order.forEach(k=>{if(r.ans.includes(k))S.bmarks[k]='ok'});saveT();render();if(first)flyStar($('.multi'));return}
  S.tries++;SFX.bad();S.bmarks={};render();toast(L('Not quite. Look again!','Chưa đúng. Xem lại nhé!'),'bad')}
-function joinRoom(code,n){store.set('mdet-role','team');S.room=code;S.n=n;S.pts=0;S.res=[[],[],[],[],[]];S.sorted={};S.help=false;S.scr='lobby';S.sorter=1;if(code!=='SOLO')busOpen(code,teamMsg);saveT();render();setTimeout(()=>sendSt({k:'join'}),600)}
+function joinRoom(code,n){store.set('mdet-role','team');S.names=NM();if(S.names.length)S.size=Math.max(2,S.names.length);S.room=code;S.n=n;S.pts=0;S.res=[[],[],[],[],[]];S.sorted={};S.help=false;S.scr='lobby';S.sorter=1;if(code!=='SOLO')busOpen(code,teamMsg);saveT();render();setTimeout(()=>sendSt({k:'join'}),600)}
 $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;ac();const a=b.dataset.act;
  if(a==='test')return runTest();
  if(a==='bin'){if(S.done||S.scr!=='m')return;return sortInto(b.dataset.g,b)}
@@ -6474,6 +6486,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='tojoin'){S.scr='join';return render()}
  if(a==='tohome'){if(S.scr==='host')busClose();store.set('mdet-role',null);S.scr='home';return render()}
  if(a==='pickn'){S.n=+b.dataset.n;SFX.pop();return render()}
+ if(a==='savenames'){S.names=NM();if(S.names.length)S.size=Math.max(2,S.names.length);saveT();sendSt(null);toast(L('Names saved!','Đã lưu tên!'),'ok');return render()}
  if(a==='join'){const c=(S.code||'').trim();if(c.length!==4){toast(L('Type the 4-letter code from the TV.','Nhập mã 4 kí tự trên TV.'),'bad');return}return joinRoom(c,S.n)}
  if(a==='solo')return joinRoom('SOLO',S.n);
  if(a==='resume'){const v=store.get('mdet-team');if(!v)return;Object.assign(S,v);store.set('mdet-role','team');if(S.scr==='m'&&S.m<4)newObj();if(S.room!=='SOLO')busOpen(S.room,teamMsg);render();setTimeout(()=>sendSt(null),600);return}
@@ -6647,10 +6660,14 @@ function busSend(o){if(!BUS.topic)return;o.mid=Math.random().toString(36).slice(
 function netDot(){const d=$('#net');if(d){d.className='net '+(BUS.state==='on'?'on':'off');d.textContent=BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…')}}
 const netHTML=()=>'<span id="net" class="net '+(BUS.state==='on'?'on':'off')+'">'+(BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…'))+'</span>';
 /* ---------- team state ---------- */
-const S={scr:'home',room:'',n:1,pts:0,m:0,st:0,res:[[],[],[],[],[]],wear:[],dw:0,tray:[],tries:0,done:false,marks:{},oord:null,say:null,mood:'happy',splash:null,bq:0,sorter:1,size:5,help:false,code:'',leaveArm:false};
+const S={scr:'home',room:'',n:1,pts:0,m:0,st:0,res:[[],[],[],[],[]],wear:[],dw:0,tray:[],tries:0,done:false,marks:{},oord:null,say:null,mood:'happy',splash:null,bq:0,sorter:1,size:5,help:false,code:'',leaveArm:false,names:[]};
+const esc=t=>String(t).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const TNM=()=>(S.names||[]).filter(x=>x&&x.trim());const who=n=>TNM()[n-1]?esc(TNM()[n-1]):n;
+function namesHTML(){const v=(S.names||[]).concat(Array(6).fill('')).slice(0,6);return '<div class="nmgrid">'+v.map((x,i)=>'<input class="nmin" data-ni="'+i+'" maxlength="20" placeholder="'+L('Student','Học sinh')+' '+(i+1)+'" value="'+esc(x)+'">').join('')+'</div>'}
+function bindNames(){$$('.nmin').forEach(el=>el.oninput=()=>{const a=(S.names||[]).concat(Array(6).fill('')).slice(0,6);a[+el.dataset.ni]=el.value;S.names=a;if(TNM().length)S.size=Math.max(2,TNM().length);saveT()})}
 const tcol=()=>COLS[(S.n-1)%COLS.length];
-function saveT(){store.set('tdy-team',{scr:S.scr,room:S.room,n:S.n,pts:S.pts,m:S.m,st:S.st,res:S.res,splash:S.splash,bq:S.bq,size:S.size,sorter:S.sorter,wear:S.wear,dw:S.dw})}
-function sendSt(ev){if(S.room==='SOLO')return;busSend({t:'st',n:S.n,s:{pts:S.pts,m:S.m,st:S.st,bq:S.bq,res:S.res,scr:S.scr,help:S.help},ev:ev||null})}
+function saveT(){store.set('tdy-team',{scr:S.scr,room:S.room,n:S.n,pts:S.pts,m:S.m,st:S.st,res:S.res,splash:S.splash,bq:S.bq,size:S.size,sorter:S.sorter,wear:S.wear,dw:S.dw,names:S.names})}
+function sendSt(ev){if(S.room==='SOLO')return;busSend({t:'st',n:S.n,s:{pts:S.pts,m:S.m,st:S.st,bq:S.bq,res:S.res,scr:S.scr,help:S.help,names:TNM()},ev:ev||null})}
 function teamMsg(o){if(o.t==='start'&&S.scr==='lobby'){SFX.fan();startMission(0);setTimeout(()=>sendSt(null),500)}if(o.t==='hello')sendSt(null);
  if(o.t==='helpok'&&o.n===S.n&&S.help){S.help=false;toast(L('Your teacher is coming! 🙋','Thầy cô đang đến! 🙋'),'ok');renderBoard()}}
 /* ---------- host ---------- */
@@ -6675,9 +6692,9 @@ function flashBanner(msg,k,c){const w=$('.wrap');const b=document.createElement(
 const fmt=s=>Math.floor(Math.max(0,s)/60)+':'+String(Math.floor(Math.max(0,s)%60)).padStart(2,'0');
 const LEN=m=>m<4?PER:BQ.length;
 function progRows(res,cur){return [0,1,2,3,4].map(m=>'<div class="mp" style="--c:'+(m<4?M[m].c:'#0f9aa8')+'"><b style="width:1.6em;text-align:center">'+(m<4?M[m].ic:'👓')+'</b><span>'+Array.from({length:LEN(m)},(_,j)=>{const r=(res[m]||[])[j];return '<i class="'+(r==='ok'?'ok':r?'no':(cur===m?'on':''))+'"></i>'}).join('')+'</span></div>').join('')}
-function teamPanel(){return '<div class="tbadge" style="--c:'+tcol()+'"><span class="dot">'+S.n+'</span><span><b>'+L('Team','Nhóm')+' '+S.n+'</b>'+(S.room==='SOLO'?'<small>'+L('Practice','Luyện tập')+'</small>':'<small>'+L('Room','Phòng')+' '+S.room+' '+netHTML()+'</small>')+'</span></div>'+
+function teamPanel(){return '<div class="tbadge" style="--c:'+tcol()+'"><span class="dot">'+S.n+'</span><span><b>'+L('Team','Nhóm')+' '+S.n+'</b>'+(S.room==='SOLO'?'<small>'+L('Practice','Luyện tập')+'</small>':'<small>'+L('Room','Phòng')+' '+S.room+' '+netHTML()+'</small>')+'</span></div>'+(TNM().length?'<div class="nmlist">👥 '+TNM().map(esc).join(' · ')+'</div>':'')+''+
  '<div class="bigstars" id="bigstars">⭐ '+S.pts+'<small>'+L('points','điểm')+' / '+MAXP+'</small></div><div class="mps">'+progRows(S.res,S.scr==='m'?S.m:-1)+'</div>'+
- '<div class="speaker"><b>'+L('Whose turn?','Đến lượt ai?')+'</b><div class="num" id="spk">👤 '+S.sorter+'</div><div style="font-size:.8em;font-weight:700;margin-bottom:.3em">'+L('Student number ','Học sinh số ')+S.sorter+L(' taps the answer. Everyone helps decide!',' chạm đáp án. Cả nhóm cùng quyết định!')+'</div><div class="sz">'+L('Students','Số HS')+': <button class="tiny" data-act="size" data-d="-1">−</button> <b>'+S.size+'</b> <button class="tiny" data-act="size" data-d="1">+</button></div></div>'+
+ '<div class="speaker"><b>'+L('Whose turn?','Đến lượt ai?')+'</b><div class="num" id="spk">👤 '+who(S.sorter)+'</div><div style="font-size:.8em;font-weight:700;margin-bottom:.3em">'+(TNM()[S.sorter-1]?who(S.sorter):L('Student number ','Học sinh số ')+S.sorter)+L(' taps the answer. Everyone helps decide!',' chạm đáp án. Cả nhóm cùng quyết định!')+'</div><div class="sz">'+L('Students','Số HS')+': <button class="tiny" data-act="size" data-d="-1">−</button> <b>'+S.size+'</b> <button class="tiny" data-act="size" data-d="1">+</button></div></div>'+
  (S.room!=='SOLO'?'<button class="helpb '+(S.help?'on':'')+'" data-act="help">🙋 '+(S.help?L('Teacher is called…','Đã gọi thầy cô…'):L('Ask the teacher','Gọi thầy cô'))+'</button>':'')+
  '<div class="toolbar"><button class="tiny" data-act="mute">'+(SOUND?'🔊':'🔇')+'</button><button class="tiny" data-act="leave">'+(S.leaveArm?L('Tap again to leave','Chạm lần nữa để thoát'):'🚪 '+L('Leave','Thoát'))+'</button></div>'}
 function renderBoard(){const b=$('#board');if(b)b.innerHTML=['m','lobby','tend'].includes(S.scr)?teamPanel():''}
@@ -6690,7 +6707,7 @@ function stageHTML(k,items,mood,say){return '<div class="tstage" id="tstage">'+s
 function optRow(opts,cls){return '<div class="mopts '+(cls||'')+'">'+opts.map((o,i)=>'<button class="mopt '+(S.marks[i]||'')+'" data-act="pick" data-i="'+i+'">'+(o.img?'<img src="'+img(o.img)+'" alt="">':'')+'<span>'+B(o.t)+'</span></button>').join('')+'</div>'}
 function pat(){return '<div class="pats"><b>🗣 '+L('Say it with your team:','Cùng nhóm nói:')+'</b>'+PATTERNS.map(p=>'<span>“'+B(p)+'”</span>').join('')+'</div>'}
 function missionHTML(){const m=M[S.m];let left='',right='';
- const head='<div class="mhead" style="--c:'+m.c+'"><span style="font-size:2.4em">'+m.ic+'</span><h2><small>'+L('MISSION','NHIỆM VỤ')+' '+(S.m+1)+' / 4</small>'+B([m.en,m.vi])+' · <span style="font-weight:800;font-size:.75em">'+B(m.task)+'</span></h2><span class="ptsbig" style="margin-left:auto">⭐ '+S.pts+' / '+MAXP+'</span></div><div class="turnb"><span class="tb" style="--c:'+tcol()+'">👤 '+L('Student','Học sinh')+' '+S.sorter+L('’s turn',' trả lời')+'</span>'+stepsHTML()+'</div>';
+ const head='<div class="mhead" style="--c:'+m.c+'"><span style="font-size:2.4em">'+m.ic+'</span><h2><small>'+L('MISSION','NHIỆM VỤ')+' '+(S.m+1)+' / 4</small>'+B([m.en,m.vi])+' · <span style="font-weight:800;font-size:.75em">'+B(m.task)+'</span></h2><span class="ptsbig" style="margin-left:auto">⭐ '+S.pts+' / '+MAXP+'</span></div><div class="turnb"><span class="tb" style="--c:'+tcol()+'">👤 '+(TNM()[S.sorter-1]?who(S.sorter):L('Student','Học sinh')+' '+S.sorter)+L('’s turn',' trả lời')+'</span>'+stepsHTML()+'</div>';
  if(S.st===0){const pair=S.oord;left='<div class="pickout">'+pair.map((k,i)=>{const mk=S.marks[i]||'';const mm=M.find(x=>x.k===k);return '<button class="outc '+mk+'" data-act="pick" data-i="'+i+'"><span class="lt">'+'AB'[i]+'</span><div class="outsvg">'+teddySVG(SETS[k])+'</div><b>'+B(mm.out)+'</b><span class="chbtn">'+L('Choose','Chọn')+' '+'AB'[i]+'</span></button>'}).join('')+'</div>';
   right='<div class="qbox"><div class="q">'+bi('Which clothes should Teddy wear?','Gấu nên mặc bộ quần áo nào?')+'</div><div class="mini">'+stageHTML(m.k,[],'wow',m.task)+'</div>'+resHTML()+'</div>'}
  else if(S.st===1){left=stageHTML(m.k,S.wear,S.mood,S.say||['Help me get dressed! Drag the clothes onto me.','Giúp tớ mặc đồ nhé! Kéo quần áo vào tớ.']);
@@ -6722,17 +6739,17 @@ function render(){const w=$('.wrap');w.classList.toggle('host',S.scr==='host');w
   (saved&&['m','lobby','tend'].includes(saved.scr)?'<p style="text-align:center"><button class="big alt" data-act="resume">↩ '+L('Continue as Team','Tiếp tục là Nhóm')+' '+saved.n+'</button></p>':'')+'</div>'}
  else if(S.scr==='join'){h='<div class="intro">'+hero(TITLE,L('Join your team','Vào nhóm của em'))+
   '<div class="joinbox"><label>'+B(['1. Type the code on the TV','1. Nhập mã trên TV'])+'</label><input id="code" maxlength="4" autocomplete="off" autocapitalize="characters" value="'+S.code+'" placeholder="ABCD">'+
-  '<label>'+B(['2. Choose your team','2. Chọn nhóm của em'])+'</label><div class="tpick">'+[1,2,3,4,5,6].map(n=>'<button class="'+(n===S.n?'on':'')+'" style="--c:'+COLS[n-1]+'" data-act="pickn" data-n="'+n+'">'+n+'</button>').join('')+'</div>'+
+  '<label>'+B(['2. Choose your team','2. Chọn nhóm của em'])+'</label><div class="tpick">'+[1,2,3,4,5,6].map(n=>'<button class="'+(n===S.n?'on':'')+'" style="--c:'+COLS[n-1]+'" data-act="pickn" data-n="'+n+'">'+n+'</button>').join('')+'</div><label>'+B(['3. Write your names (optional)','3. Viết tên các em (không bắt buộc)'])+'</label>'+namesHTML()+
   '<button class="big" data-act="join">🚀 '+L('Join the missions','Vào nhiệm vụ')+'</button><button class="tiny" data-act="tohome">← '+L('Back','Quay lại')+'</button></div></div>'}
  else if(S.scr==='lobby'){h='<div class="intro" style="text-align:center">'+hero(TITLE,'<em>'+L('Team','Nhóm')+' '+S.n+'</em> '+L('is ready!','đã sẵn sàng!'))+
-  '<div class="wait" style="--c:'+tcol()+'"><div class="egg-wob">🧸</div><b>'+(S.room==='SOLO'?B(['Practice mode. Start when you are ready.','Chế độ luyện tập. Bắt đầu khi sẵn sàng.']):B(['Waiting for your teacher to start the missions…','Chờ thầy cô bắt đầu nhiệm vụ…']))+'</b></div>'+PSTRIP()+CARDS(true)+
+  '<div class="wait" style="--c:'+tcol()+'"><div style="font-weight:900;margin-bottom:.3em">✏️ '+L('Our names','Tên các thành viên')+'</div>'+namesHTML()+'<button class="tiny" data-act="savenames" style="margin:.3em 0">💾 '+L('Save names','Lưu tên')+'</button><div class="egg-wob">🧸</div><b>'+(S.room==='SOLO'?B(['Practice mode. Start when you are ready.','Chế độ luyện tập. Bắt đầu khi sẵn sàng.']):B(['Waiting for your teacher to start the missions…','Chờ thầy cô bắt đầu nhiệm vụ…']))+'</b></div>'+PSTRIP()+CARDS(true)+
   ''+(S.room==='SOLO'?'<p><button class="big" data-act="begin">🧸 '+L('Start Mission 1','Bắt đầu Nhiệm vụ 1')+'</button></p>':'<p style="font-weight:800;color:#5c6e80">🔒 '+bi('Only your teacher can start the missions. If they have already started, you will join in a moment.','Chỉ thầy cô mới bắt đầu được nhiệm vụ. Nếu nhiệm vụ đã bắt đầu, nhóm em sẽ vào ngay sau đây.')+'</p>')+'</div>'}
  else if(S.scr==='m')h=S.m<4?missionHTML():bonusHTML();
  else if(S.scr==='tend'){h='<div class="intro" style="text-align:center">'+hero('🏆 '+L('SUPER','GIỎI LẮM,')+' <em>'+L('DESIGNERS!','CÁC NHÀ THIẾT KẾ!')+'</em>',L('Team','Nhóm')+' '+S.n+' '+L('dressed Teddy for every day!','đã mặc đồ cho Gấu cho mọi ngày!'))+
-  '<div class="cert" style="--c:'+tcol()+'"><div class="cs">'+'⭐'.repeat(Math.min(S.pts,16))+'</div><h3>'+S.pts+' / '+MAXP+' '+L('points','điểm')+'</h3><p>'+bi('You chose clothes and materials that keep Teddy comfy, warm, dry and cool.','Các em đã chọn quần áo và vật liệu giúp Gấu thoải mái, ấm áp, khô ráo và mát mẻ.')+'</p></div>'+CARDS()+'<p>'+bi('Look at the TV to see all the teams!','Hãy nhìn lên TV để xem tất cả các nhóm!')+'</p></div>'}
+  '<div class="cert" style="--c:'+tcol()+'">'+(TNM().length?'<div style="font-weight:900;font-size:1.2em">'+TNM().map(esc).join(' · ')+'</div>':'')+'<div class="cs">'+'⭐'.repeat(Math.min(S.pts,16))+'</div><h3>'+S.pts+' / '+MAXP+' '+L('points','điểm')+'</h3><p>'+bi('You chose clothes and materials that keep Teddy comfy, warm, dry and cool.','Các em đã chọn quần áo và vật liệu giúp Gấu thoải mái, ấm áp, khô ráo và mát mẻ.')+'</p></div>'+CARDS()+'<p>'+bi('Look at the TV to see all the teams!','Hãy nhìn lên TV để xem tất cả các nhóm!')+'</p></div>'}
  else if(S.scr==='host'){st.innerHTML='';return renderHost()}
  st.innerHTML=h;
- if(S.scr==='join'){const c=$('#code');if(c)c.oninput=()=>{c.value=c.value.toUpperCase().replace(/[^A-Z0-9]/g,'');S.code=c.value}}
+ if(S.scr==='join'||S.scr==='lobby')bindNames();if(S.scr==='join'){const c=$('#code');if(c)c.oninput=()=>{c.value=c.value.toUpperCase().replace(/[^A-Z0-9]/g,'');S.code=c.value}}
  if(S.scr==='m'&&S.m<4&&S.st===1&&!S.splash)bindDrag()}
 function tileHTML(n){const t=H.teams[n],c=COLS[(n-1)%COLS.length];
  if(!t)return '<div class="tile off" style="--c:'+c+'"><div class="th"><span class="dot">'+n+'</span>'+L('Team','Nhóm')+' '+n+'</div><div class="twait">'+L('Not joined yet','Chưa vào')+'</div></div>';
@@ -6740,7 +6757,7 @@ function tileHTML(n){const t=H.teams[n],c=COLS[(n-1)%COLS.length];
  const where=fin?'🏆 '+L('All missions done!','Xong tất cả nhiệm vụ!'):t.scr==='lobby'?'⏳ '+L('Ready, waiting','Sẵn sàng, đang chờ'):'<b>'+(t.m<4?M[t.m].ic:'👓')+'</b> '+mname(t.m)+(t.m<4?' · '+STEPS[Math.min(3,t.st||0)].e+' '+stname(Math.min(3,t.st||0)):' · '+((t.bq||0)+1)+'/4');
  return '<div class="tile '+(fl?'flashing':'')+(t.help?' help':'')+(fin?' fin':'')+'" style="--c:'+c+'"><div class="th"><span class="dot">'+n+'</span>'+L('Team','Nhóm')+' '+n+'<span class="tst">⭐ '+t.pts+'</span></div>'+
   (t.help?'<button class="helpack" data-act="helpok" data-n="'+n+'">🙋 '+L('NEEDS HELP — tap when helped','CẦN GIÚP — chạm khi đã giúp')+'</button>':'')+
-  '<div class="where">'+where+'</div><div class="tprog">'+[0,1,2,3,4].map(m=>'<div class="tr"><b style="width:1.5em;text-align:center">'+(m<4?M[m].ic:'👓')+'</b>'+Array.from({length:LEN(m)},(_,j)=>{const x=(t.res[m]||[])[j];return '<i class="'+(x==='ok'?'ok':x?'no':'')+'">'+(x==='ok'?'⭐':x?'✗':'')+'</i>'}).join('')+'</div>').join('')+'</div></div>'}
+  (t.names&&t.names.length?'<div class="tnames">👥 '+t.names.map(esc).join(', ')+'</div>':'')+'<div class="where">'+where+'</div><div class="tprog">'+[0,1,2,3,4].map(m=>'<div class="tr"><b style="width:1.5em;text-align:center">'+(m<4?M[m].ic:'👓')+'</b>'+Array.from({length:LEN(m)},(_,j)=>{const x=(t.res[m]||[])[j];return '<i class="'+(x==='ok'?'ok':x?'no':'')+'">'+(x==='ok'?'⭐':x?'✗':'')+'</i>'}).join('')+'</div>').join('')+'</div></div>'}
 function renderHost(){if(!H)return;const st=$('#stage');const ns=Object.keys(H.teams).map(Number),maxN=Math.max(4,...ns,0);const tiles=Array.from({length:Math.min(6,maxN)},(_,i)=>tileHTML(i+1)).join('');
  const el=H.startAt?(Date.now()-H.startAt)/1000:0;
  let h='<div class="hhead"><div class="hcode"><small>'+L('JOIN CODE','MÃ THAM GIA')+'</small><b>'+H.room+'</b></div><div class="htitle"><h1>DRESS THE <em>TEDDY BEAR!</em></h1><span>'+B(['Teacher monitor · live','Màn hình giáo viên · trực tiếp'])+' '+netHTML()+'</span></div>'+
@@ -6778,7 +6795,7 @@ function banswer(i,el){if(S.done)return;const ok=i===0;
  if(ok){const first=S.tries===0;S.done=true;S.marks[i]='ok';S.res[4][S.bq]=first?'ok':'no';if(first){S.pts++;SFX.good();confetti(10)}saveT();sendSt({k:first?'ok':'no',m:4,st:-1});render();if(first)flyStar(el);return}
  S.tries++;S.marks[i]='no';SFX.bad();if(S.tries>=2){S.done=true;S.marks[0]='ok';S.res[4][S.bq]='no';saveT();sendSt({k:'no',m:4,st:-1})}render()}
 function nextStep(){S.sorter=S.sorter%S.size+1;if(S.st<3){S.st++;newStep();if(S.st===1){S.marks={}}saveT();render()}else{S.splash='end';SFX.fan();confetti(30);saveT();sendSt({k:'mdone',m:S.m});render()}}
-function joinRoom(code,n){store.set('tdy-role','team');S.room=code;S.n=n;S.pts=0;S.res=[[],[],[],[],[]];S.help=false;S.scr='lobby';S.sorter=1;if(code!=='SOLO')busOpen(code,teamMsg);saveT();render();setTimeout(()=>sendSt({k:'join'}),600)}
+function joinRoom(code,n){store.set('tdy-role','team');S.names=TNM();if(S.names.length)S.size=Math.max(2,S.names.length);S.room=code;S.n=n;S.pts=0;S.res=[[],[],[],[],[]];S.help=false;S.scr='lobby';S.sorter=1;if(code!=='SOLO')busOpen(code,teamMsg);saveT();render();setTimeout(()=>sendSt({k:'join'}),600)}
 function restoreMission(){if(S.scr==='m'&&S.m<4){S.oord=shuf([M[S.m].k,M[S.m].alt]);S.tray=shuf(SETS[M[S.m].k].concat(M[S.m].dis));newStep()}else if(S.scr==='m')newStep()}
 $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;ac();const a=b.dataset.act;
  if(a==='pick'){const i=+b.dataset.i;return S.m<4?answer(i,b):banswer(i,b)}
@@ -6793,6 +6810,7 @@ $('.wrap').addEventListener('click',e=>{const b=e.target.closest('[data-act]');i
  if(a==='tojoin'){S.scr='join';return render()}
  if(a==='tohome'){if(S.scr==='host')busClose();store.set('tdy-role',null);S.scr='home';return render()}
  if(a==='pickn'){S.n=+b.dataset.n;SFX.pop();return render()}
+ if(a==='savenames'){S.names=TNM();if(S.names.length)S.size=Math.max(2,S.names.length);saveT();sendSt(null);toast(L('Names saved!','Đã lưu tên!'),'ok');return render()}
  if(a==='join'){const c=(S.code||'').trim();if(c.length!==4){toast(L('Type the 4-letter code from the TV.','Nhập mã 4 kí tự trên TV.'),'bad');return}return joinRoom(c,S.n)}
  if(a==='solo')return joinRoom('SOLO',S.n);
  if(a==='resume'){const v=store.get('tdy-team');if(!v)return;Object.assign(S,v);store.set('tdy-role','team');restoreMission();if(S.room!=='SOLO')busOpen(S.room,teamMsg);render();setTimeout(()=>sendSt(null),600);return}
