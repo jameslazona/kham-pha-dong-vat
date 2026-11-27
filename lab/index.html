@@ -6008,6 +6008,10 @@ fit();labels();renderStep();renderTable();requestAnimationFrame(step);
 setTimeout(fit,100);
 })();
 </script>
+<script src="vendor/supabase.js"></script>
+<script>
+window.slRT={c:null,get(){if(!this.c&&window.supabase&&supabase.createClient){try{this.c=supabase.createClient('https://yamlzkjhiygxmieexneu.supabase.co','sb_publishable_zweoyqJapFSITNqH-J1fQw_L7fTh0_v',{auth:{persistSession:false,autoRefreshToken:false},realtime:{params:{eventsPerSecond:30}}})}catch(e){console.warn(e)}}return this.c}};
+</script>
 <script>
 /* ===== Little Bird Detectives (Grade 1 team missions) ===== */
 (()=>{const HOST=document.getElementById('bdetHost'),ROOT=HOST.attachShadow({mode:'open'});ROOT.appendChild(document.getElementById('bdetTpl').content.cloneNode(true));
@@ -6121,15 +6125,17 @@ function resultHTML(){if(!S.done)return S.tries&&curQ().type!=='label'&&curQ().t
 const fmt=s=>Math.floor(Math.max(0,s)/60)+':'+String(Math.floor(Math.max(0,s)%60)).padStart(2,'0');
 const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(_){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}};
 /* ---------- message bus (ntfy.sh + same-device channel) ---------- */
-const BUS={topic:null,es:null,bc:null,seen:new Set(),on:null,state:'off'};
-function busOpen(code,onMsg){busClose();BUS.on=onMsg;BUS.topic='scilab-bdet-'+code.toLowerCase();
+const BUS={topic:null,ch:null,bc:null,seen:new Set(),on:null,state:'off',q:[]};
+function busOpen(code,onMsg){busClose();BUS.on=onMsg;BUS.topic='scilab-bdet-'+code.toLowerCase();BUS.q=[];
  try{BUS.bc=new BroadcastChannel(BUS.topic);BUS.bc.onmessage=e=>busIn(e.data)}catch(_){}
- try{BUS.es=new EventSource('https://ntfy.sh/'+BUS.topic+'/sse?since=2h');BUS.es.onopen=()=>{BUS.state='on';netDot()};BUS.es.onerror=()=>{BUS.state='off';netDot()};BUS.es.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.event&&d.event!=='message')return;busIn(JSON.parse(d.message))}catch(_){}}}catch(_){}}
-function busClose(){try{BUS.es&&BUS.es.close()}catch(_){}try{BUS.bc&&BUS.bc.close()}catch(_){}BUS.es=BUS.bc=null;BUS.topic=null;BUS.state='off'}
+ const c=window.slRT&&slRT.get();if(!c)return;
+ const ch=c.channel(BUS.topic,{config:{broadcast:{self:false}}});BUS.ch=ch;
+ ch.on('broadcast',{event:'m'},m=>busIn(m.payload));
+ ch.subscribe(st=>{if(BUS.ch!==ch)return;BUS.state=st==='SUBSCRIBED'?'on':'off';netDot();if(st==='SUBSCRIBED'){const q=BUS.q;BUS.q=[];q.forEach(o=>ch.send({type:'broadcast',event:'m',payload:o}).catch(()=>{}));if(BUS.onUp)BUS.onUp()}})}
+function busClose(){try{BUS.ch&&window.slRT&&slRT.get()&&slRT.get().removeChannel(BUS.ch)}catch(_){}try{BUS.bc&&BUS.bc.close()}catch(_){}BUS.ch=BUS.bc=null;BUS.topic=null;BUS.state='off'}
 function busIn(o){if(!o||!o.mid||BUS.seen.has(o.mid))return;BUS.seen.add(o.mid);BUS.on&&BUS.on(o)}
-function busSend(o){if(!BUS.topic)return;o.mid=Math.random().toString(36).slice(2)+Date.now().toString(36);o.at=Date.now();BUS.seen.add(o.mid);
- try{BUS.bc&&BUS.bc.postMessage(o)}catch(_){}
- fetch('https://ntfy.sh/'+BUS.topic,{method:'POST',body:JSON.stringify(o)}).catch(()=>{})}
+function busSend(o){if(!BUS.topic)return;o.mid=Math.random().toString(36).slice(2)+Date.now().toString(36);o.at=Date.now();BUS.seen.add(o.mid);try{BUS.bc&&BUS.bc.postMessage(o)}catch(_){}
+ if(BUS.ch&&BUS.state==='on')BUS.ch.send({type:'broadcast',event:'m',payload:o}).catch(()=>{});else{BUS.q.push(o);if(BUS.q.length>30)BUS.q.shift()}}
 function netDot(){const d=$('#net');if(d){d.className='net '+(BUS.state==='on'?'on':'off');d.textContent=BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…')}}
 const netHTML=()=>'<span id="net" class="net '+(BUS.state==='on'?'on':'off')+'">'+(BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…'))+'</span>';
 /* ---------- team state ---------- */
@@ -6148,7 +6154,7 @@ function teamMsg(o){if(o.t==='start'&&S.scr==='lobby'){SFX.fan();startMission(0)
 /* ---------- host state ---------- */
 let H=null;const HOSTK='bdet-host';
 function hostOpen(fresh){if(fresh||!H){H=store.get(HOSTK);if(fresh||!H||!H.room){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i=0;i<4;i++)r+=A[Math.floor(Math.random()*A.length)];H={room:r,startAt:null,teams:{},feed:[],intro:120,showEnd:false}}}
- store.set(HOSTK,H);busOpen(H.room,hostMsg);setTimeout(()=>busSend({t:'hello'}),900)}
+ store.set(HOSTK,H);busOpen(H.room,hostMsg);BUS.onUp=()=>busSend({t:'hello'})}
 function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n,old=H.teams[n]||{};if(H.startAt&&o.s&&o.s.scr==='lobby')busSend({t:'start'});H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
  if(o.ev){const e=o.ev,tm=tlab(n);let msg='',k='';
   if(e.k==='join'){msg='👋 '+tm+' '+L('joined!','đã vào!');if(H.startAt)busSend({t:'start'})}
@@ -6332,13 +6338,17 @@ const MAXP=M.reduce((a,m)=>a+Object.keys(m.ans).length,0)+BONUS.rounds.length;
 const PH=[{k:'LOOK',vi:'NHÌN',e:'👀',c:'#4cc9f0'},{k:'THINK',vi:'NGHĨ',e:'🤔',c:'#ffd60a'},{k:'SORT',vi:'PHÂN LOẠI',e:'🗂️',c:'#f72585'},{k:'SCORE',vi:'GHI ĐIỂM',e:'⭐',c:'#2b9348'}];
 const img=k=>P+k+'.webp';
 /* ---------- bus ---------- */
-const BUS={topic:null,es:null,bc:null,seen:new Set(),on:null,state:'off'};
-function busOpen(code,onMsg){busClose();BUS.on=onMsg;BUS.topic='scilab-mdet-'+code.toLowerCase();
+const BUS={topic:null,ch:null,bc:null,seen:new Set(),on:null,state:'off',q:[]};
+function busOpen(code,onMsg){busClose();BUS.on=onMsg;BUS.topic='scilab-mdet-'+code.toLowerCase();BUS.q=[];
  try{BUS.bc=new BroadcastChannel(BUS.topic);BUS.bc.onmessage=e=>busIn(e.data)}catch(_){}
- try{BUS.es=new EventSource('https://ntfy.sh/'+BUS.topic+'/sse?since=2h');BUS.es.onopen=()=>{BUS.state='on';netDot()};BUS.es.onerror=()=>{BUS.state='off';netDot()};BUS.es.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.event&&d.event!=='message')return;busIn(JSON.parse(d.message))}catch(_){}}}catch(_){}}
-function busClose(){try{BUS.es&&BUS.es.close()}catch(_){}try{BUS.bc&&BUS.bc.close()}catch(_){}BUS.es=BUS.bc=null;BUS.topic=null;BUS.state='off'}
+ const c=window.slRT&&slRT.get();if(!c)return;
+ const ch=c.channel(BUS.topic,{config:{broadcast:{self:false}}});BUS.ch=ch;
+ ch.on('broadcast',{event:'m'},m=>busIn(m.payload));
+ ch.subscribe(st=>{if(BUS.ch!==ch)return;BUS.state=st==='SUBSCRIBED'?'on':'off';netDot();if(st==='SUBSCRIBED'){const q=BUS.q;BUS.q=[];q.forEach(o=>ch.send({type:'broadcast',event:'m',payload:o}).catch(()=>{}));if(BUS.onUp)BUS.onUp()}})}
+function busClose(){try{BUS.ch&&window.slRT&&slRT.get()&&slRT.get().removeChannel(BUS.ch)}catch(_){}try{BUS.bc&&BUS.bc.close()}catch(_){}BUS.ch=BUS.bc=null;BUS.topic=null;BUS.state='off'}
 function busIn(o){if(!o||!o.mid||BUS.seen.has(o.mid))return;BUS.seen.add(o.mid);BUS.on&&BUS.on(o)}
-function busSend(o){if(!BUS.topic)return;o.mid=Math.random().toString(36).slice(2)+Date.now().toString(36);o.at=Date.now();BUS.seen.add(o.mid);try{BUS.bc&&BUS.bc.postMessage(o)}catch(_){}fetch('https://ntfy.sh/'+BUS.topic,{method:'POST',body:JSON.stringify(o)}).catch(()=>{})}
+function busSend(o){if(!BUS.topic)return;o.mid=Math.random().toString(36).slice(2)+Date.now().toString(36);o.at=Date.now();BUS.seen.add(o.mid);try{BUS.bc&&BUS.bc.postMessage(o)}catch(_){}
+ if(BUS.ch&&BUS.state==='on')BUS.ch.send({type:'broadcast',event:'m',payload:o}).catch(()=>{});else{BUS.q.push(o);if(BUS.q.length>30)BUS.q.shift()}}
 function netDot(){const d=$('#net');if(d){d.className='net '+(BUS.state==='on'?'on':'off');d.textContent=BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…')}}
 const netHTML=()=>'<span id="net" class="net '+(BUS.state==='on'?'on':'off')+'">'+(BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…'))+'</span>';
 /* ---------- team state ---------- */
@@ -6355,7 +6365,7 @@ function teamMsg(o){if(o.t==='start'&&S.scr==='lobby'){SFX.fan();startMission(0)
 /* ---------- host ---------- */
 let H=null;const HOSTK='mdet-host';
 function hostOpen(fresh){if(fresh||!H){H=store.get(HOSTK);if(fresh||!H||!H.room){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i=0;i<4;i++)r+=A[Math.floor(Math.random()*A.length)];H={room:r,startAt:null,teams:{},feed:[],intro:120,showEnd:false}}}
- store.set(HOSTK,H);busOpen(H.room,hostMsg);setTimeout(()=>busSend({t:'hello'}),900)}
+ store.set(HOSTK,H);busOpen(H.room,hostMsg);BUS.onUp=()=>busSend({t:'hello'})}
 const mname=m=>m<4?T([M[m].en,M[m].vi]):T([BONUS.en,BONUS.vi]);
 function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n;if(H.startAt&&o.s&&o.s.scr==='lobby')busSend({t:'start'});H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
  if(o.ev){const e=o.ev,tm=tlab(n);let msg='',k='';
@@ -6666,13 +6676,17 @@ function sceneHTML(k){let s='<svg class="scene" viewBox="0 0 800 520" preserveAs
  if(k==='cold')s+='<div class="snow">'+Array.from({length:36},(_,i)=>'<i style="left:'+(Math.random()*100)+'%;animation-delay:'+(Math.random()*5).toFixed(2)+'s;animation-duration:'+(4+Math.random()*4).toFixed(2)+'s;width:'+(5+Math.random()*7).toFixed(0)+'px;height:'+(5+Math.random()*7).toFixed(0)+'px"></i>').join('')+'</div>';
  return s}
 /* ---------- bus ---------- */
-const BUS={topic:null,es:null,bc:null,seen:new Set(),on:null,state:'off'};
-function busOpen(code,onMsg){busClose();BUS.on=onMsg;BUS.topic='scilab-tdy-'+code.toLowerCase();
+const BUS={topic:null,ch:null,bc:null,seen:new Set(),on:null,state:'off',q:[]};
+function busOpen(code,onMsg){busClose();BUS.on=onMsg;BUS.topic='scilab-tdy-'+code.toLowerCase();BUS.q=[];
  try{BUS.bc=new BroadcastChannel(BUS.topic);BUS.bc.onmessage=e=>busIn(e.data)}catch(_){}
- try{BUS.es=new EventSource('https://ntfy.sh/'+BUS.topic+'/sse?since=2h');BUS.es.onopen=()=>{BUS.state='on';netDot()};BUS.es.onerror=()=>{BUS.state='off';netDot()};BUS.es.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.event&&d.event!=='message')return;busIn(JSON.parse(d.message))}catch(_){}}}catch(_){}}
-function busClose(){try{BUS.es&&BUS.es.close()}catch(_){}try{BUS.bc&&BUS.bc.close()}catch(_){}BUS.es=BUS.bc=null;BUS.topic=null;BUS.state='off'}
+ const c=window.slRT&&slRT.get();if(!c)return;
+ const ch=c.channel(BUS.topic,{config:{broadcast:{self:false}}});BUS.ch=ch;
+ ch.on('broadcast',{event:'m'},m=>busIn(m.payload));
+ ch.subscribe(st=>{if(BUS.ch!==ch)return;BUS.state=st==='SUBSCRIBED'?'on':'off';netDot();if(st==='SUBSCRIBED'){const q=BUS.q;BUS.q=[];q.forEach(o=>ch.send({type:'broadcast',event:'m',payload:o}).catch(()=>{}));if(BUS.onUp)BUS.onUp()}})}
+function busClose(){try{BUS.ch&&window.slRT&&slRT.get()&&slRT.get().removeChannel(BUS.ch)}catch(_){}try{BUS.bc&&BUS.bc.close()}catch(_){}BUS.ch=BUS.bc=null;BUS.topic=null;BUS.state='off'}
 function busIn(o){if(!o||!o.mid||BUS.seen.has(o.mid))return;BUS.seen.add(o.mid);BUS.on&&BUS.on(o)}
-function busSend(o){if(!BUS.topic)return;o.mid=Math.random().toString(36).slice(2)+Date.now().toString(36);o.at=Date.now();BUS.seen.add(o.mid);try{BUS.bc&&BUS.bc.postMessage(o)}catch(_){}fetch('https://ntfy.sh/'+BUS.topic,{method:'POST',body:JSON.stringify(o)}).catch(()=>{})}
+function busSend(o){if(!BUS.topic)return;o.mid=Math.random().toString(36).slice(2)+Date.now().toString(36);o.at=Date.now();BUS.seen.add(o.mid);try{BUS.bc&&BUS.bc.postMessage(o)}catch(_){}
+ if(BUS.ch&&BUS.state==='on')BUS.ch.send({type:'broadcast',event:'m',payload:o}).catch(()=>{});else{BUS.q.push(o);if(BUS.q.length>30)BUS.q.shift()}}
 function netDot(){const d=$('#net');if(d){d.className='net '+(BUS.state==='on'?'on':'off');d.textContent=BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…')}}
 const netHTML=()=>'<span id="net" class="net '+(BUS.state==='on'?'on':'off')+'">'+(BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…'))+'</span>';
 /* ---------- team state ---------- */
@@ -6689,7 +6703,7 @@ function teamMsg(o){if(o.t==='start'&&S.scr==='lobby'){SFX.fan();startMission(0)
 /* ---------- host ---------- */
 let H=null;const HOSTK='tdy-host';
 function hostOpen(fresh){if(fresh||!H){H=store.get(HOSTK);if(fresh||!H||!H.room){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i=0;i<4;i++)r+=A[Math.floor(Math.random()*A.length)];H={room:r,startAt:null,teams:{},feed:[],intro:120,showEnd:false}}}
- store.set(HOSTK,H);busOpen(H.room,hostMsg);setTimeout(()=>busSend({t:'hello'}),900)}
+ store.set(HOSTK,H);busOpen(H.room,hostMsg);BUS.onUp=()=>busSend({t:'hello'})}
 const mname=m=>m<4?T([M[m].en,M[m].vi]):L('Teddy’s glasses','Kính của Gấu');
 const stname=i=>L(STEPS[i].k.toLowerCase(),STEPS[i].vi.toLowerCase());
 function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n;if(H.startAt&&o.s&&o.s.scr==='lobby')busSend({t:'start'});H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
@@ -7125,15 +7139,17 @@ function resultHTML(){if(!S.done)return S.tries&&curQ().type!=='label'&&curQ().t
 const fmt=s=>Math.floor(Math.max(0,s)/60)+':'+String(Math.floor(Math.max(0,s)%60)).padStart(2,'0');
 const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(_){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}};
 /* ---------- message bus (ntfy.sh + same-device channel) ---------- */
-const BUS={topic:null,es:null,bc:null,seen:new Set(),on:null,state:'off'};
-function busOpen(code,onMsg){busClose();BUS.on=onMsg;BUS.topic='scilab-chem2-'+code.toLowerCase();
+const BUS={topic:null,ch:null,bc:null,seen:new Set(),on:null,state:'off',q:[]};
+function busOpen(code,onMsg){busClose();BUS.on=onMsg;BUS.topic='scilab-chem2-'+code.toLowerCase();BUS.q=[];
  try{BUS.bc=new BroadcastChannel(BUS.topic);BUS.bc.onmessage=e=>busIn(e.data)}catch(_){}
- try{BUS.es=new EventSource('https://ntfy.sh/'+BUS.topic+'/sse?since=2h');BUS.es.onopen=()=>{BUS.state='on';netDot()};BUS.es.onerror=()=>{BUS.state='off';netDot()};BUS.es.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.event&&d.event!=='message')return;busIn(JSON.parse(d.message))}catch(_){}}}catch(_){}}
-function busClose(){try{BUS.es&&BUS.es.close()}catch(_){}try{BUS.bc&&BUS.bc.close()}catch(_){}BUS.es=BUS.bc=null;BUS.topic=null;BUS.state='off'}
+ const c=window.slRT&&slRT.get();if(!c)return;
+ const ch=c.channel(BUS.topic,{config:{broadcast:{self:false}}});BUS.ch=ch;
+ ch.on('broadcast',{event:'m'},m=>busIn(m.payload));
+ ch.subscribe(st=>{if(BUS.ch!==ch)return;BUS.state=st==='SUBSCRIBED'?'on':'off';netDot();if(st==='SUBSCRIBED'){const q=BUS.q;BUS.q=[];q.forEach(o=>ch.send({type:'broadcast',event:'m',payload:o}).catch(()=>{}));if(BUS.onUp)BUS.onUp()}})}
+function busClose(){try{BUS.ch&&window.slRT&&slRT.get()&&slRT.get().removeChannel(BUS.ch)}catch(_){}try{BUS.bc&&BUS.bc.close()}catch(_){}BUS.ch=BUS.bc=null;BUS.topic=null;BUS.state='off'}
 function busIn(o){if(!o||!o.mid||BUS.seen.has(o.mid))return;BUS.seen.add(o.mid);BUS.on&&BUS.on(o)}
-function busSend(o){if(!BUS.topic)return;o.mid=Math.random().toString(36).slice(2)+Date.now().toString(36);o.at=Date.now();BUS.seen.add(o.mid);
- try{BUS.bc&&BUS.bc.postMessage(o)}catch(_){}
- fetch('https://ntfy.sh/'+BUS.topic,{method:'POST',body:JSON.stringify(o)}).catch(()=>{})}
+function busSend(o){if(!BUS.topic)return;o.mid=Math.random().toString(36).slice(2)+Date.now().toString(36);o.at=Date.now();BUS.seen.add(o.mid);try{BUS.bc&&BUS.bc.postMessage(o)}catch(_){}
+ if(BUS.ch&&BUS.state==='on')BUS.ch.send({type:'broadcast',event:'m',payload:o}).catch(()=>{});else{BUS.q.push(o);if(BUS.q.length>30)BUS.q.shift()}}
 function netDot(){const d=$('#net');if(d){d.className='net '+(BUS.state==='on'?'on':'off');d.textContent=BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…')}}
 const netHTML=()=>'<span id="net" class="net '+(BUS.state==='on'?'on':'off')+'">'+(BUS.state==='on'?'● LIVE':'● '+L('connecting…','đang kết nối…'))+'</span>';
 /* ---------- team state ---------- */
@@ -7152,7 +7168,7 @@ function teamMsg(o){if(o.t==='start'&&S.scr==='lobby'){SFX.fan();startMission(0)
 /* ---------- host state ---------- */
 let H=null;const HOSTK='chem2-host';
 function hostOpen(fresh){if(fresh||!H){H=store.get(HOSTK);if(fresh||!H||!H.room){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i=0;i<4;i++)r+=A[Math.floor(Math.random()*A.length)];H={room:r,startAt:null,teams:{},feed:[],intro:120,showEnd:false}}}
- store.set(HOSTK,H);busOpen(H.room,hostMsg);setTimeout(()=>busSend({t:'hello'}),900)}
+ store.set(HOSTK,H);busOpen(H.room,hostMsg);BUS.onUp=()=>busSend({t:'hello'})}
 function hostMsg(o){if(o.t!=='st'||!H)return;const n=o.n,old=H.teams[n]||{};if(H.startAt&&o.s&&o.s.scr==='lobby')busSend({t:'start'});H.teams[n]=Object.assign({},o.s,{seen:Date.now(),flash:Date.now()});
  if(o.ev){const e=o.ev,tm=tlab(n);let msg='',k='';
   if(e.k==='join'){msg='👋 '+tm+' '+L('joined!','đã vào!');if(H.startAt)busSend({t:'start'})}
